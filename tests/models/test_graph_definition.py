@@ -17,6 +17,42 @@ import sqlite3
 from typing import List
 
 
+def test_merging_coincident_pulses() -> None:
+    """Test merging of coincident pulses/photons."""
+    input_feature_names = ["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t"]
+    input_features = np.array(
+        [
+            [1, 2, 3, 0.1],
+            [1, 2, 3, 2],
+            [2, 2, 1, 0.1],
+            [1, 2, 1, 0.1],
+            [1, 2, 1, 7],
+        ]
+    )
+
+    pulses = []
+    for window in [0.5, 2, 8]:
+        graph_definition = KNNGraph(
+            detector=ORCA150SuperDense(),
+            merge_coincident=True,
+            merge_window=window,
+            input_feature_names=input_feature_names,
+        )
+        y = graph_definition(
+            input_features=input_features,
+            input_feature_names=input_feature_names,
+        )
+        pulses.append(y.x.shape[0])
+
+    # Merging window (0.5 ns) is too small to merge anything,
+    # so nothing should happen!
+    assert pulses[0] == input_features.shape[0]
+    # Merging window (2 ns) is large enough to merge two of the pulses
+    assert pulses[1] == (input_features.shape[0] - 1)
+    # Merging window (2 ns) is large enough to merge four of the pulses
+    assert pulses[2] == (input_features.shape[0] - 2)
+
+
 def test_graph_definition() -> None:
     """Tests the forward pass of GraphDefinition."""
     # Test configuration

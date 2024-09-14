@@ -34,6 +34,8 @@ class GraphDefinition(Model):
         sensor_mask: Optional[List[int]] = None,
         string_mask: Optional[List[int]] = None,
         sort_by: str = None,
+        merge_coincident: bool = False,
+        merge_window: Optional[float] = None,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -62,9 +64,16 @@ class GraphDefinition(Model):
             add_inactive_sensors: If True, inactive sensors will be appended
                 to the graph with padded pulse information. Defaults to False.
             sensor_mask: A list of sensor id's to be masked from the graph. Any
-                sensor listed here will be removed from the graph. Defaults to None.
-            string_mask: A list of string id's to be masked from the graph. Defaults to None.
+                sensor listed here will be removed from the graph.
+                Defaults to None.
+            string_mask: A list of string id's to be masked from the graph.
+                         Defaults to None.
             sort_by: Name of node feature to sort by. Defaults to None.
+            merge_coincident: If True, raw pulses/photons arriving on the same
+            PMT within `merge_window` ns will be merged into a single pulse.
+            merge_window: The size of the time window (in ns) used to merge
+            coincident pulses/photons. Has no effect if `merge_coincident` is
+            `False`.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -80,6 +89,10 @@ class GraphDefinition(Model):
         self._sensor_mask = sensor_mask
         self._string_mask = string_mask
         self._add_inactive_sensors = add_inactive_sensors
+        self._n_modules = self._detector.geometry_table.shape[0]
+        self._merge_window = merge_window
+        self._merge = merge_coincident
+        self._charge_key = self._detector.charge_name
 
         self._resolve_masks()
 
@@ -138,6 +151,18 @@ class GraphDefinition(Model):
         else:
             self.rng = default_rng()
 
+        if merge_coincident:
+            if merge_window is None:
+                raise AssertionError(
+                    f"Got ´merge´={merge_coincident},"
+                    "but `merge_window` = `None`."
+                    " Please specify a value."
+                )
+            elif merge_window <= 0:
+                raise AssertionError(
+                    f"`merge_window` must be > 0. " f"Got {merge_window}"
+                )
+
     def forward(  # type: ignore
         self,
         input_features: np.ndarray,
@@ -152,10 +177,11 @@ class GraphDefinition(Model):
         """Construct graph as ´Data´ object.
 
         Args:
-            input_features: Input features for graph construction. Shape ´[num_rows, d]´
+            input_features: Input features for graph construction.
+                            Shape ´[num_rows, d]´
             input_feature_names: name of each column. Shape ´[,d]´.
             truth_dicts: Dictionary containing truth labels.
-            custom_label_functions: Custom label functions. See https://github.com/graphnet-team/graphnet/blob/main/GETTING_STARTED.md#adding-custom-truth-labels.
+            custom_label_functions: Custom label functions.
             loss_weight_column: Name of column that holds loss weight.
                                 Defaults to None.
             loss_weight: Loss weight associated with event. Defaults to None.
@@ -187,6 +213,12 @@ class GraphDefinition(Model):
 
         # Gaussian perturbation of each column if perturbation dict is given
         input_features = self._perturb_input(input_features)
+
+        # Merge coincident pulses
+        if self._merge:
+            input_features = self._merge_into_pulses(
+                input_features=input_features
+            )
 
         # Transform to pytorch tensor
         input_features = torch.tensor(input_features, dtype=self.dtype)
@@ -244,9 +276,10 @@ class GraphDefinition(Model):
         """Handle cases with sensor/string masks."""
         if self._sensor_mask is not None:
             if self._string_mask is not None:
-                assert (
-                    1 == 2
-                ), """Got arguments for both `sensor_mask`and `string_mask`. Please specify only one. """
+                raise AssertionError(
+                    "Got arguments for both `sensor_mask`and "
+                    "`string_mask`. Please specify only one."
+                )
 
         if (self._sensor_mask is None) & (self._string_mask is not None):
             self._sensor_mask = self._convert_string_to_sensor_mask()
@@ -314,8 +347,11 @@ class GraphDefinition(Model):
         return self._detector.geometry_table.loc[idx, :].index
 
     def _validate_input(
-        self, input_features: np.array, input_feature_names: List[str]
+        self,
+        input_features: np.array,
+        input_feature_names: List[str],
     ) -> None:
+
         # node feature matrix dimension check
         assert input_features.shape[1] == len(input_feature_names)
 
@@ -450,3 +486,153 @@ class GraphDefinition(Model):
         for key, fn in custom_label_functions.items():
             graph[key] = fn(graph)
         return graph
+
+    def _merge_into_pulses(
+        self, input_features: np.ndarray
+    ) -> Dict[str, List]:
+        """Merge photon attributes into pulses and add pseudo-charge."""
+        photons = {}
+        for key in self._input_feature_names:
+            photons[key] = input_features[
+                :, self._input_feature_names.index(key)
+            ].tolist()
+
+        # Create temporary module ids based on xyz coordinates
+        xyz = self._detector.xyz
+        ids = self._assign_temp_ids(
+            x=photons[xyz[0]],
+            y=photons[xyz[1]],
+            z=photons[xyz[2]],
+        )
+
+        # Identify photons that needs to be merged
+        assert isinstance(self._merge_window, (float, int))
+        idx = self._find_photons_for_merging(
+            t=photons[self._detector.sensor_time_name],
+            ids=ids,
+            merge_window=self._merge_window,
+        )
+
+        # Merge photon attributes based on temporary ids
+        pulses = self._merge_to_pulses(data_dict=photons, ids_to_merge=idx)
+
+        # Delete photons that was merged
+        delete_these = []
+        for group in idx:
+            delete_these.extend(group)
+
+        if len(delete_these) > 0:
+            for key in photons.keys():
+                photons[key] = np.delete(
+                    np.array(photons[key]), delete_these
+                ).tolist()
+
+        # Add the pulses instead
+        for key in photons.keys():
+            photons[key].extend(pulses[key])
+        del pulses  # save memory
+
+        input_features = np.concatenate(
+            [
+                np.array(photons[key]).reshape(-1, 1)
+                for key in self._input_feature_names
+            ],
+            axis=1,
+        )
+
+        return input_features
+
+    def _merge_to_pulses(
+        self, data_dict: Dict[str, List], ids_to_merge: List[List[int]]
+    ) -> Dict[str, List]:
+        """Merge photon attributes into pulses according to assigned ids."""
+        # Initialize a new dictionary to store the merged results
+        merged_dict: Dict[str, List] = {key: [] for key in data_dict.keys()}
+
+        # Iterate over the groups of IDs to merge
+        for group in ids_to_merge:
+            for key in data_dict.keys():
+                # Extract the values corresponding to the current group of IDs
+                values_to_merge = np.array([data_dict[key][i] for i in group])
+                if self._charge_key in data_dict.keys():
+                    charges = np.array(
+                        [data_dict[self._charge_key][i] for i in group]
+                    )
+                    weights = charges / sum(charges)
+                else:
+                    self.warning_once(
+                        f"`{self._charge_key}` not available in"
+                        f" {self._input_feature_names}."
+                        " Cannot do weighted sum."
+                    )
+                    weights = np.array([1])
+                # Handle numeric and non-numeric fields differently
+                if all(
+                    isinstance(value, (int, float))
+                    for value in values_to_merge
+                ):
+                    # alculate the mean for all attributes except charge
+                    if key != self._charge_key:
+                        merged_value = sum(values_to_merge * weights)
+                    else:
+                        merged_value = sum(charges)
+                else:
+                    assert 1 == 1, "shouldn't reach here"
+                merged_dict[key].append(merged_value)
+
+        return merged_dict
+
+    def _assign_temp_ids(
+        self, x: List[float], y: List[float], z: List[float]
+    ) -> List[int]:
+        """Create a temporary module id based on xyz positions."""
+        # Convert lists to a structured NumPy array
+        data = np.array(
+            list(zip(x, y, z)),
+            dtype=[("x", float), ("y", float), ("z", float)],
+        )
+
+        # Get the unique rows and the indices to reconstruct
+        # the original array with IDs
+        _, ids = np.unique(data, return_inverse=True, axis=0)
+
+        return ids.tolist()
+
+    def _find_photons_for_merging(
+        self, t: List[float], ids: List[int], merge_window: float
+    ) -> List[List[int]]:
+        """Identify photons that needs to be merged."""
+        # Convert lists to a structured NumPy array
+        data = np.array(
+            list(zip(t, ids)), dtype=[("time", float), ("id", int)]
+        )
+
+        # Get original indices after sorting by ID first and then by time
+        sorted_indices = np.argsort(data, order=["id", "time"])
+        sorted_data = data[sorted_indices]
+
+        close_elements_indices = []
+        current_group = [sorted_indices[0]]
+
+        for i in range(1, len(sorted_data)):
+            current_value = sorted_data[i]["time"]
+            current_id_value = sorted_data[i]["id"]
+
+            # Compare with the last element in the current group
+            if (
+                current_id_value == sorted_data[i - 1]["id"]
+                and current_value - sorted_data[i - 1]["time"] < merge_window
+            ):
+                current_group.append(sorted_indices[i])
+            else:
+                # If the group has more than one element, add it to the results
+                if len(current_group) > 1:
+                    close_elements_indices.append(current_group)
+                # Start a new group
+                current_group = [sorted_indices[i]]
+
+        # Append the last group if it has more than one element
+        if len(current_group) > 1:
+            close_elements_indices.append(current_group)
+
+        return close_elements_indices
