@@ -399,7 +399,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         else:
             # Only test selection given - no training / val selection inferred
             self.info(
-                f"{self.__class__.__name__} only recieved arguments for a"
+                f"{self.__class__.__name__} only received arguments for a"
                 " test selection. DataLoaders for training and validation"
                 " will not be available."
             )
