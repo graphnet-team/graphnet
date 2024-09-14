@@ -321,7 +321,7 @@ class PublicBenchmarkDataset(ERDAHostedDataset):
 
         If instantiated in "test" or "test-no-noise" mode,
         already processed photons will be read from "pulses" or
-        "pulses-no-noise", respectively. GraphDefinition passed to the dataset
+        "pulses_no_noise", respectively. GraphDefinition passed to the dataset
         should in this case not smear charge and time variables, and should
         not apply any merging.
 
@@ -351,7 +351,7 @@ class PublicBenchmarkDataset(ERDAHostedDataset):
         elif self._mode == "test":
             self._pulsemaps = ["pulses"]
         elif self._mode == "test-no-noise":
-            self._pulsemaps = ["pulses-no-noise"]
+            self._pulsemaps = ["pulses_no_noise"]
         else:
             raise AssertionError(
                 "'mode' must be one of "
@@ -508,7 +508,7 @@ class SecretDataset(PublicBenchmarkDataset):
 
         If instantiated in "test" or "test-no-noise" mode,
         already processed photons will be read from "pulses" or
-        "pulses-no-noise", respectively. GraphDefinition passed to the dataset
+        "pulses_no_noise", respectively. GraphDefinition passed to the dataset
         should in this case not smear charge and time variables, and should
         not apply any merging.
 

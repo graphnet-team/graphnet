@@ -192,8 +192,13 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                 self._train_dataset = self._create_dataset(
                     self._train_selection
                 )
+            else:
+                self._train_dataset = None
+
             if self._val_selection is not None:
                 self._val_dataset = self._create_dataset(self._val_selection)
+            else:
+                self._val_dataset = None
 
         return
 
@@ -377,12 +382,12 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                     self._selection
                 )
 
-        else:  # selection is None
+        elif self._test_selection is None:  # selection is None
             # If not provided, we infer it by grabbing
             # all event ids in the dataset.
             self.info(
-                f"{self.__class__.__name__} did not receive an"
-                " for `selection`. Selection will "
+                f"{self.__class__.__name__} did not receive an argument"
+                " for `selection`. Selection "
                 "will automatically be created with a split of "
                 f"train: {self._train_val_split[0]} and "
                 f"validation: {self._train_val_split[1]}"
@@ -391,6 +396,15 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                 self._train_selection,
                 self._val_selection,
             ) = self._infer_selections()  # type: ignore
+        else:
+            # Only test selection given - no training / val selection inferred
+            self.info(
+                f"{self.__class__.__name__} only recieved arguments for a"
+                " test selection. DataLoaders for training and validation"
+                " will not be available."
+            )
+            self._train_selection = None  # type: ignore
+            self._val_selection = None  # type: ignore
 
     def _split_selection(
         self, selection: Union[int, List[int], List[List[int]]]
