@@ -285,7 +285,17 @@ class ERDAHostedDataset(CuratedDataset):
             return
         else:
             # Download, unzip and delete zipped file
+
             os.makedirs(self.dataset_dir, exist_ok=True)
+
+            os.makedirs(self.dataset_dir)
+            _, file_name = os.path.split(file_hash)
+            extension = ".tar.gz" if ".tar.gz" not in file_name else ""
+            file_path = os.path.join(
+                self.dataset_dir,
+                file_name + extension,
+            )
+
             os.system(f"wget -O {file_path} {self._mirror}/{file_hash}")
             print("Unzipping file, this might take a while..")
             if self._backend == "parquet":
