@@ -404,6 +404,10 @@ class PublicBenchmarkDataset(ERDAHostedDataset):
         """
         if backend == "sqlite":
             dataset_path = glob(os.path.join(self.dataset_dir, "*.db"))
+            # Cast from list to string if just 1 path
+            if isinstance(dataset_path, list) & len(dataset_path) == 1:
+                dataset_path: str = dataset_path[0]  # type: ignore
+
             if self._mode == "train":
                 train_val = pd.read_parquet(
                     os.path.join(
