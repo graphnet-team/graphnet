@@ -29,6 +29,7 @@ Submodules
    graphnet.models.coarsening
    graphnet.models.easy_model
    graphnet.models.model
+   graphnet.models.normalizing_flow
    graphnet.models.standard_averaged_model
    graphnet.models.standard_model
    graphnet.models.utils

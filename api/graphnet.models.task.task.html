@@ -484,11 +484,11 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardFlowTask</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.default_prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">default_prediction_labels</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.nb_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_inputs()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.compute_loss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">compute_loss()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -624,6 +624,13 @@
     <li class="md-nav__item">
     
     
+      <a href="#graphnet.models.task.task.StandardFlowTask.default_prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">default_prediction_labels</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="#graphnet.models.task.task.StandardFlowTask.nb_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_inputs()</span></code></a>
       
     
@@ -632,13 +639,6 @@
     
     
       <a href="#graphnet.models.task.task.StandardFlowTask.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.task.task.StandardFlowTask.compute_loss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">compute_loss()</span></code></a>
       
     
     </li></ul>
@@ -751,11 +751,11 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">StandardFlowTask</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.default_prediction_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">default_prediction_labels</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.nb_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_inputs()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.task.task.StandardFlowTask.compute_loss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">compute_loss()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -782,7 +782,6 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loss_function</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.training.loss_functions.html#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></span>) – Loss function appropriate to the task.</p></li>
 <li><p><strong>target_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name(s) of the quantity/-ies being predicted, used
 to extract the  target tensor(s) from the <cite>Data</cite> object in
 <cite>.compute_loss(…)</cite>.</p></li>
@@ -871,6 +870,7 @@ acts like a prediction head.</p>
 <li><p><strong>hidden_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of columns in the output of
 the last latent layer of <cite>Model</cite> using this Task.
 Available through <cite>Model.nb_outputs</cite></p></li>
+<li><p><strong>loss_function</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.training.loss_functions.html#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></span>) – Loss function appropriate to the task.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
@@ -1003,14 +1003,21 @@ the direct inputs from <cite>Model</cite>.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">StandardFlowTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardFlowTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
 <p>A <cite>Task</cite> for <a href="#id3"><span class="problematic" id="id4">`</span></a>NormalizingFlow`s in GraphNeT.</p>
-<p>Construct <cite>StandardLearnedTask</cite>.</p>
+<p>This Task requires the support package`jammy_flows` for constructing and
+evaluating normalizing flows.</p>
+<p>Construct <cite>StandardFlowTask</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – A list of names for the targets of this Task.</p></li>
-<li><p><strong>hidden_size</strong> – The number of columns in the output of
-the last latent layer of <cite>Model</cite> using this Task.
-Available through <cite>Model.nb_outputs</cite></p></li>
+<li><p><strong>target_labels</strong> – A list of names for the targets of this Task.</p></li>
+<li><p><strong>flow_layers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'gggt'</span></code>) – A string indicating the flow layer types. See
+<a class="reference external" href="https://thoglu.github.io/jammy_flows/usage/introduction.html">https://thoglu.github.io/jammy_flows/usage/introduction.html</a>
+for details.</p></li>
+<li><p><strong>target_norm</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1000.0</span></code>) – A normalization constant used to divide the target</p></li>
+<li><p><strong>1000.</strong> (<em>values. Value is applied to all targets. Defaults to</em>)</p></li>
+<li><p><strong>hidden_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – The number of columns on which the normalizing flow</p></li>
+<li><p><strong>None</strong> (<em>is conditioned on. May be</em>)</p></li>
+<li><p><strong>flow.</strong> (<em>indicating non-conditional</em>)</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
@@ -1019,19 +1026,24 @@ Available through <cite>Model.nb_outputs</cite></p></li>
 <dd class="field-even"><p>object</p>
 </dd>
 </dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.models.task.task.StandardFlowTask.default_prediction_labels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask.default_prediction_labels" title="Link to this definition">¶</a></dt>
+<dd><p>Return default prediction labels.</p>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.task.task.StandardFlowTask.nb_inputs">
 <span class="sig-name descname"><span class="pre">nb_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardFlowTask.nb_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask.nb_inputs" title="Link to this definition">¶</a></dt>
-<dd><p>Return number of inputs assumed by task.</p>
+<dd><p>Return number of conditional inputs assumed by task.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.task.task.StandardFlowTask.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jacobian</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardFlowTask.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask.forward" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardFlowTask.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1040,28 +1052,8 @@ Available through <cite>Model.nb_outputs</cite></p></li>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>x</strong> (<em>Tensor</em><em> | </em><em>Data</em>)</p></li>
-<li><p><strong>jacobian</strong> (<em>Tensor</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>data</strong> (<em>List</em><em>[</em><em>Data</em><em>]</em>)</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.task.task.StandardFlowTask.compute_loss">
-<span class="sig-name descname"><span class="pre">compute_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prediction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jacobian</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardFlowTask.compute_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask.compute_loss" title="Link to this definition">¶</a></dt>
-<dd><p>Compute loss for normalizing flow tasks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prediction</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – transformed sample in latent distribution space.</p></li>
-<li><p><strong>jacobian</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – the jacobian associated with the transformation.</p></li>
-<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span>) – the graph object.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>the loss associated with the transformation.</p>
 </dd>
 </dl>
 </dd></dl>

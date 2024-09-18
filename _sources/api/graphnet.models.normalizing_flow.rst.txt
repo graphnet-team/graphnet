@@ -1,0 +1,7 @@
+graphnet.models.normalizing\_flow module
+========================================
+
+.. automodule:: graphnet.models.normalizing_flow
+   :members:
+   :undoc-members:
+   :show-inheritance:

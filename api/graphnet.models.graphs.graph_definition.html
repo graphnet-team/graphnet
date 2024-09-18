@@ -587,10 +587,18 @@ to None.</p></li>
 Defaults to None.</p></li>
 <li><p><strong>add_inactive_sensors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, inactive sensors will be appended
 to the graph with padded pulse information. Defaults to False.</p></li>
-<li><p><strong>sensor_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A list of sensor id’s to be masked from the graph. Any
-sensor listed here will be removed from the graph. Defaults to None.</p></li>
-<li><p><strong>string_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A list of string id’s to be masked from the graph. Defaults to None.</p></li>
+<li><p><strong>sensor_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – <p>A list of sensor id’s to be masked from the graph. Any
+sensor listed here will be removed from the graph.</p>
+<blockquote>
+<div><p>Defaults to None.</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>string_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A list of string id’s to be masked from the graph.
+Defaults to None.</p></li>
 <li><p><strong>sort_by</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of node feature to sort by. Defaults to None.</p></li>
+<li><p><strong>repeat_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, labels will be repeated to match the
+the number of rows in the output of the GraphDefinition.
+Defaults to False.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>

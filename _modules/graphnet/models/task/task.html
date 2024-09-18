@@ -362,6 +362,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
@@ -374,6 +375,11 @@
 
 <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span> <span class="nn">graphnet.utilities.decorators</span> <span class="kn">import</span> <span class="n">final</span>
+<span class="kn">from</span> <span class="nn">graphnet.models.utils</span> <span class="kn">import</span> <span class="n">get_fields</span>
+<span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_jammy_flows_package</span>
+
+<span class="k">if</span> <span class="n">has_jammy_flows_package</span><span class="p">():</span>
+    <span class="kn">import</span> <span class="nn">jammy_flows</span>
 
 
 <div class="viewcode-block" id="Task">
@@ -399,7 +405,6 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">loss_function</span><span class="p">:</span> <span class="s2">"LossFunction"</span><span class="p">,</span>
         <span class="n">target_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">prediction_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">transform_prediction_and_target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -411,7 +416,6 @@
 <span class="w">        </span><span class="sd">"""Construct `Task`.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            loss_function: Loss function appropriate to the task.</span>
 <span class="sd">            target_labels: Name(s) of the quantity/-ies being predicted, used</span>
 <span class="sd">                to extract the  target tensor(s) from the `Data` object in</span>
 <span class="sd">                `.compute_loss(...)`.</span>
@@ -461,7 +465,6 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span> <span class="o">=</span> <span class="n">target_labels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prediction_labels</span> <span class="o">=</span> <span class="n">prediction_labels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span> <span class="o">=</span> <span class="n">loss_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_inference</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="o">=</span> <span class="n">loss_weight</span>
 
@@ -598,6 +601,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">loss_function</span><span class="p">:</span> <span class="s2">"LossFunction"</span><span class="p">,</span>
         <span class="o">**</span><span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `LearnedTask`.</span>
@@ -606,11 +610,13 @@
 <span class="sd">            hidden_size: The number of columns in the output of</span>
 <span class="sd">                         the last latent layer of `Model` using this Task.</span>
 <span class="sd">                         Available through `Model.nb_outputs`</span>
+<span class="sd">            loss_function: Loss function appropriate to the task.</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
 
         <span class="c1"># Mapping from last hidden layer to required size of input</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span> <span class="o">=</span> <span class="n">loss_function</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">)</span>
 
     <span class="nd">@abstractmethod</span>
@@ -767,77 +773,93 @@
 <div class="viewcode-block" id="StandardFlowTask">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask">[docs]</a>
 <span class="k">class</span> <span class="nc">StandardFlowTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""A `Task` for `NormalizingFlow`s in GraphNeT."""</span>
+<span class="w">    </span><span class="sd">"""A `Task` for `NormalizingFlow`s in GraphNeT.</span>
+
+<span class="sd">    This Task requires the support package`jammy_flows` for constructing and</span>
+<span class="sd">    evaluating normalizing flows.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">target_labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">hidden_size</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span>
+        <span class="n">flow_layers</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"gggt"</span><span class="p">,</span>
+        <span class="n">target_norm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1000.0</span><span class="p">,</span>
         <span class="o">**</span><span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct `StandardLearnedTask`.</span>
+<span class="w">        </span><span class="sd">"""Construct `StandardFlowTask`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            target_labels: A list of names for the targets of this Task.</span>
-<span class="sd">            hidden_size: The number of columns in the output of</span>
-<span class="sd">                         the last latent layer of `Model` using this Task.</span>
-<span class="sd">                         Available through `Model.nb_outputs`</span>
+<span class="sd">            flow_layers: A string indicating the flow layer types. See</span>
+<span class="sd">             https://thoglu.github.io/jammy_flows/usage/introduction.html</span>
+<span class="sd">             for details.</span>
+<span class="sd">            target_norm: A normalization constant used to divide the target</span>
+<span class="sd">            values. Value is applied to all targets. Defaults to 1000.</span>
+<span class="sd">            hidden_size: The number of columns on which the normalizing flow</span>
+<span class="sd">            is conditioned on. May be `None`, indicating non-conditional flow.</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">target_labels</span><span class="o">=</span><span class="n">target_labels</span><span class="p">,</span> <span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Member variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"nllh"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flow</span> <span class="o">=</span> <span class="n">jammy_flows</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"e</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+            <span class="n">flow_layers</span><span class="p">,</span>
+            <span class="n">conditional_input_dim</span><span class="o">=</span><span class="n">hidden_size</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_norm</span> <span class="o">=</span> <span class="n">target_norm</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">default_prediction_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return default prediction labels."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_prediction_labels</span>
 
 <div class="viewcode-block" id="StandardFlowTask.nb_inputs">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.nb_inputs">[docs]</a>
-    <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Return number of inputs assumed by task."""</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+<span class="w">        </span><span class="sd">"""Return number of conditional inputs assumed by task."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-        <span class="c1"># Leave it as is.</span>
-        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">y</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_norm</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"Targets </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="si">}</span><span class="s2"> have "</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> rows while conditional "</span>
+                    <span class="sa">f</span><span class="s2">"inputs have </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> rows. "</span>
+                    <span class="s2">"The number of rows must match."</span>
+                <span class="p">)</span>
+            <span class="n">log_pdf</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flow</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">conditional_input</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log_pdf</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flow</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">log_pdf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <div class="viewcode-block" id="StandardFlowTask.forward">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.forward">[docs]</a>
     <span class="nd">@final</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">],</span> <span class="n">jacobian</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">],</span> <span class="n">data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Forward pass."""</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">)</span>
+        <span class="c1"># Manually cast pdf to correct dtype - is there a better way?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_flow</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flow</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="c1"># Get target values</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">get_fields</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">fields</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_labels</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="c1"># Set the initial parameters of flow close to truth</span>
+        <span class="c1"># This speeds up training and helps with NaN</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flow</span><span class="o">.</span><span class="n">init_params</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flow</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># This is only done once</span>
+        <span class="c1"># Compute nllh</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="StandardFlowTask.compute_loss">
-<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.StandardFlowTask.compute_loss">[docs]</a>
-    <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">jacobian</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute loss for normalizing flow tasks.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            prediction: transformed sample in latent distribution space.</span>
-<span class="sd">            jacobian: the jacobian associated with the transformation.</span>
-<span class="sd">            data: the graph object.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            the loss associated with the transformation.</span>
-<span class="sd">        """</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">weights</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span><span class="p">(</span>
-                <span class="n">prediction</span><span class="o">=</span><span class="n">prediction</span><span class="p">,</span>
-                <span class="n">jacobian</span><span class="o">=</span><span class="n">jacobian</span><span class="p">,</span>
-                <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">,</span>
-                <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">loss</span></div>
 </div>
 
 </pre></div>
