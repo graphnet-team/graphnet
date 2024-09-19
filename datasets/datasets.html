@@ -599,7 +599,7 @@ It looks like so:</p>
 <li><p><code class="code docutils literal notranslate"><span class="pre">graph_definition</span></code>: A <cite>GraphDefinition`that prepares the raw data from the `Dataset</cite> into your choice in data representation.</p></li>
 </ul>
 <p>After that, you can construct your <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> from a SQLite database with just a few lines of code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.sqlite</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.dataset.sqlite.sqlite_dataset</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.detector.prometheus</span>  <span class="kn">import</span>  <span class="n">Prometheus</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.graphs</span>  <span class="kn">import</span>  <span class="n">KNNGraph</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.graphs.nodes</span>  <span class="kn">import</span>  <span class="n">NodesAsPulses</span>
@@ -623,7 +623,7 @@ It looks like so:</p>
 </pre></div>
 </div>
 <p>Or similarly for Parquet files:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.parquet</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.dataset.parquet.parquet_dataset</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.detector.prometheus</span>  <span class="kn">import</span>  <span class="n">Prometheus</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.graphs</span>  <span class="kn">import</span>  <span class="n">KNNGraph</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.graphs.nodes</span>  <span class="kn">import</span>  <span class="n">NodesAsPulses</span>

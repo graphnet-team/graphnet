@@ -176,7 +176,7 @@ After that, you can construct your :code:`Dataset` from a SQLite database with j
 
 .. code-block:: python
 
-    from graphnet.data.sqlite import SQLiteDataset
+    from graphnet.data.dataset.sqlite.sqlite_dataset import SQLiteDataset
     from graphnet.models.detector.prometheus  import  Prometheus
     from graphnet.models.graphs  import  KNNGraph
     from graphnet.models.graphs.nodes  import  NodesAsPulses
@@ -203,7 +203,7 @@ Or similarly for Parquet files:
 
 .. code-block:: python
 
-    from graphnet.data.parquet import ParquetDataset
+    from graphnet.data.dataset.parquet.parquet_dataset import ParquetDataset
     from graphnet.models.detector.prometheus  import  Prometheus
     from graphnet.models.graphs  import  KNNGraph
     from graphnet.models.graphs.nodes  import  NodesAsPulses
