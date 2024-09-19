@@ -1,6 +1,6 @@
 """Contains `DataConverter`."""
 
-from typing import List, Union, OrderedDict, Dict, Tuple, Any, Optional, Type
+from typing import List, Union, OrderedDict, Dict, Tuple, Any, Optional
 from abc import ABC
 
 from tqdm import tqdm

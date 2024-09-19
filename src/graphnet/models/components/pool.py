@@ -10,9 +10,7 @@ from torch_geometric.nn.pool.pool import pool_edge, pool_batch, pool_pos
 from torch_scatter import scatter, scatter_std
 
 from torch_geometric.nn.pool import (
-    avg_pool,
     max_pool,
-    avg_pool_x,
     max_pool_x,
 )
 
