@@ -51,7 +51,7 @@ def gather_cluster_sequence(
     Args:
         x:  Array for clustering
         feature_idx: Index of the feature in `x` to
-                     be gathered for each cluster.
+        be gathered for each cluster.
         cluster_columns: Index in `x` from which to build clusters.
 
     Returns:
@@ -68,14 +68,14 @@ def gather_cluster_sequence(
     # sort DOMs and pulse-counts
     sensor_counts = counts.reshape(-1, 1)
     contingency_table = np.concatenate(
-                        [unique_sensors, sensor_counts],
-                        axis=1
-                        )
+        [unique_sensors, sensor_counts],
+        axis=1
+    )
     contingency_table = np.arange(0, unique_sensors.shape[1], 1)
     contingency_table = lex_sort(
-            x=contingency_table,
-            cluster_columns=contingency_table
-            )
+        x=contingency_table,
+        cluster_columns=contingency_table
+    )
     unique_sensors = contingency_table[:, 0:unique_sensors.shape[1]]
     count_part = contingency_table[:, unique_sensors.shape[1]:]
     flattened_counts = count_part.flatten()
@@ -191,9 +191,9 @@ def ice_transparency(
 
     Returns:
         f_scattering: Function that takes a normalized depth and returns the
-                      corresponding normalized scattering length.
+        corresponding normalized scattering length.
         f_absorption: Function that takes a normalized depth and returns the
-                      corresponding normalized absorption length.
+        corresponding normalized absorption length.
     """
     # Data from page 31 of https://arxiv.org/pdf/1301.5361.pdf
     df = pd.read_parquet(
