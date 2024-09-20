@@ -33,6 +33,20 @@ def has_torch_package() -> bool:
         return False
 
 
+def has_jammy_flows_package() -> bool:
+    """Check if the `jammy_flows` package is available."""
+    try:
+        import jammy_flows  # pyright: reportMissingImports=false
+
+        return True
+    except ImportError:
+        Logger(log_folder=None).warning_once(
+            "`jammy_flows` not available. Normalizing Flow functionality is "
+            "missing."
+        )
+        return False
+
+
 def requires_icecube(test_function: Callable) -> Callable:
     """Decorate `test_function` for use only if `icecube` module is present."""
 
