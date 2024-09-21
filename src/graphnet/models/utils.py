@@ -1,12 +1,13 @@
 """Utility functions for `graphnet.models`."""
 
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Union
 from torch_geometric.nn import knn_graph
 from torch_geometric.data import Batch
 import torch
 from torch import Tensor, LongTensor
 
 from torch_geometric.utils import homophily
+from torch_geometric.data import Data
 
 
 def calculate_xyzt_homophily(
@@ -103,3 +104,15 @@ def array_to_sequence(
     mask = torch.ne(x[:, :, 1], excluding_value)
     x[~mask] = padding_value
     return x, mask, seq_length
+
+
+def get_fields(data: Union[Data, List[Data]], fields: List[str]) -> Tensor:
+    """Extract named fields in Data object."""
+    labels = []
+    if not isinstance(data, list):
+        data = [data]
+    for label in list(fields):
+        labels.append(
+            torch.cat([d[label].reshape(-1, 1) for d in data], dim=0)
+        )
+    return torch.cat(labels, dim=1)
