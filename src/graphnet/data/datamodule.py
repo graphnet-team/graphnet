@@ -273,6 +273,39 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
                 "Unknown dataset encountered during dataloader creation."
             )
 
+        if "sampler" in dataloader_args.keys():
+            # If there were no kwargs provided, set it to empty dict
+            if "sampler_kwargs" not in dataloader_args.keys():
+                dataloader_args["sampler_kwargs"] = {}
+            dataloader_args["sampler"] = dataloader_args["sampler"](
+                dataset, **dataloader_args["sampler_kwargs"]
+            )
+            del dataloader_args["sampler_kwargs"]
+
+        if "batch_sampler" in dataloader_args.keys():
+            if "sampler" not in dataloader_args.keys():
+                raise KeyError(
+                    "When specifying a `batch_sampler`,"
+                    "you must also provide `sampler`."
+                )
+            # If there were no kwargs provided, set it to empty dict
+            if "batch_sampler_kwargs" not in dataloader_args.keys():
+                dataloader_args["batch_sampler_kwargs"] = {}
+
+            batch_sampler = dataloader_args["batch_sampler"](
+                dataloader_args["sampler"],
+                **dataloader_args["batch_sampler_kwargs"],
+            )
+            dataloader_args["batch_sampler"] = batch_sampler
+            # Remove extra keys
+            for key in [
+                "batch_sampler_kwargs",
+                "drop_last",
+                "sampler",
+                "shuffle",
+            ]:
+                dataloader_args.pop(key, None)
+
         if dataloader_args is None:
             raise AttributeError("Dataloader arguments not provided.")
 
@@ -479,7 +512,6 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             .sample(frac=1, replace=False, random_state=self._rng)
             .values.tolist()
         )  # shuffled list
-
         return self._split_selection(all_events)
 
     def _construct_dataset(self, tmp_args: Dict[str, Any]) -> Dataset:
