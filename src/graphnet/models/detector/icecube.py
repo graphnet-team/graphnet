@@ -17,6 +17,8 @@ class IceCube86(Detector):
     xyz = ["dom_x", "dom_y", "dom_z"]
     string_id_column = "string"
     sensor_id_column = "sensor_id"
+    sensor_time_column = "dom_time"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension of input data."""
@@ -57,6 +59,8 @@ class IceCubeKaggle(Detector):
     xyz = ["x", "y", "z"]
     string_id_column = "string"
     sensor_id_column = "sensor_id"
+    sensor_time_column = "time"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension of input data."""
@@ -122,6 +126,8 @@ class IceCubeUpgrade(Detector):
     xyz = ["dom_x", "dom_y", "dom_z"]
     string_id_column = "string"
     sensor_id_column = "sensor_id"
+    sensor_time_column = "dom_time"
+    charge_column = "charge"
 
     def feature_map(self) -> Dict[str, Callable]:
         """Map standardization functions to each dimension of input data."""

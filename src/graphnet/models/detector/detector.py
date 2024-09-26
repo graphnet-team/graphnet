@@ -33,7 +33,7 @@ class Detector(Model):
     @property
     def geometry_table(self) -> pd.DataFrame:
         """Public get method for retrieving a `Detector`s geometry table."""
-        if ~hasattr(self, "_geometry_table"):
+        if not hasattr(self, "_geometry_table"):
             try:
                 assert hasattr(self, "geometry_table_path")
             except AssertionError as e:
@@ -59,6 +59,16 @@ class Detector(Model):
     def sensor_index_name(self) -> str:
         """Public get method for retrieving the sensor id column name."""
         return self.sensor_id_column
+
+    @property
+    def sensor_time_name(self) -> str:
+        """Public get method for retrieving the sensor time column name."""
+        return self.sensor_time_column
+
+    @property
+    def charge_name(self) -> str:
+        """Public get method for retrieving the charge column name."""
+        return self.charge_column
 
     @final
     def _standardize(
