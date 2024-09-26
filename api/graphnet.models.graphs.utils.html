@@ -625,8 +625,8 @@ spatial directions  defining each cluster.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span>) – Array for clustering</p></li>
-<li><p><strong>feature_idx</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Index of the feature in <cite>x</cite> to
-be gathered for each cluster.</p></li>
+<li><p><strong>feature_idx</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Index of the feature in <cite>x</cite> to</p></li>
+<li><p><strong>cluster.</strong> (<em>be gathered for each</em>)</p></li>
 <li><p><strong>cluster_columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – Index in <cite>x</cite> from which to build clusters.</p></li>
 </ul>
 </dd>
@@ -671,7 +671,8 @@ features specified in <cite>summarization_indices</cite> correspond to time, cha
 then each row in the returned array will correspond to a DOM,
 and the time and charge for each DOM will be summarized by percentiles.
 Returned output array has dimensions
-<cite>[n_clusters, len(percentiles)*len(summarization_indices) + len(cluster_indices)]</cite></p>
+<cite>[n_clusters,
+len(percentiles)*len(summarization_indices) + len(cluster_indices)]</cite></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -709,13 +710,10 @@ Any deviation from this scaling method results in inaccurate results.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Function that takes a normalized depth and returns the</dt><dd><p>corresponding normalized scattering length.</p>
-</dd>
-<dt>f_absorption: Function that takes a normalized depth and returns the</dt><dd><p>corresponding normalized absorption length.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>Function that takes a normalized depth and returns the
+corresponding normalized scattering length.
+f_absorption: Function that takes a normalized depth and returns the
+corresponding normalized absorption length.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>f_scattering</p>
