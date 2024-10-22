@@ -113,13 +113,14 @@ def main(
     validation_dataloader = dm.val_dataloader
 
     # Building model
-    # Define the backbone architecture, in this example we use the DynEdge architecture
+
+    # Define architecture of the backbone, in this example we use the DynEdge architecture
     # described in detail in the Jinst paper: https://iopscience.iop.org/article/10.1088/1748-0221/17/11/P11003
     backbone = DynEdge(
         nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean", "sum"],
     )
-    # Define the task, loss function as well as optional transformation.
+    # Define the task.
     # In this case we are performing energy reconstruction, with a LogCoshLoss function.
     # The target and prediction are transformed using the log10 function. When infering
     # the prediction is transformed back to the original scale using 10^x.
