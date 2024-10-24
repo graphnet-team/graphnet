@@ -149,7 +149,7 @@ def main(
             "add_norm_layer": True,
             "skip_readout": True,
         },
-        n_features=len(features),
+        feature_mapping=[0, 1, 2, 3, None, None],
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=backbone.nb_outputs,
