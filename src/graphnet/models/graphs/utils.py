@@ -342,11 +342,6 @@ class cluster_and_pad:
         self._add_column(percentiles_x, location)
         return self.clustered_x
 
-    def add_counts(self, location: int) -> np.ndarray:
-        """Add the counts of the sensor to the summarization features."""
-        self._add_column(np.log10(self._counts), location)
-        return self.clustered_x
-
     def calculate_charge_sum(self, charge_index: int) -> np.ndarray:
         """Calculate the sum of the charge."""
         assert not hasattr(
@@ -369,7 +364,12 @@ class cluster_and_pad:
         )
         return self._charge_weights
 
-    def add_sum_charge(self, location: int) -> np.ndarray:
+    def add_counts(self, location: Optional[int]) -> np.ndarray:
+        """Add the counts of the sensor to the summarization features."""
+        self._add_column(np.log10(self._counts), location)
+        return self.clustered_x
+
+    def add_sum_charge(self, location: Optional[int] = None) -> np.ndarray:
         """Add the sum of the charge to the summarization features."""
         assert hasattr(
             self, "_charge_sum"
@@ -396,7 +396,10 @@ class cluster_and_pad:
         return self.clustered_x
 
     def add_mean(
-        self, column: int, location: int, weights: Union[np.ndarray, int] = 1
+        self,
+        column: int,
+        location: Optional[int] = None,
+        weights: Union[np.ndarray, int] = 1,
     ) -> np.ndarray:
         """Add the mean of the column."""
         self._add_column(
