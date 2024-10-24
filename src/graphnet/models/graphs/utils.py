@@ -364,7 +364,7 @@ class cluster_and_pad:
         )
         return self._charge_weights
 
-    def add_counts(self, location: Optional[int]) -> np.ndarray:
+    def add_counts(self, location: Optional[int] = None) -> np.ndarray:
         """Add the counts of the sensor to the summarization features."""
         self._add_column(np.log10(self._counts), location)
         return self.clustered_x
