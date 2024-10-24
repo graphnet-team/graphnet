@@ -43,7 +43,7 @@ class DeepIce(GNN):
         scaled_emb: bool = False,
         include_dynedge: bool = False,
         dynedge_args: Dict[str, Any] = None,
-        n_features: int = 6,
+        fourier_mapping: list = [0,1,2,3,4,5]
     ):
         """Construct `DeepIce`.
 
@@ -62,7 +62,8 @@ class DeepIce(GNN):
                 provided, DynEdge will be initialized with the original Kaggle
                 Competition settings. If `include_dynedge` is False, this
                 argument have no impact.
-            n_features: The number of features in the input data.
+            fourier_mapping: Mapping of the data to [x,y,z,time,charge,auxiliary] 
+                for the FourierEncoder. Use None for missing features.
         """
         super().__init__(seq_length, hidden_dim)
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
@@ -71,7 +72,7 @@ class DeepIce(GNN):
             mlp_dim=None,
             output_dim=fourier_out_dim,
             scaled=scaled_emb,
-            n_features=n_features,
+            mapping = fourier_mapping,
         )
         self.rel_pos = SpacetimeEncoder(head_size)
         self.sandwich = nn.ModuleList(
