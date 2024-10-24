@@ -357,8 +357,8 @@ class IceMixNodes(NodeDefinition):
                     f"input_feature_names {input_feature_names}"
                 )
             self.all_features = input_feature_names + [
-                "scatt_lenght",
-                "abs_lenght",
+                "scatt_length",
+                "abs_length",
             ]
             self.f_scattering, self.f_absoprtion = ice_transparency(**ice_args)
         else:
