@@ -1,5 +1,6 @@
-graphnet.models.graphs.utils module
-===================================
+
+utils
+=====
 
 .. automodule:: graphnet.models.graphs.utils
    :members:

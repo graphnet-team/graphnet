@@ -1,5 +1,6 @@
-graphnet.models.gnn.gnn module
-==============================
+
+gnn
+===
 
 .. automodule:: graphnet.models.gnn.gnn
    :members:

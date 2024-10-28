@@ -1,5 +1,6 @@
-graphnet.models.detector.icecube module
-=======================================
+
+icecube
+=======
 
 .. automodule:: graphnet.models.detector.icecube
    :members:

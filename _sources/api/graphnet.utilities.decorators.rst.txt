@@ -1,5 +1,6 @@
-graphnet.utilities.decorators module
-====================================
+
+decorators
+==========
 
 .. automodule:: graphnet.utilities.decorators
    :members:

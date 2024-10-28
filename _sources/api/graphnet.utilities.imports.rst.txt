@@ -1,5 +1,6 @@
-graphnet.utilities.imports module
-=================================
+
+imports
+=======
 
 .. automodule:: graphnet.utilities.imports
    :members:

@@ -1,5 +1,6 @@
-graphnet.deployment.deployer module
-===================================
+
+deployer
+========
 
 .. automodule:: graphnet.deployment.deployer
    :members:

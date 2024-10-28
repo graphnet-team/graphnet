@@ -1,5 +1,6 @@
-graphnet.data.dataloader module
-===============================
+
+dataloader
+==========
 
 .. automodule:: graphnet.data.dataloader
    :members:

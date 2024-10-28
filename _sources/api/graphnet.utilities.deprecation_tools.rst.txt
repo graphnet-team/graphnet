@@ -1,5 +1,6 @@
-graphnet.utilities.deprecation\_tools module
-============================================
+
+deprecation\_tools
+==================
 
 .. automodule:: graphnet.utilities.deprecation_tools
    :members:

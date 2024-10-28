@@ -1,5 +1,6 @@
-graphnet.data.curated\_datamodule module
-========================================
+
+curated\_datamodule
+===================
 
 .. automodule:: graphnet.data.curated_datamodule
    :members:

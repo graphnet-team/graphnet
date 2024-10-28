@@ -1,5 +1,6 @@
-graphnet.utilities.logging module
-=================================
+
+logging
+=======
 
 .. automodule:: graphnet.utilities.logging
    :members:

@@ -1,5 +1,6 @@
-graphnet.data.extractors.internal.parquet\_extractor module
-===========================================================
+
+parquet\_extractor
+==================
 
 .. automodule:: graphnet.data.extractors.internal.parquet_extractor
    :members:

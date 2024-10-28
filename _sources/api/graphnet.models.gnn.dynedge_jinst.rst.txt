@@ -1,5 +1,6 @@
-graphnet.models.gnn.dynedge\_jinst module
-=========================================
+
+dynedge\_jinst
+==============
 
 .. automodule:: graphnet.models.gnn.dynedge_jinst
    :members:

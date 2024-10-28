@@ -1,5 +1,6 @@
-graphnet.data.readers.internal\_parquet\_reader module
-======================================================
+
+internal\_parquet\_reader
+=========================
 
 .. automodule:: graphnet.data.readers.internal_parquet_reader
    :members:

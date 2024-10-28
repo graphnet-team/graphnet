@@ -1,5 +1,6 @@
-graphnet.models.task.task module
-================================
+
+task
+====
 
 .. automodule:: graphnet.models.task.task
    :members:

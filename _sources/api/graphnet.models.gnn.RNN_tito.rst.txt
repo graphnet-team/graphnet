@@ -1,5 +1,6 @@
-graphnet.models.gnn.RNN\_tito module
-====================================
+
+RNN\_tito
+=========
 
 .. automodule:: graphnet.models.gnn.RNN_tito
    :members:

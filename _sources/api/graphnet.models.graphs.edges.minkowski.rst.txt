@@ -1,5 +1,6 @@
-graphnet.models.graphs.edges.minkowski module
-=============================================
+
+minkowski
+=========
 
 .. automodule:: graphnet.models.graphs.edges.minkowski
    :members:

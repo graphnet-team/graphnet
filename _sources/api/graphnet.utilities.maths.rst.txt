@@ -1,5 +1,6 @@
-graphnet.utilities.maths module
-===============================
+
+maths
+=====
 
 .. automodule:: graphnet.utilities.maths
    :members:

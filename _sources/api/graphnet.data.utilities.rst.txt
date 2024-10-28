@@ -1,13 +1,16 @@
-graphnet.data.utilities package
-===============================
+
+utilities
+=========
+
 
 .. automodule:: graphnet.data.utilities
    :members:
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+
+|start-h2| Submodules |end-h2|
+
 
 .. toctree::
    :maxdepth: 2
@@ -16,3 +19,21 @@ Submodules
    graphnet.data.utilities.random
    graphnet.data.utilities.sqlite_utilities
    graphnet.data.utilities.string_selection_resolver
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

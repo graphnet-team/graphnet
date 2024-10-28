@@ -1,5 +1,6 @@
-graphnet.data.extractors.liquido.h5\_extractor module
-=====================================================
+
+h5\_extractor
+=============
 
 .. automodule:: graphnet.data.extractors.liquido.h5_extractor
    :members:

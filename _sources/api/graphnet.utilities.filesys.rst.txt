@@ -1,5 +1,6 @@
-graphnet.utilities.filesys module
-=================================
+
+filesys
+=======
 
 .. automodule:: graphnet.utilities.filesys
    :members:

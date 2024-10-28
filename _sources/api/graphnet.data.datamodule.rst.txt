@@ -1,5 +1,6 @@
-graphnet.data.datamodule module
-===============================
+
+datamodule
+==========
 
 .. automodule:: graphnet.data.datamodule
    :members:

@@ -1,5 +1,6 @@
-graphnet.data.extractors.extractor module
-=========================================
+
+extractor
+=========
 
 .. automodule:: graphnet.data.extractors.extractor
    :members:

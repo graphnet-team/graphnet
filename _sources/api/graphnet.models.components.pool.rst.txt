@@ -1,5 +1,6 @@
-graphnet.models.components.pool module
-======================================
+
+pool
+====
 
 .. automodule:: graphnet.models.components.pool
    :members:

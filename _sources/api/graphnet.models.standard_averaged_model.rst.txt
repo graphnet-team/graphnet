@@ -1,5 +1,6 @@
-graphnet.models.standard\_averaged\_model module
-================================================
+
+standard\_averaged\_model
+=========================
 
 .. automodule:: graphnet.models.standard_averaged_model
    :members:

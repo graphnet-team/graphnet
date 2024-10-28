@@ -1,5 +1,6 @@
-graphnet.models.detector.liquido module
-=======================================
+
+liquido
+=======
 
 .. automodule:: graphnet.models.detector.liquido
    :members:

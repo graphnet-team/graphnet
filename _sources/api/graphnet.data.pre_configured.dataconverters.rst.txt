@@ -1,5 +1,6 @@
-graphnet.data.pre\_configured.dataconverters module
-===================================================
+
+dataconverters
+==============
 
 .. automodule:: graphnet.data.pre_configured.dataconverters
    :members:

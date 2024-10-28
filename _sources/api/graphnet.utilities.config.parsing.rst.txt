@@ -1,5 +1,6 @@
-graphnet.utilities.config.parsing module
-========================================
+
+parsing
+=======
 
 .. automodule:: graphnet.utilities.config.parsing
    :members:

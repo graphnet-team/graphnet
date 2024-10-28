@@ -1,13 +1,15 @@
-graphnet.models.graphs package
-==============================
+
+graphs
+======
+
 
 .. automodule:: graphnet.models.graphs
    :members:
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
+
+|start-h2| Subpackages |end-h2|
 
 .. toctree::
    :maxdepth: 2
@@ -15,8 +17,8 @@ Subpackages
    graphnet.models.graphs.edges
    graphnet.models.graphs.nodes
 
-Submodules
-----------
+|start-h2| Submodules |end-h2|
+
 
 .. toctree::
    :maxdepth: 2
@@ -24,3 +26,21 @@ Submodules
    graphnet.models.graphs.graph_definition
    graphnet.models.graphs.graphs
    graphnet.models.graphs.utils
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

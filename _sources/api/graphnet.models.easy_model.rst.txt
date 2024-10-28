@@ -1,5 +1,6 @@
-graphnet.models.easy\_model module
-==================================
+
+easy\_model
+===========
 
 .. automodule:: graphnet.models.easy_model
    :members:

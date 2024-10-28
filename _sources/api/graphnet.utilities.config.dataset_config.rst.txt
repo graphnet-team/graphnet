@@ -1,5 +1,6 @@
-graphnet.utilities.config.dataset\_config module
-================================================
+
+dataset\_config
+===============
 
 .. automodule:: graphnet.utilities.config.dataset_config
    :members:

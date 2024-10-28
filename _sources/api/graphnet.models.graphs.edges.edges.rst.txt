@@ -1,5 +1,6 @@
-graphnet.models.graphs.edges.edges module
-=========================================
+
+edges
+=====
 
 .. automodule:: graphnet.models.graphs.edges.edges
    :members:

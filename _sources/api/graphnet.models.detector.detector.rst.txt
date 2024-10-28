@@ -1,5 +1,6 @@
-graphnet.models.detector.detector module
-========================================
+
+detector
+========
 
 .. automodule:: graphnet.models.detector.detector
    :members:

@@ -1,13 +1,16 @@
-graphnet.utilities.config package
-=================================
+
+config
+======
+
 
 .. automodule:: graphnet.utilities.config
    :members:
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+
+|start-h2| Submodules |end-h2|
+
 
 .. toctree::
    :maxdepth: 2
@@ -18,3 +21,21 @@ Submodules
    graphnet.utilities.config.model_config
    graphnet.utilities.config.parsing
    graphnet.utilities.config.training_config
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

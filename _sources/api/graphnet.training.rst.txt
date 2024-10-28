@@ -1,13 +1,16 @@
-graphnet.training package
-=========================
+
+training
+========
+
 
 .. automodule:: graphnet.training
    :members:
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+
+|start-h2| Submodules |end-h2|
+
 
 .. toctree::
    :maxdepth: 2
@@ -17,3 +20,21 @@ Submodules
    graphnet.training.loss_functions
    graphnet.training.utils
    graphnet.training.weight_fitting
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

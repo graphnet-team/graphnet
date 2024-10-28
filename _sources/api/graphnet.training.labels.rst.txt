@@ -1,5 +1,6 @@
-graphnet.training.labels module
-===============================
+
+labels
+======
 
 .. automodule:: graphnet.training.labels
    :members:

@@ -1,5 +1,6 @@
-graphnet.deployment.icecube.cleaning\_module module
-===================================================
+
+cleaning\_module
+================
 
 .. automodule:: graphnet.deployment.icecube.cleaning_module
    :members:

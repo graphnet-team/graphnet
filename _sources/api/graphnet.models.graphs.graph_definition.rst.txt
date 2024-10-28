@@ -1,5 +1,6 @@
-graphnet.models.graphs.graph\_definition module
-===============================================
+
+graph\_definition
+=================
 
 .. automodule:: graphnet.models.graphs.graph_definition
    :members:

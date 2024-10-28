@@ -1,13 +1,15 @@
-graphnet.data.dataset package
-=============================
+
+dataset
+=======
+
 
 .. automodule:: graphnet.data.dataset
    :members:
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
+
+|start-h2| Subpackages |end-h2|
 
 .. toctree::
    :maxdepth: 2
@@ -15,11 +17,29 @@ Subpackages
    graphnet.data.dataset.parquet
    graphnet.data.dataset.sqlite
 
-Submodules
-----------
+|start-h2| Submodules |end-h2|
+
 
 .. toctree::
    :maxdepth: 2
 
    graphnet.data.dataset.dataset
    graphnet.data.dataset.samplers
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

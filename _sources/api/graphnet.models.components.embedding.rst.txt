@@ -1,5 +1,6 @@
-graphnet.models.components.embedding module
-===========================================
+
+embedding
+=========
 
 .. automodule:: graphnet.models.components.embedding
    :members:

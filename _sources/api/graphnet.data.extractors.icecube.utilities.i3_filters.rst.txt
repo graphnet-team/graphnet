@@ -1,5 +1,6 @@
-graphnet.data.extractors.icecube.utilities.i3\_filters module
-=============================================================
+
+i3\_filters
+===========
 
 .. automodule:: graphnet.data.extractors.icecube.utilities.i3_filters
    :members:

@@ -1,5 +1,6 @@
-graphnet.data.extractors.prometheus.prometheus\_extractor module
-================================================================
+
+prometheus\_extractor
+=====================
 
 .. automodule:: graphnet.data.extractors.prometheus.prometheus_extractor
    :members:

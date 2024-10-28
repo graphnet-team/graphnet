@@ -1,5 +1,6 @@
-graphnet.data.dataset.sqlite.sqlite\_dataset module
-===================================================
+
+sqlite\_dataset
+===============
 
 .. automodule:: graphnet.data.dataset.sqlite.sqlite_dataset
    :members:

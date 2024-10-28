@@ -1,5 +1,6 @@
-graphnet.models.transformer.iseecube module
-===========================================
+
+iseecube
+========
 
 .. automodule:: graphnet.models.transformer.iseecube
    :members:

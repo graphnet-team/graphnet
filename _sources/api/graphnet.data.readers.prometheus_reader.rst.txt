@@ -1,5 +1,6 @@
-graphnet.data.readers.prometheus\_reader module
-===============================================
+
+prometheus\_reader
+==================
 
 .. automodule:: graphnet.data.readers.prometheus_reader
    :members:

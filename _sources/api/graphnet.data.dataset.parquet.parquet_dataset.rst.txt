@@ -1,5 +1,6 @@
-graphnet.data.dataset.parquet.parquet\_dataset module
-=====================================================
+
+parquet\_dataset
+================
 
 .. automodule:: graphnet.data.dataset.parquet.parquet_dataset
    :members:

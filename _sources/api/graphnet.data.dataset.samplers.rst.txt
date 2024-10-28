@@ -1,5 +1,6 @@
-graphnet.data.dataset.samplers module
-=====================================
+
+samplers
+========
 
 .. automodule:: graphnet.data.dataset.samplers
    :members:

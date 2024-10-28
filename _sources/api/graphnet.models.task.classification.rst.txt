@@ -1,5 +1,6 @@
-graphnet.models.task.classification module
-==========================================
+
+classification
+==============
 
 .. automodule:: graphnet.models.task.classification
    :members:

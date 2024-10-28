@@ -1,5 +1,6 @@
-graphnet.utilities.config.configurable module
-=============================================
+
+configurable
+============
 
 .. automodule:: graphnet.utilities.config.configurable
    :members:

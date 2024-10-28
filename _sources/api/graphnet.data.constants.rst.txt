@@ -1,5 +1,6 @@
-graphnet.data.constants module
-==============================
+
+constants
+=========
 
 .. automodule:: graphnet.data.constants
    :members:

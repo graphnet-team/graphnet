@@ -1,5 +1,6 @@
-graphnet.models.normalizing\_flow module
-========================================
+
+normalizing\_flow
+=================
 
 .. automodule:: graphnet.models.normalizing_flow
    :members:

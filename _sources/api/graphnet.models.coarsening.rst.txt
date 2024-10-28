@@ -1,5 +1,6 @@
-graphnet.models.coarsening module
-=================================
+
+coarsening
+==========
 
 .. automodule:: graphnet.models.coarsening
    :members:

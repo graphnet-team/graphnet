@@ -1,5 +1,6 @@
-graphnet.data.extractors.icecube.utilities.frames module
-========================================================
+
+frames
+======
 
 .. automodule:: graphnet.data.extractors.icecube.utilities.frames
    :members:

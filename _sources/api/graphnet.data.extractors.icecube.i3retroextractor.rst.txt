@@ -1,5 +1,6 @@
-graphnet.data.extractors.icecube.i3retroextractor module
-========================================================
+
+i3retroextractor
+================
 
 .. automodule:: graphnet.data.extractors.icecube.i3retroextractor
    :members:

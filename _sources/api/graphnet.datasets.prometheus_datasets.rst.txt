@@ -1,5 +1,6 @@
-graphnet.datasets.prometheus\_datasets module
-=============================================
+
+prometheus\_datasets
+====================
 
 .. automodule:: graphnet.datasets.prometheus_datasets
    :members:

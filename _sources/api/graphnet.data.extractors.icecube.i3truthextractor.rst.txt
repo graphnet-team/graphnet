@@ -1,5 +1,6 @@
-graphnet.data.extractors.icecube.i3truthextractor module
-========================================================
+
+i3truthextractor
+================
 
 .. automodule:: graphnet.data.extractors.icecube.i3truthextractor
    :members:

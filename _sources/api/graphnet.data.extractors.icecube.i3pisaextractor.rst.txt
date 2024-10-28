@@ -1,5 +1,6 @@
-graphnet.data.extractors.icecube.i3pisaextractor module
-=======================================================
+
+i3pisaextractor
+===============
 
 .. automodule:: graphnet.data.extractors.icecube.i3pisaextractor
    :members:

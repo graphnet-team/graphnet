@@ -1,5 +1,6 @@
-graphnet.deployment.icecube.i3deployer module
-=============================================
+
+i3deployer
+==========
 
 .. automodule:: graphnet.deployment.icecube.i3deployer
    :members:

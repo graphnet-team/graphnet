@@ -1,5 +1,6 @@
-graphnet.utilities.config.training\_config module
-=================================================
+
+training\_config
+================
 
 .. automodule:: graphnet.utilities.config.training_config
    :members:

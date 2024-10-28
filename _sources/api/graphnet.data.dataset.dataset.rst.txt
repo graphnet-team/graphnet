@@ -1,5 +1,6 @@
-graphnet.data.dataset.dataset module
-====================================
+
+dataset
+=======
 
 .. automodule:: graphnet.data.dataset.dataset
    :members:
