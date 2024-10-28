@@ -56,7 +56,7 @@ class FourierEncoder(LightningModule):
     This module incorporates sinusoidal positional embeddings and auxiliary
     embeddings to process input sequences and produce meaningful
     representations. The features x, y, z and time are mandatory, while charge
-    and auxiliary are optional. Please use the mapping to ensure correct 
+    and auxiliary are optional. Please use the mapping to ensure correct
     fourier encoding.
     """
 
@@ -79,7 +79,7 @@ class FourierEncoder(LightningModule):
                 depending on `n_features`.
             output_dim: Dimension of the output (I.e. number of columns).
             scaled: Whether or not to scale the embeddings.
-            mapping: Mapping of the data to [x,y,z,time,charge,auxiliary]. 
+            mapping: Mapping of the data to [x,y,z,time,charge,auxiliary].
                 Use None for missing features.
         """
         super().__init__()
@@ -90,7 +90,8 @@ class FourierEncoder(LightningModule):
         self.sin_emb2 = SinusoidalPosEmb(dim=seq_length // 2, scaled=scaled)
 
         assert len(mapping) == 6, (
-            "Fourier mapping must have 6 elements. Use None for missing features."
+            "Fourier mapping must have 6 elements."
+            "Use None for missing features."
         )
         assert all(
             isinstance(i, int) or i is None for i in mapping
@@ -137,7 +138,9 @@ class FourierEncoder(LightningModule):
         length = torch.log10(seq_length.to(dtype=x.dtype))
 
         # Position
-        embeddings = [self.sin_emb(4096 * x[:, :, self.mapping[:3]]).flatten(-2)]
+        embeddings = [
+            self.sin_emb(4096 * x[:, :, self.mapping[:3]]).flatten(-2)
+        ]
 
         # Charge
         if self.n_features >= 5:
