@@ -8,7 +8,6 @@ from typing import List, Union, Type
 from graphnet.data.extractors.icecube import I3Extractor
 from graphnet.data.extractors.icecube.utilities.i3_filters import (
     I3Filter,
-    NullSplitI3Filter,
 )
 from graphnet.data import I3ToSQLiteConverter
 

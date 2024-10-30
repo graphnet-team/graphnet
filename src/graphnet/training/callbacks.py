@@ -6,7 +6,6 @@ from typing import Dict, List, TYPE_CHECKING, Any, Optional
 import warnings
 
 import numpy as np
-import torch
 from tqdm.std import Bar
 
 from pytorch_lightning import LightningModule, Trainer
