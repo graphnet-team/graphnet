@@ -303,7 +303,7 @@ Below is a snippet that defines a :code:`Model` that reconstructs the zenith ang
         nb_nearest_neighbours=8,
     )
     backbone = DynEdge(
-        nb_inputs=detector.nb_outputs,
+        nb_inputs=graph_definition.nb_outputs,
         global_pooling_schemes=["min", "max", "mean"],
     )
     task = ZenithReconstructionWithKappa(
