@@ -65,16 +65,27 @@ class NullSplitI3Filter(I3Filter):
 
 class SubEventStreamI3Filter(I3Filter):
     """A filter that only keeps frames from select splits."""
-    
-    def __init__(self, split_names: List[str]):
-        self._split_names = split_names
-        
+
+    def __init__(self, selection: List[str]):
+        """Initialize SubEventStreamI3Filter.
+
+        Args:
+            selection: List of subevent streams to keep.
+        """
+        self._selection = selection
+
     def _keep_frame(self, frame: "icetray.I3Frame") -> bool:
+        """Check if current frame should be kept.
+
+        Args:
+            frame: I3-frame
+                The I3-frame to check.
+        """
         if frame.Has("I3EventHeader"):
-            if frame["I3EventHeader"].sub_event_stream not in self._split_names:
+            if frame["I3EventHeader"].sub_event_stream not in self._selection:
                 return False
         return True
-    
+
 
 class I3FilterMask(I3Filter):
     """checks list of filters from the FilterMask in I3 frames."""

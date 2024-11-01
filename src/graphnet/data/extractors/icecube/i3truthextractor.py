@@ -550,6 +550,14 @@ class I3TruthExtractor(I3Extractor):
         return sim_type
 
     def _contained_vertex(self, truth: Dict[str, Any]) -> bool:
+        """Determine if an event is starting based on vertex position.
+
+        Args:
+            truth: Dictionary of already extracted truth-level information.
+
+        Returns:
+            True/False if vertex is inside detector.
+        """
         vertex = np.array(
             [truth["position_x"], truth["position_y"], truth["position_z"]]
         )
