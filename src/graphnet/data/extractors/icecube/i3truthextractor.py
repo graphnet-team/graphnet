@@ -17,6 +17,8 @@ if has_icecube_package() or TYPE_CHECKING:
         dataclasses,
         icetray,
         phys_services,
+        dataio,
+        LeptonInjector,
     )  # pyright: reportMissingImports=false
 
 
@@ -82,26 +84,77 @@ class I3TruthExtractor(I3Extractor):
             self._borders = [border_xy, border_z]
         else:
             self._borders = borders
-            
+        
+        self._extend_boundary = extend_boundary
+        self._mctree = mctree
+        
+    def set_gcd(self, i3_file: str, gcd_file: Optional[str] = None) -> None:
+        """Extract GFrame and CFrame from i3/gcd-file pair.
+
+           Information from these frames will be set as member variables of
+           `I3Extractor.`
+
+        Args:
+            i3_file: Path to i3 file that is being converted.
+            gcd_file: Path to GCD file. Defaults to None. If no GCD file is
+                      given, the method will attempt to find C and G frames in
+                      the i3 file instead. If either one of those are not
+                      present, `RuntimeErrors` will be raised.
+        """
+        if gcd_file is None:
+            # If no GCD file is provided, search the I3 file for frames
+            # containing geometry (GFrame) and calibration (CFrame)
+            gcd = dataio.I3File(i3_file)
+        else:
+            # Ideally ends here
+            gcd = dataio.I3File(gcd_file)
+
+        # Get GFrame
+        try:
+            g_frame = gcd.pop_frame(icetray.I3Frame.Geometry)
+            # If the line above fails, it means that no gcd file was given
+            # and that the i3 file does not have a G-Frame in it.
+        except RuntimeError as e:
+            self.error(
+                "No GCD file was provided "
+                f"and no G-frame was found in {i3_file.split('/')[-1]}."
+            )
+            raise e
+
+        # Get CFrame
+        try:
+            c_frame = gcd.pop_frame(icetray.I3Frame.Calibration)
+            # If the line above fails, it means that no gcd file was given
+            # and that the i3 file does not have a C-Frame in it.
+        except RuntimeError as e:
+            self.warning(
+                "No GCD file was provided and no C-frame "
+                f"was found in {i3_file.split('/')[-1]}."
+            )
+            raise e
+
+        # Save information as member variables of I3Extractor
+        self._gcd_dict = g_frame["I3Geometry"].omgeo
+        self._calibration = c_frame["I3Calibration"]
+        
         coordinates = []
         for omkey, g in self._gcd_dict.items():
             if g.position.z > 1200: continue  # We want to exclude icetop
             coordinates.append([g.position.x, g.position.y, g.position.z])
-        hull = scipy.spatial.ConvexHull(np.array(coordinates))
-        hull_points = coordinates[hull.vertices]
-        if extend_boundary > 0:
-            center = np.mean(hull_points, axis=0)
-            d = hull_points - center
+        coordinates = np.array(coordinates)
+        
+        if self._extend_boundary != 0.0:
+            print("Boundary: ", self._extend_boundary)
+            center = np.mean(coordinates, axis=0)
+            d = coordinates - center
             norms = np.linalg.norm(d, axis=1, keepdims=True)
             dn = d / norms
-            
-            extended_points = hull_points + dn * extend_boundary
-            hull = ConvexHull(extended_points)
+            coordinates = coordinates + dn * self._extend_boundary
+        
+        hull = ConvexHull(coordinates)        
             
         self.hull = hull
         self.delaunay = Delaunay(coordinates[self.hull.vertices])
-            
-        self._mctree = mctree
 
     def __call__(
         self, frame: "icetray.I3Frame", padding_value: Any = -1
@@ -109,7 +162,7 @@ class I3TruthExtractor(I3Extractor):
         """Extract truth-level information."""
         is_mc = frame_is_montecarlo(frame, self._mctree)
         is_noise = frame_is_noise(frame, self._mctree)
-        sim_type = self._find_data_type(is_mc, self._i3_file)
+        sim_type = self._find_data_type(is_mc, self._i3_file, frame)
 
         output = {
             "energy": padding_value,
@@ -142,7 +195,7 @@ class I3TruthExtractor(I3Extractor):
             "L5_oscNext_bool": padding_value,
             "L6_oscNext_bool": padding_value,
             "L7_oscNext_bool": padding_value,
-            "is_starting": padding_value,
+            "starting": padding_value,
         }
 
         # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
@@ -252,7 +305,7 @@ class I3TruthExtractor(I3Extractor):
             starting = self._contained_vertex(output)
             output.update(
                 {
-                    "is_starting": starting,
+                    "starting": starting,
                 }
             )
 
@@ -399,15 +452,33 @@ class I3TruthExtractor(I3Extractor):
                 ]  # For some strange reason the second entry is identical in all variables and has no nans (always muon)
         else:
             MCInIcePrimary = None
-        try:
-            interaction_type = frame["I3MCWeightDict"]["InteractionType"]
-        except KeyError:
-            interaction_type = padding_value
-
-        try:
-            elasticity = frame["I3GENIEResultDict"]["y"]
-        except KeyError:
-            elasticity = padding_value
+        
+        if sim_type == "LeptonInjector":
+            event_properties = frame["EventProperties"]
+            
+            final_state_1 = event_properties.finalType1
+            if final_state_1 in [dataclasses.I3Particle.NuE, 
+                                    dataclasses.I3Particle.NuMu, 
+                                    dataclasses.I3Particle.NuTau,
+                                    dataclasses.I3Particle.NuEBar,
+                                    dataclasses.I3Particle.NuMuBar, 
+                                    dataclasses.I3Particle.NuTauBar]:
+                interaction_type = 2  # NC
+            else:
+                interaction_type = 1  # CC
+            
+            elasticity = 1 - event_properties.finalStateY
+        
+        else:
+            try:
+                interaction_type = frame["I3MCWeightDict"]["InteractionType"]
+            except KeyError:
+                interaction_type = padding_value
+                
+            try:
+                elasticity = 1 - frame["I3MCWeightDict"]["BjorkenY"]
+            except KeyError:
+                elasticity = padding_value
 
         return MCInIcePrimary, interaction_type, elasticity
 
@@ -443,12 +514,15 @@ class I3TruthExtractor(I3Extractor):
         return energy_track, energy_cascade, inelasticity
 
     # Utility methods
-    def _find_data_type(self, mc: bool, input_file: str) -> str:
+    def _find_data_type(self, mc: bool, 
+                        input_file: str, 
+                        frame: "icetray.I3Frame") -> str:
         """Determine the data type.
 
         Args:
             mc: Whether `input_file` is Monte Carlo simulation.
             input_file: Path to I3-file.
+            frame: Physics frame containing MC record
 
         Returns:
             The simulation/data type.
@@ -464,10 +538,13 @@ class I3TruthExtractor(I3Extractor):
             sim_type = "genie"
         elif "noise" in input_file:
             sim_type = "noise"
-        elif "L2" in input_file:  # not robust
-            sim_type = "dbang"
-        else:
+        elif (frame.Has("EventProprties") or \
+              frame.Has("LeptonInjectorProperties")):
+            sim_type = "LeptonInjector"
+        elif frame.Has("I3MCWeightDict"):
             sim_type = "NuGen"
+        else:
+            raise NotImplementedError("Could not determine data type.")
         return sim_type
     
     def _contained_vertex(self, truth: Dict[str, Any]):
