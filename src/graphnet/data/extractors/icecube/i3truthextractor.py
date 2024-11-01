@@ -84,10 +84,10 @@ class I3TruthExtractor(I3Extractor):
             self._borders = [border_xy, border_z]
         else:
             self._borders = borders
-        
+
         self._extend_boundary = extend_boundary
         self._mctree = mctree
-        
+
     def set_gcd(self, i3_file: str, gcd_file: Optional[str] = None) -> None:
         """Extract GFrame and CFrame from i3/gcd-file pair.
 
@@ -136,23 +136,23 @@ class I3TruthExtractor(I3Extractor):
         # Save information as member variables of I3Extractor
         self._gcd_dict = g_frame["I3Geometry"].omgeo
         self._calibration = c_frame["I3Calibration"]
-        
+
         coordinates = []
         for omkey, g in self._gcd_dict.items():
-            if g.position.z > 1200: continue  # We want to exclude icetop
+            if g.position.z > 1200:
+                continue  # We want to exclude icetop
             coordinates.append([g.position.x, g.position.y, g.position.z])
         coordinates = np.array(coordinates)
-        
+
         if self._extend_boundary != 0.0:
-            print("Boundary: ", self._extend_boundary)
             center = np.mean(coordinates, axis=0)
             d = coordinates - center
             norms = np.linalg.norm(d, axis=1, keepdims=True)
             dn = d / norms
             coordinates = coordinates + dn * self._extend_boundary
-        
-        hull = ConvexHull(coordinates)        
-            
+
+        hull = ConvexHull(coordinates)
+
         self.hull = hull
         self.delaunay = Delaunay(coordinates[self.hull.vertices])
 
@@ -301,7 +301,7 @@ class I3TruthExtractor(I3Extractor):
                         "stopped_muon": muon_final["stopped"],
                     }
                 )
-                
+
             starting = self._contained_vertex(output)
             output.update(
                 {
@@ -452,29 +452,30 @@ class I3TruthExtractor(I3Extractor):
                 ]  # For some strange reason the second entry is identical in all variables and has no nans (always muon)
         else:
             MCInIcePrimary = None
-        
+
         if sim_type == "LeptonInjector":
             event_properties = frame["EventProperties"]
-            
             final_state_1 = event_properties.finalType1
-            if final_state_1 in [dataclasses.I3Particle.NuE, 
-                                    dataclasses.I3Particle.NuMu, 
-                                    dataclasses.I3Particle.NuTau,
-                                    dataclasses.I3Particle.NuEBar,
-                                    dataclasses.I3Particle.NuMuBar, 
-                                    dataclasses.I3Particle.NuTauBar]:
+            if final_state_1 in [
+                dataclasses.I3Particle.NuE,
+                dataclasses.I3Particle.NuMu,
+                dataclasses.I3Particle.NuTau,
+                dataclasses.I3Particle.NuEBar,
+                dataclasses.I3Particle.NuMuBar,
+                dataclasses.I3Particle.NuTauBar,
+            ]:
                 interaction_type = 2  # NC
             else:
                 interaction_type = 1  # CC
-            
+
             elasticity = 1 - event_properties.finalStateY
-        
+
         else:
             try:
                 interaction_type = frame["I3MCWeightDict"]["InteractionType"]
             except KeyError:
-                interaction_type = padding_value
-                
+                interaction_type = int(padding_value)
+
             try:
                 elasticity = 1 - frame["I3MCWeightDict"]["BjorkenY"]
             except KeyError:
@@ -514,9 +515,9 @@ class I3TruthExtractor(I3Extractor):
         return energy_track, energy_cascade, inelasticity
 
     # Utility methods
-    def _find_data_type(self, mc: bool, 
-                        input_file: str, 
-                        frame: "icetray.I3Frame") -> str:
+    def _find_data_type(
+        self, mc: bool, input_file: str, frame: "icetray.I3Frame"
+    ) -> str:
         """Determine the data type.
 
         Args:
@@ -538,16 +539,17 @@ class I3TruthExtractor(I3Extractor):
             sim_type = "genie"
         elif "noise" in input_file:
             sim_type = "noise"
-        elif (frame.Has("EventProprties") or \
-              frame.Has("LeptonInjectorProperties")):
+        elif frame.Has("EventProprties") or frame.Has(
+            "LeptonInjectorProperties"
+        ):
             sim_type = "LeptonInjector"
         elif frame.Has("I3MCWeightDict"):
             sim_type = "NuGen"
         else:
             raise NotImplementedError("Could not determine data type.")
         return sim_type
-    
-    def _contained_vertex(self, truth: Dict[str, Any]):
+
+    def _contained_vertex(self, truth: Dict[str, Any]) -> bool:
         vertex = np.array(
             [truth["position_x"], truth["position_y"], truth["position_z"]]
         )
