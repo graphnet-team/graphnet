@@ -41,7 +41,7 @@ class I3TruthExtractor(I3Extractor):
                 stopping within the detector. Defaults to hard-coded boundary
                 coordinates.
             mctree: Str of which MCTree to use for truth values.
-            extend_boundary: Float to extend the convex hull of the detector
+            extend_boundary: Distance to extend the convex hull of the detector
                 for defining starting events.
         """
         # Base class constructor

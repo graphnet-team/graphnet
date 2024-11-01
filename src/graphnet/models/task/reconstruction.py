@@ -111,18 +111,7 @@ class EnergyReconstruction(StandardLearnedTask):
         # Transform, thereby preventing overflow and underflow error.
         return torch.nn.functional.softplus(x, beta=0.05) + eps_like(x)
 
-class PlainEnergyReconstruction(StandardLearnedTask):
-    """Reconstructs energy using stable method."""
 
-    # Requires one feature: untransformed energy
-    default_target_labels = ["energy"]
-    default_prediction_labels = ["energy_pred"]
-    nb_inputs = 1
-
-    def _forward(self, x: Tensor) -> Tensor:
-        return x
-    
-    
 class EnergyReconstructionWithPower(StandardLearnedTask):
     """Reconstructs energy."""
 
@@ -242,6 +231,7 @@ class InelasticityReconstruction(StandardLearnedTask):
     def _forward(self, x: Tensor) -> Tensor:
         # Transform output to unit range
         return torch.sigmoid(x)
+
 
 class VisibleInelasticityReconstruction(StandardLearnedTask):
     """Reconstructs interaction visible inelasticity.
