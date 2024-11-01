@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.path as mpath
+from scipy.spatial import ConvexHull, Delaunay
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from .i3extractor import I3Extractor
@@ -27,6 +28,7 @@ class I3TruthExtractor(I3Extractor):
         name: str = "truth",
         borders: Optional[List[np.ndarray]] = None,
         mctree: Optional[str] = "I3MCTree",
+        extend_boundary: Optional[float] = 0.0,
     ):
         """Construct I3TruthExtractor.
 
@@ -37,6 +39,8 @@ class I3TruthExtractor(I3Extractor):
                 stopping within the detector. Defaults to hard-coded boundary
                 coordinates.
             mctree: Str of which MCTree to use for truth values.
+            extend_boundary: Float to extend the convex hull of the detector
+                for defining starting events.
         """
         # Base class constructor
         super().__init__(name)
@@ -78,6 +82,25 @@ class I3TruthExtractor(I3Extractor):
             self._borders = [border_xy, border_z]
         else:
             self._borders = borders
+            
+        coordinates = []
+        for omkey, g in self._gcd_dict.items():
+            if g.position.z > 1200: continue  # We want to exclude icetop
+            coordinates.append([g.position.x, g.position.y, g.position.z])
+        hull = scipy.spatial.ConvexHull(np.array(coordinates))
+        hull_points = coordinates[hull.vertices]
+        if extend_boundary > 0:
+            center = np.mean(hull_points, axis=0)
+            d = hull_points - center
+            norms = np.linalg.norm(d, axis=1, keepdims=True)
+            dn = d / norms
+            
+            extended_points = hull_points + dn * extend_boundary
+            hull = ConvexHull(extended_points)
+            
+        self.hull = hull
+        self.delaunay = Delaunay(coordinates[self.hull.vertices])
+            
         self._mctree = mctree
 
     def __call__(
@@ -119,6 +142,7 @@ class I3TruthExtractor(I3Extractor):
             "L5_oscNext_bool": padding_value,
             "L6_oscNext_bool": padding_value,
             "L7_oscNext_bool": padding_value,
+            "is_starting": padding_value,
         }
 
         # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
@@ -224,6 +248,13 @@ class I3TruthExtractor(I3Extractor):
                         "stopped_muon": muon_final["stopped"],
                     }
                 )
+                
+            starting = self._contained_vertex(output)
+            output.update(
+                {
+                    "is_starting": starting,
+                }
+            )
 
         return output
 
@@ -438,3 +469,9 @@ class I3TruthExtractor(I3Extractor):
         else:
             sim_type = "NuGen"
         return sim_type
+    
+    def _contained_vertex(self, truth: Dict[str, Any]):
+        vertex = np.array(
+            [truth["position_x"], truth["position_y"], truth["position_z"]]
+        )
+        return self.delaunay.find_simplex(vertex) >= 0
