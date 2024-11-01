@@ -325,6 +325,7 @@ class IceMixNodes(NodeDefinition):
             "z_offset": None,
             "z_scaling": None,
         },
+        sample_pulses: bool = True,
     ) -> None:
         """Construct `IceMixNodes`.
 
@@ -338,6 +339,9 @@ class IceMixNodes(NodeDefinition):
             ice in IceCube are added to the feature set based on z coordinate.
             ice_args: Offset and scaling of the z coordinate in the Detector,
             to be able to make similar conversion in the ice data.
+            sample_pulses: Enable sampling random pulses. If True and the
+            event is longer than the max_length, they will be sampled. If
+            False, then only the first max_length pulses will be selected.
         """
         if input_feature_names is None:
             input_feature_names = [
@@ -383,6 +387,7 @@ class IceMixNodes(NodeDefinition):
         self.z_name = z_name
         self.hlc_name = hlc_name
         self.add_ice_properties = add_ice_properties
+        self.sampling_enabled = sample_pulses
 
     def _define_output_feature_names(
         self, input_feature_names: List[str]
@@ -436,7 +441,14 @@ class IceMixNodes(NodeDefinition):
             x[:, self.feature_indexes[self.hlc_name]] = torch.logical_not(
                 x[:, self.feature_indexes[self.hlc_name]]
             )  # hlc in kaggle was flipped
-        ids = self._pulse_sampler(x, event_length)
+        if self.sampling_enabled:
+            ids = self._pulse_sampler(x, event_length)
+        else:
+            if event_length < self.max_length:
+                ids = torch.arange(event_length)
+            else:
+                ids = torch.arange(self.max_length)
+        
         event_length = min(self.max_length, event_length)
 
         graph = torch.zeros([event_length, self.n_features])
