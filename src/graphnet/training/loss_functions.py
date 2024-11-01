@@ -64,6 +64,11 @@ class LossFunction(Model):
         """Syntax like `.forward`, for implentation in inheriting classes."""
 
 
+class MAELoss(LossFunction):
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        return torch.mean(torch.abs(prediction - target), dim=-1)
+
+
 class MSELoss(LossFunction):
     """Mean squared error loss."""
 
