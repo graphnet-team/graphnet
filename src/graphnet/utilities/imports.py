@@ -56,7 +56,8 @@ def requires_icecube(test_function: Callable) -> Callable:
             return test_function(*args, **kwargs)
         else:
             Logger(log_folder=None).info(
-                f"Function `{test_function.__name__}` not used since `icecube` isn't available."
+                f"Function `{test_function.__name__}` "
+                "not used since `icecube` isn't available."
             )
             return
 
