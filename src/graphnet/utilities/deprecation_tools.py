@@ -1,4 +1,5 @@
 """Utility functions for handling deprecation transitions."""
+
 from typing import Dict, Tuple
 from copy import deepcopy
 from torch import Tensor

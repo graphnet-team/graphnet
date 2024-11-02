@@ -1,4 +1,5 @@
 """Config classes for the `graphnet.data.dataset` module."""
+
 import warnings
 from abc import ABCMeta
 from functools import wraps

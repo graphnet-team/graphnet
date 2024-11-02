@@ -1,6 +1,6 @@
 """Utility functions for construction of graphs."""
 
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import os
 import numpy as np
 import pandas as pd
@@ -129,7 +129,8 @@ def cluster_summarize_with_percentiles(
     then each row in the returned array will correspond to a DOM,
     and the time and charge for each DOM will be summarized by percentiles.
     Returned output array has dimensions
-    `[n_clusters, len(percentiles)*len(summarization_indices) + len(cluster_indices)]`
+    `[n_clusters, len(percentiles)*len(summarization_indices)
+    + len(cluster_indices)]`
 
     Args:
         x: Array to be clustered
@@ -166,7 +167,7 @@ def cluster_summarize_with_percentiles(
 
 
 def ice_transparency(
-    z_offset: float = None, z_scaling: float = None
+    z_offset: Optional[float] = None, z_scaling: Optional[float] = None
 ) -> Tuple[interp1d, interp1d]:
     """Return interpolation functions for optical properties of IceCube.
 
@@ -193,9 +194,9 @@ def ice_transparency(
     z_scaling = z_scaling or 500.0
 
     df["z_norm"] = (df["depth"] + z_offset) / z_scaling
-    df[
-        ["scattering_len_norm", "absorption_len_norm"]
-    ] = RobustScaler().fit_transform(df[["scattering_len", "absorption_len"]])
+    df[["scattering_len_norm", "absorption_len_norm"]] = (
+        RobustScaler().fit_transform(df[["scattering_len", "absorption_len"]])
+    )
 
     f_scattering = interp1d(df["z_norm"], df["scattering_len_norm"])
     f_absorption = interp1d(df["z_norm"], df["absorption_len_norm"])

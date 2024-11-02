@@ -1,4 +1,5 @@
 """Base `Dataloader` class(es) used in `graphnet`."""
+
 from typing import Dict, Any, Optional, List, Tuple, Union, Type
 import pytorch_lightning as pl
 from copy import deepcopy
@@ -26,9 +27,9 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         dataset_args: Dict[str, Any],
         selection: Optional[Union[List[int], List[List[int]]]] = None,
         test_selection: Optional[Union[List[int], List[List[int]]]] = None,
-        train_dataloader_kwargs: Dict[str, Any] = None,
-        validation_dataloader_kwargs: Dict[str, Any] = None,
-        test_dataloader_kwargs: Dict[str, Any] = None,
+        train_dataloader_kwargs: Optional[Dict[str, Any]] = None,
+        validation_dataloader_kwargs: Optional[Dict[str, Any]] = None,
+        test_dataloader_kwargs: Optional[Dict[str, Any]] = None,
         train_val_split: Optional[List[float]] = [0.9, 0.10],
         split_seed: int = 42,
     ) -> None:

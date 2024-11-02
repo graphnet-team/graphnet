@@ -1,4 +1,5 @@
 """Parquet Extractor for conversion from internal parquet format."""
+
 import polars as pol
 import pandas as pd
 

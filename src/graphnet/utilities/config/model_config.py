@@ -1,4 +1,5 @@
 """Config classes for the `graphnet.models` module."""
+
 from abc import ABCMeta
 from functools import wraps
 import inspect
@@ -68,9 +69,9 @@ class ModelConfig(BaseConfig):
             value = data["arguments"][arg]
             if isinstance(value, (tuple, list)):
                 for ix, elem in enumerate(value):
-                    data["arguments"][arg][
-                        ix
-                    ] = self._parse_if_model_config_entry(elem)
+                    data["arguments"][arg][ix] = (
+                        self._parse_if_model_config_entry(elem)
+                    )
             else:
                 data["arguments"][arg] = self._parse_if_model_config_entry(
                     value

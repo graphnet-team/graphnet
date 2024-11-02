@@ -34,12 +34,12 @@ class DynEdgeTITO(GNN):
     def __init__(
         self,
         nb_inputs: int,
-        features_subset: List[int] = None,
+        features_subset: Optional[List[int]] = None,
         dyntrans_layer_sizes: Optional[List[Tuple[int, ...]]] = None,
         global_pooling_schemes: List[str] = ["max"],
         use_global_features: bool = True,
         use_post_processing_layers: bool = True,
-        post_processing_layer_sizes: List[int] = None,
+        post_processing_layer_sizes: Optional[List[int]] = None,
         readout_layer_sizes: Optional[List[int]] = None,
         n_head: int = 8,
         nb_neighbours: int = 8,
@@ -57,9 +57,12 @@ class DynEdgeTITO(GNN):
             global_pooling_schemes: The list global pooling schemes to use.
                 Options are: "min", "max", "mean", and "sum".
             use_global_features: Whether to use global features after pooling.
-            use_post_processing_layers: Whether to use post-processing layers after the `DynTrans` layers.
-            post_processing_layer_sizes: The layer sizes used in    the post-processing layers. Defaults to [336, 256].
-            readout_layer_sizes: The layer sizes used in the readout layers. Defaults to [256, 128].
+            use_post_processing_layers: Whether to use post-processing layers
+                after the `DynTrans` layers.
+            post_processing_layer_sizes: The layer sizes used in the
+                post-processing layers. Defaults to [336, 256].
+            readout_layer_sizes: The layer sizes used in the readout layers.
+                Defaults to [256, 128].
             n_head: The number of heads to use in the `DynTrans` layer.
             nb_neighbours: The number of neighbours to use in the `DynTrans`
                 layer.
