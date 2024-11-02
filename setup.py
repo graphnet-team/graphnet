@@ -39,7 +39,7 @@ EXTRAS_REQUIRE = {
         "MarkupSafe<=2.1",
         "mypy",
         "myst-parser",
-        "pre-commit<=3.8",
+        "pre-commit<=4.0",
         "pydocstyle",
         "pylint",
         "pytest",
