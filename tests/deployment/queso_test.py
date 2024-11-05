@@ -165,7 +165,7 @@ def test_deployment() -> None:
     features = FEATURES.UPGRADE
     input_folders = [f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998"]
     output_folder = f"{TEST_DATA_DIR}/output/QUESO_test"
-    gcd_file = f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/GeoCalibDetectorStatus_ICUpgrade.v58.mixed.V0.i3.bz2"
+    gcd_file = f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/GeoCalibDetectorStatus_ICUpgrade.v58.mixed.V0.i3.bz2"  # noqa: E501
     features = FEATURES.UPGRADE
     input_files = []
     for folder in input_folders:
@@ -214,11 +214,12 @@ def verify_QUESO_integrity() -> None:
                     original_predictions[frame][model],
                     equal_nan=True,
                 )
-            except AssertionError as e:
-                print(
-                    f"Mismatch found in {model}: {new_predictions[frame][model]} vs. {original_predictions[frame][model]}"
+            except AssertionError:
+                raise AssertionError(
+                    f"Mismatch found in {model}: "
+                    f"{new_predictions[frame][model]} vs. "
+                    f"{original_predictions[frame][model]}"
                 )
-                raise e
 
     return
 

@@ -1,4 +1,5 @@
 """Filter classes for filtering I3-frames when converting I3-files."""
+
 from abc import abstractmethod
 from graphnet.utilities.logging import Logger
 from typing import List
@@ -64,7 +65,7 @@ class NullSplitI3Filter(I3Filter):
 
 
 class I3FilterMask(I3Filter):
-    """checks list of filters from the FilterMask in I3 frames."""
+    """Checks list of filters from the FilterMask in I3 frames."""
 
     def __init__(self, filter_names: List[str], filter_any: bool = True):
         """Initialize I3FilterMask.
@@ -95,7 +96,8 @@ class I3FilterMask(I3Filter):
                 for filter_name in self._filter_names:
                     if filter_name not in frame["FilterMask"]:
                         self.warning_once(
-                            f"FilterMask {filter_name} not found in frame. skipping filter."
+                            f"FilterMask {filter_name} not found in frame. "
+                            "Skipping filter."
                         )
                         continue
                     elif frame["FilterMask"][filter].condition_passed is True:
@@ -104,18 +106,20 @@ class I3FilterMask(I3Filter):
                         bool_list.append(False)
                 if len(bool_list) == 0:
                     self.warning_once(
-                        "None of the FilterMask filters found in frame, FilterMask filters will not be applied."
+                        "None of the FilterMask filters found in frame."
+                        "FilterMask filters will not be applied."
                     )
                 return any(bool_list) or len(bool_list) == 0
             else:  # Require all filters to pass in order to keep the frame.
                 for filter_name in self._filter_names:
                     if filter_name not in frame["FilterMask"]:
                         self.warning_once(
-                            f"FilterMask {filter_name} not found in frame, skipping filter."
+                            f"FilterMask {filter_name} not found in frame."
+                            "Skipping filter."
                         )
                         continue
                     elif frame["FilterMask"][filter].condition_passed is True:
-                        continue  # current filter passed, continue to next filter
+                        continue  # current filter passed, go to next filter
                     else:
                         return (
                             False  # current filter failed so frame is skipped.
@@ -123,6 +127,7 @@ class I3FilterMask(I3Filter):
                 return True
         else:
             self.warning_once(
-                "FilterMask not found in frame, FilterMask filters will not be applied."
+                "FilterMask not found in frame."
+                "FilterMask filters will not be applied."
             )
             return True

@@ -1,4 +1,5 @@
 """Test for examples in 01_icetray."""
+
 import runpy
 import os
 import pytest

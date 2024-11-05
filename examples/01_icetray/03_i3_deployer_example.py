@@ -50,7 +50,7 @@ def main() -> None:
     model_config = f"{base_path}/{model_name}/{model_name}_config.yml"
     state_dict = f"{base_path}/{model_name}/{model_name}_state_dict.pth"
     output_folder = f"{EXAMPLE_OUTPUT_DIR}/i3_deployment/upgrade_03_04"
-    gcd_file = f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/GeoCalibDetectorStatus_ICUpgrade.v58.mixed.V0.i3.bz2"
+    gcd_file = f"{TEST_DATA_DIR}/i3/upgrade_genie_step4_140028_000998/GeoCalibDetectorStatus_ICUpgrade.v58.mixed.V0.i3.bz2"  # noqa: E501
     input_files = []
     for folder in input_folders:
         input_files.extend(glob(join(folder, "*.i3.gz")))

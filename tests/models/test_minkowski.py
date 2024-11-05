@@ -1,5 +1,5 @@
 """Unit tests for minkowski based edges."""
-import pytest
+
 import torch
 from torch_geometric.data.data import Data
 

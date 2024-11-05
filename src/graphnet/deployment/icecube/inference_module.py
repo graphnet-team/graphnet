@@ -2,6 +2,7 @@
 
 Contains functionality for writing model predictions to i3 files.
 """
+
 from typing import List, Union, Optional, TYPE_CHECKING, Dict, Any
 
 import numpy as np
@@ -119,13 +120,13 @@ class I3InferenceModule(DeploymentModule):
         for i in range(dim):
             try:
                 assert len(predictions[:, i]) == 1
-                data[
-                    self.model_name + "_" + self.prediction_columns[i]
-                ] = I3Double(float(predictions[:, i][0]))
+                data[self.model_name + "_" + self.prediction_columns[i]] = (
+                    I3Double(float(predictions[:, i][0]))
+                )
             except IndexError:
-                data[
-                    self.model_name + "_" + self.prediction_columns[i]
-                ] = I3Double(predictions[0])
+                data[self.model_name + "_" + self.prediction_columns[i]] = (
+                    I3Double(predictions[0])
+                )
         return data
 
     def _apply_model(self, data: Data) -> np.ndarray:

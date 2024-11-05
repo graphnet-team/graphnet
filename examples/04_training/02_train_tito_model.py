@@ -72,9 +72,9 @@ def main(
             "gpus": gpus,
             "max_epochs": max_epochs,
         },
-        "dataset_reference": SQLiteDataset
-        if path.endswith(".db")
-        else ParquetDataset,
+        "dataset_reference": (
+            SQLiteDataset if path.endswith(".db") else ParquetDataset
+        ),
     }
 
     graph_definition = KNNGraph(detector=Prometheus())

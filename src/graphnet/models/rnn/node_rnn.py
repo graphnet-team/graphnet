@@ -2,6 +2,7 @@
 
 (cannot be used as a standalone model)
 """
+
 import torch
 
 from graphnet.models.gnn.gnn import GNN
@@ -42,13 +43,21 @@ class Node_RNN(GNN):
 
         Args:
             nb_inputs: Number of features in the input data.
-            hidden_size: Number of features for the RNN output and hidden layers.
+            hidden_size: Number of features for the RNN output and hidden
+                layers.
             num_layers: Number of layers in the RNN.
-            time_series_columns: The indices of the input data that should be treated as time series data. The first index should be the charge column.
-            nb_neighbours: Number of neighbours to use when reconstructing the graph representation. Defaults to 8.
-            features_subset: The subset of latent features on each node that are used as metric dimensions when performing the k-nearest neighbours clustering. Defaults to [0,1,2,3]
+            time_series_columns: The indices of the input data that should be
+                treated as time series data. The first index should be
+                the charge column.
+            nb_neighbours: Number of neighbours to use when reconstructing the
+                graph representation. Defaults to 8.
+            features_subset: The subset of latent features on each node that
+                are used as metric dimensions when performing the k-nearest
+                neighbours clustering. Defaults to [0,1,2,3]
             dropout: Dropout fraction to use in the RNN. Defaults to 0.5.
-            embedding_dim: Embedding dimension of the RNN. Defaults to no embedding.
+                embedding_dim: Embedding dimension of the RNN.
+                Defaults to no embedding.
+            embedding_dim: Dimension of the embedding. Defaults to 0.
         """
         self._hidden_size = hidden_size
         self._num_layers = num_layers

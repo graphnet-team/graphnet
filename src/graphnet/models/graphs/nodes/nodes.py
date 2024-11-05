@@ -241,7 +241,8 @@ class NodeAsDOMTimeSeries(NodeDefinition):
             id_columns: List of columns that uniquely identify a DOM.
             time_column: Name of time column.
             charge_column: Name of charge column.
-            max_activations: Maximum number of activations to include in the time series.
+            max_activations: Maximum number of activations to include in
+                the time series.
         """
         self._keys = keys
         super().__init__(input_feature_names=self._keys)
@@ -251,9 +252,8 @@ class NodeAsDOMTimeSeries(NodeDefinition):
             self._charge_index: Optional[int] = self._keys.index(charge_column)
         except ValueError:
             self.warning(
-                "Charge column with name {} not found. Running without.".format(
-                    charge_column
-                )
+                "Charge column with name {charge_column} not found. "
+                "Running without."
             )
 
             self._charge_index = None
@@ -271,7 +271,8 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         x = x.numpy()
         if x.shape[0] == 0:
             return Data(x=torch.tensor(np.column_stack([x, []])))
-        # if there is no charge column add a dummy column of zeros with the same shape as the time column
+        # if there is no charge column add a dummy column
+        # of zeros with the same shape as the time column
         if self._charge_index is None:
             charge_index: int = len(self._keys)
             x = np.insert(x, charge_index, np.zeros(x.shape[0]), axis=1)

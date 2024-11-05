@@ -21,14 +21,9 @@ from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset
 from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
-from graphnet.utilities.imports import has_icecube_package
 from graphnet.models.graphs import KNNGraph
 from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.detector import IceCubeDeepCore
-
-if has_icecube_package():
-    from icecube import dataio  # pyright: reportMissingImports=false
-
 
 # Global variable(s)
 TEST_DATA_DIR = os.path.join(
@@ -199,7 +194,9 @@ def test_parquet_to_sqlite_converter() -> None:
     )
 
     dataset_from_parquet = SQLiteDataset(path, **opt)  # type: ignore[arg-type]
-    dataset = SQLiteDataset(get_file_path("sqlite"), **opt)  # type: ignore[arg-type]
+    dataset = SQLiteDataset(
+        get_file_path("sqlite"), **opt  # type: ignore[arg-type]
+    )
 
     assert len(dataset_from_parquet) == len(dataset)
     for ix in range(len(dataset)):
