@@ -768,7 +768,7 @@ Below is a snippet that defines a <code class="code docutils literal notranslate
     <span class="n">nb_nearest_neighbours</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">backbone</span> <span class="o">=</span> <span class="n">DynEdge</span><span class="p">(</span>
-    <span class="n">nb_inputs</span><span class="o">=</span><span class="n">detector</span><span class="o">.</span><span class="n">nb_outputs</span><span class="p">,</span>
+    <span class="n">nb_inputs</span><span class="o">=</span><span class="n">graph_definition</span><span class="o">.</span><span class="n">nb_outputs</span><span class="p">,</span>
     <span class="n">global_pooling_schemes</span><span class="o">=</span><span class="p">[</span><span class="s2">"min"</span><span class="p">,</span> <span class="s2">"max"</span><span class="p">,</span> <span class="s2">"mean"</span><span class="p">],</span>
 <span class="p">)</span>
 <span class="n">task</span> <span class="o">=</span> <span class="n">ZenithReconstructionWithKappa</span><span class="p">(</span>
