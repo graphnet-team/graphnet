@@ -1,4 +1,5 @@
 """Implementation of the DynEdge GNN model architecture."""
+
 from typing import List, Optional, Tuple, Union
 
 import torch

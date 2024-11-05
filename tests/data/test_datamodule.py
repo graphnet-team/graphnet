@@ -64,7 +64,8 @@ def dataset_setup(dataset_ref: pytest.FixtureRequest) -> tuple:
         dataset_ref: The dataset reference.
 
     Returns:
-        A tuple with the dataset reference, dataset kwargs, and dataloader kwargs.
+        A tuple with the dataset reference,
+        dataset kwargs, and dataloader kwargs.
     """
     # Grab public dataset paths
     data_path = (
@@ -127,10 +128,12 @@ def test_single_dataset_without_selections(
     """Verify GraphNeTDataModule behavior when no test selection is provided.
 
     Args:
-        dataset_setup: Tuple with dataset reference, dataset arguments, and dataloader arguments.
+        dataset_setup: Tuple with dataset reference,
+        dataset arguments, and dataloader arguments.
 
     Raises:
-        Exception: If the test dataloader is accessed without providing a test selection.
+        Exception: If the test dataloader is accessed
+        without providing a test selection.
     """
     dataset_ref, dataset_kwargs, dataloader_kwargs = dataset_setup
 
@@ -165,8 +168,9 @@ def test_single_dataset_with_selections(
     """Test that selection functionality of DataModule behaves as expected.
 
     Args:
-        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple containing the dataset reference,
-            dataset arguments, and dataloader arguments.
+        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple
+        containing the dataset reference, dataset arguments,
+        and dataloader arguments.
 
     Returns:
         None
@@ -200,7 +204,9 @@ def test_single_dataset_with_selections(
     if isinstance(dataset_ref, SQLiteDataset):
         a = len(train_dataloader.dataset) + len(val_dataloader.dataset)
         assert a == len(train_val_selection)  # type: ignore
-        assert len(test_dataloader.dataset) == len(test_selection)  # type: ignore
+        assert len(test_dataloader.dataset) == len(
+            test_selection
+        )  # noqa: E501  # type: ignore
     elif isinstance(dataset_ref, ParquetDataset):
         # Parquet dataset selection is batches not events
         a = train_dataloader.dataset._indices + val_dataloader.dataset._indices
@@ -225,8 +231,9 @@ def test_dataloader_args(
     """Test that arguments to dataloaders are propagated correctly.
 
     Args:
-        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple containing the dataset reference,
-            dataset keyword arguments, and dataloader keyword arguments.
+        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple
+        containing the dataset reference, dataset keyword arguments,
+        and dataloader keyword arguments.
 
     Returns:
         None
@@ -265,8 +272,9 @@ def test_ensemble_dataset_without_selections(
     """Test ensemble dataset functionality without selections.
 
     Args:
-        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple containing the dataset reference,
-            dataset keyword arguments, and dataloader keyword arguments.
+        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple
+        containing the dataset reference, dataset keyword arguments,
+        and dataloader keyword arguments.
 
     Returns:
         None
@@ -303,8 +311,9 @@ def test_ensemble_dataset_with_selections(
     """Test ensemble dataset functionality with selections.
 
     Args:
-        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple containing the dataset reference,
-            dataset keyword arguments, and dataloader keyword arguments.
+        dataset_setup (Tuple[Any, Dict[str, Any], Dict[str, int]]): A tuple
+        containing the dataset reference, dataset keyword arguments,
+        and dataloader keyword arguments.
 
     Returns:
         None

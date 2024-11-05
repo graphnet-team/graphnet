@@ -1,6 +1,6 @@
 """Standard model class(es)."""
 
-from typing import Any, Dict, List, Optional, Union, Type
+from typing import Dict, List, Optional, Union, Type
 import torch
 from torch import Tensor
 from torch_geometric.data import Data
@@ -26,7 +26,7 @@ class NormalizingFlow(EasySyntax):
         self,
         graph_definition: GraphDefinition,
         target_labels: str,
-        backbone: GNN = None,
+        backbone: Optional[GNN] = None,
         condition_on: Union[str, List[str], None] = None,
         flow_layers: str = "gggt",
         optimizer_class: Type[torch.optim.Optimizer] = Adam,

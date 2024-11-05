@@ -201,9 +201,9 @@ class I3GenericExtractor(I3Extractor):
     ) -> Optional[Dict[str, Any]]:
         """Extract per-pulse attribute `key` from `frame`.
 
-        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a
-        dictionary- like mapping from an OM key to some attribute, e.g.,
-        an integer or a vector properties.
+        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a dictionary-
+        like mapping from an OM key to some attribute, e.g., an integer or a
+        vector properties.
         """
         result = self._extract_pulse_series_map(frame, key)
 
@@ -264,12 +264,12 @@ class I3GenericExtractor(I3Extractor):
             flatten_nested_dictionary(res) for res in result_particles
         ]
 
-        result_primaries_transposed: Dict[
-            str, List[Any]
-        ] = transpose_list_of_dicts(result_primaries)
-        result_particles_transposed: Dict[
-            str, List[Any]
-        ] = transpose_list_of_dicts(result_particles)
+        result_primaries_transposed: Dict[str, List[Any]] = (
+            transpose_list_of_dicts(result_primaries)
+        )
+        result_particles_transposed: Dict[str, List[Any]] = (
+            transpose_list_of_dicts(result_particles)
+        )
 
         # Remove `majorID`, which has unsupported unit64 dtype.
         # Keep only one instances of `minorID`.

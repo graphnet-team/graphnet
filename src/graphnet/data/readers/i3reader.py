@@ -1,6 +1,6 @@
 """Module containing different I3Reader."""
 
-from typing import List, Union, OrderedDict
+from typing import List, Union, OrderedDict, Optional
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors.icecube.utilities.i3_filters import (
@@ -27,7 +27,7 @@ class I3Reader(GraphNeTFileReader):
     def __init__(
         self,
         gcd_rescue: str,
-        i3_filters: Union[I3Filter, List[I3Filter]] = None,
+        i3_filters: Optional[Union[I3Filter, List[I3Filter]]] = None,
         icetray_verbose: int = 0,
     ):
         """Initialize `I3Reader`.
@@ -65,7 +65,9 @@ class I3Reader(GraphNeTFileReader):
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
-    def __call__(self, file_path: I3FileSet) -> List[OrderedDict]:  # type: ignore
+    def __call__(
+        self, file_path: I3FileSet
+    ) -> List[OrderedDict]:  # noqa: E501  # type: ignore
         """Extract data from single I3 file.
 
         Args:

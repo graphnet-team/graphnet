@@ -4,7 +4,6 @@ import os
 from typing import Any, Dict, List, Optional
 
 from pytorch_lightning.loggers import WandbLogger
-import torch
 from torch.optim.adam import Adam
 
 from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR

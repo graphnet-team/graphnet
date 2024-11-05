@@ -1,4 +1,5 @@
 """Class(es) for deploying GraphNeT models in icetray as I3Modules."""
+
 from abc import abstractmethod
 from typing import Any, List, Union, Dict
 

@@ -1,4 +1,5 @@
 """Example of converting files from Prometheus to SQLite and Parquet."""
+
 import os
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR

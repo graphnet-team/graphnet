@@ -1,4 +1,5 @@
 """Example of converting H5 files from LiquidO to SQLite and Parquet."""
+
 import os
 
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
