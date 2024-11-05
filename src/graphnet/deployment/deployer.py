@@ -1,4 +1,5 @@
 """Contains the graphnet deployment module."""
+
 import random
 from abc import abstractmethod, ABC
 import multiprocessing
@@ -9,7 +10,7 @@ from graphnet.utilities.imports import has_torch_package
 from .deployment_module import DeploymentModule
 from graphnet.utilities.logging import Logger
 
-if has_torch_package or TYPE_CHECKING:
+if has_torch_package() or TYPE_CHECKING:
     import torch
 
 

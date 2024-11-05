@@ -5,5 +5,5 @@ inference as part of an icetray reconstruction chain, for different IceCube
 detector configurations.
 """
 
-from .deprecated_methods import *
+from .deprecated_methods import *  # noqa: F403
 from graphnet.deployment.icecube import I3InferenceModule, I3PulseCleanerModule

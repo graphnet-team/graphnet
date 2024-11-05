@@ -31,8 +31,8 @@ class CuratedDataset(GraphNeTDataModule):
         features: Optional[List[str]] = None,
         backend: str = "parquet",
         train_dataloader_kwargs: Optional[Dict[str, Any]] = None,
-        validation_dataloader_kwargs: Dict[str, Any] = None,
-        test_dataloader_kwargs: Dict[str, Any] = None,
+        validation_dataloader_kwargs: Optional[Dict[str, Any]] = None,
+        test_dataloader_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Construct CuratedDataset.
 

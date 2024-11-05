@@ -9,11 +9,11 @@ from torch_geometric.nn.pool.consecutive import consecutive_cluster
 from torch_geometric.nn.pool.pool import pool_edge, pool_batch, pool_pos
 from torch_scatter import scatter, scatter_std
 
-from torch_geometric.nn.pool import (
-    avg_pool,
+from torch_geometric.nn.pool import (  # noqa:F401
     max_pool,
-    avg_pool_x,
     max_pool_x,
+    avg_pool_x,
+    avg_pool,
 )
 
 
@@ -90,8 +90,8 @@ def group_by(data: Union[Data, Batch], keys: List[str]) -> LongTensor:
     This grouping is done with in each event in case of batching. This allows
     for, e.g., assigning the same index to all pulses on the same PMT or DOM in
     the same event. This can be used for coarsening graphs, e.g., from pulse-
-    level to DOM-level by aggregating feature across each group returned by this
-    method.
+    level to DOM-level by aggregating feature across each group returned by
+    this method.
 
     Example:
       Given:
@@ -140,7 +140,7 @@ def sum_pool_x(
     batch: LongTensor,
     size: Optional[int] = None,
 ) -> Tensor:
-    r"""Sum-pool node features according to the clustering defined in `cluster`.
+    r"""Sum-pool node features according to the cluster defined in `cluster`.
 
     Args:
         cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,
@@ -172,7 +172,7 @@ def std_pool_x(
     batch: LongTensor,
     size: Optional[int] = None,
 ) -> Tensor:
-    r"""Std-pool node features according to the clustering defined in `cluster`.
+    r"""Std-pool node features according to the cluster defined in `cluster`.
 
     Args:
         cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,
@@ -201,7 +201,7 @@ def std_pool_x(
 def sum_pool(
     cluster: LongTensor, data: Data, transform: Optional[Callable] = None
 ) -> Data:
-    r"""Pool and coarsen graph according to the clustering defined in `cluster`.
+    r"""Pool and coarsen graph according to the cluster defined in `cluster`.
 
     All nodes within the same cluster will be represented as one node.
     Final node features are defined by the *sum* of features of all nodes
@@ -235,7 +235,7 @@ def sum_pool(
 def std_pool(
     cluster: LongTensor, data: Data, transform: Optional[Callable] = None
 ) -> Data:
-    r"""Pool and coarsen graph according to the clustering defined in `cluster`.
+    r"""Pool and coarsen graph according to the cluster defined in `cluster`.
 
     All nodes within the same cluster will be represented as one node.
     Final node features are defined by the *std* of features of all nodes

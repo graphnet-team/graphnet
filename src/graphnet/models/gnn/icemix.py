@@ -1,12 +1,11 @@
-"""Implementation of IceMix architecture used in.
+"""Implementation of IceMix.
 
-                    IceCube - Neutrinos in Deep Ice
-Reconstruct the direction of neutrinos from the Universe to the South Pole
-
+This method was a solution submitted to the IceCube - Neutrinos in Deep Ice
 Kaggle competition.
 
 Solution by DrHB: https://github.com/DrHB/icecube-2nd-place
 """
+
 import torch
 import torch.nn as nn
 from typing import Set, Dict, Any, Optional

@@ -27,7 +27,11 @@ def _compute_elementwise_gradient(outputs: Tensor, inputs: Tensor) -> Tensor:
     nb_elements = inputs.size(dim=0)
     elementwise_gradients = torch.stack(
         [
-            grad(outputs=outputs[ix], inputs=inputs, retain_graph=True,)[
+            grad(
+                outputs=outputs[ix],
+                inputs=inputs,
+                retain_graph=True,
+            )[
                 0
             ][ix]
             for ix in range(nb_elements)
@@ -51,8 +55,8 @@ def test_log_cosh(dtype: torch.dtype = torch.float32) -> None:
 
     # (1) Loss functions should not return  `inf` losses, even for large
     #     differences between prediction and target. This is not necessarily
-    #     true for the directly calculated loss (reference) where cosh(x) may go
-    #     to `inf` for x >~ 100.
+    #     true for the directly calculated loss (reference) where cosh(x)
+    #     may go to `inf` for x >~ 100.
     assert torch.all(torch.isfinite(losses))
 
     # (2) For the inputs where the reference loss _is_ valid, the two

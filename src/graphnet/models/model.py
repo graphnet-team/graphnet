@@ -50,7 +50,8 @@ class Model(
         """Save model `state_dict` to `path`."""
         if not path.endswith(".pth"):
             self.info(
-                "It is recommended to use the .pth suffix for state_dict files."
+                "It is recommended to use the .pth suffix "
+                "for state_dict files."
             )
         state_dict = self.state_dict()
         for key, value in state_dict.items():
@@ -74,7 +75,8 @@ class Model(
         )
         if state_dict_altered:
             self.warning(
-                "DeprecationWarning: State dicts with `_gnn` entries will be deprecated in GraphNeT 2.0"
+                "DeprecationWarning: State dicts with `_gnn`"
+                " entries will be deprecated in GraphNeT 2.0"
             )
         return super().load_state_dict(state_dict, **kargs)
 

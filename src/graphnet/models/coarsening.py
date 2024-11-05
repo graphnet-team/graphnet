@@ -8,7 +8,6 @@ from torch import LongTensor, Tensor
 from torch_geometric.data import Data, Batch
 from sklearn.cluster import DBSCAN
 
-# from torch_geometric.utils import unbatch_edge_index
 from graphnet.models.components.pool import (
     group_by,
     avg_pool,
@@ -28,7 +27,7 @@ from torch_geometric.utils import degree
 
 # NOTE: From [https://github.com/pyg-team/pytorch_geometric/pull/4903]
 # TODO:  Remove once bumping to torch_geometric>=2.1.0
-#       See [https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md]
+#       See [https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md] # noqa: E501
 
 
 def unbatch_edge_index(edge_index: Tensor, batch: Tensor) -> List[Tensor]:
@@ -170,15 +169,18 @@ class Coarsening(Model):
         return pooled
 
     def _add_slice_dict(self, original: Data, pooled: Data) -> Data:
-        # Copy original slice_dict and count nodes in each graph in pooled batch
+        # Copy original slice_dict and count nodes in each
+        # graph in pooled batch
         slice_dict = deepcopy(original._slice_dict)
         _, counts = torch.unique_consecutive(pooled.batch, return_counts=True)
-        # Reconstruct the entry in slice_dict for pulsemaps - only these are affected by pooling
+        # Reconstruct the entry in slice_dict for pulsemaps -
+        # only these are affected by pooling
         pulsemap_slice = [0]
         for i in range(len(counts)):
             pulsemap_slice.append(pulsemap_slice[i] + counts[i].item())
 
-        # Identifies pulsemap entries in slice_dict and set them to pulsemap_slice
+        # Identifies pulsemap entries in slice_dict and
+        # set them to pulsemap_slice
         for field in slice_dict.keys():
             if (original._num_graphs) == slice_dict[field][-1]:
                 pass  # not pulsemap, so skip

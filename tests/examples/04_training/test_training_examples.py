@@ -1,4 +1,5 @@
 """Test for examples in 04_training."""
+
 import runpy
 import os
 from glob import glob
