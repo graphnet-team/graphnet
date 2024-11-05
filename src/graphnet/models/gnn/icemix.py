@@ -9,7 +9,7 @@ Solution by DrHB: https://github.com/DrHB/icecube-2nd-place
 """
 import torch
 import torch.nn as nn
-from typing import Set, Dict, Any
+from typing import Set, Dict, Any, Optional
 
 from graphnet.models.components.layers import (
     Block_rel,
@@ -42,7 +42,7 @@ class DeepIce(GNN):
         n_rel: int = 1,
         scaled_emb: bool = False,
         include_dynedge: bool = False,
-        dynedge_args: Dict[str, Any] = None,
+        dynedge_args: Optional[Dict[str, Any]] = None,
         fourier_mapping: list = [0, 1, 2, 3, 4, 5]
     ):
         """Construct `DeepIce`.
