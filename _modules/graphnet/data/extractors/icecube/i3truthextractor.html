@@ -474,9 +474,10 @@
             <span class="s2">"L7_oscNext_bool"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
         <span class="p">}</span>
 
-        <span class="c1"># Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.</span>
-        <span class="c1"># At low levels i3files contain several other P frame splits (e.g NullSplit),</span>
-        <span class="c1"># we remove those here.</span>
+        <span class="c1"># Only InIceSplit P frames contain ML appropriate</span>
+        <span class="c1"># for example I3RecoPulseSeriesMap,  etc.</span>
+        <span class="c1"># At low levels i3 files contain several other P frame splits</span>
+        <span class="c1"># (e.g NullSplit). We remove those here.</span>
         <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
             <span class="s2">"InIceSplit"</span><span class="p">,</span>
             <span class="s2">"Final"</span><span class="p">,</span>
@@ -534,7 +535,10 @@
                     <span class="n">energy_cascade</span><span class="p">,</span>
                     <span class="n">inelasticity</span><span class="p">,</span>
                 <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_primary_track_energy_and_inelasticity</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">RuntimeError</span><span class="p">:</span>  <span class="c1"># track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."</span>
+            <span class="k">except</span> <span class="p">(</span>
+                <span class="ne">RuntimeError</span>
+            <span class="p">):</span>  <span class="c1"># track energy fails on northeren tracks with ""Hadrons"</span>
+                <span class="c1"># has no mass implemented. Cannot get total energy."</span>
                 <span class="n">energy_track</span><span class="p">,</span> <span class="n">energy_cascade</span><span class="p">,</span> <span class="n">inelasticity</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="n">padding_value</span><span class="p">,</span>
                     <span class="n">padding_value</span><span class="p">,</span>
@@ -569,9 +573,10 @@
                 <span class="n">muon_final</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_muon_stopped</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span><span class="p">)</span>
                 <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                     <span class="p">{</span>
-                        <span class="s2">"position_x"</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span>
-                            <span class="s2">"x"</span>
-                        <span class="p">],</span>  <span class="c1"># position_xyz has no meaning for muons. These will now be updated to muon final position, given track length/azimuth/zenith</span>
+                        <span class="s2">"position_x"</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span>
+                        <span class="c1"># position_xyz has no meaning for muons.</span>
+                        <span class="c1"># These will now be updated to muon final position,</span>
+                        <span class="c1"># given track length/azimuth/zenith</span>
                         <span class="s2">"position_y"</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">"y"</span><span class="p">],</span>
                         <span class="s2">"position_z"</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">"z"</span><span class="p">],</span>
                         <span class="s2">"stopped_muon"</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">"stopped"</span><span class="p">],</span>
@@ -715,10 +720,11 @@
                 <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span> <span class="o">!=</span> <span class="n">MCInIcePrimary</span><span class="o">.</span><span class="n">energy</span>
-            <span class="p">):</span>  <span class="c1"># This is a nan check. Only happens for some muons where second item in MCTree is primary. Weird!</span>
-                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">][</span>
-                    <span class="mi">1</span>
-                <span class="p">]</span>  <span class="c1"># For some strange reason the second entry is identical in all variables and has no nans (always muon)</span>
+            <span class="p">):</span>  <span class="c1"># This is a nan check. Only happens for some muons</span>
+                <span class="c1"># where second item in MCTree is primary. Weird!</span>
+                <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="c1"># For some strange reason the second entry is identical in</span>
+                <span class="c1"># all variables and has no nans (always muon)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>

@@ -350,6 +350,7 @@
             
   <h1 id="modules-graphnet-models-gnn-rnn-tito--page-root">Source code for graphnet.models.gnn.RNN_tito</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""RNN_DynEdge model implementation."""</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -396,24 +397,42 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            nb_inputs (int): Number of input features.</span>
-<span class="sd">            time_series_columns (List[int]): The indices of the input data that should be treated as time series data. The first index should be the charge column.</span>
+<span class="sd">            time_series_columns (List[int]): The indices of the input data that</span>
+<span class="sd">                should be treated as time series data.</span>
+<span class="sd">                The first index should be the charge column.</span>
 <span class="sd">            nb_neighbours (int, optional): Number of neighbours to consider.</span>
 <span class="sd">                Defaults to 8.</span>
 <span class="sd">            rnn_layers (int, optional): Number of RNN layers.</span>
 <span class="sd">                Defaults to 1.</span>
-<span class="sd">            rnn_hidden_size (int, optional): Size of the hidden state of the RNN. Also determines the size of the output of the RNN.</span>
+<span class="sd">            rnn_hidden_size (int, optional): Size of the hidden state of the</span>
+<span class="sd">                RNN. Also determines the size of the output of the RNN.</span>
 <span class="sd">                Defaults to 64.</span>
-<span class="sd">            rnn_dropout (float, optional): Dropout to use in the RNN. Defaults  to 0.5.</span>
+<span class="sd">            rnn_dropout (float, optional): Dropout to use in the RNN.</span>
+<span class="sd">                Defaults  to 0.5.</span>
 <span class="sd">            features_subset (List[int], optional): The subset of latent</span>
-<span class="sd">                features on each node that are used as metric dimensions when performing the k-nearest neighbours clustering. Defaults to [0,1,2,3]</span>
-<span class="sd">            dyntrans_layer_sizes (List[Tuple[int, ...]], optional): List of tuples representing the sizes of the hidden layers of the DynTrans model.</span>
-<span class="sd">            post_processing_layer_sizes (List[int], optional): List of integers representing the sizes of the hidden layers of the post-processing model.</span>
-<span class="sd">            readout_layer_sizes (List[int], optional): List of integers representing the sizes of the hidden layers of the readout model.</span>
-<span class="sd">            global_pooling_schemes (Union[str, List[str]], optional): Pooling schemes to use. Defaults to None.</span>
-<span class="sd">            embedding_dim (int, optional): Embedding dimension of the RNN. Defaults to None ie. no embedding.</span>
-<span class="sd">            n_head (int, optional): Number of heads to use in the DynTrans model. Defaults to 16.</span>
-<span class="sd">            use_global_features (bool, optional): Whether to use global features after pooling. Defaults to True.</span>
-<span class="sd">            use_post_processing_layers (bool, optional): Whether to use post-processing layers after the DynTrans layers. Defaults to True.</span>
+<span class="sd">                features on each node that are used as metric dimensions when</span>
+<span class="sd">                performing the k-nearest neighbours clustering.</span>
+<span class="sd">                Defaults to [0,1,2,3]</span>
+<span class="sd">            dyntrans_layer_sizes (List[Tuple[int, ...]], optional): List of</span>
+<span class="sd">                tuples representing the sizes of the hidden layers of</span>
+<span class="sd">                the DynTrans model.</span>
+<span class="sd">            post_processing_layer_sizes (List[int], optional): List of</span>
+<span class="sd">                integers representing the sizes of the hidden layers of the</span>
+<span class="sd">                post-processing model.</span>
+<span class="sd">            readout_layer_sizes (List[int], optional): List of integers</span>
+<span class="sd">                representing the sizes of the hidden layers of the</span>
+<span class="sd">                readout model.</span>
+<span class="sd">            global_pooling_schemes (Union[str, List[str]], optional): Pooling</span>
+<span class="sd">                schemes to use. Defaults to None.</span>
+<span class="sd">            embedding_dim (int, optional): Embedding dimension of the RNN.</span>
+<span class="sd">                Defaults to None ie. no embedding.</span>
+<span class="sd">            n_head (int, optional): Number of heads to use in the DynTrans</span>
+<span class="sd">                model. Defaults to 16.</span>
+<span class="sd">            use_global_features (bool, optional): Whether to use global</span>
+<span class="sd">                features after pooling. Defaults to True.</span>
+<span class="sd">            use_post_processing_layers (bool, optional): Whether to use</span>
+<span class="sd">                post-processing layers after the DynTrans layers.</span>
+<span class="sd">                Defaults to True.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_neighbours</span> <span class="o">=</span> <span class="n">nb_neighbours</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_nb_inputs</span> <span class="o">=</span> <span class="n">nb_inputs</span>

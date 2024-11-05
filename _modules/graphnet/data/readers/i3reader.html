@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-data-readers-i3reader--page-root">Source code for graphnet.data.readers.i3reader</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Module containing different I3Reader."""</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
 <span class="kn">from</span> <span class="nn">graphnet.data.extractors.icecube.utilities.i3_filters</span> <span class="kn">import</span> <span class="p">(</span>
@@ -380,7 +380,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">gcd_rescue</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">i3_filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">i3_filters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">icetray_verbose</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Initialize `I3Reader`.</span>
@@ -418,7 +418,9 @@
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">I3FileSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">I3FileSet</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">]:</span>  <span class="c1"># noqa: E501  # type: ignore</span>
 <span class="w">        </span><span class="sd">"""Extract data from single I3 file.</span>
 
 <span class="sd">        Args:</span>

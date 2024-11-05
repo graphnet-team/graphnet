@@ -378,10 +378,12 @@
 <span class="w">        </span><span class="sd">"""Convert I3 files to Parquet.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            gcd_rescue: gcd_rescue: Path to a GCD file that will be used if no GCD file is</span>
-<span class="sd">                        found in subfolder. `I3Reader` will recursively search</span>
-<span class="sd">                        the input directory for I3-GCD file pairs. By IceCube</span>
-<span class="sd">                        convention, a folder containing i3 files will have an</span>
+<span class="sd">            gcd_rescue: gcd_rescue: Path to a GCD file that will be used if</span>
+<span class="sd">                        no GCD file is found in subfolder. `I3Reader` will</span>
+<span class="sd">                        recursively search the input directory for I3-GCD file</span>
+<span class="sd">                        pairs.</span>
+<span class="sd">                        By IceCube convention,</span>
+<span class="sd">                        a folder containing i3 files will have an</span>
 <span class="sd">                        accompanying GCD file. However, in some cases, this</span>
 <span class="sd">                        convention is broken. In cases where a folder contains</span>
 <span class="sd">                        i3 files but no GCD file, the `gcd_rescue` is used</span>
@@ -426,10 +428,11 @@
 <span class="w">        </span><span class="sd">"""Convert I3 files to SQLite.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            gcd_rescue: gcd_rescue: Path to a GCD file that will be used if no GCD file is</span>
-<span class="sd">                        found in subfolder. `I3Reader` will recursively search</span>
-<span class="sd">                        the input directory for I3-GCD file pairs. By IceCube</span>
-<span class="sd">                        convention, a folder containing i3 files will have an</span>
+<span class="sd">            gcd_rescue: gcd_rescue: Path to a GCD file that will be used if</span>
+<span class="sd">                        no GCD file is found in subfolder. `I3Reader` will</span>
+<span class="sd">                        recursively search the input directory for I3-GCD file</span>
+<span class="sd">                        pairs. By IceCube convention,</span>
+<span class="sd">                        a folder containing i3 files will have an</span>
 <span class="sd">                        accompanying GCD file. However, in some cases, this</span>
 <span class="sd">                        convention is broken. In cases where a folder contains</span>
 <span class="sd">                        i3 files but no GCD file, the `gcd_rescue` is used</span>

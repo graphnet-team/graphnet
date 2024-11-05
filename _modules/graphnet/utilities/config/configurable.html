@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-utilities-config-configurable--page-root">Source code for graphnet.utilities.config.configurable</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Bases for all configurable classes in  `graphnet`."""</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractclassmethod</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.config.base_config</span> <span class="kn">import</span> <span class="n">BaseConfig</span>
@@ -392,7 +392,7 @@
 
 <div class="viewcode-block" id="Configurable.from_config">
 <a class="viewcode-back" href="../../../../api/graphnet.utilities.config.configurable.html#graphnet.utilities.config.configurable.Configurable.from_config">[docs]</a>
-    <span class="nd">@abstractclassmethod</span>
+    <span class="nd">@abstractmethod</span>  <span class="c1"># type: ignore</span>
     <span class="k">def</span> <span class="nf">from_config</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">BaseConfig</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Construct instance from `source` configuration."""</span></div>
 </div>

@@ -349,18 +349,17 @@
           <article class="md-content__inner md-typeset" role="main">
             
   <h1 id="modules-graphnet-models-gnn-icemix--page-root">Source code for graphnet.models.gnn.icemix</h1><div class="highlight"><pre>
-<span></span><span class="sd">"""Implementation of IceMix architecture used in.</span>
+<span></span><span class="sd">"""Implementation of IceMix.</span>
 
-<span class="sd">                    IceCube - Neutrinos in Deep Ice</span>
-<span class="sd">Reconstruct the direction of neutrinos from the Universe to the South Pole</span>
-
+<span class="sd">This method was a solution submitted to the IceCube - Neutrinos in Deep Ice</span>
 <span class="sd">Kaggle competition.</span>
 
 <span class="sd">Solution by DrHB: https://github.com/DrHB/icecube-2nd-place</span>
 <span class="sd">"""</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.components.layers</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Block_rel</span><span class="p">,</span>
@@ -395,7 +394,7 @@
         <span class="n">n_rel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">scaled_emb</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">include_dynedge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">dynedge_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dynedge_args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `DeepIce`.</span>

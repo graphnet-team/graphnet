@@ -722,8 +722,8 @@
 <p>This grouping is done with in each event in case of batching. This allows
 for, e.g., assigning the same index to all pulses on the same PMT or DOM in
 the same event. This can be used for coarsening graphs, e.g., from pulse-
-level to DOM-level by aggregating feature across each group returned by this
-method.</p>
+level to DOM-level by aggregating feature across each group returned by
+this method.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LongTensor</span></code></span></p>
@@ -775,7 +775,7 @@ groupby(data, [‘f1’, ‘f2’]) -&gt; [0, 1, 2, 2, 3]</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.sum_pool_x">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">sum_pool_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/pool.html#sum_pool_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.sum_pool_x" title="Link to this definition">¶</a></dt>
-<dd><p>Sum-pool node features according to the clustering defined in <cite>cluster</cite>.</p>
+<dd><p>Sum-pool node features according to the cluster defined in <cite>cluster</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -800,7 +800,7 @@ known in advance.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.std_pool_x">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">std_pool_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/pool.html#std_pool_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.std_pool_x" title="Link to this definition">¶</a></dt>
-<dd><p>Std-pool node features according to the clustering defined in <cite>cluster</cite>.</p>
+<dd><p>Std-pool node features according to the cluster defined in <cite>cluster</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -825,7 +825,7 @@ known in advance.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.sum_pool">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">sum_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/pool.html#sum_pool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.sum_pool" title="Link to this definition">¶</a></dt>
-<dd><p>Pool and coarsen graph according to the clustering defined in <cite>cluster</cite>.</p>
+<dd><p>Pool and coarsen graph according to the cluster defined in <cite>cluster</cite>.</p>
 <p>All nodes within the same cluster will be represented as one node.
 Final node features are defined by the <em>sum</em> of features of all nodes
 within the same cluster, node positions are averaged and edge indices are
@@ -850,7 +850,7 @@ returns a transformed version.</p></li>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.models.components.pool.std_pool">
 <span class="sig-prename descclassname"><span class="pre">graphnet.models.components.pool.</span></span><span class="sig-name descname"><span class="pre">std_pool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/pool.html#std_pool"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.pool.std_pool" title="Link to this definition">¶</a></dt>
-<dd><p>Pool and coarsen graph according to the clustering defined in <cite>cluster</cite>.</p>
+<dd><p>Pool and coarsen graph according to the cluster defined in <cite>cluster</cite>.</p>
 <p>All nodes within the same cluster will be represented as one node.
 Final node features are defined by the <em>std</em> of features of all nodes
 within the same cluster, node positions are averaged and edge indices are

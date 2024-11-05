@@ -625,24 +625,42 @@ details.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nb_inputs</strong> (<em>int</em>) – Number of input features.</p></li>
-<li><p><strong>time_series_columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – The indices of the input data that should be treated as time series data. The first index should be the charge column.</p></li>
+<li><p><strong>time_series_columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – The indices of the input data that
+should be treated as time series data.
+The first index should be the charge column.</p></li>
 <li><p><strong>nb_neighbours</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of neighbours to consider.
 Defaults to 8.</p></li>
 <li><p><strong>rnn_layers</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of RNN layers.
 Defaults to 1.</p></li>
-<li><p><strong>rnn_hidden_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the hidden state of the RNN. Also determines the size of the output of the RNN.
+<li><p><strong>rnn_hidden_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the hidden state of the
+RNN. Also determines the size of the output of the RNN.
 Defaults to 64.</p></li>
-<li><p><strong>rnn_dropout</strong> (<em>float</em><em>, </em><em>optional</em>) – Dropout to use in the RNN. Defaults  to 0.5.</p></li>
+<li><p><strong>rnn_dropout</strong> (<em>float</em><em>, </em><em>optional</em>) – Dropout to use in the RNN.
+Defaults  to 0.5.</p></li>
 <li><p><strong>features_subset</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – The subset of latent
-features on each node that are used as metric dimensions when performing the k-nearest neighbours clustering. Defaults to [0,1,2,3]</p></li>
-<li><p><strong>dyntrans_layer_sizes</strong> (<em>List</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – List of tuples representing the sizes of the hidden layers of the DynTrans model.</p></li>
-<li><p><strong>post_processing_layer_sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of integers representing the sizes of the hidden layers of the post-processing model.</p></li>
-<li><p><strong>readout_layer_sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of integers representing the sizes of the hidden layers of the readout model.</p></li>
-<li><p><strong>global_pooling_schemes</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Pooling schemes to use. Defaults to None.</p></li>
-<li><p><strong>embedding_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Embedding dimension of the RNN. Defaults to None ie. no embedding.</p></li>
-<li><p><strong>n_head</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of heads to use in the DynTrans model. Defaults to 16.</p></li>
-<li><p><strong>use_global_features</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use global features after pooling. Defaults to True.</p></li>
-<li><p><strong>use_post_processing_layers</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use post-processing layers after the DynTrans layers. Defaults to True.</p></li>
+features on each node that are used as metric dimensions when
+performing the k-nearest neighbours clustering.
+Defaults to [0,1,2,3]</p></li>
+<li><p><strong>dyntrans_layer_sizes</strong> (<em>List</em><em>[</em><em>Tuple</em><em>[</em><em>int</em><em>, </em><em>...</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – List of
+tuples representing the sizes of the hidden layers of
+the DynTrans model.</p></li>
+<li><p><strong>post_processing_layer_sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of
+integers representing the sizes of the hidden layers of the
+post-processing model.</p></li>
+<li><p><strong>readout_layer_sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – List of integers
+representing the sizes of the hidden layers of the
+readout model.</p></li>
+<li><p><strong>global_pooling_schemes</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – Pooling
+schemes to use. Defaults to None.</p></li>
+<li><p><strong>embedding_dim</strong> (<em>int</em><em>, </em><em>optional</em>) – Embedding dimension of the RNN.
+Defaults to None ie. no embedding.</p></li>
+<li><p><strong>n_head</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of heads to use in the DynTrans
+model. Defaults to 16.</p></li>
+<li><p><strong>use_global_features</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use global
+features after pooling. Defaults to True.</p></li>
+<li><p><strong>use_post_processing_layers</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to use
+post-processing layers after the DynTrans layers.
+Defaults to True.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>

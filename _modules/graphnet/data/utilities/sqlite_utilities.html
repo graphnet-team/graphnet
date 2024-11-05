@@ -352,7 +352,7 @@
 <span></span><span class="sd">"""SQLite-specific utility functions for use in `graphnet.data`."""</span>
 
 <span class="kn">import</span> <span class="nn">os.path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sqlalchemy</span>
@@ -389,7 +389,9 @@
 
 <div class="viewcode-block" id="get_primary_keys">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.get_primary_keys">[docs]</a>
-<span class="k">def</span> <span class="nf">get_primary_keys</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">get_primary_keys</span><span class="p">(</span>
+    <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Get name of primary key column for each table in database.</span>
 
 <span class="sd">    Args:</span>
@@ -409,7 +411,7 @@
 
         <span class="n">integer_primary_key</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">table_names</span><span class="p">:</span>
-            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SELECT l.name FROM pragma_table_info('</span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">') as l WHERE l.pk = 1;"</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SELECT l.name FROM pragma_table_info('</span><span class="si">{</span><span class="n">table</span><span class="si">}</span><span class="s2">') as l WHERE l.pk = 1;"</span>  <span class="c1"># noqa: E501</span>
             <span class="n">first_primary_key</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">conn</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
             <span class="p">]</span>
@@ -440,7 +442,7 @@
 <span class="w">    </span><span class="sd">"""Check whether `table_name` exists in database at `database_path`."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">database_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
-    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SELECT name FROM sqlite_master WHERE type='table' AND name='</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">';"</span>
+    <span class="n">query</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SELECT name FROM sqlite_master WHERE type='table' AND name='</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">';"</span>  <span class="c1"># noqa: E501</span>
     <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">database_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">conn</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span></div>

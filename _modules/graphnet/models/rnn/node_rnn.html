@@ -353,6 +353,7 @@
 
 <span class="sd">(cannot be used as a standalone model)</span>
 <span class="sd">"""</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="kn">import</span> <span class="n">GNN</span>
@@ -395,13 +396,21 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            nb_inputs: Number of features in the input data.</span>
-<span class="sd">            hidden_size: Number of features for the RNN output and hidden layers.</span>
+<span class="sd">            hidden_size: Number of features for the RNN output and hidden</span>
+<span class="sd">                layers.</span>
 <span class="sd">            num_layers: Number of layers in the RNN.</span>
-<span class="sd">            time_series_columns: The indices of the input data that should be treated as time series data. The first index should be the charge column.</span>
-<span class="sd">            nb_neighbours: Number of neighbours to use when reconstructing the graph representation. Defaults to 8.</span>
-<span class="sd">            features_subset: The subset of latent features on each node that are used as metric dimensions when performing the k-nearest neighbours clustering. Defaults to [0,1,2,3]</span>
+<span class="sd">            time_series_columns: The indices of the input data that should be</span>
+<span class="sd">                treated as time series data. The first index should be</span>
+<span class="sd">                the charge column.</span>
+<span class="sd">            nb_neighbours: Number of neighbours to use when reconstructing the</span>
+<span class="sd">                graph representation. Defaults to 8.</span>
+<span class="sd">            features_subset: The subset of latent features on each node that</span>
+<span class="sd">                are used as metric dimensions when performing the k-nearest</span>
+<span class="sd">                neighbours clustering. Defaults to [0,1,2,3]</span>
 <span class="sd">            dropout: Dropout fraction to use in the RNN. Defaults to 0.5.</span>
-<span class="sd">            embedding_dim: Embedding dimension of the RNN. Defaults to no embedding.</span>
+<span class="sd">                embedding_dim: Embedding dimension of the RNN.</span>
+<span class="sd">                Defaults to no embedding.</span>
+<span class="sd">            embedding_dim: Dimension of the embedding. Defaults to 0.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="n">hidden_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_layers</span> <span class="o">=</span> <span class="n">num_layers</span>

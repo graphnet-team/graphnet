@@ -554,9 +554,9 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Extract per-pulse attribute `key` from `frame`.</span>
 
-<span class="sd">        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a</span>
-<span class="sd">        dictionary- like mapping from an OM key to some attribute, e.g.,</span>
-<span class="sd">        an integer or a vector properties.</span>
+<span class="sd">        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a dictionary-</span>
+<span class="sd">        like mapping from an OM key to some attribute, e.g., an integer or a</span>
+<span class="sd">        vector properties.</span>
 <span class="sd">        """</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extract_pulse_series_map</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
 
@@ -617,12 +617,12 @@
             <span class="n">flatten_nested_dictionary</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">result_particles</span>
         <span class="p">]</span>
 
-        <span class="n">result_primaries_transposed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span>
-            <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="n">transpose_list_of_dicts</span><span class="p">(</span><span class="n">result_primaries</span><span class="p">)</span>
-        <span class="n">result_particles_transposed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span>
-            <span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="n">transpose_list_of_dicts</span><span class="p">(</span><span class="n">result_particles</span><span class="p">)</span>
+        <span class="n">result_primaries_transposed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">transpose_list_of_dicts</span><span class="p">(</span><span class="n">result_primaries</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">result_particles_transposed</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">transpose_list_of_dicts</span><span class="p">(</span><span class="n">result_particles</span><span class="p">)</span>
+        <span class="p">)</span>
 
         <span class="c1"># Remove `majorID`, which has unsupported unit64 dtype.</span>
         <span class="c1"># Keep only one instances of `minorID`.</span>

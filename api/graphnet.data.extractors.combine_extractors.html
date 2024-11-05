@@ -591,8 +591,14 @@
 with a new name.</p>
 <p>Construct CombinedExtractor.</p>
 <p>Args:
-extractors: List of extractors to combine. The extractors must all return data on the same level; e.g. all event-level data or pulse-level data. Mixing tables that contain event-level and pulse-level information will fail.
-extractor_name: Name of the new extractor.</p>
+extractors: List of extractors to combine.</p>
+<blockquote>
+<div><p>The extractors must all return data on the same level;
+e.g. all event-level data or pulse-level data.
+Mixing tables that contain event-level and
+pulse-level information will fail.</p>
+</div></blockquote>
+<p>extractor_name: Name of the new extractor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

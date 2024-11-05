@@ -353,6 +353,7 @@
 
 <span class="sd">Contains functionality for writing model predictions to i3 files.</span>
 <span class="sd">"""</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -470,13 +471,13 @@
         <span class="c1"># checking the prediction for each pulse</span>
         <span class="c1"># (Adds the actual pulsemap to dictionary)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="n">data_dict</span><span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span>
-            <span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMapMask</span><span class="p">(</span>
-                <span class="n">frame</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
-                <span class="k">lambda</span> <span class="n">om_key</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">pulse</span><span class="p">:</span> <span class="n">predictions_map</span><span class="p">[</span><span class="n">om_key</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
-                <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span><span class="p">,</span>
+            <span class="n">data_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMapMask</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_pulsemap</span><span class="p">,</span>
+                    <span class="k">lambda</span> <span class="n">om_key</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">pulse</span><span class="p">:</span> <span class="n">predictions_map</span><span class="p">[</span><span class="n">om_key</span><span class="p">][</span><span class="n">index</span><span class="p">]</span>
+                    <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_threshold</span><span class="p">,</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="c1"># Submit predictions and general pulsemap</span>
@@ -491,19 +492,19 @@
             <span class="p">)</span>
 
             <span class="k">if</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_mDOMs_Only"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">data</span><span class="p">[</span>
-                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_mDOMs_Only"</span>
-                <span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="p">(</span><span class="n">mDOMMap</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_mDOMs_Only"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="p">(</span><span class="n">mDOMMap</span><span class="p">)</span>
+                <span class="p">)</span>
 
             <span class="k">if</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_dEggs_Only"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">data</span><span class="p">[</span>
-                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_dEggs_Only"</span>
-                <span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="p">(</span><span class="n">DEggMap</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_dEggs_Only"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="p">(</span><span class="n">DEggMap</span><span class="p">)</span>
+                <span class="p">)</span>
 
             <span class="k">if</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_pDOMs_Only"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="n">data</span><span class="p">[</span>
-                    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_pDOMs_Only"</span>
-                <span class="p">]</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="p">(</span><span class="n">IceCubeMap</span><span class="p">)</span>
+                <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_pulsemap_name</span><span class="si">}</span><span class="s2">_pDOMs_Only"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3RecoPulseSeriesMap</span><span class="p">(</span><span class="n">IceCubeMap</span><span class="p">)</span>
+                <span class="p">)</span>
 
         <span class="c1"># Submits the additional pulsemaps to the frame</span>
         <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_frame</span><span class="p">(</span><span class="n">frame</span><span class="o">=</span><span class="n">frame</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
@@ -564,7 +565,7 @@
         <span class="k">for</span> <span class="n">om_key</span><span class="p">,</span> <span class="n">pulses</span> <span class="ow">in</span> <span class="n">pulsemap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">num_pulses</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pulses</span><span class="p">)</span>
             <span class="n">predictions_map</span><span class="p">[</span><span class="n">om_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span>
-                <span class="n">idx</span> <span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">num_pulses</span>
+                <span class="n">idx</span> <span class="p">:</span> <span class="n">idx</span> <span class="o">+</span> <span class="n">num_pulses</span>  <span class="c1"># noqa: E203</span>
             <span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
             <span class="n">idx</span> <span class="o">+=</span> <span class="n">num_pulses</span>
 

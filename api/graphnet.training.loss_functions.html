@@ -831,27 +831,28 @@ targets should be 0 and 1.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Function</span></code></p>
 <p>MIT License.</p>
 <p>Copyright (c) 2019 Max Ryabinin</p>
-<p>Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the “Software”), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:</p>
-<p>The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the “Software”),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.</p>
 <p>THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
 _____________________</p>
-<p>From [<a class="reference external" href="https://github.com/mryab/vmf_loss/blob/master/losses.py">https://github.com/mryab/vmf_loss/blob/master/losses.py</a>]
-Modified to use modified Bessel function instead of exponentially scaled ditto
-(i.e. <cite>.ive</cite> -&gt; <cite>.iv</cite>) as indiciated in [1812.04616] in spite of suggestion in
-Sec. 8.2 of this paper. The change has been validated through comparison with
-exact calculations for <cite>m=2</cite> and <cite>m=3</cite> and found to yield the correct results.</p>
+<p>From [<a class="reference external" href="https://github.com/mryab/vmf_loss/blob/master/losses.py">https://github.com/mryab/vmf_loss/blob/master/losses.py</a>] Modified to
+use modified Bessel function instead of exponentially scaled ditto
+(i.e. <cite>.ive</cite> -&gt; <cite>.iv</cite>) as indicated in [1812.04616] in spite of suggestion
+in Sec. 8.2 of this paper. The change has been validated through comparison
+with exact calculations for <cite>m=2</cite> and <cite>m=3</cite> and found to yield the correct
+results.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LogCMK.forward">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kappa</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#LogCMK.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LogCMK.forward" title="Link to this definition">¶</a></dt>
@@ -964,7 +965,7 @@ ensuring continuity at this point.</p>
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher2DLoss">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">VonMisesFisher2DLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#VonMisesFisher2DLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher2DLoss" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisherLoss" title="graphnet.training.loss_functions.VonMisesFisherLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a></p>
-<p>von Mises-Fisher loss function vectors in the 2D plane.</p>
+<p>Von Mises-Fisher loss function vectors in the 2D plane.</p>
 <p>Construct <cite>LossFunction</cite>, saving model config.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1000,7 +1001,7 @@ ensuring continuity at this point.</p>
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">VonMisesFisher3DLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#VonMisesFisher3DLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisherLoss" title="graphnet.training.loss_functions.VonMisesFisherLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a></p>
-<p>von Mises-Fisher loss function vectors in the 3D plane.</p>
+<p>Von Mises-Fisher loss function vectors in the 3D plane.</p>
 <p>Construct <cite>LossFunction</cite>, saving model config.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

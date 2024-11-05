@@ -360,11 +360,11 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.nn.pool.pool</span> <span class="kn">import</span> <span class="n">pool_edge</span><span class="p">,</span> <span class="n">pool_batch</span><span class="p">,</span> <span class="n">pool_pos</span>
 <span class="kn">from</span> <span class="nn">torch_scatter</span> <span class="kn">import</span> <span class="n">scatter</span><span class="p">,</span> <span class="n">scatter_std</span>
 
-<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">avg_pool</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa:F401</span>
     <span class="n">max_pool</span><span class="p">,</span>
-    <span class="n">avg_pool_x</span><span class="p">,</span>
     <span class="n">max_pool_x</span><span class="p">,</span>
+    <span class="n">avg_pool_x</span><span class="p">,</span>
+    <span class="n">avg_pool</span><span class="p">,</span>
 <span class="p">)</span>
 
 
@@ -452,8 +452,8 @@
 <span class="sd">    This grouping is done with in each event in case of batching. This allows</span>
 <span class="sd">    for, e.g., assigning the same index to all pulses on the same PMT or DOM in</span>
 <span class="sd">    the same event. This can be used for coarsening graphs, e.g., from pulse-</span>
-<span class="sd">    level to DOM-level by aggregating feature across each group returned by this</span>
-<span class="sd">    method.</span>
+<span class="sd">    level to DOM-level by aggregating feature across each group returned by</span>
+<span class="sd">    this method.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">      Given:</span>
@@ -511,7 +511,7 @@
     <span class="n">batch</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Sum-pool node features according to the clustering defined in `cluster`.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Sum-pool node features according to the cluster defined in `cluster`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,</span>
@@ -546,7 +546,7 @@
     <span class="n">batch</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span>
     <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Std-pool node features according to the clustering defined in `cluster`.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Std-pool node features according to the cluster defined in `cluster`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        cluster: Cluster vector :math:`\mathbf{c} \in \{ 0,</span>
@@ -578,7 +578,7 @@
 <span class="k">def</span> <span class="nf">sum_pool</span><span class="p">(</span>
     <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Pool and coarsen graph according to the clustering defined in `cluster`.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Pool and coarsen graph according to the cluster defined in `cluster`.</span>
 
 <span class="sd">    All nodes within the same cluster will be represented as one node.</span>
 <span class="sd">    Final node features are defined by the *sum* of features of all nodes</span>
@@ -615,7 +615,7 @@
 <span class="k">def</span> <span class="nf">std_pool</span><span class="p">(</span>
     <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-<span class="w">    </span><span class="sa">r</span><span class="sd">"""Pool and coarsen graph according to the clustering defined in `cluster`.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""Pool and coarsen graph according to the cluster defined in `cluster`.</span>
 
 <span class="sd">    All nodes within the same cluster will be represented as one node.</span>
 <span class="sd">    Final node features are defined by the *std* of features of all nodes</span>

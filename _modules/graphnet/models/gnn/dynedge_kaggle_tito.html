@@ -387,12 +387,12 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">features_subset</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">features_subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dyntrans_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">global_pooling_schemes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"max"</span><span class="p">],</span>
         <span class="n">use_global_features</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">use_post_processing_layers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">post_processing_layer_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">post_processing_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">readout_layer_sizes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_head</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
         <span class="n">nb_neighbours</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
@@ -410,9 +410,12 @@
 <span class="sd">            global_pooling_schemes: The list global pooling schemes to use.</span>
 <span class="sd">                Options are: "min", "max", "mean", and "sum".</span>
 <span class="sd">            use_global_features: Whether to use global features after pooling.</span>
-<span class="sd">            use_post_processing_layers: Whether to use post-processing layers after the `DynTrans` layers.</span>
-<span class="sd">            post_processing_layer_sizes: The layer sizes used in    the post-processing layers. Defaults to [336, 256].</span>
-<span class="sd">            readout_layer_sizes: The layer sizes used in the readout layers. Defaults to [256, 128].</span>
+<span class="sd">            use_post_processing_layers: Whether to use post-processing layers</span>
+<span class="sd">                after the `DynTrans` layers.</span>
+<span class="sd">            post_processing_layer_sizes: The layer sizes used in the</span>
+<span class="sd">                post-processing layers. Defaults to [336, 256].</span>
+<span class="sd">            readout_layer_sizes: The layer sizes used in the readout layers.</span>
+<span class="sd">                Defaults to [256, 128].</span>
 <span class="sd">            n_head: The number of heads to use in the `DynTrans` layer.</span>
 <span class="sd">            nb_neighbours: The number of neighbours to use in the `DynTrans`</span>
 <span class="sd">                layer.</span>

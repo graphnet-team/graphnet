@@ -359,7 +359,6 @@
 <span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
 <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">DBSCAN</span>
 
-<span class="c1"># from torch_geometric.utils import unbatch_edge_index</span>
 <span class="kn">from</span> <span class="nn">graphnet.models.components.pool</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">group_by</span><span class="p">,</span>
     <span class="n">avg_pool</span><span class="p">,</span>
@@ -379,7 +378,7 @@
 
 <span class="c1"># NOTE: From [https://github.com/pyg-team/pytorch_geometric/pull/4903]</span>
 <span class="c1"># TODO:  Remove once bumping to torch_geometric&gt;=2.1.0</span>
-<span class="c1">#       See [https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md]</span>
+<span class="c1">#       See [https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md] # noqa: E501</span>
 
 
 <div class="viewcode-block" id="unbatch_edge_index">
@@ -529,15 +528,18 @@
         <span class="k">return</span> <span class="n">pooled</span>
 
     <span class="k">def</span> <span class="nf">_add_slice_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
-        <span class="c1"># Copy original slice_dict and count nodes in each graph in pooled batch</span>
+        <span class="c1"># Copy original slice_dict and count nodes in each</span>
+        <span class="c1"># graph in pooled batch</span>
         <span class="n">slice_dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">original</span><span class="o">.</span><span class="n">_slice_dict</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">counts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">unique_consecutive</span><span class="p">(</span><span class="n">pooled</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># Reconstruct the entry in slice_dict for pulsemaps - only these are affected by pooling</span>
+        <span class="c1"># Reconstruct the entry in slice_dict for pulsemaps -</span>
+        <span class="c1"># only these are affected by pooling</span>
         <span class="n">pulsemap_slice</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">counts</span><span class="p">)):</span>
             <span class="n">pulsemap_slice</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pulsemap_slice</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 
-        <span class="c1"># Identifies pulsemap entries in slice_dict and set them to pulsemap_slice</span>
+        <span class="c1"># Identifies pulsemap entries in slice_dict and</span>
+        <span class="c1"># set them to pulsemap_slice</span>
         <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">slice_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">original</span><span class="o">.</span><span class="n">_num_graphs</span><span class="p">)</span> <span class="o">==</span> <span class="n">slice_dict</span><span class="p">[</span><span class="n">field</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="k">pass</span>  <span class="c1"># not pulsemap, so skip</span>

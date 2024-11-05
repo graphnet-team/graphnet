@@ -409,9 +409,8 @@
 <span class="w">    </span><span class="sd">"""Reconstructs direction with kappa from the 3D-vMF distribution."""</span>
 
     <span class="c1"># Requires three features: untransformed points in (x,y,z)-space.</span>
-    <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">"direction"</span>
-    <span class="p">]</span>  <span class="c1"># contains dir_x, dir_y, dir_z see https://github.com/graphnet-team/graphnet/blob/95309556cfd46a4046bc4bd7609888aab649e295/src/graphnet/training/labels.py#L29</span>
+    <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"direction"</span><span class="p">]</span>  <span class="c1"># contains dir_x, dir_y, dir_z</span>
+    <span class="c1"># see Direction label in /src/graphnet/training/labels.py</span>
     <span class="n">default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">"dir_x_pred"</span><span class="p">,</span>
         <span class="s2">"dir_y_pred"</span><span class="p">,</span>
@@ -451,7 +450,8 @@
 <span class="k">class</span> <span class="nc">ZenithReconstructionWithKappa</span><span class="p">(</span><span class="n">ZenithReconstruction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs zenith angle and associated kappa (1/var)."""</span>
 
-    <span class="c1"># Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).</span>
+    <span class="c1"># Requires one feature in addition to `ZenithReconstruction`:</span>
+    <span class="c1"># kappa (unceratinty; 1/variance).</span>
     <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"zenith"</span><span class="p">]</span>
     <span class="n">default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"zenith_pred"</span><span class="p">,</span> <span class="s2">"zenith_kappa"</span><span class="p">]</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>
@@ -525,7 +525,8 @@
 <span class="k">class</span> <span class="nc">EnergyReconstructionWithUncertainty</span><span class="p">(</span><span class="n">EnergyReconstruction</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Reconstructs energy and associated uncertainty (log(var))."""</span>
 
-    <span class="c1"># Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).</span>
+    <span class="c1"># Requires one feature in addition to `EnergyReconstruction`:</span>
+    <span class="c1"># log-variance (uncertainty).</span>
     <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"energy"</span><span class="p">]</span>
     <span class="n">default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"energy_pred"</span><span class="p">,</span> <span class="s2">"energy_sigma"</span><span class="p">]</span>
     <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">2</span>

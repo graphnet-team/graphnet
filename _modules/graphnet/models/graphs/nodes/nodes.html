@@ -612,7 +612,8 @@
 <span class="sd">            id_columns: List of columns that uniquely identify a DOM.</span>
 <span class="sd">            time_column: Name of time column.</span>
 <span class="sd">            charge_column: Name of charge column.</span>
-<span class="sd">            max_activations: Maximum number of activations to include in the time series.</span>
+<span class="sd">            max_activations: Maximum number of activations to include in</span>
+<span class="sd">                the time series.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">keys</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_feature_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span>
@@ -622,9 +623,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_charge_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">charge_column</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">"Charge column with name </span><span class="si">{}</span><span class="s2"> not found. Running without."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                    <span class="n">charge_column</span>
-                <span class="p">)</span>
+                <span class="s2">"Charge column with name </span><span class="si">{charge_column}</span><span class="s2"> not found. "</span>
+                <span class="s2">"Running without."</span>
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_charge_index</span> <span class="o">=</span> <span class="kc">None</span>
@@ -642,7 +642,8 @@
         <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">Data</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="p">[]])))</span>
-        <span class="c1"># if there is no charge column add a dummy column of zeros with the same shape as the time column</span>
+        <span class="c1"># if there is no charge column add a dummy column</span>
+        <span class="c1"># of zeros with the same shape as the time column</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">charge_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">charge_index</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>

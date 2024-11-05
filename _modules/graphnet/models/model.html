@@ -411,7 +411,8 @@
 <span class="w">        </span><span class="sd">"""Save model `state_dict` to `path`."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".pth"</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">"It is recommended to use the .pth suffix for state_dict files."</span>
+                <span class="s2">"It is recommended to use the .pth suffix "</span>
+                <span class="s2">"for state_dict files."</span>
             <span class="p">)</span>
         <span class="n">state_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -438,7 +439,8 @@
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">state_dict_altered</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">"DeprecationWarning: State dicts with `_gnn` entries will be deprecated in GraphNeT 2.0"</span>
+                <span class="s2">"DeprecationWarning: State dicts with `_gnn`"</span>
+                <span class="s2">" entries will be deprecated in GraphNeT 2.0"</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">state_dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kargs</span><span class="p">)</span></div>
 

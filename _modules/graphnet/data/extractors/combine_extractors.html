@@ -350,6 +350,7 @@
             
   <h1 id="modules-graphnet-data-extractors-combine-extractors--page-root">Source code for graphnet.data.extractors.combine_extractors</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Module for combining multiple extractors into a single extractor."""</span>
+
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
@@ -373,7 +374,11 @@
 <span class="w">        </span><span class="sd">"""Construct CombinedExtractor.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">        extractors: List of extractors to combine. The extractors must all return data on the same level; e.g. all event-level data or pulse-level data. Mixing tables that contain event-level and pulse-level information will fail.</span>
+<span class="sd">        extractors: List of extractors to combine.</span>
+<span class="sd">                    The extractors must all return data on the same level;</span>
+<span class="sd">                    e.g. all event-level data or pulse-level data.</span>
+<span class="sd">                    Mixing tables that contain event-level and</span>
+<span class="sd">                    pulse-level information will fail.</span>
 <span class="sd">        extractor_name: Name of the new extractor.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor_name</span><span class="o">=</span><span class="n">extractor_name</span><span class="p">)</span>

@@ -369,7 +369,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">detector</span><span class="p">:</span> <span class="n">Detector</span><span class="p">,</span>
-        <span class="n">node_definition</span><span class="p">:</span> <span class="n">NodeDefinition</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">node_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NodeDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
         <span class="n">perturbation_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -390,10 +390,11 @@
 <span class="sd">                               feature should be randomly perturbed. Defaults</span>
 <span class="sd">                               to None.</span>
 <span class="sd">            seed: seed or Generator used to randomly sample perturbations.</span>
-<span class="sd">                  Defaults to None.</span>
-<span class="sd">            nb_nearest_neighbours: Number of edges for each node. Defaults to 8.</span>
-<span class="sd">            columns: node feature columns used for distance calculation</span>
-<span class="sd">            . Defaults to [0, 1, 2].</span>
+<span class="sd">                Defaults to None.</span>
+<span class="sd">            nb_nearest_neighbours: Number of edges for each node.</span>
+<span class="sd">                Defaults to 8.</span>
+<span class="sd">            columns: node feature columns used for distance calculation.</span>
+<span class="sd">                Defaults to [0, 1, 2].</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
@@ -423,7 +424,7 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">detector</span><span class="p">:</span> <span class="n">Detector</span><span class="p">,</span>
-        <span class="n">node_definition</span><span class="p">:</span> <span class="n">NodeDefinition</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">node_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NodeDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
         <span class="n">perturbation_dict</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
