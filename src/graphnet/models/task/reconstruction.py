@@ -232,3 +232,19 @@ class InelasticityReconstruction(StandardLearnedTask):
     def _forward(self, x: Tensor) -> Tensor:
         # Transform output to unit range
         return torch.sigmoid(x)
+
+
+class VisibleInelasticityReconstruction(StandardLearnedTask):
+    """Reconstructs interaction visible inelasticity.
+
+    That is, 1-(visible track energy / visible hadronic energy).
+    """
+
+    # Requires one features: inelasticity itself
+    default_target_labels = ["visible_inelasticity"]
+    default_prediction_labels = ["visible_inelasticity_pred"]
+    nb_inputs = 1
+
+    def _forward(self, x: Tensor) -> Tensor:
+        # Transform output to unit range
+        return 0.5 * (torch.tanh(2.0 * x) + 1.0)
