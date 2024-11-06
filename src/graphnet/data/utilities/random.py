@@ -9,7 +9,8 @@ def pairwise_shuffle(
 ) -> Tuple[List[str], List[str]]:
     """Shuffle the I3 file list and the correponding gcd file list.
 
-    This is handy because it ensures a more even extraction load for each worker.
+    This is handy because it ensures a more even extraction load for each
+    worker.
 
     Args:
         files_list: List of I3 file paths.

@@ -34,7 +34,7 @@ from typing import (
 )
 
 from collections import defaultdict
-from multiprocessing import Pool, cpu_count, get_context
+from multiprocessing import get_context
 
 import numpy as np
 import torch

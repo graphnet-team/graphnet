@@ -14,7 +14,6 @@ from torch import Tensor
 from torch import nn
 from torch.nn.functional import (
     one_hot,
-    cross_entropy,
     binary_cross_entropy,
     softplus,
 )
@@ -106,7 +105,7 @@ class LogCoshLoss(LossFunction):
         """Numerically stable version on log(cosh(x)).
 
         Used to avoid `inf` for even moderately large differences.
-        See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617]
+        See [https://github.com/keras-team/keras/blob/v2.6.0/keras/losses.py#L1580-L1617] # noqa: E501
         """
         return x + softplus(-2.0 * x) - np.log(2.0)
 
@@ -218,30 +217,31 @@ class LogCMK(torch.autograd.Function):
 
     Copyright (c) 2019 Max Ryabinin
 
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
+    Permission is hereby granted, free of charge, to any person obtaining a
+    copy of this software and associated documentation files (the "Software"),
+    to deal in the Software without restriction, including without limitation
+    the rights to use, copy, modify, merge, publish, distribute, sublicense,
+    and/or sell copies of the Software, and to permit persons to whom the
+    Software is furnished to do so, subject to the following conditions:
 
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
 
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+    FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+    DEALINGS IN THE SOFTWARE.
     _____________________
 
-    From [https://github.com/mryab/vmf_loss/blob/master/losses.py]
-    Modified to use modified Bessel function instead of exponentially scaled ditto
-    (i.e. `.ive` -> `.iv`) as indiciated in [1812.04616] in spite of suggestion in
-    Sec. 8.2 of this paper. The change has been validated through comparison with
-    exact calculations for `m=2` and `m=3` and found to yield the correct results.
+    From [https://github.com/mryab/vmf_loss/blob/master/losses.py] Modified to
+    use modified Bessel function instead of exponentially scaled ditto
+    (i.e. `.ive` -> `.iv`) as indicated in [1812.04616] in spite of suggestion
+    in Sec. 8.2 of this paper. The change has been validated through comparison
+    with exact calculations for `m=2` and `m=3` and found to yield the correct
+    results.
     """
 
     @staticmethod
@@ -363,7 +363,7 @@ class VonMisesFisherLoss(LossFunction):
 
 
 class VonMisesFisher2DLoss(VonMisesFisherLoss):
-    """von Mises-Fisher loss function vectors in the 2D plane."""
+    """Von Mises-Fisher loss function vectors in the 2D plane."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculate von Mises-Fisher loss for an angle in the 2D plane.
@@ -427,7 +427,7 @@ class EuclideanDistanceLoss(LossFunction):
 
 
 class VonMisesFisher3DLoss(VonMisesFisherLoss):
-    """von Mises-Fisher loss function vectors in the 3D plane."""
+    """Von Mises-Fisher loss function vectors in the 3D plane."""
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculate von Mises-Fisher loss for a direction in the 3D.
@@ -458,7 +458,7 @@ class EnsembleLoss(LossFunction):
     def __init__(
         self,
         loss_functions: List[LossFunction],
-        loss_factors: List[float] = None,
+        loss_factors: Optional[List[float]] = None,
         prediction_keys: Optional[List[List[int]]] = None,
         *args: Any,
         **kwargs: Any,

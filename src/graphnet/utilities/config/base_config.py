@@ -1,6 +1,5 @@
 """Base config class(es)."""
 
-from abc import abstractmethod
 from collections import OrderedDict
 import inspect
 import sys

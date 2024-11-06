@@ -1,6 +1,6 @@
 """Standard model class(es)."""
 
-from typing import Any, Dict, List, Optional, Union, Type
+from typing import Dict, List, Optional, Union, Type
 import torch
 from torch import Tensor
 from torch_geometric.data import Data
@@ -26,7 +26,7 @@ class StandardModel(EasySyntax):
         self,
         graph_definition: GraphDefinition,
         tasks: Union[StandardLearnedTask, List[StandardLearnedTask]],
-        backbone: Model = None,
+        backbone: Optional[Model] = None,
         gnn: Optional[GNN] = None,
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,

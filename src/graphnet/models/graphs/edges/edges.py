@@ -34,7 +34,9 @@ class EdgeDefinition(Model):  # pylint: disable=too-few-public-methods
 
     @abstractmethod
     def _construct_edges(self, graph: Data) -> Data:
-        """Construct edges and assign them to graph. I.e. ´graph.edge_index = edge_index´.
+        """Construct edges and assign them to the graph.
+
+        I.e. ´graph.edge_index = edge_index´.
 
         Args:
             graph: graph without edges
@@ -127,15 +129,11 @@ class EuclideanEdges(EdgeDefinition):  # pylint: disable=too-few-public-methods
         self,
         sigma: float,
         threshold: float = 0.0,
-        columns: List[int] = None,
+        columns: List[int] = [0, 1, 2],
     ):
         """Construct `EuclideanEdges`."""
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
-
-        # Check(s)
-        if columns is None:
-            columns = [0, 1, 2]
 
         # Member variable(s)
         self._sigma = sigma
@@ -161,9 +159,7 @@ class EuclideanEdges(EdgeDefinition):  # pylint: disable=too-few-public-methods
         )
 
         distance_matrix = calculate_distance_matrix(xyz_coords)
-        affinity_matrix = torch.exp(
-            -0.5 * distance_matrix**2 / self._sigma**2
-        )
+        affinity_matrix = torch.exp(-0.5 * distance_matrix**2 / self._sigma**2)
 
         # Use softmax to normalise all adjacencies to one for each node
         exp_row_sums = torch.exp(affinity_matrix).sum(axis=1)

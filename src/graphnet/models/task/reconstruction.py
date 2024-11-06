@@ -50,9 +50,8 @@ class DirectionReconstructionWithKappa(StandardLearnedTask):
     """Reconstructs direction with kappa from the 3D-vMF distribution."""
 
     # Requires three features: untransformed points in (x,y,z)-space.
-    default_target_labels = [
-        "direction"
-    ]  # contains dir_x, dir_y, dir_z see https://github.com/graphnet-team/graphnet/blob/95309556cfd46a4046bc4bd7609888aab649e295/src/graphnet/training/labels.py#L29
+    default_target_labels = ["direction"]  # contains dir_x, dir_y, dir_z
+    # see Direction label in /src/graphnet/training/labels.py
     default_prediction_labels = [
         "dir_x_pred",
         "dir_y_pred",
@@ -86,7 +85,8 @@ class ZenithReconstruction(StandardLearnedTask):
 class ZenithReconstructionWithKappa(ZenithReconstruction):
     """Reconstructs zenith angle and associated kappa (1/var)."""
 
-    # Requires one feature in addition to `ZenithReconstruction`: kappa (unceratinty; 1/variance).
+    # Requires one feature in addition to `ZenithReconstruction`:
+    # kappa (unceratinty; 1/variance).
     default_target_labels = ["zenith"]
     default_prediction_labels = ["zenith_pred", "zenith_kappa"]
     nb_inputs = 2
@@ -148,7 +148,8 @@ class EnergyTCReconstruction(StandardLearnedTask):
 class EnergyReconstructionWithUncertainty(EnergyReconstruction):
     """Reconstructs energy and associated uncertainty (log(var))."""
 
-    # Requires one feature in addition to `EnergyReconstruction`: log-variance (uncertainty).
+    # Requires one feature in addition to `EnergyReconstruction`:
+    # log-variance (uncertainty).
     default_target_labels = ["energy"]
     default_prediction_labels = ["energy_pred", "energy_sigma"]
     nb_inputs = 2

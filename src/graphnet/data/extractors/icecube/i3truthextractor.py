@@ -198,9 +198,10 @@ class I3TruthExtractor(I3Extractor):
             "starting": padding_value,
         }
 
-        # Only InIceSplit P frames contain ML appropriate I3RecoPulseSeriesMap etc.
-        # At low levels i3files contain several other P frame splits (e.g NullSplit),
-        # we remove those here.
+        # Only InIceSplit P frames contain ML appropriate
+        # for example I3RecoPulseSeriesMap,  etc.
+        # At low levels i3 files contain several other P frame splits
+        # (e.g NullSplit). We remove those here.
         if frame["I3EventHeader"].sub_event_stream not in [
             "InIceSplit",
             "Final",
@@ -258,7 +259,10 @@ class I3TruthExtractor(I3Extractor):
                     energy_cascade,
                     inelasticity,
                 ) = self._get_primary_track_energy_and_inelasticity(frame)
-            except RuntimeError:  # track energy fails on northeren tracks with ""Hadrons" has no mass implemented. Cannot get total energy."
+            except (
+                RuntimeError
+            ):  # track energy fails on northeren tracks with ""Hadrons"
+                # has no mass implemented. Cannot get total energy."
                 energy_track, energy_cascade, inelasticity = (
                     padding_value,
                     padding_value,
@@ -293,9 +297,10 @@ class I3TruthExtractor(I3Extractor):
                 muon_final = self._muon_stopped(output, self._borders)
                 output.update(
                     {
-                        "position_x": muon_final[
-                            "x"
-                        ],  # position_xyz has no meaning for muons. These will now be updated to muon final position, given track length/azimuth/zenith
+                        "position_x": muon_final["x"],
+                        # position_xyz has no meaning for muons.
+                        # These will now be updated to muon final position,
+                        # given track length/azimuth/zenith
                         "position_y": muon_final["y"],
                         "position_z": muon_final["z"],
                         "stopped_muon": muon_final["stopped"],
@@ -446,10 +451,11 @@ class I3TruthExtractor(I3Extractor):
                 MCInIcePrimary = frame[self._mctree][0]
             if (
                 MCInIcePrimary.energy != MCInIcePrimary.energy
-            ):  # This is a nan check. Only happens for some muons where second item in MCTree is primary. Weird!
-                MCInIcePrimary = frame[self._mctree][
-                    1
-                ]  # For some strange reason the second entry is identical in all variables and has no nans (always muon)
+            ):  # This is a nan check. Only happens for some muons
+                # where second item in MCTree is primary. Weird!
+                MCInIcePrimary = frame[self._mctree][1]
+                # For some strange reason the second entry is identical in
+                # all variables and has no nans (always muon)
         else:
             MCInIcePrimary = None
 

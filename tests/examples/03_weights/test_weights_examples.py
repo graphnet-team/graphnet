@@ -1,4 +1,5 @@
 """Test for examples in 03_weights."""
+
 import runpy
 import os
 from graphnet.constants import GRAPHNET_ROOT_DIR

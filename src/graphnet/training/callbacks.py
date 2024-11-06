@@ -6,7 +6,6 @@ from typing import Dict, List, TYPE_CHECKING, Any, Optional
 import warnings
 
 import numpy as np
-import torch
 from tqdm.std import Bar
 
 from pytorch_lightning import LightningModule, Trainer
@@ -55,7 +54,8 @@ class PiecewiseLinearLR(_LRScheduler):
             raise ValueError("Milestones must be increasing")
         if len(milestones) != len(factors):
             raise ValueError(
-                "Only multiplicative factor must be specified for each milestone."
+                "Only multiplicative factor must be specified"
+                " for each milestone."
             )
 
         self.milestones = milestones
