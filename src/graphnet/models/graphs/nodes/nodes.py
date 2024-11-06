@@ -449,7 +449,7 @@ class IceMixNodes(NodeDefinition):
                 ids = torch.arange(event_length)
             else:
                 ids = torch.arange(self.max_length)
-        
+
         event_length = min(self.max_length, event_length)
 
         graph = torch.zeros([event_length, self.n_features])

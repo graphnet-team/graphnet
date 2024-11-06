@@ -13,7 +13,7 @@ from .utilities.frames import (
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package() or TYPE_CHECKING:
-    from icecube import (
+    from icecube import (  # noqa: F401
         dataclasses,
         icetray,
         phys_services,
@@ -195,7 +195,7 @@ class I3TruthExtractor(I3Extractor):
             "L5_oscNext_bool": padding_value,
             "L6_oscNext_bool": padding_value,
             "L7_oscNext_bool": padding_value,
-            "starting": padding_value,
+            "is_starting": padding_value,
         }
 
         # Only InIceSplit P frames contain ML appropriate
@@ -307,10 +307,10 @@ class I3TruthExtractor(I3Extractor):
                     }
                 )
 
-            starting = self._contained_vertex(output)
+            is_starting = self._contained_vertex(output)
             output.update(
                 {
-                    "starting": starting,
+                    "is_starting": is_starting,
                 }
             )
 
