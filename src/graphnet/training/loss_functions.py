@@ -64,7 +64,10 @@ class LossFunction(Model):
 
 
 class MAELoss(LossFunction):
+    """Mean absolute error loss."""
+
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Implement loss calculation."""
         return torch.mean(torch.abs(prediction - target), dim=-1)
 
 
