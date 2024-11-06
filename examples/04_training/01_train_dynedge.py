@@ -70,9 +70,9 @@ def main(
             "gpus": gpus,
             "max_epochs": max_epochs,
         },
-        "dataset_reference": SQLiteDataset
-        if path.endswith(".db")
-        else ParquetDataset,
+        "dataset_reference": (
+            SQLiteDataset if path.endswith(".db") else ParquetDataset
+        ),
     }
 
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")

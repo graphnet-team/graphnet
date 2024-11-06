@@ -1,4 +1,5 @@
 """Tests for examples in 06_prometheus."""
+
 import runpy
 import os
 import pytest

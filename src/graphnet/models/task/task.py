@@ -13,7 +13,9 @@ from torch_geometric.data import Data
 
 if TYPE_CHECKING:
     # Avoid cyclic dependency
-    from graphnet.training.loss_functions import LossFunction  # type: ignore[attr-defined]
+    from graphnet.training.loss_functions import (
+        LossFunction,
+    )  # noqa: E501 # type: ignore[attr-defined]
 
 from graphnet.models import Model
 from graphnet.utilities.decorators import final
@@ -108,12 +110,12 @@ class Task(Model):
         self._inference = False
         self._loss_weight = loss_weight
 
-        self._transform_prediction_training: Callable[
-            [Tensor], Tensor
-        ] = lambda x: x
-        self._transform_prediction_inference: Callable[
-            [Tensor], Tensor
-        ] = lambda x: x
+        self._transform_prediction_training: Callable[[Tensor], Tensor] = (
+            lambda x: x
+        )
+        self._transform_prediction_inference: Callable[[Tensor], Tensor] = (
+            lambda x: x
+        )
         self._transform_target: Callable[[Tensor], Tensor] = lambda x: x
         self._validate_and_set_transforms(
             transform_prediction_and_target,
@@ -158,10 +160,10 @@ class Task(Model):
         assert not (
             (transform_prediction_and_target is not None)
             and (transform_target is not None)
-        ), "Please specify at most one of `transform_prediction_and_target` and `transform_target`"
+        ), "Please specify at most one of `transform_prediction_and_target` and `transform_target`"  # noqa: E501
         if (transform_target is not None) != (transform_inference is not None):
             self.warning(
-                "Setting one of `transform_target` and `transform_inference`, but not "
+                "Setting one of `transform_target` and `transform_inference`, but not "  # noqa: E501
                 "the other."
             )
 
@@ -434,7 +436,9 @@ class StandardFlowTask(Task):
         """Return number of conditional inputs assumed by task."""
         return self._hidden_size
 
-    def _forward(self, x: Optional[Tensor], y: Tensor) -> Tensor:  # type: ignore
+    def _forward(
+        self, x: Optional[Tensor], y: Tensor
+    ) -> Tensor:  # noqa: E501 # type: ignore
         y = y / self._norm
         if x is not None:
             if x.shape[0] != y.shape[0]:

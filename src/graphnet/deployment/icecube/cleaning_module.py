@@ -2,6 +2,7 @@
 
 Contains functionality for writing model predictions to i3 files.
 """
+
 from typing import List, Union, TYPE_CHECKING, Dict, Any, Tuple
 
 import numpy as np
@@ -117,13 +118,13 @@ class I3PulseCleanerModule(I3InferenceModule):
         # checking the prediction for each pulse
         # (Adds the actual pulsemap to dictionary)
         if self._total_pulsemap_name not in frame.keys():
-            data_dict[
-                self._total_pulsemap_name
-            ] = dataclasses.I3RecoPulseSeriesMapMask(
-                frame,
-                self._pulsemap,
-                lambda om_key, index, pulse: predictions_map[om_key][index]
-                >= self._threshold,
+            data_dict[self._total_pulsemap_name] = (
+                dataclasses.I3RecoPulseSeriesMapMask(
+                    frame,
+                    self._pulsemap,
+                    lambda om_key, index, pulse: predictions_map[om_key][index]
+                    >= self._threshold,
+                )
             )
 
         # Submit predictions and general pulsemap
@@ -138,19 +139,19 @@ class I3PulseCleanerModule(I3InferenceModule):
             )
 
             if f"{self._total_pulsemap_name}_mDOMs_Only" not in frame.keys():
-                data[
-                    f"{self._total_pulsemap_name}_mDOMs_Only"
-                ] = dataclasses.I3RecoPulseSeriesMap(mDOMMap)
+                data[f"{self._total_pulsemap_name}_mDOMs_Only"] = (
+                    dataclasses.I3RecoPulseSeriesMap(mDOMMap)
+                )
 
             if f"{self._total_pulsemap_name}_dEggs_Only" not in frame.keys():
-                data[
-                    f"{self._total_pulsemap_name}_dEggs_Only"
-                ] = dataclasses.I3RecoPulseSeriesMap(DEggMap)
+                data[f"{self._total_pulsemap_name}_dEggs_Only"] = (
+                    dataclasses.I3RecoPulseSeriesMap(DEggMap)
+                )
 
             if f"{self._total_pulsemap_name}_pDOMs_Only" not in frame.keys():
-                data[
-                    f"{self._total_pulsemap_name}_pDOMs_Only"
-                ] = dataclasses.I3RecoPulseSeriesMap(IceCubeMap)
+                data[f"{self._total_pulsemap_name}_pDOMs_Only"] = (
+                    dataclasses.I3RecoPulseSeriesMap(IceCubeMap)
+                )
 
         # Submits the additional pulsemaps to the frame
         frame = self._add_to_frame(frame=frame, data=data)
@@ -211,7 +212,7 @@ class I3PulseCleanerModule(I3InferenceModule):
         for om_key, pulses in pulsemap.items():
             num_pulses = len(pulses)
             predictions_map[om_key] = predictions[
-                idx : idx + num_pulses
+                idx : idx + num_pulses  # noqa: E203
             ].tolist()
             idx += num_pulses
 

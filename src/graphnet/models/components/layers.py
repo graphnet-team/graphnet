@@ -9,7 +9,6 @@ from torch_geometric.nn.pool import knn_graph
 from torch_geometric.typing import Adj, PairTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
-from torch_geometric.data import Data
 import torch.nn as nn
 from torch.nn.functional import linear
 from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer

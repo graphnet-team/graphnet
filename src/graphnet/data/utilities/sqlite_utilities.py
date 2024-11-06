@@ -1,7 +1,7 @@
 """SQLite-specific utility functions for use in `graphnet.data`."""
 
 import os.path
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Union
 
 import pandas as pd
 import sqlalchemy
@@ -30,7 +30,9 @@ def query_database(database: str, query: str) -> pd.DataFrame:
         return pd.read_sql(query, conn)
 
 
-def get_primary_keys(database: str) -> Tuple[Dict[str, str], str]:
+def get_primary_keys(
+    database: str,
+) -> Tuple[Dict[str, Union[str, None]], Union[str, None]]:
     """Get name of primary key column for each table in database.
 
     Args:
@@ -50,7 +52,7 @@ def get_primary_keys(database: str) -> Tuple[Dict[str, str], str]:
 
         integer_primary_key = {}
         for table in table_names:
-            query = f"SELECT l.name FROM pragma_table_info('{table}') as l WHERE l.pk = 1;"
+            query = f"SELECT l.name FROM pragma_table_info('{table}') as l WHERE l.pk = 1;"  # noqa: E501
             first_primary_key = [
                 key[0] for key in conn.execute(query).fetchall()
             ]
@@ -78,7 +80,7 @@ def database_table_exists(database_path: str, table_name: str) -> bool:
     """Check whether `table_name` exists in database at `database_path`."""
     if not database_exists(database_path):
         return False
-    query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';"
+    query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';"  # noqa: E501
     with sqlite3.connect(database_path) as conn:
         result = pd.read_sql(query, conn)
     return len(result) == 1

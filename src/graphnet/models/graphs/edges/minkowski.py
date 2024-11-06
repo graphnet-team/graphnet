@@ -1,4 +1,5 @@
 """Module containing EdgeDefinitions based on the Minkowski Metric."""
+
 from typing import Optional, List
 
 import torch

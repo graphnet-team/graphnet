@@ -1,4 +1,5 @@
 """Parquet Extractor for conversion of simulation files from PROMETHEUS."""
+
 from typing import List
 import pandas as pd
 import numpy as np

@@ -125,7 +125,9 @@ class GraphNeTFileReader(Logger, ABC):
     ) -> None:
         for extractor in extractors:
             try:
-                assert isinstance(extractor, tuple(self.accepted_extractors))  # type: ignore
+                assert isinstance(
+                    extractor, tuple(self.accepted_extractors)  # type: ignore
+                )
             except AssertionError as e:
                 self.error(
                     f"{extractor.__class__.__name__}"
@@ -164,5 +166,7 @@ class GraphNeTFileReader(Logger, ABC):
             assert file.lower().endswith(tuple(self.accepted_file_extensions))
         except AssertionError:
             self.error(
-                f'{self.__class__.__name__} accepts {self.accepted_file_extensions} but {file.split("/")[-1]} has extension {os.path.splitext(file)[1]}.'
+                f"{self.__class__.__name__} accepts "
+                f'{self.accepted_file_extensions} but {file.split("/")[-1]} '
+                f"has extension {os.path.splitext(file)[1]}."
             )

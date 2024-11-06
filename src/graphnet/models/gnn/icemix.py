@@ -1,15 +1,14 @@
-"""Implementation of IceMix architecture used in.
+"""Implementation of IceMix.
 
-                    IceCube - Neutrinos in Deep Ice
-Reconstruct the direction of neutrinos from the Universe to the South Pole
-
+This method was a solution submitted to the IceCube - Neutrinos in Deep Ice
 Kaggle competition.
 
 Solution by DrHB: https://github.com/DrHB/icecube-2nd-place
 """
+
 import torch
 import torch.nn as nn
-from typing import Set, Dict, Any
+from typing import Set, Dict, Any, Optional
 
 from graphnet.models.components.layers import (
     Block_rel,
@@ -42,7 +41,7 @@ class DeepIce(GNN):
         n_rel: int = 1,
         scaled_emb: bool = False,
         include_dynedge: bool = False,
-        dynedge_args: Dict[str, Any] = None,
+        dynedge_args: Optional[Dict[str, Any]] = None,
         n_features: int = 6,
     ):
         """Construct `DeepIce`.

@@ -24,9 +24,9 @@ class I3Extractor(Extractor):
         """Construct I3Extractor.
 
         Args:
-            extractor_name: Name of the `I3Extractor` instance. Used to keep track of the
-                provenance of different data, and to name tables to which this
-                data is saved.
+            extractor_name: Name of the `I3Extractor` instance. Used to keep
+                track of the provenance of different data, and to name tables
+                to which this data is saved.
         """
         # Member variable(s)
         self._i3_file: str = ""

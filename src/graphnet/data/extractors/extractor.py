@@ -1,4 +1,5 @@
 """Base I3Extractor class(es)."""
+
 from typing import Any, Union
 from abc import ABC, abstractmethod
 import pandas as pd
@@ -26,9 +27,10 @@ class Extractor(ABC, Logger):
         """Construct Extractor.
 
         Args:
-            extractor_name: Name of the `Extractor` instance. Used to keep track of the
-                provenance of different data, and to name tables to which this
-                data is saved. E.g. "mc_truth".
+            extractor_name: Name of the `Extractor` instance.
+                            Used to keep track of the provenance of different
+                            data, and to name tables to which this data is
+                            saved. E.g. "mc_truth".
         """
         # Member variable(s)
         self._extractor_name: str = extractor_name

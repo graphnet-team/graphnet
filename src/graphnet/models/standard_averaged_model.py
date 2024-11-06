@@ -1,4 +1,5 @@
 """Averaged Standard model class(es)."""
+
 from typing import Any, Callable, Dict, List, Optional, Union, Type
 from collections import OrderedDict
 
