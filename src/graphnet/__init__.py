@@ -32,4 +32,6 @@ Main features:
 
 from . import _version
 
-__version__ = _version.get_versions()["version"]  # type: ignore[no-untyped-call]
+__version__ = _version.get_versions()[  # type: ignore[no-untyped-call]
+    "version"
+]

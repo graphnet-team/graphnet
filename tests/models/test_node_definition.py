@@ -1,4 +1,5 @@
 """Unit tests for node definitions."""
+
 import numpy as np
 import pandas as pd
 import sqlite3
@@ -19,7 +20,7 @@ def test_percentile_cluster() -> None:
     with sqlite3.connect(database) as con:
         query = "select event_no from mc_truth limit 1"
         event_no = pd.read_sql(query, con)
-        query = f'select sensor_pos_x, sensor_pos_y, sensor_pos_z, t from total where event_no = {str(event_no["event_no"][0])}'
+        query = f'select sensor_pos_x, sensor_pos_y, sensor_pos_z, t from total where event_no = {str(event_no["event_no"][0])}'  # noqa: E501
         df = pd.read_sql(query, con)
 
     # Save original feature names, create variables.

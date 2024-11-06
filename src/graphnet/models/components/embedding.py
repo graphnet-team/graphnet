@@ -1,4 +1,5 @@
 """Classes for performing embedding of input data."""
+
 import torch
 import torch.nn as nn
 from torch.functional import Tensor
@@ -33,9 +34,7 @@ class SinusoidalPosEmb(LightningModule):
         super().__init__()
         if dim % 2 != 0:
             raise ValueError(f"dim has to be even. Got: {dim}")
-        self.scale = (
-            nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
-        )
+        self.scale = nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
         self.dim = dim
         self.n_freq = torch.Tensor([n_freq])
 

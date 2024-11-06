@@ -3,13 +3,10 @@
 This code will be removed in GraphNeT 2.0.
 """
 
-from typing import List, Union, Type
+from typing import List, Union
 
 from graphnet.data.extractors.icecube import I3Extractor
-from graphnet.data.extractors.icecube.utilities.i3_filters import (
-    I3Filter,
-    NullSplitI3Filter,
-)
+from graphnet.data.extractors.icecube.utilities.i3_filters import I3Filter
 from graphnet.data import I3ToSQLiteConverter
 
 
@@ -28,10 +25,11 @@ class SQLiteDataConverter(I3ToSQLiteConverter):
         """Convert I3 files to Parquet.
 
         Args:
-            gcd_rescue: gcd_rescue: Path to a GCD file that will be used if no GCD file is
-                        found in subfolder. `I3Reader` will recursively search
-                        the input directory for I3-GCD file pairs. By IceCube
-                        convention, a folder containing i3 files will have an
+            gcd_rescue: gcd_rescue: Path to a GCD file that will be used if no
+                        GCD file is found in subfolder. `I3Reader` will
+                        recursively search the input directory for I3-GCD file
+                        pairs. By IceCube convention,
+                        a folder containing i3 files will have an
                         accompanying GCD file. However, in some cases, this
                         convention is broken. In cases where a folder contains
                         i3 files but no GCD file, the `gcd_rescue` is used

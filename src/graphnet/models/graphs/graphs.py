@@ -16,7 +16,7 @@ class KNNGraph(GraphDefinition):
     def __init__(
         self,
         detector: Detector,
-        node_definition: NodeDefinition = None,
+        node_definition: Optional[NodeDefinition] = None,
         input_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
         perturbation_dict: Optional[Dict[str, float]] = None,
@@ -37,10 +37,11 @@ class KNNGraph(GraphDefinition):
                                feature should be randomly perturbed. Defaults
                                to None.
             seed: seed or Generator used to randomly sample perturbations.
-                  Defaults to None.
-            nb_nearest_neighbours: Number of edges for each node. Defaults to 8.
-            columns: node feature columns used for distance calculation
-            . Defaults to [0, 1, 2].
+                Defaults to None.
+            nb_nearest_neighbours: Number of edges for each node.
+                Defaults to 8.
+            columns: node feature columns used for distance calculation.
+                Defaults to [0, 1, 2].
         """
         # Base class constructor
         super().__init__(
@@ -67,7 +68,7 @@ class EdgelessGraph(GraphDefinition):
     def __init__(
         self,
         detector: Detector,
-        node_definition: NodeDefinition = None,
+        node_definition: Optional[NodeDefinition] = None,
         input_feature_names: Optional[List[str]] = None,
         dtype: Optional[torch.dtype] = torch.float,
         perturbation_dict: Optional[Dict[str, float]] = None,

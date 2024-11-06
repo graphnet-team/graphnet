@@ -1,6 +1,5 @@
 """Script for applying GraphNeTModule in IceTray chain."""
 
-
 import argparse
 from glob import glob
 from os import makedirs
@@ -37,9 +36,7 @@ def main(
     # Get GCD file
     gcd_pattern = "GeoCalibDetector"
     gcd_candidates = [p for p in input_files if gcd_pattern in p]
-    assert (
-        len(gcd_candidates) == 1
-    ), f"Did not get exactly one GCD-file candidate in `{dirname(input_files[0])}: {gcd_candidates}"
+    assert len(gcd_candidates) == 1, "Did not get exactly one GCD-file "
     gcd_file = gcd_candidates[0]
 
     # Get all input I3-files
@@ -78,8 +75,10 @@ if __name__ == "__main__":
     """The main function must get an input folder and output folder!
 
     Args:
-        input_folder (str): The input folder where i3 files of a given dataset are located.
-        output_folder (str): The output folder where processed i3 files will be saved.
+        input_folder (str): The input folder where i3 files of a
+                            given dataset are located.
+        output_folder (str): The output folder where processed i3
+                            files will be saved.
     """
     parser = argparse.ArgumentParser()
 

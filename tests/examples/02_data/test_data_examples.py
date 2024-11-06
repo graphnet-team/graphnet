@@ -1,4 +1,5 @@
 """Tests for examples in 02_data."""
+
 import runpy
 import os
 import pytest

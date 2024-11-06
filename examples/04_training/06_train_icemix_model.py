@@ -1,7 +1,8 @@
 """Example of training Model.
 
 This example is based on Icemix solution proposed in
-https://github.com/DrHB/icecube-2nd-place.git (2nd place solution).
+https://github.com/DrHB/icecube-2nd-place.git
+(2nd place solution).
 """
 
 import os
@@ -78,9 +79,9 @@ def main(
             "max_epochs": max_epochs,
             "distribution_strategy": "ddp_find_unused_parameters_true",
         },
-        "dataset_reference": SQLiteDataset
-        if path.endswith(".db")
-        else ParquetDataset,
+        "dataset_reference": (
+            SQLiteDataset if path.endswith(".db") else ParquetDataset
+        ),
     }
 
     graph_definition = KNNGraph(

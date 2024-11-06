@@ -66,7 +66,9 @@ class Detector(Model):
     ) -> Data:
         for idx, feature in enumerate(input_feature_names):
             try:
-                input_features[:, idx] = self.feature_map()[feature](  # type: ignore
+                input_features[:, idx] = self.feature_map()[
+                    feature
+                ](  # noqa: E501 # type: ignore
                     input_features[:, idx]
                 )
             except KeyError as e:

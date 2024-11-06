@@ -1,4 +1,5 @@
 """Dataset classes for training in GraphNeT."""
+
 # Configuration
 from graphnet.utilities.imports import has_torch_package
 

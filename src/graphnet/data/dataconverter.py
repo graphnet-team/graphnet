@@ -1,6 +1,6 @@
 """Contains `DataConverter`."""
 
-from typing import List, Union, OrderedDict, Dict, Tuple, Any, Optional, Type
+from typing import List, Union, OrderedDict, Dict, Tuple, Any, Optional
 from abc import ABC
 
 from tqdm import tqdm
@@ -28,7 +28,8 @@ from .dataclasses import I3FileSet
 def init_global_index(index: Synchronized, output_files: List[str]) -> None:
     """Make `global_index` available to pool workers."""
     global global_index, global_output_files  # type: ignore[name-defined]
-    global_index, global_output_files = (index, output_files)  # type: ignore[name-defined]
+    global_index = index  # type: ignore[name-defined]
+    global_output_files = output_files  # type: ignore[name-defined]
 
 
 class DataConverter(ABC, Logger):
@@ -116,10 +117,9 @@ class DataConverter(ABC, Logger):
     ) -> None:
         """Multi Processing Logic.
 
-        Spawns worker pool,
-        distributes the input files evenly across workers.
-        declare event_no as globally accessible variable across workers.
-        starts jobs.
+        Spawns worker pool, distributes the input files evenly across workers.
+        declare event_no as globally accessible variable across workers. starts
+        jobs.
 
         Will call process_file in parallel.
         """
@@ -138,8 +138,8 @@ class DataConverter(ABC, Logger):
     def _process_file(self, file_path: Union[str, I3FileSet]) -> None:
         """Process a single file.
 
-        Calls file reader to recieve extracted output, event ids
-        is assigned to the extracted data and is handed to save method.
+        Calls file reader to recieve extracted output, event ids is assigned to
+        the extracted data and is handed to save method.
 
         This function is called in parallel.
         """
@@ -247,7 +247,8 @@ class DataConverter(ABC, Logger):
                 n_rows = 1
         except ValueError as e:
             self.error(
-                f"Features from {extractor_name} ({extractor_dict.keys()}) have different lengths."
+                f"Features from {extractor_name} ({extractor_dict.keys()}) "
+                "have different lengths."
             )
             raise e
         return n_rows
@@ -276,7 +277,8 @@ class DataConverter(ABC, Logger):
         n_workers = min(self._num_workers, nb_files)
         if n_workers > 1:
             self.info(
-                f"Starting pool of {n_workers} workers to process {nb_files} {unit}"
+                f"Starting pool of {n_workers} workers to process"
+                " {nb_files} {unit}"
             )
 
             manager = Manager()
@@ -292,7 +294,8 @@ class DataConverter(ABC, Logger):
 
         else:
             self.info(
-                f"Processing {nb_files} {unit} in main thread (not multiprocessing)"
+                f"Processing {nb_files} {unit} in main thread"
+                "(not multiprocessing)"
             )
             map_fn = map  # type: ignore
             pool = None

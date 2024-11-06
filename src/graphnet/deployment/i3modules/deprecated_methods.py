@@ -1,4 +1,5 @@
 """Contains deprecated methods."""
+
 from typing import Union, Sequence
 
 # from graphnet.deployment.icecube import I3Deployer, I3InferenceModule

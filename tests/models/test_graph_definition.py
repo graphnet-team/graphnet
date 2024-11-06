@@ -72,7 +72,7 @@ def get_event(
     with sqlite3.connect(database) as con:
         query = f"SELECT event_no FROM {truth_table} limit 1"
         event_no = pd.read_sql(query, con)
-        query = f'SELECT {query_features} FROM {pulsemap} WHERE event_no = {str(event_no["event_no"][0])}'
+        query = f'SELECT {query_features} FROM {pulsemap} WHERE event_no = {str(event_no["event_no"][0])}'  # noqa: E501
         df = pd.read_sql(query, con)
     return np.array(df)
 
@@ -86,11 +86,11 @@ def test_geometry_tables() -> None:
         ),
         "IceCube86": os.path.join(
             TEST_DATA_DIR,
-            "sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db",
+            "sqlite/oscNext_genie_level7_v02/oscNext_genie_level7_v02_first_5_frames.db",  # noqa: E501
         ),
         "IceCubeUpgrade": os.path.join(
             TEST_DATA_DIR,
-            "sqlite/upgrade_genie_step4_140028_000998_first_5_frames/upgrade_genie_step4_140028_000998_first_5_frames.db",
+            "sqlite/upgrade_genie_step4_140028_000998_first_5_frames/upgrade_genie_step4_140028_000998_first_5_frames.db",  # noqa: E501
         ),
     }
     meta = {
