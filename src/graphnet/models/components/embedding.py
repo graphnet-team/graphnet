@@ -127,7 +127,7 @@ class FourierEncoder(LightningModule):
         seq_length: Tensor,
     ) -> Tensor:
         """Forward pass."""
-        mapping_max = max(i for i in self.mapping if i is not None)+1
+        mapping_max = max(i for i in self.mapping if i is not None) + 1
         if mapping_max > x.shape[2]:
             raise IndexError(
                 f"Fourier mapping does not fit given data."
