@@ -133,14 +133,15 @@ class I3InferenceModule(DeploymentModule):
         """Apply model to `Data` and case-handling."""
         if data is not None:
             predictions = self._inference(data)
-            if isinstance(predictions, list):
+            if isinstance(predictions, list) and len(predictions) > 1:
                 predictions = predictions[0]
-                self.warning(
-                    f"{self.__class__.__name__} assumes one Task "
-                    f"but got {len(predictions)}. Only the first will"
-                    " be used."
+                logger = Logger()
+                logger.warning_once(
+                    f"{self.__class__.__name__} assumes one Task 
+                    f"but got {len(predictions)}. Only the first will be used."
                 )
-        else:
+            elif isinstance(predictions, list):
+                predictions = predictions[0]
             self.warning(
                 "At least one event has no pulses "
                 " - padding {self.prediction_columns} with NaN."
