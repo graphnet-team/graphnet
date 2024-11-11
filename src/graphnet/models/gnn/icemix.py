@@ -42,7 +42,7 @@ class DeepIce(GNN):
         scaled_emb: bool = False,
         include_dynedge: bool = False,
         dynedge_args: Optional[Dict[str, Any]] = None,
-        fourier_mapping: list = [0, 1, 2, 3, 4, 5]
+        fourier_mapping: list = [0, 1, 2, 3, 4, 5],
     ):
         """Construct `DeepIce`.
 
