@@ -11,7 +11,7 @@ from graphnet.deployment import Deployer
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
-    from I3Tray import I3Tray
+    from icecube.icetray import I3Tray
 
 
 class I3Deployer(Deployer):
