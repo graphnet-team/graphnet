@@ -101,44 +101,12 @@ class I3TruthExtractor(I3Extractor):
                       the i3 file instead. If either one of those are not
                       present, `RuntimeErrors` will be raised.
         """
-        if gcd_file is None:
-            # If no GCD file is provided, search the I3 file for frames
-            # containing geometry (GFrame) and calibration (CFrame)
-            gcd = dataio.I3File(i3_file)
-        else:
-            # Ideally ends here
-            gcd = dataio.I3File(gcd_file)
+        super().set_gcd(i3_file=i3_file, gcd_file=gcd_file)
 
-        # Get GFrame
-        try:
-            g_frame = gcd.pop_frame(icetray.I3Frame.Geometry)
-            # If the line above fails, it means that no gcd file was given
-            # and that the i3 file does not have a G-Frame in it.
-        except RuntimeError as e:
-            self.error(
-                "No GCD file was provided "
-                f"and no G-frame was found in {i3_file.split('/')[-1]}."
-            )
-            raise e
-
-        # Get CFrame
-        try:
-            c_frame = gcd.pop_frame(icetray.I3Frame.Calibration)
-            # If the line above fails, it means that no gcd file was given
-            # and that the i3 file does not have a C-Frame in it.
-        except RuntimeError as e:
-            self.warning(
-                "No GCD file was provided and no C-frame "
-                f"was found in {i3_file.split('/')[-1]}."
-            )
-            raise e
-
-        # Save information as member variables of I3Extractor
-        self._gcd_dict = g_frame["I3Geometry"].omgeo
-        self._calibration = c_frame["I3Calibration"]
-
+        # Modifications specific to I3TruthExtractor
+        # These modifications are needed to identify starting events
         coordinates = []
-        for omkey, g in self._gcd_dict.items():
+        for _, g in self._gcd_dict.items():
             if g.position.z > 1200:
                 continue  # We want to exclude icetop
             coordinates.append([g.position.x, g.position.y, g.position.z])
