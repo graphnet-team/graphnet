@@ -377,10 +377,24 @@
       
         
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-icecube-i3deployer--page-root" class="md-nav__link">i3deployer</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.icecube.i3deployer.I3Deployer" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3Deployer</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.deployment.icecube.i3deployer.I3Deployer" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3Deployer</span></code></a>
       
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -457,7 +471,14 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-deployment-icecube-i3deployer--page-root" class="md-nav__link">i3deployer</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.deployment.icecube.i3deployer.I3Deployer" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3Deployer</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -467,8 +488,31 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="i3deployer">
-<h1 id="api-graphnet-deployment-icecube-i3deployer--page-root">i3deployer<a class="headerlink" href="#api-graphnet-deployment-icecube-i3deployer--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.deployment.icecube.i3deployer">
+<span id="i3deployer"></span><h1 id="api-graphnet-deployment-icecube-i3deployer--page-root">i3deployer<a class="headerlink" href="#api-graphnet-deployment-icecube-i3deployer--page-root" title="Link to this heading">¶</a></h1>
+<p>Contains an IceCube-specific implementation of Deployer.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.deployment.icecube.i3deployer.I3Deployer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.deployment.icecube.i3deployer.</span></span><span class="sig-name descname"><span class="pre">I3Deployer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modules</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_workers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/deployment/icecube/i3deployer.html#I3Deployer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.deployment.icecube.i3deployer.I3Deployer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.deployment.deployer.html#graphnet.deployment.deployer.Deployer" title="graphnet.deployment.deployer.Deployer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Deployer</span></code></a></p>
+<p>A generic baseclass for applying <cite>DeploymentModules</cite> to analysis files.</p>
+<p>Modules are applied in the order that they appear in <cite>modules</cite>.</p>
+<p>Initialize <cite>Deployer</cite>.</p>
+<p>Will apply <cite>DeploymentModules</cite> to files in the order in which they
+appear in <cite>modules</cite>. Each module is run independently.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>modules</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.deployment.icecube.inference_module.html#graphnet.deployment.icecube.inference_module.I3InferenceModule" title="graphnet.deployment.icecube.inference_module.I3InferenceModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<a class="reference internal" href="graphnet.deployment.icecube.inference_module.html#graphnet.deployment.icecube.inference_module.I3InferenceModule" title="graphnet.deployment.icecube.inference_module.I3InferenceModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3InferenceModule</span></code></a>]]</span>) – List of <cite>DeploymentModules</cite>.
+Order of appearence in the list determines order
+of deployment.</p></li>
+<li><p><strong>gcd_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – path to gcd file.</p></li>
+<li><p><strong>n_workers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Number of workers. The deployer will divide the number
+of input files across workers. Defaults to 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 </section>
 
 
