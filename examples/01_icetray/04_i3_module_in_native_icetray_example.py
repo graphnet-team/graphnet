@@ -19,7 +19,7 @@ from graphnet.utilities.logging import Logger
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
-    from I3Tray import I3Tray
+    from icecube.icetray import I3Tray
 
     from graphnet.deployment.i3modules import (
         I3InferenceModule,

@@ -6,7 +6,7 @@ from os import makedirs
 from os.path import join, dirname
 from typing import List
 
-from I3Tray import I3Tray  # pyright: reportMissingImports=false
+from icecube.icetray import I3Tray  # pyright: reportMissingImports=false
 
 from graphnet.deployment.i3modules import I3InferenceModule
 from graphnet.data.extractors.i3featureextractor import (
