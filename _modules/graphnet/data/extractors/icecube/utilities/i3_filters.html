@@ -421,6 +421,33 @@
 
 
 
+<div class="viewcode-block" id="SubEventStreamI3Filter">
+<a class="viewcode-back" href="../../../../../../api/graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter">[docs]</a>
+<span class="k">class</span> <span class="nc">SubEventStreamI3Filter</span><span class="p">(</span><span class="n">I3Filter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A filter that only keeps frames from select splits."""</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="w">        </span><span class="sd">"""Initialize SubEventStreamI3Filter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            selection: List of subevent streams to keep.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span> <span class="o">=</span> <span class="n">selection</span>
+
+    <span class="k">def</span> <span class="nf">_keep_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Check if current frame should be kept.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: I3-frame</span>
+<span class="sd">                The I3-frame to check.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">Has</span><span class="p">(</span><span class="s2">"I3EventHeader"</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">]</span><span class="o">.</span><span class="n">sub_event_stream</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selection</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
 <div class="viewcode-block" id="I3FilterMask">
 <a class="viewcode-back" href="../../../../../../api/graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.I3FilterMask">[docs]</a>
 <span class="k">class</span> <span class="nc">I3FilterMask</span><span class="p">(</span><span class="n">I3Filter</span><span class="p">):</span>

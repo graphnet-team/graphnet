@@ -353,6 +353,7 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.path</span> <span class="k">as</span> <span class="nn">mpath</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">ConvexHull</span><span class="p">,</span> <span class="n">Delaunay</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">.i3extractor</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
@@ -363,10 +364,12 @@
 <span class="kn">from</span> <span class="nn">graphnet.utilities.imports</span> <span class="kn">import</span> <span class="n">has_icecube_package</span>
 
 <span class="k">if</span> <span class="n">has_icecube_package</span><span class="p">()</span> <span class="ow">or</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="kn">from</span> <span class="nn">icecube</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: F401</span>
         <span class="n">dataclasses</span><span class="p">,</span>
         <span class="n">icetray</span><span class="p">,</span>
         <span class="n">phys_services</span><span class="p">,</span>
+        <span class="n">dataio</span><span class="p">,</span>
+        <span class="n">LeptonInjector</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
@@ -380,6 +383,7 @@
         <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"truth"</span><span class="p">,</span>
         <span class="n">borders</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">mctree</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"I3MCTree"</span><span class="p">,</span>
+        <span class="n">extend_boundary</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct I3TruthExtractor.</span>
 
@@ -390,6 +394,8 @@
 <span class="sd">                stopping within the detector. Defaults to hard-coded boundary</span>
 <span class="sd">                coordinates.</span>
 <span class="sd">            mctree: Str of which MCTree to use for truth values.</span>
+<span class="sd">            extend_boundary: Distance to extend the convex hull of the detector</span>
+<span class="sd">                for defining starting events.</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -431,7 +437,48 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="p">[</span><span class="n">border_xy</span><span class="p">,</span> <span class="n">border_z</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_borders</span> <span class="o">=</span> <span class="n">borders</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extend_boundary</span> <span class="o">=</span> <span class="n">extend_boundary</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span> <span class="o">=</span> <span class="n">mctree</span>
+
+<div class="viewcode-block" id="I3TruthExtractor.set_gcd">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3truthextractor.html#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor.set_gcd">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_gcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Extract GFrame and CFrame from i3/gcd-file pair.</span>
+
+<span class="sd">           Information from these frames will be set as member variables of</span>
+<span class="sd">           `I3Extractor.`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            i3_file: Path to i3 file that is being converted.</span>
+<span class="sd">            gcd_file: Path to GCD file. Defaults to None. If no GCD file is</span>
+<span class="sd">                      given, the method will attempt to find C and G frames in</span>
+<span class="sd">                      the i3 file instead. If either one of those are not</span>
+<span class="sd">                      present, `RuntimeErrors` will be raised.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">set_gcd</span><span class="p">(</span><span class="n">i3_file</span><span class="o">=</span><span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="o">=</span><span class="n">gcd_file</span><span class="p">)</span>
+
+        <span class="c1"># Modifications specific to I3TruthExtractor</span>
+        <span class="c1"># These modifications are needed to identify starting events</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">g</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gcd_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">g</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span> <span class="o">&gt;</span> <span class="mi">1200</span><span class="p">:</span>
+                <span class="k">continue</span>  <span class="c1"># We want to exclude icetop</span>
+            <span class="n">coordinates</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">g</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="n">position</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
+        <span class="n">coordinates</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extend_boundary</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">center</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">coordinates</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="n">coordinates</span> <span class="o">-</span> <span class="n">center</span>
+            <span class="n">norms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">dn</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">norms</span>
+            <span class="n">coordinates</span> <span class="o">=</span> <span class="n">coordinates</span> <span class="o">+</span> <span class="n">dn</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extend_boundary</span>
+
+        <span class="n">hull</span> <span class="o">=</span> <span class="n">ConvexHull</span><span class="p">(</span><span class="n">coordinates</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">hull</span> <span class="o">=</span> <span class="n">hull</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">delaunay</span> <span class="o">=</span> <span class="n">Delaunay</span><span class="p">(</span><span class="n">coordinates</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">vertices</span><span class="p">])</span></div>
+
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -439,7 +486,7 @@
 <span class="w">        </span><span class="sd">"""Extract truth-level information."""</span>
         <span class="n">is_mc</span> <span class="o">=</span> <span class="n">frame_is_montecarlo</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">)</span>
         <span class="n">is_noise</span> <span class="o">=</span> <span class="n">frame_is_noise</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mctree</span><span class="p">)</span>
-        <span class="n">sim_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_data_type</span><span class="p">(</span><span class="n">is_mc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">)</span>
+        <span class="n">sim_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_data_type</span><span class="p">(</span><span class="n">is_mc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_i3_file</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">"energy"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
@@ -472,6 +519,7 @@
             <span class="s2">"L5_oscNext_bool"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">"L6_oscNext_bool"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
             <span class="s2">"L7_oscNext_bool"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
+            <span class="s2">"is_starting"</span><span class="p">:</span> <span class="n">padding_value</span><span class="p">,</span>
         <span class="p">}</span>
 
         <span class="c1"># Only InIceSplit P frames contain ML appropriate</span>
@@ -582,6 +630,13 @@
                         <span class="s2">"stopped_muon"</span><span class="p">:</span> <span class="n">muon_final</span><span class="p">[</span><span class="s2">"stopped"</span><span class="p">],</span>
                     <span class="p">}</span>
                 <span class="p">)</span>
+
+            <span class="n">is_starting</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_contained_vertex</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"is_starting"</span><span class="p">:</span> <span class="n">is_starting</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">output</span>
 
@@ -727,15 +782,34 @@
                 <span class="c1"># all variables and has no nans (always muon)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">MCInIcePrimary</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCWeightDict"</span><span class="p">][</span><span class="s2">"InteractionType"</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">padding_value</span>
 
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">elasticity</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3GENIEResultDict"</span><span class="p">][</span><span class="s2">"y"</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">elasticity</span> <span class="o">=</span> <span class="n">padding_value</span>
+        <span class="k">if</span> <span class="n">sim_type</span> <span class="o">==</span> <span class="s2">"LeptonInjector"</span><span class="p">:</span>
+            <span class="n">event_properties</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"EventProperties"</span><span class="p">]</span>
+            <span class="n">final_state_1</span> <span class="o">=</span> <span class="n">event_properties</span><span class="o">.</span><span class="n">finalType1</span>
+            <span class="k">if</span> <span class="n">final_state_1</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">NuE</span><span class="p">,</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">NuMu</span><span class="p">,</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">NuTau</span><span class="p">,</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">NuEBar</span><span class="p">,</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">NuMuBar</span><span class="p">,</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">NuTauBar</span><span class="p">,</span>
+            <span class="p">]:</span>
+                <span class="n">interaction_type</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># NC</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">interaction_type</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># CC</span>
+
+            <span class="n">elasticity</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">event_properties</span><span class="o">.</span><span class="n">finalStateY</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">interaction_type</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCWeightDict"</span><span class="p">][</span><span class="s2">"InteractionType"</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">interaction_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">padding_value</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">elasticity</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3MCWeightDict"</span><span class="p">][</span><span class="s2">"BjorkenY"</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">elasticity</span> <span class="o">=</span> <span class="n">padding_value</span>
 
         <span class="k">return</span> <span class="n">MCInIcePrimary</span><span class="p">,</span> <span class="n">interaction_type</span><span class="p">,</span> <span class="n">elasticity</span>
 
@@ -771,12 +845,15 @@
         <span class="k">return</span> <span class="n">energy_track</span><span class="p">,</span> <span class="n">energy_cascade</span><span class="p">,</span> <span class="n">inelasticity</span>
 
     <span class="c1"># Utility methods</span>
-    <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">input_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">mc</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">input_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Determine the data type.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            mc: Whether `input_file` is Monte Carlo simulation.</span>
 <span class="sd">            input_file: Path to I3-file.</span>
+<span class="sd">            frame: Physics frame containing MC record</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The simulation/data type.</span>
@@ -792,11 +869,29 @@
             <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"genie"</span>
         <span class="k">elif</span> <span class="s2">"noise"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>
             <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"noise"</span>
-        <span class="k">elif</span> <span class="s2">"L2"</span> <span class="ow">in</span> <span class="n">input_file</span><span class="p">:</span>  <span class="c1"># not robust</span>
-            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"dbang"</span>
-        <span class="k">else</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">frame</span><span class="o">.</span><span class="n">Has</span><span class="p">(</span><span class="s2">"EventProprties"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">frame</span><span class="o">.</span><span class="n">Has</span><span class="p">(</span>
+            <span class="s2">"LeptonInjectorProperties"</span>
+        <span class="p">):</span>
+            <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"LeptonInjector"</span>
+        <span class="k">elif</span> <span class="n">frame</span><span class="o">.</span><span class="n">Has</span><span class="p">(</span><span class="s2">"I3MCWeightDict"</span><span class="p">):</span>
             <span class="n">sim_type</span> <span class="o">=</span> <span class="s2">"NuGen"</span>
-        <span class="k">return</span> <span class="n">sim_type</span></div>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"Could not determine data type."</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sim_type</span>
+
+    <span class="k">def</span> <span class="nf">_contained_vertex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truth</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Determine if an event is starting based on vertex position.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            truth: Dictionary of already extracted truth-level information.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True/False if vertex is inside detector.</span>
+<span class="sd">        """</span>
+        <span class="n">vertex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">truth</span><span class="p">[</span><span class="s2">"position_x"</span><span class="p">],</span> <span class="n">truth</span><span class="p">[</span><span class="s2">"position_y"</span><span class="p">],</span> <span class="n">truth</span><span class="p">[</span><span class="s2">"position_z"</span><span class="p">]]</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">delaunay</span><span class="o">.</span><span class="n">find_simplex</span><span class="p">(</span><span class="n">vertex</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span></div>
 
 </pre></div>
 

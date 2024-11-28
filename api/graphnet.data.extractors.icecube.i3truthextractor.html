@@ -443,7 +443,11 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-extractors-icecube-i3truthextractor--page-root" class="md-nav__link">i3truthextractor</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor.set_gcd" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_gcd()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -454,7 +458,14 @@
     
     
       <a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor.set_gcd" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_gcd()</span></code></a>
       
+    
+    </li></ul>
     
     </li></ul>
     
@@ -658,7 +669,11 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-data-extractors-icecube-i3truthextractor--page-root" class="md-nav__link">i3truthextractor</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3TruthExtractor</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor.set_gcd" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_gcd()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -676,7 +691,7 @@
 <p>I3Extractor class(es) for extracting truth-level information.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3truthextractor.</span></span><span class="sig-name descname"><span class="pre">I3TruthExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3truthextractor.html#I3TruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3truthextractor.</span></span><span class="sig-name descname"><span class="pre">I3TruthExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">borders</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extend_boundary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3truthextractor.html#I3TruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.extractors.icecube.i3extractor.html#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="graphnet.data.extractors.icecube.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
 <p>Class for extracting truth-level information.</p>
 <p>Construct I3TruthExtractor.</p>
@@ -689,9 +704,34 @@ coordinates, for identifying, e.g., particles starting and
 stopping within the detector. Defaults to hard-coded boundary
 coordinates.</p></li>
 <li><p><strong>mctree</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">'I3MCTree'</span></code>) – Str of which MCTree to use for truth values.</p></li>
+<li><p><strong>extend_boundary</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) – Distance to extend the convex hull of the detector
+for defining starting events.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor.set_gcd">
+<span class="sig-name descname"><span class="pre">set_gcd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i3_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gcd_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3truthextractor.html#I3TruthExtractor.set_gcd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3truthextractor.I3TruthExtractor.set_gcd" title="Link to this definition">¶</a></dt>
+<dd><p>Extract GFrame and CFrame from i3/gcd-file pair.</p>
+<blockquote>
+<div><p>Information from these frames will be set as member variables of
+<cite>I3Extractor.</cite></p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>i3_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Path to i3 file that is being converted.</p></li>
+<li><p><strong>gcd_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Path to GCD file. Defaults to None. If no GCD file is
+given, the method will attempt to find C and G frames in
+the i3 file instead. If either one of those are not
+present, <cite>RuntimeErrors</cite> will be raised.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
 </dd></dl>
 </section>
 

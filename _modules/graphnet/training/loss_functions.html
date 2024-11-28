@@ -420,6 +420,17 @@
 
 
 
+<div class="viewcode-block" id="MAELoss">
+<a class="viewcode-back" href="../../../api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.MAELoss">[docs]</a>
+<span class="k">class</span> <span class="nc">MAELoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Mean absolute error loss."""</span>
+
+    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Implement loss calculation."""</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">prediction</span> <span class="o">-</span> <span class="n">target</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="MSELoss">
 <a class="viewcode-back" href="../../../api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.MSELoss">[docs]</a>
 <span class="k">class</span> <span class="nc">MSELoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>

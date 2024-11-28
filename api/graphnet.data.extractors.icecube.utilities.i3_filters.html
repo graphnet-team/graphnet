@@ -390,6 +390,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.NullSplitI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NullSplitI3Filter</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SubEventStreamI3Filter</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3FilterMask" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3FilterMask</span></code></a>
         </li></ul>
             </nav>
@@ -408,6 +410,13 @@
     
     
       <a href="#graphnet.data.extractors.icecube.utilities.i3_filters.NullSplitI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NullSplitI3Filter</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SubEventStreamI3Filter</span></code></a>
       
     
     </li>
@@ -709,6 +718,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.NullSplitI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NullSplitI3Filter</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SubEventStreamI3Filter</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3FilterMask" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3FilterMask</span></code></a>
         </li></ul>
             </nav>
@@ -758,6 +769,18 @@
 <li><p><strong>log_folder</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.i3_filters.</span></span><span class="sig-name descname"><span class="pre">SubEventStreamI3Filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">selection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/i3_filters.html#SubEventStreamI3Filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter" title="graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Filter</span></code></a></p>
+<p>A filter that only keeps frames from select splits.</p>
+<p>Initialize SubEventStreamI3Filter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>selection</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – List of subevent streams to keep.</p>
 </dd>
 </dl>
 </dd></dl>

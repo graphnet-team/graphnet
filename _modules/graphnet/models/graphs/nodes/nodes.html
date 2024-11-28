@@ -700,6 +700,7 @@
             <span class="s2">"z_offset"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="s2">"z_scaling"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">},</span>
+        <span class="n">sample_pulses</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Construct `IceMixNodes`.</span>
 
@@ -713,6 +714,9 @@
 <span class="sd">            ice in IceCube are added to the feature set based on z coordinate.</span>
 <span class="sd">            ice_args: Offset and scaling of the z coordinate in the Detector,</span>
 <span class="sd">            to be able to make similar conversion in the ice data.</span>
+<span class="sd">            sample_pulses: Enable sampling random pulses. If True and the</span>
+<span class="sd">            event is longer than the max_length, they will be sampled. If</span>
+<span class="sd">            False, then only the first max_length pulses will be selected.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">input_feature_names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">input_feature_names</span> <span class="o">=</span> <span class="p">[</span>
@@ -758,6 +762,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">z_name</span> <span class="o">=</span> <span class="n">z_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hlc_name</span> <span class="o">=</span> <span class="n">hlc_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_ice_properties</span> <span class="o">=</span> <span class="n">add_ice_properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampling_enabled</span> <span class="o">=</span> <span class="n">sample_pulses</span>
 
     <span class="k">def</span> <span class="nf">_define_output_feature_names</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
@@ -811,7 +816,14 @@
             <span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_indexes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hlc_name</span><span class="p">]]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span>
                 <span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_indexes</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">hlc_name</span><span class="p">]]</span>
             <span class="p">)</span>  <span class="c1"># hlc in kaggle was flipped</span>
-        <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulse_sampler</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">event_length</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampling_enabled</span><span class="p">:</span>
+            <span class="n">ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pulse_sampler</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">event_length</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_length</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">:</span>
+                <span class="n">ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">event_length</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">)</span>
+
         <span class="n">event_length</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_length</span><span class="p">,</span> <span class="n">event_length</span><span class="p">)</span>
 
         <span class="n">graph</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">event_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span><span class="p">])</span>
