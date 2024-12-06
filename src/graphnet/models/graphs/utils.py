@@ -431,8 +431,9 @@ class cluster_and_pad:
     def add_counts(self, location: Optional[int] = None) -> np.ndarray:
         """Add the counts of the sensor to the summarization features."""
         self._add_column(np.log10(self._counts), location)
-        new_name = ["counts"]
-        self._add_column_names(new_name, location)
+        if self._input_names is not None:
+            new_name = ["counts"]
+            self._add_column_names(new_name, location)
 
     def add_sum_charge(
         self, charge_index: int, location: Optional[int] = None
