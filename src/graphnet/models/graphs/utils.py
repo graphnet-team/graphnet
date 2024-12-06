@@ -180,7 +180,30 @@ def cluster_summarize_with_percentiles(
 
 
 class cluster_and_pad:
-    """Cluster and pad the data for further summarization."""
+    """Cluster and pad the data for further summarization.
+
+    Clusters the inptut data according to the specified columns
+    and computes aggregate statistics on the clusters.
+    The clustering will happen only ones creating a cluster matrix
+    which will hold all the aggregated statistics and a padded matrix which
+    will hold the padded data for quick calculation of aggregate statistics.
+
+    Example:
+    clustered_x = cluster_and_pad(x = single_event_as_array,
+                                 cluster_columns = [0,1,2])
+    # Creates a cluster matrix and a padded matrix,
+    # the cluster matrix will contain the unique values of the cluster columns,
+    # no additional aggregate statistics are added yet.
+
+    clustered_x_with_percentiles = cluster_class.add_percentile_summary(
+    summarization_indices = [3,4,5], percentiles = [10,50,90])
+    # Adds the 10th, 50th and 90th percentile of columns 3,4
+    # and 5 in the input data to the cluster matrix.
+
+    clustered_x_with_percentiles_and_std = cluster_class.add_std(column = 4)
+    # Adds the standard deviation of column 4 in the input data
+    # to the cluster matrix.
+    """
 
     def __init__(self, x: np.ndarray, cluster_columns: List[int]) -> None:
         """Initialize the class with the data and cluster columns.
@@ -269,7 +292,7 @@ class cluster_and_pad:
             _padded_x: Charge is altered to be the cumulative sum
                        of the charge divided by the total charge
             clustered_x: The summarization indices are added at the end
-                         of the tensor
+                         of the tensor or inserted at the specified location.
         """
         # convert the charge to the cumulative sum of the charge divided
         # by the total charge
@@ -336,7 +359,7 @@ class cluster_and_pad:
             None
         Altered:
             clustered_x: The summarization indices are added at the end of
-                         the tensor
+                         the tensor or inserted at the specified location
         """
         percentiles_x = np.nanpercentile(
             self._padded_x[:, :, summarization_indices],
