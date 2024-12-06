@@ -202,13 +202,20 @@ class cluster_and_pad:
     # Gets the clustered matrix with all the aggregate statistics.
     """
 
-    def __init__(self, x: np.ndarray, cluster_columns: List[int]) -> None:
+    def __init__(
+        self,
+        x: np.ndarray,
+        cluster_columns: List[int],
+        input_names: Optional[List[str]] = None,
+    ) -> None:
         """Initialize the class with the data and cluster columns.
 
         Args:
             x: Array to be clustered
             cluster_columns: List of column indices on which the clusters
                             are constructed.
+            input_names: Names of the columns in the input data for automatic
+                        generation of names.
             Adds:
                 clustered_x: Added to the class
                 _counts: Added to the class
@@ -244,6 +251,14 @@ class cluster_and_pad:
             self._padded_x[i, : self._counts[i]] = x[: self._counts[i]]
             x = x[self._counts[i] :]
 
+        self._input_names = input_names
+        if self._input_names is not None:
+            assert (
+                len(self._input_names) == x.shape[1]
+            ), "The input names must have the same length as the input data"
+
+            self._cluster_names = np.array(input_names)[cluster_columns]
+
     def _add_column(
         self, column: np.ndarray, location: Optional[int] = None
     ) -> None:
@@ -261,6 +276,25 @@ class cluster_and_pad:
         else:
             self.clustered_x = np.insert(
                 self.clustered_x, location, column, axis=1
+            )
+
+    def _add_column_names(
+        self, names: List[str], location: Optional[int] = None
+    ) -> None:
+        """Add names to the columns of the clustered tensor.
+
+        Args:
+            names: Names to be added to the columns of the tensor
+            location: Location to insert the names in the clustered tensor
+        Altered:
+            _cluster_names: The names are added at the end of the tensor
+                            or inserted at the specified location
+        """
+        if location is None:
+            self._cluster_names = np.append(self._cluster_names, names)
+        else:
+            self._cluster_names = np.insert(
+                self._cluster_names, location, names
             )
 
     def _calculate_charge_sum(self, charge_index: int) -> np.ndarray:
@@ -310,6 +344,8 @@ class cluster_and_pad:
                        of the charge divided by the total charge
             clustered_x: The summarization indices are added at the end
                          of the tensor or inserted at the specified location.
+            _cluster_names: The names are added at the end of the tensor
+                            or inserted at the specified location
         """
         # convert the charge to the cumulative sum of the charge divided
         # by the total charge
@@ -340,6 +376,15 @@ class cluster_and_pad:
         )
         self._add_column(selections, location)
 
+        # update the cluster names
+        if self._input_names is not None:
+            new_names = [
+                self._input_names[i] + "_charge_threshold_" + str(p)
+                for i in summarization_indices
+                for p in percentiles
+            ]
+            self._add_column_names(new_names, location)
+
     def add_percentile_summary(
         self,
         summarization_indices: List[int],
@@ -359,6 +404,8 @@ class cluster_and_pad:
         Altered:
             clustered_x: The summarization indices are added at the end of
                          the tensor or inserted at the specified location
+            _cluster_names: The names are added at the end of the tensor
+                            or inserted at the specified location
         """
         percentiles_x = np.nanpercentile(
             self._padded_x[:, :, summarization_indices],
@@ -372,48 +419,71 @@ class cluster_and_pad:
         )
         self._add_column(percentiles_x, location)
 
+        # update the cluster names
+        if self._input_names is not None:
+            new_names = [
+                self._input_names[i] + "_percentile_" + str(p)
+                for i in summarization_indices
+                for p in percentiles
+            ]
+            self._add_column_names(new_names, location)
+
     def add_counts(self, location: Optional[int] = None) -> np.ndarray:
         """Add the counts of the sensor to the summarization features."""
         self._add_column(np.log10(self._counts), location)
+        new_name = ["counts"]
+        self._add_column_names(new_name, location)
 
-    def add_sum_charge(self, location: Optional[int] = None) -> np.ndarray:
+    def add_sum_charge(
+        self, charge_index: int, location: Optional[int] = None
+    ) -> np.ndarray:
         """Add the sum of the charge to the summarization features."""
-        assert hasattr(
-            self, "_charge_sum"
-        ), "Charge sum has not been calculated, \
-            please run calculate_charge_sum"
+        if not hasattr(self, "_charge_sum"):
+            self._calculate_charge_sum(charge_index)
         self._add_column(self._charge_sum, location)
+        # update the cluster names
+        if self._input_names is not None:
+            new_name = [self._input_names[charge_index] + "_sum"]
+            self._add_column_names(new_name, location)
 
     def add_std(
         self,
-        column: int,
+        columns: List[int],
         location: Optional[int] = None,
         weights: Union[np.ndarray, int] = 1,
     ) -> np.ndarray:
         """Add the standard deviation of the column.
 
         Args:
-            column: Index of the column in the padded tensor to
-                    calculate the standard deviation
+            columns: Index of the columns from which to calculate the standard
+                    deviation.
             location: Location to insert the standard deviation in the
                       clustered tensor defaults to adding at the end
             weights: Optional weights to be applied to the standard deviation
         """
         self._add_column(
-            np.nanstd(self._padded_x[:, :, column] * weights, axis=1), location
+            np.nanstd(self._padded_x[:, :, columns] * weights, axis=1),
+            location,
         )
+        if self._input_names is not None:
+            new_names = [self._input_names[i] + "_std" for i in columns]
+            self._add_column_names(new_names, location)
 
     def add_mean(
         self,
-        column: int,
+        columns: List[int],
         location: Optional[int] = None,
         weights: Union[np.ndarray, int] = 1,
     ) -> np.ndarray:
         """Add the mean of the column."""
         self._add_column(
-            np.nanmean(self._padded_x[:, :, column] * weights, axis=1),
+            np.nanmean(self._padded_x[:, :, columns] * weights, axis=1),
             location,
         )
+        # update the cluster names
+        if self._input_names is not None:
+            new_names = [self._input_names[i] + "_mean" for i in columns]
+            self._add_column_names(new_names, location)
 
 
 def ice_transparency(
