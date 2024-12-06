@@ -184,20 +184,22 @@ class cluster_and_pad:
     will hold the padded data for quick calculation of aggregate statistics.
 
     Example:
-    clustered_x = cluster_and_pad(x = single_event_as_array,
+    cluster_and_pad(x = single_event_as_array,
                                  cluster_columns = [0,1,2])
     # Creates a cluster matrix and a padded matrix,
     # the cluster matrix will contain the unique values of the cluster columns,
     # no additional aggregate statistics are added yet.
 
-    clustered_x_with_percentiles = cluster_class.add_percentile_summary(
-    summarization_indices = [3,4,5], percentiles = [10,50,90])
+    cluster_class.add_percentile_summary(summarization_indices = [3,4,5],
+                                         percentiles = [10,50,90])
     # Adds the 10th, 50th and 90th percentile of columns 3,4
     # and 5 in the input data to the cluster matrix.
 
-    clustered_x_with_percentiles_and_std = cluster_class.add_std(column = 4)
+    cluster_class.add_std(column = 4)
     # Adds the standard deviation of column 4 in the input data
     # to the cluster matrix.
+    x = cluster_class.clustered_x
+    # Gets the clustered matrix with all the aggregate statistics.
     """
 
     def __init__(self, x: np.ndarray, cluster_columns: List[int]) -> None:
@@ -242,7 +244,6 @@ class cluster_and_pad:
         for i in range(len(self._counts)):
             self._padded_x[i, : self._counts[i]] = x[: self._counts[i]]
             x = x[self._counts[i] :]
-        return self.clustered_x
 
     def _add_column(
         self, column: np.ndarray, location: Optional[int] = None
@@ -269,7 +270,6 @@ class cluster_and_pad:
         ), "Charge sum has already been calculated, \
             re-calculation is not allowed"
         self._charge_sum = self._padded_x[:, :, charge_index].sum(axis=1)
-        return self._charge_sum
 
     def _calculate_charge_weights(self, charge_index: int) -> np.ndarray:
         """Calculate the weights of the charge."""
@@ -285,7 +285,6 @@ class cluster_and_pad:
             self._padded_x[:, :, charge_index]
             / self._charge_sum[:, np.newaxis]
         )
-        return self._charge_weights
 
     def add_charge_threshold_summary(
         self,
@@ -343,7 +342,6 @@ class cluster_and_pad:
             len(self.clustered_x), -1
         )
         self._add_column(selections, location)
-        return self.clustered_x
 
     def add_percentile_summary(
         self,
@@ -380,12 +378,10 @@ class cluster_and_pad:
             len(self.clustered_x), -1
         )
         self._add_column(percentiles_x, location)
-        return self.clustered_x
 
     def add_counts(self, location: Optional[int] = None) -> np.ndarray:
         """Add the counts of the sensor to the summarization features."""
         self._add_column(np.log10(self._counts), location)
-        return self.clustered_x
 
     def add_sum_charge(self, location: Optional[int] = None) -> np.ndarray:
         """Add the sum of the charge to the summarization features."""
@@ -394,7 +390,6 @@ class cluster_and_pad:
         ), "Charge sum has not been calculated, \
             please run calculate_charge_sum"
         self._add_column(self._charge_sum, location)
-        return self.clustered_x
 
     def add_std(
         self,
@@ -414,7 +409,6 @@ class cluster_and_pad:
         self._add_column(
             np.nanstd(self._padded_x[:, :, column] * weights, axis=1), location
         )
-        return self.clustered_x
 
     def add_mean(
         self,
@@ -427,7 +421,6 @@ class cluster_and_pad:
             np.nanmean(self._padded_x[:, :, column] * weights, axis=1),
             location,
         )
-        return self.clustered_x
 
 
 def ice_transparency(

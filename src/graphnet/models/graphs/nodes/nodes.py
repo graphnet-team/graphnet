@@ -198,12 +198,13 @@ class PercentileClusters(NodeDefinition):
             cluster_class = cluster_and_pad(
                 x=x, cluster_columns=self._cluster_indices
             )
-            array = cluster_class.add_percentile_summary(
+            cluster_class.add_percentile_summary(
                 summarization_indices=self._summarization_indices,
                 percentiles=self._percentiles,
             )
             if self._add_counts:
-                array = cluster_class.add_counts()
+                cluster_class.add_counts()
+            array = cluster_class.clustered_x
         else:
             self.error(
                 f"""{self.__class__.__name__} was not instatiated with
