@@ -113,6 +113,67 @@ def identify_indices(
     return cluster_indices, summarization_indices, features_for_summarization
 
 
+# TODO Remove this function as it is superseded by
+# cluster_and_pad wich has the same functionality
+def cluster_summarize_with_percentiles(
+    x: np.ndarray,
+    summarization_indices: List[int],
+    cluster_indices: List[int],
+    percentiles: List[int],
+    add_counts: bool,
+) -> np.ndarray:
+    """Turn `x` into clusters with percentile summary.
+
+    From variables specified by column indices `cluster_indices`, `x` is turned
+    into clusters. Information in columns of `x` specified by indices
+    `summarization_indices` with each cluster is summarized using percentiles.
+    It is assumed `x` represents a single event.
+
+    **Example use-case**:
+    Suppose `x` contains raw pulses from a neutrino event where some DOMs have
+    multiple measurements of Cherenkov radiation. If `cluster_indices` is set
+    to the columns corresponding to the xyz-position of the DOMs, and the
+    features specified in `summarization_indices` correspond to time, charge,
+    then each row in the returned array will correspond to a DOM,
+    and the time and charge for each DOM will be summarized by percentiles.
+    Returned output array has dimensions
+    `[n_clusters,
+    len(percentiles)*len(summarization_indices) + len(cluster_indices)]`
+
+    Args:
+        x: Array to be clustered
+        summarization_indices: List of column indices that defines features
+                                that will be summarized with percentiles.
+        cluster_indices: List of column indices on which the clusters
+                        are constructed.
+        percentiles: percentiles used to summarize `x`. E.g. [10,50,90].
+
+    Returns:
+        Percentile-summarized array
+    """
+    pct_dict = {}
+    for feature_idx in summarization_indices:
+        summarized_array, column_offset, counts = gather_cluster_sequence(
+            x, feature_idx, cluster_indices
+        )
+        pct_dict[feature_idx] = np.nanpercentile(
+            summarized_array[:, column_offset:], percentiles, axis=1
+        ).T
+
+    for i, key in enumerate(pct_dict.keys()):
+        if i == 0:
+            array = summarized_array[:, 0:column_offset]
+
+        array = np.concatenate([array, pct_dict[key]], axis=1)
+
+    if add_counts:
+        array = np.concatenate(
+            [array, np.log10(counts).reshape(-1, 1)], axis=1
+        )
+
+    return array
+
+
 class cluster_and_pad:
     """Cluster and pad the data for further summarization.
 
