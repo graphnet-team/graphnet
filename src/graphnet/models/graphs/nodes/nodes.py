@@ -169,9 +169,7 @@ class PercentileClusters(NodeDefinition):
             cluster_idx,
             summ_idx,
             new_feature_names,
-        ) = self._get_indices_and_feature_names(
-            input_feature_names, self._add_counts
-        )
+        ) = self._get_indices_and_feature_names(input_feature_names)
         self._cluster_indices = cluster_idx
         self._summarization_indices = summ_idx
         return new_feature_names
@@ -179,7 +177,6 @@ class PercentileClusters(NodeDefinition):
     def _get_indices_and_feature_names(
         self,
         feature_names: List[str],
-        add_counts: bool,
     ) -> Tuple[List[int], List[int], List[str]]:
         cluster_idx, summ_idx, summ_names = identify_indices(
             feature_names, self._cluster_on
@@ -188,7 +185,7 @@ class PercentileClusters(NodeDefinition):
         for feature in summ_names:
             for pct in self._percentiles:
                 new_feature_names.append(f"{feature}_pct{pct}")
-        if add_counts:
+        if self._add_counts:
             # add "counts" as the last feature
             new_feature_names.append("counts")
         return cluster_idx, summ_idx, new_feature_names
@@ -205,7 +202,8 @@ class PercentileClusters(NodeDefinition):
                 summarization_indices=self._summarization_indices,
                 percentiles=self._percentiles,
             )
-            array = cluster_class.add_counts()
+            if self._add_counts:
+                array = cluster_class.add_counts()
         else:
             self.error(
                 f"""{self.__class__.__name__} was not instatiated with
