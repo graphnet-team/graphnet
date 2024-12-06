@@ -209,7 +209,6 @@ class cluster_and_pad:
             x: Array to be clustered
             cluster_columns: List of column indices on which the clusters
                             are constructed.
-            Returns: None
             Adds:
                 clustered_x: Added to the class
                 _counts: Added to the class
@@ -252,9 +251,10 @@ class cluster_and_pad:
 
         Args:
             column: Column to be added to the tensor
-            location: Location to insert the column in the clustered tensor
-        Returns:
-            clustered_x: The clustered tensor with the column added
+            location: Location to insert the column in the clustered tensor.
+        Altered:
+            clustered_x: The column is added at the end of the tenor or
+                            inserted at the specified location
         """
         if location is None:
             self.clustered_x = np.column_stack([self.clustered_x, column])
@@ -302,9 +302,6 @@ class cluster_and_pad:
             charge_index: index of the charge column in the padded tensor
             location: Location to insert the summarization indices in the
                       clustered tensor defaults to adding at the end
-        Returns:
-            clustered_x: The clustered tensor with the summarization indices
-                         added
         Adds:
             _charge_sum: Added to the class
             _charge_weights: Added to the class
@@ -359,10 +356,6 @@ class cluster_and_pad:
             method: Method to summarize the features. E.g. "linear"
             location: Location to insert the summarization indices in the
                        clustered tensor defaults to adding at the end
-        Returns:
-            None
-        Adds:
-            None
         Altered:
             clustered_x: The summarization indices are added at the end of
                          the tensor or inserted at the specified location
