@@ -9,7 +9,7 @@ from torch_geometric.data import Data
 from graphnet.utilities.decorators import final
 from graphnet.models import Model
 from graphnet.models.graphs.utils import (
-    cluster_summarize_with_percentiles,
+    cluster_and_pad,
     identify_indices,
     lex_sort,
     ice_transparency,
@@ -169,9 +169,7 @@ class PercentileClusters(NodeDefinition):
             cluster_idx,
             summ_idx,
             new_feature_names,
-        ) = self._get_indices_and_feature_names(
-            input_feature_names, self._add_counts
-        )
+        ) = self._get_indices_and_feature_names(input_feature_names)
         self._cluster_indices = cluster_idx
         self._summarization_indices = summ_idx
         return new_feature_names
@@ -179,7 +177,6 @@ class PercentileClusters(NodeDefinition):
     def _get_indices_and_feature_names(
         self,
         feature_names: List[str],
-        add_counts: bool,
     ) -> Tuple[List[int], List[int], List[str]]:
         cluster_idx, summ_idx, summ_names = identify_indices(
             feature_names, self._cluster_on
@@ -188,7 +185,7 @@ class PercentileClusters(NodeDefinition):
         for feature in summ_names:
             for pct in self._percentiles:
                 new_feature_names.append(f"{feature}_pct{pct}")
-        if add_counts:
+        if self._add_counts:
             # add "counts" as the last feature
             new_feature_names.append("counts")
         return cluster_idx, summ_idx, new_feature_names
@@ -198,13 +195,16 @@ class PercentileClusters(NodeDefinition):
         x = x.numpy()
         # Construct clusters with percentile-summarized features
         if hasattr(self, "_summarization_indices"):
-            array = cluster_summarize_with_percentiles(
-                x=x,
-                summarization_indices=self._summarization_indices,
-                cluster_indices=self._cluster_indices,
-                percentiles=self._percentiles,
-                add_counts=self._add_counts,
+            cluster_class = cluster_and_pad(
+                x=x, cluster_columns=self._cluster_indices
             )
+            cluster_class.add_percentile_summary(
+                summarization_indices=self._summarization_indices,
+                percentiles=self._percentiles,
+            )
+            if self._add_counts:
+                cluster_class.add_counts()
+            array = cluster_class.clustered_x
         else:
             self.error(
                 f"""{self.__class__.__name__} was not instatiated with
