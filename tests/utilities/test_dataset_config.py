@@ -272,7 +272,7 @@ def test_dataset_config_files(backend: str) -> None:
 
 
 @pytest.mark.order(6)
-@pytest.mark.parametrize("backend", ["sqlite"])
+@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
 def test_multiple_dataset_config_dict_selection(backend: str) -> None:
     """Test constructing Dataset with multiple data paths."""
     # Arrange
