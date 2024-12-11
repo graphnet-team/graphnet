@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-models-graphs-utils--page-root">Source code for graphnet.models.graphs.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Utility functions for construction of graphs."""</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -473,6 +473,8 @@
 
 
 
+<span class="c1"># TODO Remove this function as it is superseded by</span>
+<span class="c1"># cluster_and_pad wich has the same functionality</span>
 <div class="viewcode-block" id="cluster_summarize_with_percentiles">
 <a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_summarize_with_percentiles">[docs]</a>
 <span class="k">def</span> <span class="nf">cluster_summarize_with_percentiles</span><span class="p">(</span>
@@ -532,6 +534,340 @@
         <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">array</span></div>
+
+
+
+<div class="viewcode-block" id="cluster_and_pad">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_and_pad">[docs]</a>
+<span class="k">class</span> <span class="nc">cluster_and_pad</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Cluster and pad the data for further summarization.</span>
+
+<span class="sd">    Clusters the inptut data according to the specified columns</span>
+<span class="sd">    and computes aggregate statistics on the clusters.</span>
+<span class="sd">    The clustering will happen only ones creating a cluster matrix</span>
+<span class="sd">    which will hold all the aggregated statistics and a padded matrix which</span>
+<span class="sd">    will hold the padded data for quick calculation of aggregate statistics.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">    cluster_and_pad(x = single_event_as_array,</span>
+<span class="sd">                                 cluster_columns = [0,1,2])</span>
+<span class="sd">    # Creates a cluster matrix and a padded matrix,</span>
+<span class="sd">    # the cluster matrix will contain the unique values of the cluster columns,</span>
+<span class="sd">    # no additional aggregate statistics are added yet.</span>
+
+<span class="sd">    cluster_class.add_percentile_summary(summarization_indices = [3,4,5],</span>
+<span class="sd">                                         percentiles = [10,50,90])</span>
+<span class="sd">    # Adds the 10th, 50th and 90th percentile of columns 3,4</span>
+<span class="sd">    # and 5 in the input data to the cluster matrix.</span>
+
+<span class="sd">    cluster_class.add_std(column = 4)</span>
+<span class="sd">    # Adds the standard deviation of column 4 in the input data</span>
+<span class="sd">    # to the cluster matrix.</span>
+<span class="sd">    x = cluster_class.clustered_x</span>
+<span class="sd">    # Gets the clustered matrix with all the aggregate statistics.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">cluster_columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">input_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Initialize the class with the data and cluster columns.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x: Array to be clustered</span>
+<span class="sd">            cluster_columns: List of column indices on which the clusters</span>
+<span class="sd">                            are constructed.</span>
+<span class="sd">            input_names: Names of the columns in the input data for automatic</span>
+<span class="sd">                        generation of names.</span>
+<span class="sd">            Adds:</span>
+<span class="sd">                clustered_x: Added to the class</span>
+<span class="sd">                _counts: Added to the class</span>
+<span class="sd">                _padded_x: Added to the class</span>
+<span class="sd">        """</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">lex_sort</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">cluster_columns</span><span class="o">=</span><span class="n">cluster_columns</span><span class="p">)</span>
+
+        <span class="n">unique_sensors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">[:,</span> <span class="n">cluster_columns</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+
+        <span class="n">contingency_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">unique_sensors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="n">contingency_table</span> <span class="o">=</span> <span class="n">lex_sort</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">contingency_table</span><span class="p">,</span> <span class="n">cluster_columns</span><span class="o">=</span><span class="n">cluster_columns</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="p">[:,</span> <span class="mi">0</span> <span class="p">:</span> <span class="n">unique_sensors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">contingency_table</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">:]</span>
+            <span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">:]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="o">=</span> <span class="n">input_names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">)</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="p">),</span> <span class="s2">"The input names must have the same length as the input data"</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">input_names</span><span class="p">)[</span><span class="n">cluster_columns</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_add_column</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">column</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add a column to the clustered tensor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            column: Column to be added to the tensor</span>
+<span class="sd">            location: Location to insert the column in the clustered tensor.</span>
+<span class="sd">        Altered:</span>
+<span class="sd">            clustered_x: The column is added at the end of the tenor or</span>
+<span class="sd">                            inserted at the specified location</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">location</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">,</span> <span class="n">column</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_add_column_names</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add names to the columns of the clustered tensor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            names: Names to be added to the columns of the tensor</span>
+<span class="sd">            location: Location to insert the names in the clustered tensor</span>
+<span class="sd">        Altered:</span>
+<span class="sd">            _cluster_names: The names are added at the end of the tensor</span>
+<span class="sd">                            or inserted at the specified location</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">location</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cluster_names</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_names</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_names</span><span class="p">,</span> <span class="n">location</span><span class="p">,</span> <span class="n">names</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_charge_sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charge_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculate the sum of the charge."""</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_sum"</span>
+        <span class="p">),</span> <span class="s2">"Charge sum has already been calculated, </span><span class="se">\</span>
+<span class="s2">            re-calculation is not allowed"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_calculate_charge_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charge_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculate the weights of the charge."""</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_weights"</span>
+        <span class="p">),</span> <span class="s2">"Charge weights have already been calculated, </span><span class="se">\</span>
+<span class="s2">            re-calculation is not allowed"</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_sum"</span>
+        <span class="p">),</span> <span class="s2">"Charge sum has not been calculated, </span><span class="se">\</span>
+<span class="s2">            please run calculate_charge_sum"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_weights</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="cluster_and_pad.add_charge_threshold_summary">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_and_pad.add_charge_threshold_summary">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_charge_threshold_summary</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">summarization_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">percentiles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">charge_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Summarize features through percentiles on charge of sensor.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            summarization_indices: List of column indices that defines features</span>
+<span class="sd">                                   that will be summarized with percentiles.</span>
+<span class="sd">            percentiles: percentiles used to summarize `x`. E.g. [10,50,90].</span>
+<span class="sd">            charge_index: index of the charge column in the padded tensor</span>
+<span class="sd">            location: Location to insert the summarization indices in the</span>
+<span class="sd">                      clustered tensor defaults to adding at the end</span>
+<span class="sd">        Adds:</span>
+<span class="sd">            _charge_sum: Added to the class</span>
+<span class="sd">            _charge_weights: Added to the class</span>
+<span class="sd">        Altered:</span>
+<span class="sd">            _padded_x: Charge is altered to be the cumulative sum</span>
+<span class="sd">                       of the charge divided by the total charge</span>
+<span class="sd">            clustered_x: The summarization indices are added at the end</span>
+<span class="sd">                         of the tensor or inserted at the specified location.</span>
+<span class="sd">            _cluster_names: The names are added at the end of the tensor</span>
+<span class="sd">                            or inserted at the specified location</span>
+<span class="sd">        """</span>
+        <span class="c1"># convert the charge to the cumulative sum of the charge divided</span>
+        <span class="c1"># by the total charge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_sum</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_weights</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span>
+            <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Summarize the charge at different percentiles</span>
+        <span class="n">selections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+            <span class="o">&gt;=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">percentiles</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">),</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">selections</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span>
+            <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span>
+        <span class="p">]</span>
+
+        <span class="n">selections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">summarization_indices</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">summarization_indices</span><span class="p">)</span>
+        <span class="p">)[</span><span class="n">selections</span><span class="p">]</span>
+        <span class="n">selections</span> <span class="o">=</span> <span class="n">selections</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span><span class="n">selections</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+        <span class="c1"># update the cluster names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_charge_threshold_"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">summarization_indices</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">percentiles</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_percentile_summary">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_and_pad.add_percentile_summary">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_percentile_summary</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">summarization_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">percentiles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"linear"</span><span class="p">,</span>
+        <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Summarize the features of the sensors using percentiles.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            summarization_indices: List of column indices that defines features</span>
+<span class="sd">                                    that will be summarized with percentiles.</span>
+<span class="sd">            percentiles: percentiles used to summarize `x`. E.g. [10,50,90].</span>
+<span class="sd">            method: Method to summarize the features. E.g. "linear"</span>
+<span class="sd">            location: Location to insert the summarization indices in the</span>
+<span class="sd">                       clustered tensor defaults to adding at the end</span>
+<span class="sd">        Altered:</span>
+<span class="sd">            clustered_x: The summarization indices are added at the end of</span>
+<span class="sd">                         the tensor or inserted at the specified location</span>
+<span class="sd">            _cluster_names: The names are added at the end of the tensor</span>
+<span class="sd">                            or inserted at the specified location</span>
+<span class="sd">        """</span>
+        <span class="n">percentiles_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanpercentile</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">summarization_indices</span><span class="p">],</span>
+            <span class="n">percentiles</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">percentiles_x</span> <span class="o">=</span> <span class="n">percentiles_x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span><span class="n">percentiles_x</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+        <span class="c1"># update the cluster names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_percentile_"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">summarization_indices</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">percentiles</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_counts">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_and_pad.add_counts">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_counts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add the counts of the sensor to the summarization features."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">),</span> <span class="n">location</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"counts"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_sum_charge">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_and_pad.add_sum_charge">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_sum_charge</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">charge_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add the sum of the charge to the summarization features."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_sum"</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_sum</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+        <span class="c1"># update the cluster names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">charge_index</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_sum"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_std">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_and_pad.add_std">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_std</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add the standard deviation of the column.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            columns: Index of the columns from which to calculate the standard</span>
+<span class="sd">                    deviation.</span>
+<span class="sd">            location: Location to insert the standard deviation in the</span>
+<span class="sd">                      clustered tensor defaults to adding at the end</span>
+<span class="sd">            weights: Optional weights to be applied to the standard deviation</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">columns</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">location</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_std"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_mean">
+<a class="viewcode-back" href="../../../../api/graphnet.models.graphs.utils.html#graphnet.models.graphs.utils.cluster_and_pad.add_mean">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_mean</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">weights</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add the mean of the column."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">columns</span><span class="p">]</span> <span class="o">*</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">location</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># update the cluster names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_mean"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+</div>
 
 
 
