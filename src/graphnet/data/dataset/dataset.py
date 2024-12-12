@@ -141,7 +141,16 @@ class Dataset(
             cfg["graph_definition"] = parse_graph_definition(cfg)
         if cfg["labels"] is not None:
             cfg["labels"] = parse_labels(cfg)
-        return source._dataset_class(**cfg)
+
+        if isinstance(cfg["path"], list):
+            sources = []
+            for path in cfg["path"]:
+                cfg["path"] = path
+                sources.append(source._dataset_class(**cfg))
+            source = EnsembleDataset(sources)
+            return source
+        else:
+            return source._dataset_class(**cfg)
 
     @classmethod
     def concatenate(
