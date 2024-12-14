@@ -669,14 +669,14 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
             self.VeRow = nn.Parameter(torch.zeros(self.out_dim, self.num_heads, self.out_dim), requires_grad=True)
             nn.init.xavier_normal_(self.VeRow)
             
-    def propagate_attention(self, batch):
-        src = batch.K_h[batch.edge_index[0]]      # (num relative) x num_heads x out_dim
-        dest = batch.Q_h[batch.edge_index[1]]     # (num relative) x num_heads x out_dim
+    def propagate_attention(self, data):
+        src = data.K_x[data.edge_index[0]]      # (num relative) x num_heads x out_dim
+        dest = data.Q_x[data.edge_index[1]]     # (num relative) x num_heads x out_dim
         score = src + dest                        # element-wise multiplication
 
-        if batch.get("E", None) is not None:
-            batch.E = batch.E.view(-1, self.num_heads, self.out_dim * 2)
-            E_w, E_b = batch.E[:, :, :self.out_dim], batch.E[:, :, self.out_dim:]
+        if data.get("E", None) is not None:
+            data.E = data.E.view(-1, self.num_heads, self.out_dim * 2)
+            E_w, E_b = data.E[:, :, :self.out_dim], data.E[:, :, self.out_dim:]
             # (num relative) x num_heads x out_dim
             score = score * E_w
             score = torch.sqrt(torch.relu(score)) - torch.sqrt(torch.relu(-score))
@@ -686,46 +686,43 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
         e_t = score
 
         # output edge
-        if batch.get("E", None) is not None:
-            batch.wE = score.flatten(1)
+        if data.get("E", None) is not None:
+            data.wE = score.flatten(1)
 
         # final attn
-        # score = oe.contract("ehd, dhc->ehc", score, self.Aw, backend="torch")
         score = torch.einsum("ehd, dhc->ehc", score, self.Aw)
         if self.clamp is not None:
             score = torch.clamp(score, min=-self.clamp, max=self.clamp)
 
-        # raw_attn = score
-        # score = pyg_softmax(score, batch.edge_index[1])  # (num relative) x num_heads x 1
-        score = softmax(score, index=batch.edge_index[1])  # Replace w/ torch_geometric function -PW
+        
+        score = softmax(score, index=data.edge_index[1]) # (num relative) x num_heads x 1
         score = self.dropout(score)
-        batch.attn = score
+        data.attn = score
 
         # Aggregate with Attn-Score
-        msg = batch.V_h[batch.edge_index[0]] * score  # (num relative) x num_heads x out_dim
-        batch.wV = torch.zeros_like(batch.V_h)  # (num nodes in batch) x num_heads x out_dim
+        msg = data.V_x[data.edge_index[0]] * score  # (num relative) x num_heads x out_dim
+        data.wV = torch.zeros_like(data.V_x)  # (num nodes in batch) x num_heads x out_dim
         
-        scatter(msg, batch.edge_index[1], dim=0, out=batch.wV, reduce='add')
+        scatter(msg, data.edge_index[1], dim=0, out=data.wV, reduce='add')
 
-        if self.edge_enhance and batch.E is not None:
-            rowV = scatter(e_t * score, batch.edge_index[1], dim=0, reduce="add")
-            # rowV = oe.contract("nhd, dhc -> nhc", rowV, self.VeRow, backend="torch")
+        if self.edge_enhance and data.E is not None:
+            rowV = scatter(e_t * score, data.edge_index[1], dim=0, reduce="add")
             rowV = torch.einsum("nhd, dhc -> nhc", rowV, self.VeRow)
-            batch.wV = batch.wV + rowV
+            data.wV = data.wV + rowV
 
     def forward(self, data):
-        Q_h = self.Q(data.x)
-        K_h = self.K(data.x)
-
-        V_h = self.V(data.x)
+        Q_x = self.Q(data.x)
+        K_x = self.K(data.x)
+        V_x = self.V(data.x)
+        
         if data.get("edge_attr", None) is not None:
             data.E = self.E(data.edge_attr)
         else:
             data.E = None
 
-        data.Q_h = Q_h.view(-1, self.num_heads, self.out_dim)
-        data.K_h = K_h.view(-1, self.num_heads, self.out_dim)
-        data.V_h = V_h.view(-1, self.num_heads, self.out_dim)
+        data.Q_x = Q_x.view(-1, self.num_heads, self.out_dim)
+        data.K_x = K_x.view(-1, self.num_heads, self.out_dim)
+        data.V_x = V_x.view(-1, self.num_heads, self.out_dim)
         self.propagate_attention(data)
         h_out = data.wV
         e_out = data.get('wE', None)
@@ -777,6 +774,8 @@ class GritTransformerLayer(LightningModule):
                  attn_no_qk=False,
                  **kwargs):
         super().__init__()
+        
+        assert not (layer_norm and batch_norm), "Cannot use both layer and batch normalization!"
 
         self.in_channels = in_dim
         self.out_channels = out_dim
@@ -815,7 +814,7 @@ class GritTransformerLayer(LightningModule):
             no_qk=attn_no_qk,
         )
 
-        self.O_h = nn.Linear(out_dim//num_heads * num_heads, out_dim)
+        self.O_x = nn.Linear(out_dim//num_heads * num_heads, out_dim)
         if O_e:
             self.O_e = nn.Linear(out_dim//num_heads * num_heads, out_dim)
         else:
@@ -842,101 +841,101 @@ class GritTransformerLayer(LightningModule):
                                                 eps=1e-5, 
                                                 momentum=self.batch_norm_momentum) if norm_e else nn.Identity()
 
-        # FFN for h
-        self.FFN_h_layer1 = nn.Linear(out_dim, out_dim * 2)
-        self.FFN_h_layer2 = nn.Linear(out_dim * 2, out_dim)
+        # FFN for x
+        self.FFN_x_layer1 = nn.Linear(out_dim, out_dim * 2)
+        self.FFN_x_layer2 = nn.Linear(out_dim * 2, out_dim)
 
         if self.layer_norm:
-            self.layer_norm2_h = nn.LayerNorm(out_dim)
+            self.layer_norm2_x = nn.LayerNorm(out_dim)
 
         if self.batch_norm:
-            self.batch_norm2_h = nn.BatchNorm1d(out_dim, 
+            self.batch_norm2_x = nn.BatchNorm1d(out_dim, 
                                                 track_running_stats=self.batch_norm_runner, 
                                                 eps=1e-5,
                                                 momentum=self.batch_norm_momentum)
 
-        if self.rezero:
-            self.alpha1_h = nn.Parameter(torch.zeros(1,1))
-            self.alpha2_h = nn.Parameter(torch.zeros(1,1))
+        if self.rezero: # Learnable scaling parameters
+            self.alpha1_x = nn.Parameter(torch.zeros(1,1))
+            self.alpha2_x = nn.Parameter(torch.zeros(1,1))
             self.alpha1_e = nn.Parameter(torch.zeros(1,1))
             
-        self.dropout1 = nn.Dropout(dropout)
-        self.dropout2 = nn.Dropout(dropout)
-        self.dropout3 = nn.Dropout(dropout)
+        self.dropout1 = nn.Dropout(dropout) # Post-attention dropout on x
+        self.dropout2 = nn.Dropout(dropout) # Post-attention dropout on e
+        self.dropout3 = nn.Dropout(dropout) # Post-FFN dropout on x
 
     def forward(self, data):
-        h = data.x
+        x = data.x
         num_nodes = data.num_nodes
         log_deg = get_log_deg(data)
 
-        h_in1 = h  # for first residual connection
-        e_in1 = data.get("edge_attr", None)
+        x_attn_residual = x  # for first residual connection
+        e_values_in = data.get("edge_attr", None)
         e = None
         # multi-head attention out
 
-        h_attn_out, e_attn_out = self.attention(data)
+        x_attn_out, e_attn_out = self.attention(data)
 
-        h = h_attn_out.view(num_nodes, -1)
+        x = x_attn_out.view(num_nodes, -1)
         # TODO: Make this a nn.Dropout in initialization -PW
-        # h = F.dropout(h, self.dropout, training=self.training)
-        h = self.dropout1(h)
+        x = self.dropout1(x)
 
-        # degree scaler
+        # Apply degree scaler if enabled
         if self.deg_scaler:
-            h = torch.stack([h, h * log_deg], dim=-1)
-            h = (h * self.deg_coef).sum(dim=-1)
+            x = torch.stack([x, x*log_deg], dim=-1)
+            x = (x * self.deg_coef).sum(dim=-1)
 
-        h = self.O_h(h)
+        x = self.O_x(x)
         if e_attn_out is not None:
             e = e_attn_out.flatten(1)
             # TODO: Make this a nn.Dropout in initialization -PW
-            # e = F.dropout(e, self.dropout, training=self.training)
             e = self.dropout2(e)
             e = self.O_e(e)
 
         if self.residual:
-            if self.rezero: h = h * self.alpha1_h
-            h = h_in1 + h  # residual connection
+            if self.rezero: 
+                x = x * self.alpha1_x
+            x = x_attn_residual + x  # residual connection
+            
             if e is not None:
                 if self.rezero: e = e * self.alpha1_e
-                e = e + e_in1
+                e = e + e_values_in
 
         if self.layer_norm:
-            h = self.layer_norm1_h(h)
+            x = self.layer_norm1_h(x)
             if e is not None: e = self.layer_norm1_e(e)
 
         if self.batch_norm:
-            h = self.batch_norm1_h(h)
+            x = self.batch_norm1_h(x)
             if e is not None: e = self.batch_norm1_e(e)
 
         # FFN for h
-        h_ffn_residual = h  # Residual over the FFN
-        h = self.FFN_h_layer1(h)  # Apply FFN
-        h = self.act(h)
-        h = self.dropout3(h)
-        h = self.FFN_h_layer2(h)
+        x_ffn_residual = x  # Residual over the FFN
+        x = self.FFN_x_layer1(x)  # Apply FFN
+        x = self.act(x)
+        x = self.dropout3(x)
+        x = self.FFN_x_layer2(x)
 
         if self.residual:
-            if self.rezero: h = h * self.alpha2_h
-            h = h_ffn_residual + h  # residual connection
+            if self.rezero: x = x * self.alpha2_x
+            x = x_ffn_residual + x  # residual connection
 
         if self.layer_norm:
-            h = self.layer_norm2_h(h)
+            x = self.layer_norm2_x(x)
 
         if self.batch_norm:
-            h = self.batch_norm2_h(h)
+            x = self.batch_norm2_x(x)
 
-        data.x = h
+        data.x = x
         if self.update_edges:
             data.edge_attr = e
         else:
-            data.edge_attr = e_in1
+            data.edge_attr = e_values_in
 
         return data
 
 # TODO: This is a prediction head... we probably want only the graph stuff here and let the
 # Tasks handle the last layer. -PW
-class SANGraphHead(nn.Module):
+class SANGraphHead(LightningModule):
     """
     SAN prediction head for graph prediction tasks.
     Args:
@@ -945,35 +944,39 @@ class SANGraphHead(nn.Module):
         L (int): Number of hidden layers.
     """
 
-    def __init__(self, dim_in, dim_out, L=2):
+    def __init__(self, 
+                 dim_in, 
+                 dim_out, 
+                 L=2):
         super().__init__()
         self.deg_scaler = False
-        self.fwl = False
+        # self.fwl = False
         # graph_pooling: add
         self.pooling_fun = global_add_pool
 
-        list_FC_layers = [
+        fc_layers = [
             nn.Linear(dim_in // 2 ** l, dim_in // 2 ** (l + 1), bias=True)
-            for l in range(L)]
-        list_FC_layers.append(
+            for l in range(L)
+        ]
+        fc_layers.append(
             nn.Linear(dim_in // 2 ** L, dim_out, bias=True))
-        self.FC_layers = nn.ModuleList(list_FC_layers)
+        self.fc_layers = nn.ModuleList(fc_layers)
         self.L = L
         # TODO: Dynamic activation functions -PW
         self.activation = nn.ReLU()
         # note: modified to add () in the end from original code of 'GPS'
         #   potentially due to the change of PyG/GraphGym version
 
-    def _apply_index(self, batch):
-        return batch.graph_feature, batch.y
+    def _apply_index(self, data):
+        return data.graph_feature, data.y
 
-    def forward(self, batch):
-        graph_emb = self.pooling_fun(batch.x, batch.batch)
+    def forward(self, data):
+        graph_emb = self.pooling_fun(data.x, data.batch)
         for l in range(self.L):
-            graph_emb = self.FC_layers[l](graph_emb)
+            graph_emb = self.fc_layers[l](graph_emb)
             graph_emb = self.activation(graph_emb)
-        graph_emb = self.FC_layers[self.L](graph_emb)
-        batch.graph_feature = graph_emb
+        graph_emb = self.fc_layers[self.L](graph_emb)
+        data.graph_feature = graph_emb # Do we need this? -PW
         # pred, label = self._apply_index(batch)
         return graph_emb
         # return pred, label
