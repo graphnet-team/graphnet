@@ -12,7 +12,7 @@ from torch_geometric.nn.inits import reset
 import torch.nn as nn
 from torch.nn.functional import linear
 from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer
-from torch_geometric.utils import to_dense_batch, degree
+from torch_geometric.utils import to_dense_batch, degree, softmax
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_scatter import scatter, scatter_max, scatter_add
 
@@ -623,14 +623,20 @@ def pyg_softmax(src, index, num_nodes=None):
 
 class MultiHeadAttentionLayerGritSparse(LightningModule):
     """
-        Proposed Attention Computation for GRIT
+    Proposed Attention Computation for GRIT
     """
 
-    def __init__(self, in_dim, out_dim, num_heads, use_bias,
-                 clamp=5., dropout=0., act=None,
+    def __init__(self, 
+                 in_dim, 
+                 out_dim, 
+                 num_heads, 
+                 use_bias,
+                 clamp=5., 
+                 dropout=0., 
+                 act=None,
                  edge_enhance=True,
-                 sqrt_relu=False,
-                 signed_sqrt=True,
+                #  sqrt_relu=False,  # unused
+                #  signed_sqrt=True,  # unused
                  **kwargs):
         super().__init__()
 
@@ -689,8 +695,9 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
         if self.clamp is not None:
             score = torch.clamp(score, min=-self.clamp, max=self.clamp)
 
-        raw_attn = score
-        score = pyg_softmax(score, batch.edge_index[1])  # (num relative) x num_heads x 1
+        # raw_attn = score
+        # score = pyg_softmax(score, batch.edge_index[1])  # (num relative) x num_heads x 1
+        score = softmax(score, index=batch.edge_index[1])  # Replace w/ torch_geometric function -PW
         score = self.dropout(score)
         batch.attn = score
 
@@ -706,39 +713,39 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
             rowV = torch.einsum("nhd, dhc -> nhc", rowV, self.VeRow)
             batch.wV = batch.wV + rowV
 
-    def forward(self, batch):
-        Q_h = self.Q(batch.x)
-        K_h = self.K(batch.x)
+    def forward(self, data):
+        Q_h = self.Q(data.x)
+        K_h = self.K(data.x)
 
-        V_h = self.V(batch.x)
-        if batch.get("edge_attr", None) is not None:
-            batch.E = self.E(batch.edge_attr)
+        V_h = self.V(data.x)
+        if data.get("edge_attr", None) is not None:
+            data.E = self.E(data.edge_attr)
         else:
-            batch.E = None
+            data.E = None
 
-        batch.Q_h = Q_h.view(-1, self.num_heads, self.out_dim)
-        batch.K_h = K_h.view(-1, self.num_heads, self.out_dim)
-        batch.V_h = V_h.view(-1, self.num_heads, self.out_dim)
-        self.propagate_attention(batch)
-        h_out = batch.wV
-        e_out = batch.get('wE', None)
+        data.Q_h = Q_h.view(-1, self.num_heads, self.out_dim)
+        data.K_h = K_h.view(-1, self.num_heads, self.out_dim)
+        data.V_h = V_h.view(-1, self.num_heads, self.out_dim)
+        self.propagate_attention(data)
+        h_out = data.wV
+        e_out = data.get('wE', None)
 
         return h_out, e_out
     
 @torch.no_grad()
-def get_log_deg(batch):
-    if "log_deg" in batch:
-        log_deg = batch.log_deg
-    elif "deg" in batch:
-        deg = batch.deg
+def get_log_deg(data):
+    if "log_deg" in data:
+        log_deg = data.log_deg
+    elif "deg" in data:
+        deg = data.deg
         log_deg = torch.log(deg + 1).unsqueeze(-1)
     else:
         # warnings.warn("Compute the degree on the fly; Might be problematric if have applied edge-padding to complete graphs")
-        deg = degree(batch.edge_index[1],
-                     num_nodes=batch.num_nodes,
+        deg = degree(data.edge_index[1],
+                     num_nodes=data.num_nodes,
                      dtype=torch.float)  # TODO: Let dtype be anything? -PW
         log_deg = torch.log(deg + 1)
-    log_deg = log_deg.view(batch.num_nodes, 1)
+    log_deg = log_deg.view(data.num_nodes, 1)
     return log_deg
 
 class GritTransformerLayer(LightningModule):
@@ -750,17 +757,27 @@ class GritTransformerLayer(LightningModule):
                  out_dim, 
                  num_heads,
                  dropout=0.0,
-                 attn_dropout=0.0,
-                 layer_norm=False, batch_norm=True,
+                 layer_norm=False, 
+                 batch_norm=True,
                  residual=True,
+                 deg_scaler=True,
                  act='relu',
                  norm_e=True,
+                 update_edges=True,
+                 batch_norm_momentum=0.1,
+                 batch_norm_runner=True,
+                 rezero=False,
                  O_e=True,
-                 cfg=dict(),
+                 attn_bias=False,
+                 attn_dropout=0.0,  # CHECK
+                 attn_clamp=5.0,
+                 attn_act='relu',
+                 attn_edge_enhance=True,
+                 attn_scale=False,
+                 attn_no_qk=False,
                  **kwargs):
         super().__init__()
 
-        self.debug = False
         self.in_channels = in_dim
         self.out_channels = out_dim
         self.in_dim = in_dim
@@ -770,12 +787,11 @@ class GritTransformerLayer(LightningModule):
         self.residual = residual
         self.layer_norm = layer_norm
         self.batch_norm = batch_norm
-
-        # -------
-        self.update_e = cfg.get("update_e", True)
-        self.bn_momentum = cfg.get("bn_momentum", 0.1)
-        self.bn_no_runner = cfg.get("bn_no_runner", False)
-        self.rezero = cfg.get("rezero", False)
+        self.update_edges = update_edges
+        self.batch_norm_momentum = batch_norm_momentum
+        self.batch_norm_runner = batch_norm_runner
+        self.rezero = rezero
+        self.deg_scaler = deg_scaler
 
         # self.act = act_dict[act]() if act is not None else nn.Identity()
         if act == "relu":
@@ -783,47 +799,21 @@ class GritTransformerLayer(LightningModule):
         else:
             print("GritTransformerLayer: Did not identify activation function, setting to id.")
             self.act = nn.Identity()
-        cfg_attn = cfg.get("attn", None)
-        if cfg_attn is None:
-            cfg_attn = dict()
             
-        self.use_attn = cfg_attn.get("use", True)
         # self.sigmoid_deg = cfg_attn.get("sigmoid_deg", False)
-        self.deg_scaler = cfg_attn.get("deg_scaler", True)
 
         self.attention = MultiHeadAttentionLayerGritSparse(
             in_dim=in_dim,
             out_dim=out_dim // num_heads,
             num_heads=num_heads,
-            use_bias=cfg_attn.get("use_bias", False),
+            use_bias=attn_bias,
             dropout=attn_dropout,
-            clamp=cfg_attn.get("clamp", 5.),
-            act=cfg_attn.get("act", "relu"),
-            edge_enhance=cfg_attn.get("edge_enhance", True),
-            sqrt_relu=cfg_attn.get("sqrt_relu", False),
-            signed_sqrt=cfg_attn.get("signed_sqrt", False),
-            scaled_attn =cfg_attn.get("scaled_attn", False),
-            no_qk=cfg_attn.get("no_qk", False),
+            clamp=attn_clamp,
+            act=attn_act,
+            edge_enhance=attn_edge_enhance,
+            scaled_attn=attn_scale,
+            no_qk=attn_no_qk,
         )
-
-        if cfg_attn.get('graphormer_attn', False):
-            assert NotImplementedError, "GraphormerAttention not implemented!"
-            # self.attention = MultiHeadAttentionLayerGraphormerSparse(
-            #     in_dim=in_dim,
-            #     out_dim=out_dim // num_heads,
-            #     num_heads=num_heads,
-            #     use_bias=cfg_attn.get("use_bias", False),
-            #     dropout=attn_dropout,
-            #     clamp=cfg_attn.get("clamp", 5.),
-            #     act=cfg_attn.get("act", "relu"),
-            #     edge_enhance=True,
-            #     sqrt_relu=cfg_attn.get("sqrt_relu", False),
-            #     signed_sqrt=cfg_attn.get("signed_sqrt", False),
-            #     scaled_attn =cfg_attn.get("scaled_attn", False),
-            #     no_qk=cfg_attn.get("no_qk", False),
-            # )
-
-
 
         self.O_h = nn.Linear(out_dim//num_heads * num_heads, out_dim)
         if O_e:
@@ -843,8 +833,14 @@ class GritTransformerLayer(LightningModule):
 
         if self.batch_norm:
             # when the batch_size is really small, use smaller momentum to avoid bad mini-batch leading to extremely bad val/test loss (NaN)
-            self.batch_norm1_h = nn.BatchNorm1d(out_dim, track_running_stats=not self.bn_no_runner, eps=1e-5, momentum=self.bn_momentum)
-            self.batch_norm1_e = nn.BatchNorm1d(out_dim, track_running_stats=not self.bn_no_runner, eps=1e-5, momentum=self.bn_momentum) if norm_e else nn.Identity()
+            self.batch_norm1_h = nn.BatchNorm1d(out_dim, 
+                                                track_running_stats=self.batch_norm_runner, 
+                                                eps=1e-5, 
+                                                momentum=self.batch_norm_momentum)
+            self.batch_norm1_e = nn.BatchNorm1d(out_dim, 
+                                                track_running_stats=self.batch_norm_runner, 
+                                                eps=1e-5, 
+                                                momentum=self.batch_norm_momentum) if norm_e else nn.Identity()
 
         # FFN for h
         self.FFN_h_layer1 = nn.Linear(out_dim, out_dim * 2)
@@ -854,7 +850,10 @@ class GritTransformerLayer(LightningModule):
             self.layer_norm2_h = nn.LayerNorm(out_dim)
 
         if self.batch_norm:
-            self.batch_norm2_h = nn.BatchNorm1d(out_dim, track_running_stats=not self.bn_no_runner, eps=1e-5, momentum=self.bn_momentum)
+            self.batch_norm2_h = nn.BatchNorm1d(out_dim, 
+                                                track_running_stats=self.batch_norm_runner, 
+                                                eps=1e-5,
+                                                momentum=self.batch_norm_momentum)
 
         if self.rezero:
             self.alpha1_h = nn.Parameter(torch.zeros(1,1))
@@ -865,17 +864,17 @@ class GritTransformerLayer(LightningModule):
         self.dropout2 = nn.Dropout(dropout)
         self.dropout3 = nn.Dropout(dropout)
 
-    def forward(self, batch):
-        h = batch.x
-        num_nodes = batch.num_nodes
-        log_deg = get_log_deg(batch)
+    def forward(self, data):
+        h = data.x
+        num_nodes = data.num_nodes
+        log_deg = get_log_deg(data)
 
         h_in1 = h  # for first residual connection
-        e_in1 = batch.get("edge_attr", None)
+        e_in1 = data.get("edge_attr", None)
         e = None
         # multi-head attention out
 
-        h_attn_out, e_attn_out = self.attention(batch)
+        h_attn_out, e_attn_out = self.attention(data)
 
         h = h_attn_out.view(num_nodes, -1)
         # TODO: Make this a nn.Dropout in initialization -PW
@@ -911,17 +910,15 @@ class GritTransformerLayer(LightningModule):
             if e is not None: e = self.batch_norm1_e(e)
 
         # FFN for h
-        h_in2 = h  # for second residual connection
-        h = self.FFN_h_layer1(h)
+        h_ffn_residual = h  # Residual over the FFN
+        h = self.FFN_h_layer1(h)  # Apply FFN
         h = self.act(h)
-        # TODO: Make this a nn.Dropout in initialization -PW
-        # h = F.dropout(h, self.dropout, training=self.training)F
         h = self.dropout3(h)
         h = self.FFN_h_layer2(h)
 
         if self.residual:
             if self.rezero: h = h * self.alpha2_h
-            h = h_in2 + h  # residual connection
+            h = h_ffn_residual + h  # residual connection
 
         if self.layer_norm:
             h = self.layer_norm2_h(h)
@@ -929,13 +926,13 @@ class GritTransformerLayer(LightningModule):
         if self.batch_norm:
             h = self.batch_norm2_h(h)
 
-        batch.x = h
-        if self.update_e:
-            batch.edge_attr = e
+        data.x = h
+        if self.update_edges:
+            data.edge_attr = e
         else:
-            batch.edge_attr = e_in1
+            data.edge_attr = e_in1
 
-        return batch
+        return data
 
 # TODO: This is a prediction head... we probably want only the graph stuff here and let the
 # Tasks handle the last layer. -PW
