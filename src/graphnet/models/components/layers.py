@@ -645,47 +645,6 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
         if self.edge_enhance:
             self.VeRow = nn.Parameter(torch.zeros(self.out_dim, self.num_heads, self.out_dim), requires_grad=True)
             nn.init.xavier_normal_(self.VeRow)
-            
-    def propagate_attention(self, data):
-        src = data.K_x[data.edge_index[0]]      # (num relative) x num_heads x out_dim
-        dest = data.Q_x[data.edge_index[1]]     # (num relative) x num_heads x out_dim
-        score = src + dest                        # element-wise multiplication
-
-        if data.get("E", None) is not None:
-            data.E = data.E.view(-1, self.num_heads, self.out_dim * 2)
-            E_w, E_b = data.E[:, :, :self.out_dim], data.E[:, :, self.out_dim:]
-            # (num relative) x num_heads x out_dim
-            score = score * E_w
-            score = torch.sqrt(torch.relu(score)) - torch.sqrt(torch.relu(-score))
-            score = score + E_b
-
-        score = self.act(score)
-        e_t = score
-
-        # output edge
-        if data.get("E", None) is not None:
-            data.wE = score.flatten(1)
-
-        # final attn
-        score = torch.einsum("ehd, dhc->ehc", score, self.Aw)
-        if self.clamp is not None:
-            score = torch.clamp(score, min=-self.clamp, max=self.clamp)
-
-        
-        score = softmax(score, index=data.edge_index[1]) # (num relative) x num_heads x 1
-        score = self.dropout(score)
-        data.attn = score
-
-        # Aggregate with Attn-Score
-        msg = data.V_x[data.edge_index[0]] * score  # (num relative) x num_heads x out_dim
-        data.wV = torch.zeros_like(data.V_x)  # (num nodes in batch) x num_heads x out_dim
-        
-        scatter(msg, data.edge_index[1], dim=0, out=data.wV, reduce='add')
-
-        if self.edge_enhance and data.E is not None:
-            rowV = scatter(e_t * score, data.edge_index[1], dim=0, reduce="add")
-            rowV = torch.einsum("nhd, dhc -> nhc", rowV, self.VeRow)
-            data.wV = data.wV + rowV
 
     def forward(self, data):
         Q_x = self.Q(data.x)
@@ -693,18 +652,55 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
         V_x = self.V(data.x)
         
         if data.get("edge_attr", None) is not None:
-            data.E = self.E(data.edge_attr)
+            E = self.E(data.edge_attr)
         else:
-            data.E = None
+            E = None
 
-        data.Q_x = Q_x.view(-1, self.num_heads, self.out_dim)
-        data.K_x = K_x.view(-1, self.num_heads, self.out_dim)
-        data.V_x = V_x.view(-1, self.num_heads, self.out_dim)
-        self.propagate_attention(data)
-        h_out = data.wV
-        e_out = data.get('wE', None)
+        Q_x = Q_x.view(-1, self.num_heads, self.out_dim)
+        K_x = K_x.view(-1, self.num_heads, self.out_dim)
+        V_x = V_x.view(-1, self.num_heads, self.out_dim)
 
-        return h_out, e_out
+        # Applying Eq. 2:
+        src = K_x[data.edge_index[0]]      # (num relative) x num_heads x out_dim
+        dest = Q_x[data.edge_index[1]]     # (num relative) x num_heads x out_dim
+        score = src + dest                 # element-wise multiplication
+
+        if E is not None:
+            E = E.view(-1, self.num_heads, self.out_dim * 2)
+            E_w, E_b = E[:, :, :self.out_dim], E[:, :, self.out_dim:]
+            # (num relative) x num_heads x out_dim
+            score = score * E_w
+            score = torch.sqrt(torch.relu(score)) - torch.sqrt(torch.relu(-score))
+            score = score + E_b
+            
+        score = self.act(score)
+        e_t = score
+
+        # output edge
+        if E is not None:
+            wE = score.flatten(1)
+
+        # final attn
+        score = torch.einsum("ehd, dhc->ehc", score, self.Aw)
+        if self.clamp is not None:
+            score = torch.clamp(score, min=-self.clamp, max=self.clamp)
+        
+        score = softmax(score, index=data.edge_index[1]) # (num relative) x num_heads x 1
+        score = self.dropout(score)
+        # data.attn = score  # TODO: Remove? -PW
+
+        # Aggregate with Attn-Score
+        msg = V_x[data.edge_index[0]] * score   # (num relative) x num_heads x out_dim
+        wV = torch.zeros_like(V_x)              # (num nodes in batch) x num_heads x out_dim
+        
+        scatter(msg, data.edge_index[1], dim=0, out=wV, reduce='add')
+
+        if self.edge_enhance and data.E is not None:
+            rowV = scatter(e_t * score, data.edge_index[1], dim=0, reduce="add")
+            rowV = torch.einsum("nhd, dhc -> nhc", rowV, self.VeRow)
+            wV = wV + rowV
+        
+        return wV, wE
     
 @torch.no_grad()
 def get_log_deg(data):
@@ -791,11 +787,11 @@ class GritTransformerLayer(LightningModule):
             no_qk=attn_no_qk,
         )
 
-        self.O_x = nn.Linear(out_dim//num_heads * num_heads, out_dim)
+        self.fc1_x = nn.Linear(out_dim//num_heads * num_heads, out_dim)
         if O_e:
-            self.O_e = nn.Linear(out_dim//num_heads * num_heads, out_dim)
+            self.fc1_e = nn.Linear(out_dim//num_heads * num_heads, out_dim)
         else:
-            self.O_e = nn.Identity()
+            self.fc1_e = nn.Identity()
 
         # -------- Deg Scaler Option ------
 
@@ -861,12 +857,12 @@ class GritTransformerLayer(LightningModule):
             x = torch.stack([x, x*log_deg], dim=-1)
             x = (x * self.deg_coef).sum(dim=-1)
 
-        x = self.O_x(x)
+        x = self.fc1_x(x)
         if e_attn_out is not None:
             e = e_attn_out.flatten(1)
             # TODO: Make this a nn.Dropout in initialization -PW
             e = self.dropout2(e)
-            e = self.O_e(e)
+            e = self.fc1_e(e)
 
         if self.residual:
             if self.rezero: 
