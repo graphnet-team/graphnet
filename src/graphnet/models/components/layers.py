@@ -860,6 +860,10 @@ class GritTransformerLayer(LightningModule):
             self.alpha1_h = nn.Parameter(torch.zeros(1,1))
             self.alpha2_h = nn.Parameter(torch.zeros(1,1))
             self.alpha1_e = nn.Parameter(torch.zeros(1,1))
+            
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
+        self.dropout3 = nn.Dropout(dropout)
 
     def forward(self, batch):
         h = batch.x
@@ -875,7 +879,8 @@ class GritTransformerLayer(LightningModule):
 
         h = h_attn_out.view(num_nodes, -1)
         # TODO: Make this a nn.Dropout in initialization -PW
-        h = F.dropout(h, self.dropout, training=self.training)
+        # h = F.dropout(h, self.dropout, training=self.training)
+        h = self.dropout1(h)
 
         # degree scaler
         if self.deg_scaler:
@@ -886,7 +891,8 @@ class GritTransformerLayer(LightningModule):
         if e_attn_out is not None:
             e = e_attn_out.flatten(1)
             # TODO: Make this a nn.Dropout in initialization -PW
-            e = F.dropout(e, self.dropout, training=self.training)
+            # e = F.dropout(e, self.dropout, training=self.training)
+            e = self.dropout2(e)
             e = self.O_e(e)
 
         if self.residual:
@@ -909,7 +915,8 @@ class GritTransformerLayer(LightningModule):
         h = self.FFN_h_layer1(h)
         h = self.act(h)
         # TODO: Make this a nn.Dropout in initialization -PW
-        h = F.dropout(h, self.dropout, training=self.training)
+        # h = F.dropout(h, self.dropout, training=self.training)F
+        h = self.dropout3(h)
         h = self.FFN_h_layer2(h)
 
         if self.residual:

@@ -6,9 +6,12 @@ from graphnet.models.gnn.gnn import GNN
 from graphnet.models.components.layers import GritTransformerLayer, SANGraphHead
 from graphnet.models.components.embedding import RRWPLinearEdgeEncoder, RRWPLinearNodeEncoder, LinearNodeEncoder, LinearEdgeEncoder
 
-
 class GRIT(GNN):
     """
+    GRIT is a graph transformer model.
+    
+    Paper: "Graph Inductive Biases in Transformers without Message Passing", https://arxiv.org/abs/2305.17589
+    Original code: https://github.com/LiamMa/GRIT
     """
     def __init__(
                  self,
