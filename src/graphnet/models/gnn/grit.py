@@ -4,34 +4,7 @@ import torch.nn as nn
 from graphnet.models.gnn.gnn import GNN
 
 from graphnet.models.components.layers import GritTransformerLayer, SANGraphHead
-from graphnet.models.components.embedding import RRWPLinearEdgeEncoder, RRWPLinearNodeEncoder
-
-class LinearEdgeEncoder(torch.nn.Module):
-    def __init__(self, emb_dim):
-        super().__init__()
-        # if cfg.dataset.name in ['MNIST', 'CIFAR10']:
-        #     self.in_dim = 1
-        # elif cfg.dataset.name.startswith('attributed_triangle-'):
-        #     self.in_dim = 2
-        # else:
-        #     raise ValueError("Input edge feature dim is required to be hardset "
-        #                      "or refactored to use a cfg option.")
-        self.in_dim = 1
-        self.encoder = torch.nn.Linear(self.in_dim, emb_dim)
-
-    def forward(self, batch):
-        batch.edge_attr = self.encoder(batch.edge_attr.view(-1, self.in_dim))
-        return batch
-    
-class LinearNodeEncoder(torch.nn.Module):
-    def __init__(self, dim_in, emb_dim):
-        super().__init__()
-        
-        self.encoder = torch.nn.Linear(dim_in, emb_dim)
-
-    def forward(self, batch):
-        batch.x = self.encoder(batch.x)
-        return batch
+from graphnet.models.components.embedding import RRWPLinearEdgeEncoder, RRWPLinearNodeEncoder, LinearNodeEncoder, LinearEdgeEncoder
 
 
 class GRIT(GNN):

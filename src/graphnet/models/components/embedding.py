@@ -11,6 +11,28 @@ from torch_geometric.utils import add_self_loops
 from torch_scatter import scatter
 from torch_sparse import coalesce
 
+class LinearEdgeEncoder(LightningModule):
+    def __init__(self, emb_dim):
+        super().__init__()
+        
+        self.in_dim = 1  # TODO: generalize to more edge features -PW
+        self.encoder = torch.nn.Linear(self.in_dim, emb_dim)
+
+    def forward(self, data):
+        data.edge_attr = self.encoder(data.edge_attr.view(-1, self.in_dim))
+        return data
+    
+class LinearNodeEncoder(LightningModule):
+    def __init__(self, dim_in, emb_dim):
+        super().__init__()
+        
+        self.encoder = torch.nn.Linear(dim_in, emb_dim)
+
+    def forward(self, data):
+        data.x = self.encoder(data.x)
+        return data
+
+
 class SinusoidalPosEmb(LightningModule):
     """Sinusoidal positional embeddings module.
 
@@ -229,7 +251,7 @@ class RRWPLinearNodeEncoder(LightningModule):
         self.fc = nn.Linear(emb_dim, out_dim, bias=use_bias)
         torch.nn.init.xavier_uniform_(self.fc.weight)
 
-        if self.batchnorm:
+        if self.batchnorm: 
             self.bn = nn.BatchNorm1d(out_dim)
         if self.layernorm:
             self.ln = nn.LayerNorm(out_dim)
