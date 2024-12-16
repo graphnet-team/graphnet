@@ -94,6 +94,7 @@ class HigestEparticleExtractor(I3Extractor):
         particle = dataclasses.I3Particle()
         EonEntrance = 0
         checked_id_list = []
+        primary = frame[self.mctree].get_primaries()[0]
         for track in frame[self.mmctracklist]:
             track_particle = track.GetI3Particle()
             checked_id_list.append(track_particle.id)
@@ -102,7 +103,7 @@ class HigestEparticleExtractor(I3Extractor):
                     dataclasses.I3MCTree.parent(
                         frame[self.mctree], track_particle
                     )
-                    == frame[self.mctree].get_primaries()[0]
+                    == primary
                 ):
                     continue
             if track_particle.energy > EonEntrance:
