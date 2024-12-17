@@ -790,7 +790,6 @@ class GritTransformerLayer(LightningModule):
         self.num_heads = num_heads
         self.dropout = dropout
         self.residual = residual
-        self.norm = norm
         self.update_edges = update_edges
         self.batch_norm_momentum = batch_norm_momentum
         self.batch_norm_runner = batch_norm_runner
@@ -821,20 +820,18 @@ class GritTransformerLayer(LightningModule):
             )
             nn.init.xavier_normal_(self.deg_coef)
 
-        if self.norm == nn.LayerNorm:
-            self.layer_norm1_h = self.norm(out_dim)
-            self.layer_norm1_e = (
-                self.norm(out_dim) if norm_edges else nn.Identity()
-            )
-        elif self.norm == nn.BatchNorm1d:
-            self.batch_norm1_h = self.norm(
+        if norm == nn.LayerNorm:
+            self.norm1_x = norm(out_dim)
+            self.norm1_e = self.norm(out_dim) if norm_edges else nn.Identity()
+        elif norm == nn.BatchNorm1d:
+            self.norm1_x = norm(
                 out_dim,
                 track_running_stats=self.batch_norm_runner,
                 eps=1e-5,
                 momentum=self.batch_norm_momentum,
             )
-            self.batch_norm1_e = (
-                self.norm(
+            self.norm1_e = (
+                norm(
                     out_dim,
                     track_running_stats=self.batch_norm_runner,
                     eps=1e-5,
@@ -843,7 +840,7 @@ class GritTransformerLayer(LightningModule):
                 if norm_edges
                 else nn.Identity()
             )
-        else:
+        else:  # TODO: Maybe just set this to nn.Identity. -PW
             raise ValueError(
                 "GritTransformerLayer normalization layer must be 'LayerNorm' \
                     or 'BatchNorm1d'!"
@@ -853,11 +850,10 @@ class GritTransformerLayer(LightningModule):
         self.FFN_x_layer1 = nn.Linear(out_dim, out_dim * 2)
         self.FFN_x_layer2 = nn.Linear(out_dim * 2, out_dim)
 
-        if self.layer_norm:
-            self.layer_norm2_x = nn.LayerNorm(out_dim)
-
-        if self.batch_norm:
-            self.batch_norm2_x = nn.BatchNorm1d(
+        if self.norm == nn.LayerNorm:
+            self.norm2_x = norm(out_dim)
+        elif self.norm == nn.BatchNorm1d:
+            self.norm2_x = norm(
                 out_dim,
                 track_running_stats=self.batch_norm_runner,
                 eps=1e-5,
@@ -911,19 +907,13 @@ class GritTransformerLayer(LightningModule):
                     e = e * self.alpha1_e
                 e = e + e_values_in
 
-        if self.layer_norm:
-            x = self.layer_norm1_h(x)
-            if e is not None:
-                e = self.layer_norm1_e(e)
-
-        if self.batch_norm:
-            x = self.batch_norm1_h(x)
-            if e is not None:
-                e = self.batch_norm1_e(e)
+        x = self.norm1_x(x)
+        if e is not None:
+            e = self.norm1_e(e)
 
         # FFN for x
         x_ffn_residual = x  # Residual over the FFN
-        x = self.FFN_x_layer1(x)  # Apply FFN
+        x = self.FFN_x_layer1(x)
         x = self.activation(x)
         x = self.dropout3(x)
         x = self.FFN_x_layer2(x)
@@ -933,11 +923,7 @@ class GritTransformerLayer(LightningModule):
                 x = x * self.alpha2_x
             x = x_ffn_residual + x  # residual connection
 
-        if self.layer_norm:
-            x = self.layer_norm2_x(x)
-
-        if self.batch_norm:
-            x = self.batch_norm2_x(x)
+        x = self.norm2_x(x)
 
         data.x = x
         if self.update_edges:
