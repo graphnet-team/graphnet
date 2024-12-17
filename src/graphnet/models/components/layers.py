@@ -3,20 +3,22 @@
 from typing import Any, Callable, Optional, Sequence, Union, List
 
 import torch
+import torch.nn as nn
 from torch.functional import Tensor
 from torch_geometric.nn import EdgeConv
 from torch_geometric.nn.pool import knn_graph, global_add_pool
 from torch_geometric.typing import Adj, PairTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
-import torch.nn as nn
+from torch_geometric.data import Data
 from torch.nn.functional import linear
 from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer
-from torch_geometric.utils import to_dense_batch, degree, softmax
-from torch_geometric.utils.num_nodes import maybe_num_nodes
-from torch_scatter import scatter, scatter_max, scatter_add
+from torch_geometric.utils import to_dense_batch, softmax
+from torch_scatter import scatter
 
 from pytorch_lightning import LightningModule
+
+from graphnet.models.utils import get_log_deg
 
 
 class DynEdgeConv(EdgeConv, LightningModule):
@@ -598,23 +600,37 @@ class Block(LightningModule):
         return x
 
 
-class MultiHeadAttentionLayerGritSparse(LightningModule):
-    """
-    Proposed Attention Computation for GRIT
+class GritSparseMHA(LightningModule):
+    """Proposed Attention Computation for GRIT.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py
     """
 
-    def __init__(self, 
-                 in_dim, 
-                 out_dim, 
-                 num_heads, 
-                 use_bias,
-                 clamp=5., 
-                 dropout=0., 
-                 act=None,
-                 edge_enhance=True,
-                #  sqrt_relu=False,  # unused
-                #  signed_sqrt=True,  # unused
-                 **kwargs):
+    def __init__(
+        self,
+        in_dim: int,
+        out_dim: int,
+        num_heads: int,
+        use_bias: bool,
+        clamp: float = 5.0,
+        dropout: float = 0.0,
+        activation: nn.Module = nn.ReLU,
+        edge_enhance: bool = True,
+    ):
+        """Construct 'GritSparseMHA'.
+
+        Args:
+            in_dim: Dimension of the input tensor.
+            out_dim: Dimension of theo output tensor.
+            num_heads: Number of attention heads.
+            use_bias: Apply bias the key and value linear layers.
+            clamp: Clamp the absolute value of the attention scores to a value.
+            dropout: Dropout layer probability.
+            activation: Activation function.
+            edge_enhance: Applies learnable weight matrix with node-pair in
+                output node calculation.
+        """
         super().__init__()
 
         self.out_dim = out_dim
@@ -632,25 +648,27 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
         nn.init.xavier_normal_(self.E.weight)
         nn.init.xavier_normal_(self.V.weight)
 
-        self.Aw = nn.Parameter(torch.zeros(self.out_dim, self.num_heads, 1), requires_grad=True)
+        self.Aw = nn.Parameter(
+            torch.zeros(self.out_dim, self.num_heads, 1), requires_grad=True
+        )
         nn.init.xavier_normal_(self.Aw)
 
         # TODO: Better activation function handling -PW
-        if act == "relu":
-            self.act = nn.ReLU()
-        else:
-            print("GritTransformerLayer: Did not identify activation function, setting to id.")
-            self.act = nn.Identity()
+        self.activation = activation()
 
         if self.edge_enhance:
-            self.VeRow = nn.Parameter(torch.zeros(self.out_dim, self.num_heads, self.out_dim), requires_grad=True)
+            self.VeRow = nn.Parameter(
+                torch.zeros(self.out_dim, self.num_heads, self.out_dim),
+                requires_grad=True,
+            )
             nn.init.xavier_normal_(self.VeRow)
 
-    def forward(self, data):
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
         Q_x = self.Q(data.x)
         K_x = self.K(data.x)
         V_x = self.V(data.x)
-        
+
         if data.get("edge_attr", None) is not None:
             E = self.E(data.edge_attr)
         else:
@@ -660,95 +678,110 @@ class MultiHeadAttentionLayerGritSparse(LightningModule):
         K_x = K_x.view(-1, self.num_heads, self.out_dim)
         V_x = V_x.view(-1, self.num_heads, self.out_dim)
 
-        # Applying Eq. 2:
-        src = K_x[data.edge_index[0]]      # (num relative) x num_heads x out_dim
-        dest = Q_x[data.edge_index[1]]     # (num relative) x num_heads x out_dim
-        score = src + dest                 # element-wise multiplication
-
+        # Applying Eq. 2 of the GRIT paper:
+        src = K_x[data.edge_index[0]]  # (num relative) x num_heads x out_dim
+        dest = Q_x[data.edge_index[1]]  # (num relative) x num_heads x out_dim
+        score = src + dest  # element-wise multiplication
         if E is not None:
             E = E.view(-1, self.num_heads, self.out_dim * 2)
-            E_w, E_b = E[:, :, :self.out_dim], E[:, :, self.out_dim:]
-            # (num relative) x num_heads x out_dim
+            E_w, E_b = E[:, :, : self.out_dim], E[:, :, self.out_dim :]
             score = score * E_w
-            score = torch.sqrt(torch.relu(score)) - torch.sqrt(torch.relu(-score))
+            score = torch.sqrt(torch.relu(score)) - torch.sqrt(
+                torch.relu(-score)
+            )
             score = score + E_b
-            
-        score = self.act(score)
-        e_t = score
 
-        # output edge
+        score = self.activation(score)
+        e_t = score  # ehat_ij
+
+        # Output edge
         if E is not None:
             wE = score.flatten(1)
 
-        # final attn
+        # Complete attention ccaclculation
         score = torch.einsum("ehd, dhc->ehc", score, self.Aw)
         if self.clamp is not None:
             score = torch.clamp(score, min=-self.clamp, max=self.clamp)
-        
-        score = softmax(score, index=data.edge_index[1]) # (num relative) x num_heads x 1
+        score = softmax(score, index=data.edge_index[1]).to(
+            dtype=data.x.dtype
+        )  # (num relative) x num_heads x 1
         score = self.dropout(score)
-        # data.attn = score  # TODO: Remove? -PW
 
         # Aggregate with Attn-Score
-        msg = V_x[data.edge_index[0]] * score   # (num relative) x num_heads x out_dim
-        wV = torch.zeros_like(V_x)              # (num nodes in batch) x num_heads x out_dim
-        
-        scatter(msg, data.edge_index[1], dim=0, out=wV, reduce='add')
+        V_x_weighted = (
+            V_x[data.edge_index[0]] * score
+        )  # (num relative) x num_heads x out_dim
+        wV = torch.zeros_like(
+            V_x, dtype=score.dtype
+        )  # (num nodes in batch) x num_heads x out_dim
+        scatter(V_x_weighted, data.edge_index[1], dim=0, out=wV, reduce="add")
 
-        if self.edge_enhance and data.E is not None:
-            rowV = scatter(e_t * score, data.edge_index[1], dim=0, reduce="add")
+        # Adds the second term (W_Ev ehhat_ij) in the last line of Eq. 2
+        if self.edge_enhance and E is not None:
+            rowV = scatter(
+                e_t * score, data.edge_index[1], dim=0, reduce="add"
+            )
             rowV = torch.einsum("nhd, dhc -> nhc", rowV, self.VeRow)
             wV = wV + rowV
-        
+
         return wV, wE
-    
-@torch.no_grad()
-def get_log_deg(data):
-    if "log_deg" in data:
-        log_deg = data.log_deg
-    elif "deg" in data:
-        deg = data.deg
-        log_deg = torch.log(deg + 1).unsqueeze(-1)
-    else:
-        # warnings.warn("Compute the degree on the fly; Might be problematric if have applied edge-padding to complete graphs")
-        deg = degree(data.edge_index[1],
-                     num_nodes=data.num_nodes,
-                     dtype=torch.float)  # TODO: Let dtype be anything? -PW
-        log_deg = torch.log(deg + 1)
-    log_deg = log_deg.view(data.num_nodes, 1)
-    return log_deg
+
 
 class GritTransformerLayer(LightningModule):
+    """Proposed Transformer Layer for GRIT.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py
     """
-    Proposed Transformer Layer for GRIT
-    """
-    def __init__(self, 
-                 in_dim, 
-                 out_dim, 
-                 num_heads,
-                 dropout=0.0,
-                 layer_norm=False, 
-                 batch_norm=True,
-                 residual=True,
-                 deg_scaler=True,
-                 act='relu',
-                 norm_e=True,
-                 update_edges=True,
-                 batch_norm_momentum=0.1,
-                 batch_norm_runner=True,
-                 rezero=False,
-                 O_e=True,
-                 attn_bias=False,
-                 attn_dropout=0.0,  # CHECK
-                 attn_clamp=5.0,
-                 attn_act='relu',
-                 attn_edge_enhance=True,
-                 attn_scale=False,
-                 attn_no_qk=False,
-                 **kwargs):
+
+    def __init__(
+        self,
+        in_dim: int,
+        out_dim: int,
+        num_heads: int,
+        dropout: float = 0.0,
+        norm: nn.Module = nn.BatchNorm1d,
+        residual: bool = True,
+        deg_scaler: bool = True,
+        activation: nn.Module = nn.ReLU,
+        norm_edges: bool = True,
+        update_edges: bool = True,
+        batch_norm_momentum: float = 0.1,
+        batch_norm_runner: bool = True,
+        rezero: bool = False,
+        enable_edge_transform: bool = True,
+        attn_bias: bool = False,
+        attn_dropout: float = 0.0,  # CHECK
+        attn_clamp: float = 5.0,
+        attn_activation: nn.Module = nn.ReLU,
+        attn_edge_enhance: bool = True,
+    ):
+        """Construct 'GritTransformerLayer'.
+
+        Args:
+            in_dim: Dimension of the input tensor.
+            out_dim: Dimension of theo output tensor.
+            num_heads: Number of attention heads.
+            dropout: Dropout layer probability.
+            norm: Normalization layer.
+            residual: Apply residual connections.
+            deg_scaler: Apply degree scaling after MHA.
+            activation: Activation function.
+            norm_edges: Apply normalization to edges.
+            update_edges: Update edges after layer.
+            batch_norm_momentum: Momentum of batch normalization.
+            batch_norm_runner: Track running stats of batch normalization.
+            rezero: Apply learnable scaling parameters.
+            enable_edge_transform: Apply a FC to edges at the start
+                of the layer.
+            attn_bias: Add bias to keys and values in MHA block.
+            attn_dropout: Attention droput.
+            attn_clamp: Clamp absolute value of attention scores to a value.
+            attn_activation: Activation function for MHA block.
+            attn_edge_enhance: Applies learnable weight matrix with node-pair
+                in output node calculation in MHA block.
+        """
         super().__init__()
-        
-        assert not (layer_norm and batch_norm), "Cannot use both layer and batch normalization!"
 
         self.in_channels = in_dim
         self.out_channels = out_dim
@@ -757,62 +790,64 @@ class GritTransformerLayer(LightningModule):
         self.num_heads = num_heads
         self.dropout = dropout
         self.residual = residual
-        self.layer_norm = layer_norm
-        self.batch_norm = batch_norm
+        self.norm = norm
         self.update_edges = update_edges
         self.batch_norm_momentum = batch_norm_momentum
         self.batch_norm_runner = batch_norm_runner
         self.rezero = rezero
         self.deg_scaler = deg_scaler
+        self.activation = activation()
 
-        # self.act = act_dict[act]() if act is not None else nn.Identity()
-        if act == "relu":
-            self.act = nn.ReLU()
-        else:
-            print("GritTransformerLayer: Did not identify activation function, setting to id.")
-            self.act = nn.Identity()
-            
-        # self.sigmoid_deg = cfg_attn.get("sigmoid_deg", False)
-
-        self.attention = MultiHeadAttentionLayerGritSparse(
+        self.attention = GritSparseMHA(
             in_dim=in_dim,
             out_dim=out_dim // num_heads,
             num_heads=num_heads,
             use_bias=attn_bias,
             dropout=attn_dropout,
             clamp=attn_clamp,
-            act=attn_act,
+            activation=attn_activation,
             edge_enhance=attn_edge_enhance,
-            scaled_attn=attn_scale,
-            no_qk=attn_no_qk,
         )
 
-        self.fc1_x = nn.Linear(out_dim//num_heads * num_heads, out_dim)
-        if O_e:
-            self.fc1_e = nn.Linear(out_dim//num_heads * num_heads, out_dim)
+        self.fc1_x = nn.Linear(out_dim // num_heads * num_heads, out_dim)
+        if enable_edge_transform:
+            self.fc1_e = nn.Linear(out_dim // num_heads * num_heads, out_dim)
         else:
             self.fc1_e = nn.Identity()
 
-        # -------- Deg Scaler Option ------
-
         if self.deg_scaler:
-            self.deg_coef = nn.Parameter(torch.zeros(1, out_dim//num_heads * num_heads, 2))
+            self.deg_coef = nn.Parameter(
+                torch.zeros(1, out_dim // num_heads * num_heads, 2)
+            )
             nn.init.xavier_normal_(self.deg_coef)
 
-        if self.layer_norm:
-            self.layer_norm1_h = nn.LayerNorm(out_dim)
-            self.layer_norm1_e = nn.LayerNorm(out_dim) if norm_e else nn.Identity()
-
-        if self.batch_norm:
-            # when the batch_size is really small, use smaller momentum to avoid bad mini-batch leading to extremely bad val/test loss (NaN)
-            self.batch_norm1_h = nn.BatchNorm1d(out_dim, 
-                                                track_running_stats=self.batch_norm_runner, 
-                                                eps=1e-5, 
-                                                momentum=self.batch_norm_momentum)
-            self.batch_norm1_e = nn.BatchNorm1d(out_dim, 
-                                                track_running_stats=self.batch_norm_runner, 
-                                                eps=1e-5, 
-                                                momentum=self.batch_norm_momentum) if norm_e else nn.Identity()
+        if self.norm == nn.LayerNorm:
+            self.layer_norm1_h = self.norm(out_dim)
+            self.layer_norm1_e = (
+                self.norm(out_dim) if norm_edges else nn.Identity()
+            )
+        elif self.norm == nn.BatchNorm1d:
+            self.batch_norm1_h = self.norm(
+                out_dim,
+                track_running_stats=self.batch_norm_runner,
+                eps=1e-5,
+                momentum=self.batch_norm_momentum,
+            )
+            self.batch_norm1_e = (
+                self.norm(
+                    out_dim,
+                    track_running_stats=self.batch_norm_runner,
+                    eps=1e-5,
+                    momentum=self.batch_norm_momentum,
+                )
+                if norm_edges
+                else nn.Identity()
+            )
+        else:
+            raise ValueError(
+                "GritTransformerLayer normalization layer must be 'LayerNorm' \
+                    or 'BatchNorm1d'!"
+            )
 
         # FFN for x
         self.FFN_x_layer1 = nn.Linear(out_dim, out_dim * 2)
@@ -822,21 +857,24 @@ class GritTransformerLayer(LightningModule):
             self.layer_norm2_x = nn.LayerNorm(out_dim)
 
         if self.batch_norm:
-            self.batch_norm2_x = nn.BatchNorm1d(out_dim, 
-                                                track_running_stats=self.batch_norm_runner, 
-                                                eps=1e-5,
-                                                momentum=self.batch_norm_momentum)
+            self.batch_norm2_x = nn.BatchNorm1d(
+                out_dim,
+                track_running_stats=self.batch_norm_runner,
+                eps=1e-5,
+                momentum=self.batch_norm_momentum,
+            )
 
-        if self.rezero: # Learnable scaling parameters
-            self.alpha1_x = nn.Parameter(torch.zeros(1,1))
-            self.alpha2_x = nn.Parameter(torch.zeros(1,1))
-            self.alpha1_e = nn.Parameter(torch.zeros(1,1))
-            
-        self.dropout1 = nn.Dropout(dropout) # Post-attention dropout on x
-        self.dropout2 = nn.Dropout(dropout) # Post-attention dropout on e
-        self.dropout3 = nn.Dropout(dropout) # Post-FFN dropout on x
+        if self.rezero:  # Learnable scaling parameters
+            self.alpha1_x = nn.Parameter(torch.zeros(1, 1))
+            self.alpha2_x = nn.Parameter(torch.zeros(1, 1))
+            self.alpha1_e = nn.Parameter(torch.zeros(1, 1))
 
-    def forward(self, data):
+        self.dropout1 = nn.Dropout(dropout)  # Post-attention dropout on x
+        self.dropout2 = nn.Dropout(dropout)  # Post-attention dropout on e
+        self.dropout3 = nn.Dropout(dropout)  # Post-FFN dropout on x
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
         x = data.x
         num_nodes = data.num_nodes
         log_deg = get_log_deg(data)
@@ -844,17 +882,16 @@ class GritTransformerLayer(LightningModule):
         x_attn_residual = x  # for first residual connection
         e_values_in = data.get("edge_attr", None)
         e = None
-        # multi-head attention out
 
+        # Attention outputs
         x_attn_out, e_attn_out = self.attention(data)
 
         x = x_attn_out.view(num_nodes, -1)
-        # TODO: Make this a nn.Dropout in initialization -PW
         x = self.dropout1(x)
 
         # Apply degree scaler if enabled
         if self.deg_scaler:
-            x = torch.stack([x, x*log_deg], dim=-1)
+            x = torch.stack([x, x * log_deg], dim=-1)
             x = (x * self.deg_coef).sum(dim=-1)
 
         x = self.fc1_x(x)
@@ -865,31 +902,35 @@ class GritTransformerLayer(LightningModule):
             e = self.fc1_e(e)
 
         if self.residual:
-            if self.rezero: 
+            if self.rezero:
                 x = x * self.alpha1_x
             x = x_attn_residual + x  # residual connection
-            
+
             if e is not None:
-                if self.rezero: e = e * self.alpha1_e
+                if self.rezero:
+                    e = e * self.alpha1_e
                 e = e + e_values_in
 
         if self.layer_norm:
             x = self.layer_norm1_h(x)
-            if e is not None: e = self.layer_norm1_e(e)
+            if e is not None:
+                e = self.layer_norm1_e(e)
 
         if self.batch_norm:
             x = self.batch_norm1_h(x)
-            if e is not None: e = self.batch_norm1_e(e)
+            if e is not None:
+                e = self.batch_norm1_e(e)
 
-        # FFN for h
+        # FFN for x
         x_ffn_residual = x  # Residual over the FFN
         x = self.FFN_x_layer1(x)  # Apply FFN
-        x = self.act(x)
+        x = self.activation(x)
         x = self.dropout3(x)
         x = self.FFN_x_layer2(x)
 
         if self.residual:
-            if self.rezero: x = x * self.alpha2_x
+            if self.rezero:
+                x = x * self.alpha2_x
             x = x_ffn_residual + x  # residual connection
 
         if self.layer_norm:
@@ -906,33 +947,32 @@ class GritTransformerLayer(LightningModule):
 
         return data
 
-# TODO: This is a prediction head... we probably want only the graph stuff here and let the
-# Tasks handle the last layer. -PW
+
+# TODO: This is a prediction head... we probably want only the graph stuff here
+# and let the Tasks handle the last layer. -PW
 class SANGraphHead(LightningModule):
-    """
-    SAN prediction head for graph prediction tasks.
-    Args:
-        dim_in (int): Input dimension.
-        dim_out (int): Output dimension. For binary prediction, dim_out=1.
-        L (int): Number of hidden layers.
+    """SAN prediction head for graph prediction tasks.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/head/san_graph.py
     """
 
-    def __init__(self, 
-                 dim_in, 
-                 dim_out, 
-                 L=2):
+    def __init__(self, dim_in: int, dim_out: int, L: int = 2):
+        """Construct `SANGraphHead`.
+
+        Args:
+            dim_in: Input dimension.
+            dim_out: Output dimension.
+            L: Number of hidden layers.
+        """
         super().__init__()
-        self.deg_scaler = False
-        # self.fwl = False
-        # graph_pooling: add
         self.pooling_fun = global_add_pool
 
         fc_layers = [
-            nn.Linear(dim_in // 2 ** l, dim_in // 2 ** (l + 1), bias=True)
-            for l in range(L)
+            nn.Linear(dim_in // 2**n, dim_in // 2 ** (n + 1), bias=True)
+            for n in range(L)
         ]
-        fc_layers.append(
-            nn.Linear(dim_in // 2 ** L, dim_out, bias=True))
+        fc_layers.append(nn.Linear(dim_in // 2**L, dim_out, bias=True))
         self.fc_layers = nn.ModuleList(fc_layers)
         self.L = L
         # TODO: Dynamic activation functions -PW
@@ -940,16 +980,12 @@ class SANGraphHead(LightningModule):
         # note: modified to add () in the end from original code of 'GPS'
         #   potentially due to the change of PyG/GraphGym version
 
-    def _apply_index(self, data):
-        return data.graph_feature, data.y
-
-    def forward(self, data):
+    def forward(self, data: Data) -> Tensor:
+        """Forward Pass."""
         graph_emb = self.pooling_fun(data.x, data.batch)
-        for l in range(self.L):
-            graph_emb = self.fc_layers[l](graph_emb)
+        for i in range(self.L):
+            graph_emb = self.fc_layers[i](graph_emb)
             graph_emb = self.activation(graph_emb)
-        graph_emb = self.fc_layers[self.L](graph_emb)
-        data.graph_feature = graph_emb # Do we need this? -PW
-        # pred, label = self._apply_index(batch)
+        graph_emb = self.fc_layers[self.i](graph_emb)
+        # data.graph_feature = graph_emb  # Do we need this? -PW
         return graph_emb
-        # return pred, label

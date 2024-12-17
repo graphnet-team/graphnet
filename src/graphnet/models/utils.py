@@ -1,12 +1,15 @@
 """Utility functions for `graphnet.models`."""
 
 from typing import List, Tuple, Any, Union, Optional
-from torch_geometric.nn import knn_graph
-from torch_geometric.data import Batch, Data
+
 import torch
 from torch import Tensor, LongTensor
 
-from torch_geometric.utils import homophily
+from torch_geometric.nn import knn_graph
+from torch_geometric.data import Batch, Data
+from torch_geometric.utils import homophily, degree
+
+from torch_scatter import scatter
 from torch_sparse import SparseTensor
 
 
@@ -117,48 +120,92 @@ def get_fields(data: Union[Data, List[Data]], fields: List[str]) -> Tensor:
         )
     return torch.cat(labels, dim=1)
 
-def add_node_attr(data: Data, value: Any,
-                  attr_name: Optional[str] = None) -> Data:
-    if attr_name is None:
-        if 'x' in data:
-            x = data.x.view(-1, 1) if data.x.dim() == 1 else data.x
-            data.x = torch.cat([x, value.to(x.device, x.dtype)], dim=-1)
-        else:
-            data.x = value
-    else:
-        data[attr_name] = value
 
-    return data
+def full_edge_index(
+    edge_index: Tensor, batch: Optional[Tensor] = None
+) -> Tensor:
+    """Return the full batched sparse adjacency matrices given by edge indices.
+
+    Return batched sparse adjacency matrices with exactly those edges that
+    are not in the input `edge_index` while ignoring self-loops. Implementation
+    inspired by `torch_geometric.utils.to_dense_adj`.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py
+
+    Args:
+        edge_index: The edge indices.
+        batch: Batch vector, which assigns each node to a specific example.
+
+    Returns:
+        Complementary edge index.
+    """
+    if batch is None:
+        batch = edge_index.new_zeros(edge_index.max().item() + 1)
+
+    batch_size = batch.max().item() + 1
+    one = batch.new_ones(batch.size(0))
+    num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce="add")
+    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
+
+    negative_index_list = []
+    for i in range(batch_size):
+        n = num_nodes[i].item()
+        size = [n, n]
+        adj = torch.ones(size, dtype=torch.short, device=edge_index.device)
+
+        adj = adj.view(size)
+        _edge_index = adj.nonzero(as_tuple=False).t().contiguous()
+        # _edge_index, _ = remove_self_loops(_edge_index)
+        negative_index_list.append(_edge_index + cum_nodes[i])
+
+    edge_index_full = torch.cat(negative_index_list, dim=1).contiguous()
+    return edge_index_full
+
 
 @torch.no_grad()
-def add_full_rrwp(data,
-                  walk_length=8,
-                  attr_name_abs="rrwp", # name: 'rrwp'
-                  attr_name_rel="rrwp", # name: ('rrwp_idx', 'rrwp_val')
-                  add_identity=True,
-                  spd=False,
-                  **kwargs
-                  ):
-    device=data.edge_index.device
-    ind_vec = torch.eye(walk_length, dtype=torch.float, device=device)
+def add_full_rrwp(
+    data: Data,
+    walk_length: int = 8,
+    attr_name_abs: str = "rrwp",  # name: 'rrwp'
+    attr_name_rel: str = "rrwp",  # name: ('rrwp_idx', 'rrwp_val')
+    add_identity: bool = True,
+    spd: bool = False,
+) -> Data:
+    """Add relative random walk probabilities.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/transform/rrwp.py
+
+    Args:
+        data: Input data.
+        walk_length: Number of random walks for encoding.
+        attr_name_abs: Absolute position encoding name.
+        attr_name_rel: Relative position encoding name.
+        add_identity: Add identity matrix to position encoding.
+        spd: Use shortest path distances.
+    """
+    # device = data.edge_index.device
     num_nodes = data.num_nodes
     edge_index, edge_weight = data.edge_index, data.edge_weight
 
-    adj = SparseTensor.from_edge_index(edge_index, edge_weight,
-                                       sparse_sizes=(num_nodes, num_nodes),
-                                       )
+    adj = SparseTensor.from_edge_index(
+        edge_index,
+        edge_weight,
+        sparse_sizes=(num_nodes, num_nodes),
+    )
 
     # Compute D^{-1} A:
     deg = adj.sum(dim=1)
     deg_inv = 1.0 / adj.sum(dim=1)
-    deg_inv[deg_inv == float('inf')] = 0
+    deg_inv[deg_inv == float("inf")] = 0
     adj = adj * deg_inv.view(-1, 1)
     adj = adj.to_dense()
 
     pe_list = []
     i = 0
     if add_identity:
-        pe_list.append(torch.eye(num_nodes, dtype=torch.float))
+        pe_list.append(torch.eye(num_nodes, dtype=data.x.dtype))
         i = i + 1
 
     out = adj
@@ -169,30 +216,53 @@ def add_full_rrwp(data,
             out = out @ adj
             pe_list.append(out)
 
-    pe = torch.stack(pe_list, dim=-1) # n x n x k
+    pe = torch.stack(pe_list, dim=-1)  # n x n x k
 
-    abs_pe = pe.diagonal().transpose(0, 1) # n x k
+    abs_pe = pe.diagonal().transpose(0, 1)  # n x k
 
     rel_pe = SparseTensor.from_dense(pe, has_value=True)
     rel_pe_row, rel_pe_col, rel_pe_val = rel_pe.coo()
     # rel_pe_idx = torch.stack([rel_pe_row, rel_pe_col], dim=0)
     rel_pe_idx = torch.stack([rel_pe_col, rel_pe_row], dim=0)
-    # the framework of GRIT performing right-mul while adj is row-normalized, 
+    # the framework of GRIT performing right-mul while adj is row-normalized,
     #                 need to switch the order or row and col.
     #    note: both can work but the current version is more reasonable.
-
 
     if spd:
         spd_idx = walk_length - torch.arange(walk_length)
         val = (rel_pe_val > 0).type(torch.float) * spd_idx.unsqueeze(0)
         val = torch.argmax(val, dim=-1)
-        rel_pe_val = F.one_hot(val, walk_length).type(torch.float)
+        rel_pe_val = torch.nn.functional.one_hot(val, walk_length).type(
+            torch.float
+        )
         abs_pe = torch.zeros_like(abs_pe)
 
-    data = add_node_attr(data, abs_pe, attr_name=attr_name_abs)
-    data = add_node_attr(data, rel_pe_idx, attr_name=f"{attr_name_rel}_index")
-    data = add_node_attr(data, rel_pe_val, attr_name=f"{attr_name_rel}_val")
+    data[attr_name_abs] = abs_pe
+    data[f"{attr_name_rel}_index"] = rel_pe_idx
+    data[f"{attr_name_rel}_val"] = rel_pe_val
+
     data.log_deg = torch.log(deg + 1)
     data.deg = deg.type(torch.long)
 
     return data
+
+
+@torch.no_grad()
+def get_log_deg(data: Data) -> Tensor:
+    """Get log of the degree number of a graph.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py
+    """
+    if "log_deg" in data:
+        log_deg = data.log_deg
+    elif "deg" in data:
+        deg = data.deg
+        log_deg = torch.log(deg + 1).unsqueeze(-1)
+    else:
+        deg = degree(
+            data.edge_index[1], num_nodes=data.num_nodes, dtype=data.x.dtype
+        )
+        log_deg = torch.log(deg + 1)
+    log_deg = log_deg.view(data.num_nodes, 1)
+    return log_deg
