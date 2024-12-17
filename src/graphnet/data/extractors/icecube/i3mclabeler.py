@@ -5,11 +5,13 @@ Using pre-existing IceCube Monte Carlo labeler.
 
 from typing import Any, Dict
 from icecube import icetray
+from icecube.sim_services.label_events.mc_labeler import MCLabeler
+
 
 from .i3extractor import I3Extractor
 
 
-class MClabelerWrapper(icetray.MCLabeler):
+class MClabelerWrapper(MCLabeler):
     """Wrapper for IceCube Monte Carlo labeler."""
 
     def __init__(self, context: icetray.I3Context):

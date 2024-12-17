@@ -2,9 +2,9 @@
 
 from typing import Dict, Any, List
 
-from utilities import GCD_hull
+from .utilities import GCD_hull
 from icecube import dataclasses, MuonGun, icetray
-from i3extractor import I3Extractor
+from .i3extractor import I3Extractor
 
 import numpy as np
 

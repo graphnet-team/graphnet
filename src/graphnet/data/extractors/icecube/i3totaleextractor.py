@@ -2,9 +2,9 @@
 
 from typing import Dict, Any, List
 
-from utilities import GCD_hull
+from .utilities import GCD_hull
 from icecube import dataclasses, MuonGun, icetray
-from i3extractor import I3Extractor
+from .i3extractor import I3Extractor
 
 import numpy as np
 
@@ -57,15 +57,15 @@ class I3TotalEExtractor(I3Extractor):
             output.update(
                 {
                     "e_entrance_track_"
-                    + self.extractor_name: e_entrance_track,
+                    + self._extractor_name: e_entrance_track,
                     "e_deposited_track_"
-                    + self.extractor_name: e_deposited_track,
+                    + self._extractor_name: e_deposited_track,
                     "e_entrance_cascade_"
-                    + self.extractor_name: e_entrance_cascade,
+                    + self._extractor_name: e_entrance_cascade,
                     "e_deposited_cascade_"
-                    + self.extractor_name: e_deposited_cascade,
+                    + self._extractor_name: e_deposited_cascade,
                     "e_fraction_"
-                    + self.extractor_name: (
+                    + self._extractor_name: (
                         e_entrance_track + e_entrance_cascade
                     )
                     / primary_energy,
