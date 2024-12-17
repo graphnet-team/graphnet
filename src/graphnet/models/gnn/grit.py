@@ -38,7 +38,6 @@ class GRIT(GNN):
         self,
         nb_inputs: int,
         hidden_dim: int,
-        dim_out: int = 1,
         ksteps: int = 21,
         n_layers: int = 10,
         n_heads: int = 8,
@@ -55,6 +54,8 @@ class GRIT(GNN):
         attn_activation: nn.Module = nn.ReLU,
         norm_edges: bool = True,
         enable_edge_transform: bool = True,
+        pred_head_layers: int = 2,
+        pred_head_activation: nn.Module = nn.ReLU,
     ):
         """Construct `GRIT` model.
 
@@ -79,8 +80,10 @@ class GRIT(GNN):
             attn_activation: Attention activation function.
             norm_edges: Apply normalization layer to edges.
             enable_edge_transform: Apply transformation to edges.
+            pred_head_layers: Number of layers in the prediction head.
+            pred_head_activation: Prediction head activation function.
         """
-        super().__init__(nb_inputs, dim_out)
+        super().__init__(nb_inputs, hidden_dim // 2**pred_head_layers)
 
         self.node_encoder = LinearNodeEncoder(nb_inputs, hidden_dim)
         self.edge_encoder = LinearEdgeEncoder(hidden_dim)
@@ -115,7 +118,11 @@ class GRIT(GNN):
                 )
             )
         self.layers = nn.ModuleList(layers)
-        self.head = SANGraphHead(dim_in=hidden_dim, dim_out=1)
+        self.head = SANGraphHead(
+            dim_in=hidden_dim,
+            L=pred_head_layers,
+            activation=pred_head_activation,
+        )
 
     def forward(self, x: Data) -> Tensor:
         """Forward pass."""

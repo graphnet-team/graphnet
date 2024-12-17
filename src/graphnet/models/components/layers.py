@@ -943,13 +943,18 @@ class SANGraphHead(LightningModule):
     https://github.com/LiamMa/GRIT/blob/main/grit/head/san_graph.py
     """
 
-    def __init__(self, dim_in: int, dim_out: int, L: int = 2):
+    def __init__(
+        self,
+        dim_in: int,
+        L: int = 2,
+        activation: nn.Module = nn.ReLU,
+    ):
         """Construct `SANGraphHead`.
 
         Args:
             dim_in: Input dimension.
-            dim_out: Output dimension.
             L: Number of hidden layers.
+            activation: Activation function.
         """
         super().__init__()
         self.pooling_fun = global_add_pool
@@ -958,13 +963,10 @@ class SANGraphHead(LightningModule):
             nn.Linear(dim_in // 2**n, dim_in // 2 ** (n + 1), bias=True)
             for n in range(L)
         ]
-        fc_layers.append(nn.Linear(dim_in // 2**L, dim_out, bias=True))
         self.fc_layers = nn.ModuleList(fc_layers)
         self.L = L
-        # TODO: Dynamic activation functions -PW
-        self.activation = nn.ReLU()
-        # note: modified to add () in the end from original code of 'GPS'
-        #   potentially due to the change of PyG/GraphGym version
+        self.activation = activation()
+        self.dim_out = dim_in // 2**L
 
     def forward(self, data: Data) -> Tensor:
         """Forward Pass."""
@@ -972,6 +974,6 @@ class SANGraphHead(LightningModule):
         for i in range(self.L):
             graph_emb = self.fc_layers[i](graph_emb)
             graph_emb = self.activation(graph_emb)
-        graph_emb = self.fc_layers[self.L](graph_emb)
-        # data.graph_feature = graph_emb  # Do we need this? -PW
+        # Original code applied a final linear layer to project to dim_out,
+        # but we will let the Task layer do that.
         return graph_emb
