@@ -6,7 +6,7 @@ Using pre-existing IceCube Monte Carlo labeler.
 from typing import Any, Dict
 from icecube import icetray
 
-from i3extractor import I3Extractor
+from .i3extractor import I3Extractor
 
 
 class MClabelerWrapper(icetray.MCLabeler):
