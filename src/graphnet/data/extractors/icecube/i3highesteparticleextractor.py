@@ -9,7 +9,7 @@ from i3extractor import I3Extractor
 import numpy as np
 
 
-class HigestEparticleExtractor(I3Extractor):
+class I3HighestEparticleExtractor(I3Extractor):
     """Extract the highest energy particle in the event."""
 
     def __init__(
