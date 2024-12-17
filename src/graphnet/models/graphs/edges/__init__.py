@@ -5,5 +5,11 @@ graph-manipulation.´EdgeDefinition´ defines how edges are drawn between nodes
 and their features.
 """
 
-from .edges import EdgeDefinition, KNNEdges, RadialEdges, EuclideanEdges
+from .edges import (
+    EdgeDefinition,
+    KNNEdges,
+    RadialEdges,
+    EuclideanEdges,
+    KNNDistanceEdges,
+)
 from .minkowski import MinkowskiKNNEdges

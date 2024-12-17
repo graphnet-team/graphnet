@@ -82,6 +82,49 @@ class KNNEdges(EdgeDefinition):  # pylint: disable=too-few-public-methods
         return graph
 
 
+class KNNDistanceEdges(KNNEdges):
+    """Builds edges from the k-nearest neighbours with distance attribute."""
+
+    def __init__(
+        self,
+        nb_nearest_neighbours: int,
+        columns: List[int] = [0, 1, 2],
+    ):
+        """K-NN Edge definition with edge distances.
+
+        Will connect nodes together with their `nb_nearest_neighbours`
+        nearest neighbours in the feature space given by `columns`. The
+        edges will be assigned values of the distance between the connecting
+        nodes.
+
+        Args:
+            nb_nearest_neighbours: number of neighbours.
+            columns: Node features to use for distance calculation.
+            Defaults to [0,1,2].
+        """
+        # Base class constructor
+        super().__init__(
+            nb_nearest_neighbours=nb_nearest_neighbours,
+            columns=columns,
+        )
+
+    def _construct_edges(self, graph: Data) -> Data:
+        """Define K-NN edges."""
+        graph = super()._construct_edges(graph)
+        position_data = graph.x[:, self._columns]
+
+        src, tgt = graph.edge_index
+
+        src_pos = position_data[src]
+        tgt_pos = position_data[tgt]
+        diff = src_pos - tgt_pos
+
+        # Shape: [num_edges, 1]
+        graph.edge_attr = torch.norm(diff, p=2, dim=-1).unsqueeze(1)
+
+        return graph
+
+
 class RadialEdges(EdgeDefinition):
     """Builds graph from a sphere of chosen radius centred at each node."""
 
