@@ -100,6 +100,7 @@ class SQLiteWriter(GraphNeTWriter):
         files: List[str],
         output_dir: str,
         primary_key_rescue: str = "event_no",
+        remove_originals: bool = False,
     ) -> None:
         """SQLite-specific method for merging output files/databases.
 
@@ -117,6 +118,8 @@ class SQLiteWriter(GraphNeTWriter):
             primary_key_rescue: The name of the columns on which the primary
                 key is constructed. This will only be used if it is not
                 possible to infer the primary key name.
+            remove_originals: If True, the original files will be removed
+                after merging.
         """
         # Warnings
         if self._max_table_size:
@@ -136,7 +139,11 @@ class SQLiteWriter(GraphNeTWriter):
         if len(files) > 0:
             os.makedirs(output_dir, exist_ok=True)
             self.info(f"Merging {len(files)} database files")
-            self._merge_databases(files=files, database_path=database_path)
+            self._merge_databases(
+                files=files,
+                database_path=database_path,
+                remove_originals=remove_originals,
+            )
         else:
             self.warning("No database files given! Exiting.")
 
@@ -144,6 +151,7 @@ class SQLiteWriter(GraphNeTWriter):
         self,
         files: List[str],
         database_path: str,
+        remove_originals: bool = False,
     ) -> None:
         """Merge the temporary databases.
 
@@ -152,6 +160,8 @@ class SQLiteWriter(GraphNeTWriter):
             database_path: Path to a database, can be an empty path, where the
             databases listed in `files` will be merged into. If no database
             exists at the given path, one will be created.
+            remove_originals: If True, the original files will be removed
+            after merging.
         """
         if os.path.exists(database_path):
             self.warning(
@@ -216,6 +226,8 @@ class SQLiteWriter(GraphNeTWriter):
                         "Maximum row count reached."
                         f" Creating new partition at {database_path}"
                     )
+                if remove_originals:
+                    os.remove(input_file)
 
     # Internal methods
 
