@@ -219,9 +219,6 @@ class SpacetimeEncoder(LightningModule):
         return rel_attn
 
 
-# TODO: Put in some utils file -PW
-
-
 class RRWPLinearNodeEncoder(LightningModule):
     """Relative random walk probability node encoder.
 
