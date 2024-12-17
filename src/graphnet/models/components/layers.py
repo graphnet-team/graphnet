@@ -850,9 +850,9 @@ class GritTransformerLayer(LightningModule):
         self.FFN_x_layer1 = nn.Linear(out_dim, out_dim * 2)
         self.FFN_x_layer2 = nn.Linear(out_dim * 2, out_dim)
 
-        if self.norm == nn.LayerNorm:
+        if norm == nn.LayerNorm:
             self.norm2_x = norm(out_dim)
-        elif self.norm == nn.BatchNorm1d:
+        elif norm == nn.BatchNorm1d:
             self.norm2_x = norm(
                 out_dim,
                 track_running_stats=self.batch_norm_runner,
@@ -972,6 +972,6 @@ class SANGraphHead(LightningModule):
         for i in range(self.L):
             graph_emb = self.fc_layers[i](graph_emb)
             graph_emb = self.activation(graph_emb)
-        graph_emb = self.fc_layers[self.i](graph_emb)
+        graph_emb = self.fc_layers[self.L](graph_emb)
         # data.graph_feature = graph_emb  # Do we need this? -PW
         return graph_emb
