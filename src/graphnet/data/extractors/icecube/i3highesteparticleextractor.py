@@ -7,8 +7,9 @@ from .i3extractor import I3Extractor
 
 import numpy as np
 
+from graphnet.utilities.imports import has_icecube_package
 
-if TYPE_CHECKING:
+if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         icetray,
         dataclasses,

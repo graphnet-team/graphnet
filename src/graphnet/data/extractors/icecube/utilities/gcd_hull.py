@@ -6,7 +6,9 @@ from scipy.spatial import ConvexHull
 
 import numpy as np
 
-if TYPE_CHECKING:
+from graphnet.utilities.imports import has_icecube_package
+
+if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         MuonGun,
         dataclasses,
