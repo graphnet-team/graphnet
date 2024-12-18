@@ -4,6 +4,7 @@ from typing import Dict, Any, List, TYPE_CHECKING
 
 
 from .i3extractor import I3Extractor
+from .utilities.gcd_hull import GCD_hull
 
 import numpy as np
 
@@ -15,7 +16,6 @@ if has_icecube_package() or TYPE_CHECKING:
         dataclasses,
         MuonGun,
     )  # pyright: reportMissingImports=false
-    from .utilities.gcd_hull import GCD_hull
 
 
 class I3HighestEparticleExtractor(I3Extractor):
