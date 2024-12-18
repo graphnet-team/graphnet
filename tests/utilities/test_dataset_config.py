@@ -269,3 +269,22 @@ def test_dataset_config_files(backend: str) -> None:
         )
         == 0
     )
+
+
+@pytest.mark.order(6)
+@pytest.mark.parametrize("backend", ["sqlite"])
+def test_multiple_dataset_config_dict_selection(backend: str) -> None:
+    """Test constructing Dataset with multiple data paths."""
+    # Arrange
+    config_path = CONFIG_PATHS[backend]
+
+    # Single dataset
+    config = DatasetConfig.load(config_path)
+    dataset = Dataset.from_config(config)
+    # Construct multiple datasets
+    config_ensemble = DatasetConfig.load(config_path)
+    config_ensemble.path = [config_ensemble.path, config_ensemble.path]
+
+    ensemble_dataset = Dataset.from_config(config_ensemble)
+
+    assert len(dataset) * 2 == len(ensemble_dataset)
