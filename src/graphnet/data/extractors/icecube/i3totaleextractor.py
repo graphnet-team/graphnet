@@ -13,8 +13,8 @@ if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         icetray,
         dataclasses,
+        MuonGun,
     )  # pyright: reportMissingImports=false
-    from icecube.MuonGun import Track  # pyright: reportMissingImports=false
 
 
 class I3TotalEExtractor(I3Extractor):
@@ -93,7 +93,7 @@ class I3TotalEExtractor(I3Extractor):
         e_entrance = 0
         e_deposited = 0
         primary = frame[self.mctree].get_primaries()[0]
-        for track in Track.harvest(
+        for track in MuonGun.Track.harvest(
             frame[self.mctree], frame[self.mmctracklist]
         ):
             if self.daughters:
