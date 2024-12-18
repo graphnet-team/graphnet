@@ -88,17 +88,14 @@ class I3TotalEExtractor(I3Extractor):
         for track in MuonGun.Track.harvest(
             frame[self.mctree], frame[self.mmctracklist]
         ):
-            track_id = track.particle.id
             if self.daughters:
                 if (
-                    dataclasses.I3MCTree.parent(
-                        frame[self.mctree], track.particle
-                    )
+                    dataclasses.I3MCTree.parent(frame[self.mctree], track.id)
                     != primary
                 ):
                     continue
 
-            if track_id in checked_id_list:
+            if track.id in checked_id_list:
                 continue
             # Find distance to entrance and exit from sampling volume
             intersections = self.hull.surface.intersection(
@@ -110,7 +107,7 @@ class I3TotalEExtractor(I3Extractor):
             # Accumulate
             e_deposited += e0 - e1
             e_entrance += e0
-            checked_id_list.append(track_id)
+            checked_id_list.append(track.id)
 
         return e_entrance, e_deposited, checked_id_list
 
