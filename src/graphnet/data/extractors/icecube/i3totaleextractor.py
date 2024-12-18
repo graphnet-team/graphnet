@@ -2,7 +2,7 @@
 
 from typing import Dict, Any, List, TYPE_CHECKING
 
-from .utilities import GCD_hull
+from .utilities.gcd_hull import GCD_hull
 from .i3extractor import I3Extractor
 
 import numpy as np
