@@ -10,7 +10,6 @@ from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
-        dataclasses,
         MuonGun,
     )  # pyright: reportMissingImports=false
 
@@ -43,9 +42,7 @@ class GCD_hull(ConvexHull):
         # Base class constructor
         super().__init__(self.coords)
 
-    def point_in_hull(
-        self, point: dataclasses.I3Position, tolerance: float = 1e-12
-    ) -> bool:
+    def point_in_hull(self, point: np.array, tolerance: float = 1e-12) -> bool:
         """Check if a point is inside the convex hull.
 
         Args:
