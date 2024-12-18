@@ -93,7 +93,7 @@ class I3HighestEparticleExtractor(I3Extractor):
 
     def highest_energy_track(
         self, frame: "icetray.I3Frame", checked_id_list: List = []
-    ) -> dataclasses.I3Particle:
+    ) -> "dataclasses.I3Particle":
         """Get the highest energy track in the event.
 
         Args:
@@ -153,7 +153,7 @@ class I3HighestEparticleExtractor(I3Extractor):
 
     def highest_energy_cascade(
         self, frame: "icetray.I3Frame", checked_id_list: List = []
-    ) -> dataclasses.I3Particle:
+    ) -> "dataclasses.I3Particle":
         """Get the highest energy cascade in the event.
 
         Args:
