@@ -1,9 +1,16 @@
 """Convex hull object for IceCube geometry."""
 
+from typing import TYPE_CHECKING
+
 from scipy.spatial import ConvexHull
-from icecube import dataclasses, MuonGun
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from icecube import (
+        MuonGun,
+        dataclasses,
+    )  # pyright: reportMissingImports=false
 
 
 class GCD_hull(ConvexHull):
