@@ -1,12 +1,18 @@
 """Extract all the visible particles entering the volume."""
 
-from typing import Dict, Any, List
+from typing import Dict, Any, List, TYPE_CHECKING
 
 from .utilities import GCD_hull
-from icecube import dataclasses, MuonGun, icetray
 from .i3extractor import I3Extractor
 
 import numpy as np
+
+if TYPE_CHECKING:
+    from icecube import (
+        icetray,
+        dataclasses,
+        MuonGun,
+    )  # pyright: reportMissingImports=false
 
 
 class I3TotalEExtractor(I3Extractor):
