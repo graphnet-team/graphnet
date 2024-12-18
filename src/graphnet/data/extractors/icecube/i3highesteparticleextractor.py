@@ -14,8 +14,8 @@ if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         icetray,
         dataclasses,
-        MuonGun,
     )  # pyright: reportMissingImports=false
+    from icecube.MuonGun import Track  # pyright: reportMissingImports=false
 
 
 class I3HighestEparticleExtractor(I3Extractor):
@@ -121,7 +121,7 @@ class I3HighestEparticleExtractor(I3Extractor):
                 )
                 if intersections.first is not np.nan:
                     found = False
-                    for Mtrack in MuonGun.Track.harvest(
+                    for Mtrack in Track.harvest(
                         frame[self.mctree], frame[self.mmctracklist]
                     ):
                         if Mtrack.id == track_particle.id:

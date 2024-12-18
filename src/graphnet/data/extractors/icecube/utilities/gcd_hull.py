@@ -10,8 +10,10 @@ from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
-        MuonGun,
         dataclasses,
+    )  # pyright: reportMissingImports=false
+    from icecube.MuonGun import (
+        ExtrudedPolygon,
     )  # pyright: reportMissingImports=false
 
 
@@ -22,9 +24,7 @@ class GCD_hull(ConvexHull):
         """Initialize the ConvexHull object from the GCD file."""
         # Member variable(s)
         # IceCube surface object
-        self.surface = MuonGun.ExtrudedPolygon.from_file(
-            gcd_file, padding=padding
-        )
+        self.surface = ExtrudedPolygon.from_file(gcd_file, padding=padding)
         lower = np.array(
             [
                 self.surface.x,
