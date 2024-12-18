@@ -88,7 +88,7 @@ class I3TotalEExtractor(I3Extractor):
 
     def total_track_energy(
         self, frame: "icetray.I3Frame", checked_id_list: List = []
-    ) -> tuple[int, int, Any]:
+    ) -> Tuple[int, int, Any]:
         """Get the total energy of track particles on entrance."""
         e_entrance = 0
         e_deposited = 0
