@@ -9,7 +9,6 @@ import numpy as np
 from graphnet.utilities.imports import has_icecube_package
 
 if has_icecube_package() or TYPE_CHECKING:
-    from icecube import icetray  # noqa
     from icecube import (
         MuonGun,
         dataclasses,
