@@ -1,6 +1,6 @@
 """Extract all the visible particles entering the volume."""
 
-from typing import Dict, Any, List, TYPE_CHECKING
+from typing import Dict, Any, List, TYPE_CHECKING, Tuple
 
 from .utilities.gcd_hull import GCD_hull
 from .i3extractor import I3Extractor
@@ -121,7 +121,7 @@ class I3TotalEExtractor(I3Extractor):
 
     def total_cascade_energy(
         self, frame: "icetray.I3Frame", checked_id_list: List = []
-    ) -> tuple[int, int, Any]:
+    ) -> Tuple[int, int, Any]:
         """Get the total energy of cascade particles on entrance."""
         e_entrance = 0
         e_deposited = 0
