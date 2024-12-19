@@ -56,7 +56,7 @@ jobs:
         run: df -h
       - name: Upgrade packages already installed on icecube/icetray
         run: |
-          pip install --ignore-installed astropy==6.1.7   # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
+          pip install --ignore-installed astropy==5.2.2   # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
           pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
           pip install --upgrade psutil # Original version from IceTray Environment incompatible
       - name: Install package
