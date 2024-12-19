@@ -37,7 +37,7 @@ jobs:
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-latest
     container:
-      image: icecube/icetray:icetray-prod-current-ubuntu20.04-X64
+      image: icecube/icetray:icetray-devel-current-ubuntu20.04-X64
       options: --user root
     steps:
       - name: install git
