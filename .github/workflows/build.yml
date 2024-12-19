@@ -56,7 +56,7 @@ jobs:
         run: df -h
       - name: Upgrade packages already installed on icecube/icetray
         run: |
-          pip install --upgrade --no-deps astropy   # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
+          pip install --upgrade astropy   # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
           pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
           pip install --upgrade psutil # Original version from IceTray Environment incompatible
       - name: Install package
@@ -150,6 +150,11 @@ jobs:
             pip show torch-cluster
             pip show torch-sparse
             pip show torch-scatter
+      - name: Recompile IceTray
+        run: |
+          cd /usr/local/icetray
+          make clean
+          make
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
