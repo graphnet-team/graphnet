@@ -7,9 +7,10 @@ from torch import Tensor, LongTensor
 
 from torch_geometric.nn import knn_graph
 from torch_geometric.data import Batch, Data
-from torch_geometric.utils import homophily, degree
+from torch_geometric.utils import homophily, degree, to_dense_adj
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
-from torch_scatter import scatter
+from torch_scatter import scatter, scatter_add
 from torch_sparse import SparseTensor
 
 
@@ -266,3 +267,70 @@ def get_log_deg(data: Data) -> Tensor:
         log_deg = torch.log(deg + 1)
     log_deg = log_deg.view(data.num_nodes, 1)
     return log_deg
+
+
+def get_rw_landing_probs(
+    ksteps: List,
+    edge_index: Tensor,
+    edge_weight: Tensor = None,
+    num_nodes: Optional[int] = None,
+    space_dim: int = 0,
+) -> Tensor:
+    """Compute Random Walk landing probabilities for given list of K steps.
+
+    Original code:
+    https://github.com/ETH-DISCO/Benchmarking-PEs
+    Args:
+        ksteps: List of k-steps for which to compute the RW landings
+        edge_index: PyG sparse representation of the graph
+        edge_weight: (optional) Edge weights
+        num_nodes: (optional) Number of nodes in the graph
+        space_dim: (optional) Estimated dimensionality of the space. Used to
+            correct the random-walk diagonal by a factor `k^(space_dim/2)`.
+            In euclidean space, this correction means that the height of
+            the gaussian distribution stays almost constant across the number
+            of steps, if `space_dim` is the dimension of the euclidean space.
+
+    Returns:
+        2D Tensor with shape (num_nodes, len(ksteps)) with RW landing probs
+    """
+    print(edge_index.shape)
+    if edge_weight is None:
+        edge_weight = torch.ones(edge_index.size(1), device=edge_index.device)
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    source = edge_index[0]
+    # dest = edge_index[1]
+
+    # Out degrees
+    deg = scatter_add(edge_weight, source, dim=0, dim_size=num_nodes)
+    deg_inv = deg.pow(-1.0)
+    deg_inv.masked_fill_(deg_inv == float("inf"), 0)
+
+    if edge_index.numel() == 0:
+        P = edge_index.new_zeros((1, num_nodes, num_nodes))
+    else:
+        # P = D^-1 * A
+        # 1 x (Num nodes) x (Num nodes)
+        P = torch.diag(deg_inv) @ to_dense_adj(
+            edge_index, max_num_nodes=num_nodes
+        )
+    rws = []
+    if ksteps == list(range(min(ksteps), max(ksteps) + 1)):
+        # Efficient way if ksteps are a consecutive sequence
+        Pk = P.clone().detach().matrix_power(min(ksteps))
+        for k in range(min(ksteps), max(ksteps) + 1):
+            rws.append(
+                torch.diagonal(Pk, dim1=-2, dim2=-1) * (k ** (space_dim / 2))
+            )
+            Pk = Pk @ P
+    else:
+        # Explicitly raising P to power k for each k \in ksteps.
+        for k in ksteps:
+            rws.append(
+                torch.diagonal(P.matrix_power(k), dim1=-2, dim2=-1)
+                * (k ** (space_dim / 2))
+            )
+
+    # (Num nodes) x (K steps)
+    rw_landing = torch.cat(rws, dim=0).transpose(0, 1)
+    return rw_landing

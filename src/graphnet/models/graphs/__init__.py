@@ -6,4 +6,10 @@ and their features.
 """
 
 from .graph_definition import GraphDefinition
-from .graphs import KNNGraph, EdgelessGraph, KNNGraphRRWP
+from .graphs import (
+    KNNGraph,
+    EdgelessGraph,
+    KNNGraphRRWP,
+    KNNGraphRWSE,
+    KNNGraphNoPE,
+)

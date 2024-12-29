@@ -6,6 +6,8 @@ from abc import abstractmethod
 import torch
 from torch_geometric.nn import knn_graph, radius_graph
 from torch_geometric.data import Data
+from torch_geometric.utils import to_undirected
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from graphnet.models.utils import calculate_distance_matrix
 from graphnet.models import Model
@@ -111,6 +113,16 @@ class KNNDistanceEdges(KNNEdges):
     def _construct_edges(self, graph: Data) -> Data:
         """Define K-NN edges."""
         graph = super()._construct_edges(graph)
+
+        if graph.edge_index.numel() == 0:  # Check if edge_index is empty
+            num_nodes = graph.num_nodes
+            self_loops = torch.arange(num_nodes).repeat(2, 1)
+            graph.edge_index = self_loops
+
+        graph.num_nodes = maybe_num_nodes(graph.edge_index)
+        graph.edge_index = to_undirected(
+            graph.edge_index, num_nodes=graph.num_nodes
+        )
         position_data = graph.x[:, self._columns]
 
         src, tgt = graph.edge_index

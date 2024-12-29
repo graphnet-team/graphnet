@@ -367,3 +367,38 @@ class RRWPLinearEdgeEncoder(LightningModule):
 
         data.edge_index, data.edge_attr = out_idx, out_val
         return data
+
+
+class RWSELinearNodeEncoder(LightningModule):
+    """Random walk structural node encoding."""
+
+    def __init__(
+        self,
+        emb_dim: int,
+        out_dim: int,
+        use_bias: bool = False,
+    ):
+        """Construct `RWSELinearEdgeEncoder`.
+
+        Args:
+            emb_dim: Embedding dimension.
+            out_dim: Output dimension.
+            use_bias: Apply bias to linear layer.
+        """
+        super().__init__()
+
+        self.emb_dim = emb_dim
+        self.out_dim = out_dim
+
+        self.encoder = nn.Linear(emb_dim, out_dim, bias=use_bias)
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
+        rwse = data.rwse
+        x = data.x
+
+        rwse = self.encoder(rwse)
+
+        data.x = torch.cat((x, rwse), dim=1)
+
+        return data

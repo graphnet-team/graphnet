@@ -9,7 +9,6 @@ Adapted by: Philip Weigel
 """
 
 import torch.nn as nn
-
 from torch import Tensor
 from torch_geometric.data import Data
 
@@ -24,6 +23,7 @@ from graphnet.models.components.embedding import (
     RRWPLinearNodeEncoder,
     LinearNodeEncoder,
     LinearEdgeEncoder,
+    RWSELinearNodeEncoder,
 )
 
 
@@ -38,6 +38,7 @@ class GRIT(GNN):
         self,
         nb_inputs: int,
         hidden_dim: int,
+        nb_outputs: int = 1,
         ksteps: int = 21,
         n_layers: int = 10,
         n_heads: int = 8,
@@ -56,13 +57,15 @@ class GRIT(GNN):
         enable_edge_transform: bool = True,
         pred_head_layers: int = 2,
         pred_head_activation: nn.Module = nn.ReLU,
+        pred_head_pooling: str = "mean",
+        position_encoding: str = "NoPE",
     ):
         """Construct `GRIT` model.
 
         Args:
             nb_inputs: Number of inputs.
             hidden_dim: Size of hidden dimension.
-            dim_out: Size of output dimension.
+            nb_outputs: Size of output dimension.
             ksteps: Number of random walk steps.
             n_layers: Number of GRIT layers.
             n_heads: Number of heads in MHA.
@@ -82,20 +85,36 @@ class GRIT(GNN):
             enable_edge_transform: Apply transformation to edges.
             pred_head_layers: Number of layers in the prediction head.
             pred_head_activation: Prediction head activation function.
+            pred_head_pooling: Pooling function to use for the prediction head,
+                either "mean" (default) or "add".
+            position_encoding: Method of position encoding.
         """
-        super().__init__(nb_inputs, hidden_dim // 2**pred_head_layers)
-
-        self.node_encoder = LinearNodeEncoder(nb_inputs, hidden_dim)
-        self.edge_encoder = LinearEdgeEncoder(hidden_dim)
-
-        self.rrwp_abs_encoder = RRWPLinearNodeEncoder(ksteps, hidden_dim)
-        self.rrwp_rel_encoder = RRWPLinearEdgeEncoder(
-            ksteps,
-            hidden_dim,
-            pad_to_full_graph=pad_to_full_graph,
-            add_node_attr_as_self_loop=add_node_attr_as_self_loop,
-            fill_value=fill_value,
-        )
+        super().__init__(nb_inputs, nb_outputs)
+        self.position_encoding = position_encoding.lower()
+        if self.position_encoding == "nope":
+            encoders = [
+                LinearNodeEncoder(nb_inputs, hidden_dim),
+                LinearEdgeEncoder(hidden_dim),
+            ]
+        elif self.position_encoding == "rrwp":
+            encoders = [
+                LinearNodeEncoder(nb_inputs, hidden_dim),
+                LinearEdgeEncoder(hidden_dim),
+                RRWPLinearNodeEncoder(ksteps, hidden_dim),
+                RRWPLinearEdgeEncoder(
+                    ksteps,
+                    hidden_dim,
+                    pad_to_full_graph=pad_to_full_graph,
+                    add_node_attr_as_self_loop=add_node_attr_as_self_loop,
+                    fill_value=fill_value,
+                ),
+            ]
+        elif self.position_encoding == "rwse":
+            encoders = [
+                LinearNodeEncoder(nb_inputs, hidden_dim - (ksteps - 1)),
+                RWSELinearNodeEncoder(ksteps - 1, hidden_dim),
+            ]
+        self.encoders = nn.ModuleList(encoders)
 
         layers = []
         for _ in range(n_layers):
@@ -120,19 +139,16 @@ class GRIT(GNN):
         self.layers = nn.ModuleList(layers)
         self.head = SANGraphHead(
             dim_in=hidden_dim,
+            dim_out=nb_outputs,
             L=pred_head_layers,
             activation=pred_head_activation,
+            pooling=pred_head_pooling,
         )
 
     def forward(self, x: Data) -> Tensor:
         """Forward pass."""
-        # Apply linear layers to node/edge features
-        x = self.node_encoder(x)
-        x = self.edge_encoder(x)
-
-        # Encode with RRWP
-        x = self.rrwp_abs_encoder(x)
-        x = self.rrwp_rel_encoder(x)
+        for encoder in self.encoders:
+            x = encoder(x)
 
         # Apply GRIT layers
         for layer in self.layers:

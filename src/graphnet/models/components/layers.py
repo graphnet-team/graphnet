@@ -6,7 +6,11 @@ import torch
 import torch.nn as nn
 from torch.functional import Tensor
 from torch_geometric.nn import EdgeConv
-from torch_geometric.nn.pool import knn_graph, global_add_pool
+from torch_geometric.nn.pool import (
+    knn_graph,
+    global_mean_pool,
+    global_add_pool,
+)
 from torch_geometric.typing import Adj, PairTensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
@@ -893,14 +897,13 @@ class GritTransformerLayer(LightningModule):
         x = self.fc1_x(x)
         if e_attn_out is not None:
             e = e_attn_out.flatten(1)
-            # TODO: Make this a nn.Dropout in initialization -PW
             e = self.dropout2(e)
             e = self.fc1_e(e)
 
         if self.residual:
             if self.rezero:
                 x = x * self.alpha1_x
-            x = x_attn_residual + x  # residual connection
+            x = x_attn_residual + x
 
             if e is not None:
                 if self.rezero:
@@ -946,27 +949,38 @@ class SANGraphHead(LightningModule):
     def __init__(
         self,
         dim_in: int,
+        dim_out: int = 1,
         L: int = 2,
         activation: nn.Module = nn.ReLU,
+        pooling: str = "mean",
     ):
         """Construct `SANGraphHead`.
 
         Args:
             dim_in: Input dimension.
+            dim_out: Output dimension.
             L: Number of hidden layers.
             activation: Activation function.
+            pooling: Pooling method.
         """
         super().__init__()
-        self.pooling_fun = global_add_pool
+        if pooling == "mean":
+            self.pooling_fun = global_mean_pool
+        elif pooling == "add":
+            self.pooling_fun = global_add_pool
+        else:
+            raise RuntimeError("Currently supports only 'add' or 'mean'.")
 
         fc_layers = [
             nn.Linear(dim_in // 2**n, dim_in // 2 ** (n + 1), bias=True)
             for n in range(L)
         ]
+        assert dim_in // 2**L >= dim_out, "Too much dim reduction!"
+        fc_layers.append(nn.Linear(dim_in // 2**L, dim_out, bias=True))
         self.fc_layers = nn.ModuleList(fc_layers)
         self.L = L
         self.activation = activation()
-        self.dim_out = dim_in // 2**L
+        self.dim_out = dim_out
 
     def forward(self, data: Data) -> Tensor:
         """Forward Pass."""
@@ -974,6 +988,7 @@ class SANGraphHead(LightningModule):
         for i in range(self.L):
             graph_emb = self.fc_layers[i](graph_emb)
             graph_emb = self.activation(graph_emb)
+        graph_emb = self.fc_layers[self.L](graph_emb)
         # Original code applied a final linear layer to project to dim_out,
         # but we will let the Task layer do that.
         return graph_emb
