@@ -37,7 +37,7 @@ jobs:
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-latest
     container:
-      image: icecube/icetray:icetray-prod-current-ubuntu22.04-X64
+      image: icecube/icetray:icetray-prod-current-ubuntu20.04-X64
       options: --user root
     steps:
       - name: install git
@@ -46,6 +46,7 @@ jobs:
           sudo apt update --fix-missing --yes
           sudo apt upgrade --yes
           sudo apt-get install --yes git-all
+          sudo apt-get install -y libboost-numpy1.71.0
       - name: Set environment variables
         run: |
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
