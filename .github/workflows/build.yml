@@ -37,7 +37,7 @@ jobs:
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-latest
     container:
-      image: icecube/icetray:icetray-prod-current-ubuntu20.04-X64
+      image: icecube/icetray:icetray-prod-current-ubuntu22.04-X64
       options: --user root
     steps:
       - name: install git
@@ -56,21 +56,13 @@ jobs:
         run: df -h
       - name: Upgrade packages already installed on icecube/icetray
         run: |
-          pip install --upgrade astropy   # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
+          pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
           pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
           pip install --upgrade psutil # Original version from IceTray Environment incompatible
       - name: Install package
         uses: ./.github/actions/install
         with:
           editable: true
-      - name: Print packages in pip
-        run: |
-          pip show torch
-          pip show torch-geometric
-          pip show torch-cluster
-          pip show torch-sparse
-          pip show torch-scatter
-          pip show jammy_flows
       - name: Run unit tests and generate coverage report
         run: |
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
@@ -118,8 +110,6 @@ jobs:
           pip show torch-sparse
           pip show torch-scatter
           pip show numpy
-
-
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
@@ -150,11 +140,6 @@ jobs:
             pip show torch-cluster
             pip show torch-sparse
             pip show torch-scatter
-      - name: Recompile IceTray
-        run: |
-          cd /usr/local/icetray
-          make clean
-          make
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
