@@ -16,7 +16,7 @@ jobs:
 
   check-codeclimate-credentials:
     name: Check CodeClimate credentials
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     outputs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
     steps:
@@ -35,7 +35,7 @@ jobs:
   build-icetray:
     name: Unit tests - IceTray
     needs: [ check-codeclimate-credentials ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     container:
       image: icecube/icetray:icetray-prod-current-ubuntu22.04-X64
       options: --user root
@@ -92,7 +92,7 @@ jobs:
 
   build-matrix:
     name: Unit tests - Python versions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: [3.8, 3.9, '3.10', '3.11']
