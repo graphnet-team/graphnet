@@ -111,7 +111,17 @@ class EdgelessGraph(GraphDefinition):
 
 
 class KNNGraphRRWP(GraphDefinition):
-    """KNN Graph with relative random walk probabilities."""
+    """KNN Graph with relative random walk probabilities (RRWP).
+
+    Identical to KNNGraph, but with five extra fields containing absolute and
+    relative positional encoding using RRWP.
+
+    ``` abs_pe = graph["rrwp"]  # RRWP absolute positional encoding values
+    rrwp_val = graph["rrwp_val"]  # Non-zero values of the RRWP tensor
+    rrwp_index = graph["rrwp_index]  # Corresponding row, col indices degree =
+    graph["deg"]  # Degree of each node (num. of incoming edges) log_deg =
+    graph["log_deg"]  # Equal to torch.log10(graph["deg"] + 1) ```
+    """
 
     def __init__(
         self,
@@ -179,7 +189,13 @@ class KNNGraphRRWP(GraphDefinition):
 
 
 class KNNGraphRWSE(GraphDefinition):
-    """KNN Graph with random walk structural encoding."""
+    """KNN Graph with random walk structural encoding (RWSE).
+
+    Identical to KNNGraph but with an additional field containing the values
+    obtained from RWSE. The encoding can be accessed via
+
+    `rwse = graph["rwse"]  # random walk structural encoding`
+    """
 
     def __init__(
         self,

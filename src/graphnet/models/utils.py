@@ -157,7 +157,6 @@ def full_edge_index(
 
         adj = adj.view(size)
         _edge_index = adj.nonzero(as_tuple=False).t().contiguous()
-        # _edge_index, _ = remove_self_loops(_edge_index)
         negative_index_list.append(_edge_index + cum_nodes[i])
 
     edge_index_full = torch.cat(negative_index_list, dim=1).contiguous()
@@ -168,8 +167,8 @@ def full_edge_index(
 def add_full_rrwp(
     data: Data,
     walk_length: int = 8,
-    attr_name_abs: str = "rrwp",  # name: 'rrwp'
-    attr_name_rel: str = "rrwp",  # name: ('rrwp_idx', 'rrwp_val')
+    attr_name_abs: str = "rrwp",
+    attr_name_rel: str = "rrwp",
     add_identity: bool = True,
     spd: bool = False,
 ) -> Data:
@@ -186,7 +185,6 @@ def add_full_rrwp(
         add_identity: Add identity matrix to position encoding.
         spd: Use shortest path distances.
     """
-    # device = data.edge_index.device
     num_nodes = data.num_nodes
     edge_index, edge_weight = data.edge_index, data.edge_weight
 
@@ -223,11 +221,10 @@ def add_full_rrwp(
 
     rel_pe = SparseTensor.from_dense(pe, has_value=True)
     rel_pe_row, rel_pe_col, rel_pe_val = rel_pe.coo()
-    # rel_pe_idx = torch.stack([rel_pe_row, rel_pe_col], dim=0)
     rel_pe_idx = torch.stack([rel_pe_col, rel_pe_row], dim=0)
-    # the framework of GRIT performing right-mul while adj is row-normalized,
-    #                 need to switch the order or row and col.
-    #    note: both can work but the current version is more reasonable.
+    # The framework of GRIT performing right-mul while adj is row-normalized,
+    # need to switch the order or row and col.
+    # Note: both can work but the current version is more reasonable.
 
     if spd:
         spd_idx = walk_length - torch.arange(walk_length)
@@ -299,7 +296,6 @@ def get_rw_landing_probs(
         edge_weight = torch.ones(edge_index.size(1), device=edge_index.device)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     source = edge_index[0]
-    # dest = edge_index[1]
 
     # Out degrees
     deg = scatter_add(edge_weight, source, dim=0, dim_size=num_nodes)

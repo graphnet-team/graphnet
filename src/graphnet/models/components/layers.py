@@ -626,12 +626,13 @@ class GritSparseMHA(LightningModule):
 
         Args:
             in_dim: Dimension of the input tensor.
-            out_dim: Dimension of theo output tensor.
+            out_dim: Dimension of the output tensor.
             num_heads: Number of attention heads.
             use_bias: Apply bias the key and value linear layers.
             clamp: Clamp the absolute value of the attention scores to a value.
             dropout: Dropout layer probability.
-            activation: Activation function.
+            activation: Uninstantiated activation function.
+                E.g. `torch.nn.ReLU`
             edge_enhance: Applies learnable weight matrix with node-pair in
                 output node calculation.
         """
@@ -702,7 +703,7 @@ class GritSparseMHA(LightningModule):
         if E is not None:
             wE = score.flatten(1)
 
-        # Complete attention ccaclculation
+        # Complete attention calculation
         score = torch.einsum("ehd, dhc->ehc", score, self.Aw)
         if self.clamp is not None:
             score = torch.clamp(score, min=-self.clamp, max=self.clamp)
@@ -755,7 +756,7 @@ class GritTransformerLayer(LightningModule):
         rezero: bool = False,
         enable_edge_transform: bool = True,
         attn_bias: bool = False,
-        attn_dropout: float = 0.0,  # CHECK
+        attn_dropout: float = 0.0,
         attn_clamp: float = 5.0,
         attn_activation: nn.Module = nn.ReLU,
         attn_edge_enhance: bool = True,
@@ -767,10 +768,12 @@ class GritTransformerLayer(LightningModule):
             out_dim: Dimension of theo output tensor.
             num_heads: Number of attention heads.
             dropout: Dropout layer probability.
-            norm: Normalization layer.
+            norm: Uninstantiated normalization layer.
+                Must be either `torch.nn.BatchNorm1d` or `torch.nn.LayerNorm`.
             residual: Apply residual connections.
             deg_scaler: Apply degree scaling after MHA.
-            activation: Activation function.
+            activation: Uninstantiated activation function.
+                E.g. `torch.nn.ReLU`
             norm_edges: Apply normalization to edges.
             update_edges: Update edges after layer.
             batch_norm_momentum: Momentum of batch normalization.
@@ -781,7 +784,8 @@ class GritTransformerLayer(LightningModule):
             attn_bias: Add bias to keys and values in MHA block.
             attn_dropout: Attention droput.
             attn_clamp: Clamp absolute value of attention scores to a value.
-            attn_activation: Activation function for MHA block.
+            attn_activation: Uninstantiated activation function for MHA block.
+                E.g. `torch.nn.ReLU`
             attn_edge_enhance: Applies learnable weight matrix with node-pair
                 in output node calculation in MHA block.
         """
@@ -960,8 +964,9 @@ class SANGraphHead(LightningModule):
             dim_in: Input dimension.
             dim_out: Output dimension.
             L: Number of hidden layers.
-            activation: Activation function.
-            pooling: Pooling method.
+            activation: Uninstantiated activation function.
+                E.g. `torch.nn.ReLU`
+            pooling: Node-wise pooling operation. Either "mean" or "add".
         """
         super().__init__()
         if pooling == "mean":
