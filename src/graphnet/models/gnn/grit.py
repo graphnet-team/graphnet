@@ -73,18 +73,22 @@ class GRIT(GNN):
             add_node_attr_as_self_loop: Adds node attr as an self-edge.
             dropout: Dropout probability.
             fill_value: Padding value.
-            norm: Normalization layer.
+            norm: Uninstantiated normalization layer.
+                Either `torch.nn.BatchNorm1d` or `torch.nn.LayerNorm`.
             attn_dropout: Attention dropout probability.
             edge_enhance: Applies learnable weight matrix with node-pair in
                 output node calculation for MHA.
             update_edges: Update edge values after GRIT layer.
             attn_clamp: Clamp absolute value of attention scores to a value.
-            activation: Activation function.
-            attn_activation: Attention activation function.
+            activation: Uninstantiated activation function.
+                E.g. `torch.nn.ReLU`
+            attn_activation: Uninstantiated attention activation function.
+                E.g. `torch.nn.ReLU`
             norm_edges: Apply normalization layer to edges.
             enable_edge_transform: Apply transformation to edges.
             pred_head_layers: Number of layers in the prediction head.
-            pred_head_activation: Prediction head activation function.
+            pred_head_activation: Uninstantiated prediction head activation
+                    function. E.g. `torch.nn.ReLU`
             pred_head_pooling: Pooling function to use for the prediction head,
                 either "mean" (default) or "add".
             position_encoding: Method of position encoding.

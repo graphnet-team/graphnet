@@ -116,11 +116,10 @@ class KNNGraphRRWP(GraphDefinition):
     Identical to KNNGraph, but with five extra fields containing absolute and
     relative positional encoding using RRWP.
 
-    ``` abs_pe = graph["rrwp"]  # RRWP absolute positional encoding values
-    rrwp_val = graph["rrwp_val"]  # Non-zero values of the RRWP tensor
-    rrwp_index = graph["rrwp_index]  # Corresponding row, col indices degree =
-    graph["deg"]  # Degree of each node (num. of incoming edges) log_deg =
-    graph["log_deg"]  # Equal to torch.log10(graph["deg"] + 1) ```
+    `abs_pe = graph["rrwp"]  # RRWP absolute positional encoding values`
+    `rrwp_val = graph["rrwp_val"]  # Non-zero values of the RRWP tensor`
+    `rrwp_index = graph["rrwp_index]  # Corresponding row, col indices` `degree
+    = graph["deg"]  # Degree of each node (num. of incoming edges)`
     """
 
     def __init__(

@@ -21,8 +21,7 @@ from torch_geometric.utils import to_dense_batch, softmax
 from torch_scatter import scatter
 
 from pytorch_lightning import LightningModule
-
-from graphnet.models.utils import get_log_deg
+from torch_geometric.utils import degree
 
 
 class DynEdgeConv(EdgeConv, LightningModule):
@@ -848,7 +847,7 @@ class GritTransformerLayer(LightningModule):
                 if norm_edges
                 else nn.Identity()
             )
-        else:  # TODO: Maybe just set this to nn.Identity. -PW
+        else:
             raise ValueError(
                 "GritTransformerLayer normalization layer must be 'LayerNorm' \
                     or 'BatchNorm1d'!"
@@ -881,7 +880,7 @@ class GritTransformerLayer(LightningModule):
         """Forward pass."""
         x = data.x
         num_nodes = data.num_nodes
-        log_deg = get_log_deg(data)
+        log_deg = torch.log10(degree(data.edge_index[0]) + 1)
 
         x_attn_residual = x  # for first residual connection
         e_values_in = data.get("edge_attr", None)

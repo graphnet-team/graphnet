@@ -7,7 +7,7 @@ from torch import Tensor, LongTensor
 
 from torch_geometric.nn import knn_graph
 from torch_geometric.data import Batch, Data
-from torch_geometric.utils import homophily, degree, to_dense_adj
+from torch_geometric.utils import homophily, to_dense_adj
 from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from torch_scatter import scatter, scatter_add
@@ -195,7 +195,6 @@ def add_full_rrwp(
     )
 
     # Compute D^{-1} A:
-    deg = adj.sum(dim=1)
     deg_inv = 1.0 / adj.sum(dim=1)
     deg_inv[deg_inv == float("inf")] = 0
     adj = adj * deg_inv.view(-1, 1)
@@ -239,31 +238,7 @@ def add_full_rrwp(
     data[f"{attr_name_rel}_index"] = rel_pe_idx
     data[f"{attr_name_rel}_val"] = rel_pe_val
 
-    data.log_deg = torch.log(deg + 1)
-    data.deg = deg.type(torch.long)
-
     return data
-
-
-@torch.no_grad()
-def get_log_deg(data: Data) -> Tensor:
-    """Get log of the degree number of a graph.
-
-    Original code:
-    https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py
-    """
-    if "log_deg" in data:
-        log_deg = data.log_deg
-    elif "deg" in data:
-        deg = data.deg
-        log_deg = torch.log(deg + 1).unsqueeze(-1)
-    else:
-        deg = degree(
-            data.edge_index[1], num_nodes=data.num_nodes, dtype=data.x.dtype
-        )
-        log_deg = torch.log(deg + 1)
-    log_deg = log_deg.view(data.num_nodes, 1)
-    return log_deg
 
 
 def get_rw_landing_probs(
