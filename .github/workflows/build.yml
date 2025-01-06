@@ -104,6 +104,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Print available disk space before graphnet install
         run: df -h
+      - name: print which ubuntu version
+        run: lsb_release -a
       - name: Install package
         uses: ./.github/actions/install
         with:
