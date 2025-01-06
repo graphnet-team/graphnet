@@ -11,5 +11,4 @@ from .graphs import (
     EdgelessGraph,
     KNNGraphRRWP,
     KNNGraphRWSE,
-    KNNGraphNoPE,
 )
