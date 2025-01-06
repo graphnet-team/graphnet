@@ -16,7 +16,7 @@ jobs:
 
   check-codeclimate-credentials:
     name: Check CodeClimate credentials
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     outputs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
     steps:
