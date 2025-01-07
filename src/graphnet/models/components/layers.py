@@ -880,7 +880,11 @@ class GritTransformerLayer(LightningModule):
         """Forward pass."""
         x = data.x
         num_nodes = data.num_nodes
-        log_deg = torch.log10(degree(data.edge_index[0]) + 1)
+        log_deg = torch.log10(
+            degree(data.edge_index[0], num_nodes=num_nodes, dtype=data.x.dtype)
+            + 1
+        )
+        log_deg = log_deg.view(data.num_nodes, 1)
 
         x_attn_residual = x  # for first residual connection
         e_values_in = data.get("edge_attr", None)
