@@ -1,6 +1,6 @@
 """Module for combining multiple extractors into a single extractor."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors.icecube.i3extractor import I3Extractor
@@ -30,6 +30,11 @@ class CombinedExtractor(I3Extractor):
         """
         super().__init__(extractor_name=extractor_name)
         self._extractors = extractors
+
+    def set_gcd(self, i3_file: str, gcd_file: Optional[str] = None) -> None:
+        """Set the GCD file for all extractors."""
+        for extractor in self._extractors:
+            extractor.set_gcd(i3_file, gcd_file)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, float]:
         """Extract data from frame using all extractors.
