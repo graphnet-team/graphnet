@@ -18,7 +18,7 @@ if has_icecube_package() or TYPE_CHECKING:
 
 
 class I3TotalEExtractor(I3Extractor):
-    """Extract all the visible particles entering the volume."""
+    """Energy on appearance of all visible particles in the volume."""
 
     def __init__(
         self,
@@ -40,10 +40,11 @@ class I3TotalEExtractor(I3Extractor):
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract all the visible particles entering the volume."""
         output = {}
+        checked_id_list: List = []
         if self.frame_contains_info(frame):
 
             e_entrance_track, e_deposited_track, checked_id_list = (
-                self.total_track_energy(frame)
+                self.total_track_energy(frame, checked_id_list=checked_id_list)
             )
 
             e_entrance_cascade, e_deposited_cascade, checked_id_list = (
@@ -61,6 +62,10 @@ class I3TotalEExtractor(I3Extractor):
                         )
                     ]
                 )
+            e_total = e_entrance_track + e_entrance_cascade
+            assert (
+                e_total <= primary_energy
+            ), "Total energy is greater than primary energy"
 
             output.update(
                 {
@@ -73,10 +78,7 @@ class I3TotalEExtractor(I3Extractor):
                     "e_deposited_cascade_"
                     + self._extractor_name: e_deposited_cascade,
                     "e_fraction_"
-                    + self._extractor_name: (
-                        e_entrance_track + e_entrance_cascade
-                    )
-                    / primary_energy,
+                    + self._extractor_name: (e_total) / primary_energy,
                 }
             )
 
@@ -115,6 +117,13 @@ class I3TotalEExtractor(I3Extractor):
             # Accumulate
             e_deposited += e0 - e1
             e_entrance += e0
+            if self.daughters:
+                assert (
+                    e_entrance <= primary.energy
+                ), "Energy on entrance is greater than primary energy"
+                assert (
+                    e_deposited <= primary.energy
+                ), "Energy deposited is greater than primary energy"
             checked_id_list.append(track.id)
 
         return e_entrance, e_deposited, checked_id_list
