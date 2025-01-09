@@ -17,7 +17,7 @@ jobs:
 
   pre-commit:
     name: Pre-commit - ${{ matrix.hook }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         hook: ["black", "flake8", "docformatter", "pydocstyle", "mypy"]
