@@ -120,7 +120,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -433,10 +433,10 @@ extraction from experiment-specific file formats to graphnet-supported data form
 <code class="code docutils literal notranslate"><span class="pre">GraphNeTWriter</span></code> which will save the extracted data from your files as a specific file format.
 Below is an example of configuring <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> to extract data from <code class="code docutils literal notranslate"><span class="pre">.h5</span></code> files from the LiquidO experiment,
 and to save the data as <code class="code docutils literal notranslate"><span class="pre">.parquet</span></code> files which are compatible with the <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> in GraphNeT.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.extractors.liquido</span> <span class="kn">import</span> <span class="n">H5HitExtractor</span><span class="p">,</span> <span class="n">H5TruthExtractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.readers</span> <span class="kn">import</span> <span class="n">LiquidOReader</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.writers</span> <span class="kn">import</span> <span class="n">ParquetWriter</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.liquido</span><span class="w"> </span><span class="kn">import</span> <span class="n">H5HitExtractor</span><span class="p">,</span> <span class="n">H5TruthExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataconverter</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataConverter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">LiquidOReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetWriter</span>
 
 <span class="c1"># Your settings</span>
 <span class="n">dir_with_files</span> <span class="o">=</span> <span class="s1">'/home/my_files'</span>
@@ -474,21 +474,21 @@ Similarly, extending GraphNeT conversion code to work on data from a new experim
 <details>
 <summary><b>Example of a Reader</b></summary><p>Implementing a <code class="code docutils literal notranslate"><span class="pre">GraphNeTFileReader</span></code> to read data from your experiment requires writing just a few lines of code.
 Below is an example of a reader meant to parse and extract data from <code class="code docutils literal notranslate"><span class="pre">.h5</span></code> files from LiquidO, which output data in the vectorized format.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
-<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.liquido</span> <span class="kn">import</span> <span class="n">H5Extractor</span>
-<span class="kn">from</span> <span class="nn">.graphnet_file_reader</span> <span class="kn">import</span> <span class="n">GraphNeTFileReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.liquido</span><span class="w"> </span><span class="kn">import</span> <span class="n">H5Extractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.graphnet_file_reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphNeTFileReader</span>
 
-<span class="k">class</span> <span class="nc">LiquidOReader</span><span class="p">(</span><span class="n">GraphNeTFileReader</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LiquidOReader</span><span class="p">(</span><span class="n">GraphNeTFileReader</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""A class for reading h5 files from LiquidO."""</span>
 
     <span class="n">_accepted_file_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".h5"</span><span class="p">]</span>
     <span class="n">_accepted_extractors</span> <span class="o">=</span> <span class="p">[</span><span class="n">H5Extractor</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Extract data from single parquet file.</span>
 
 <span class="sd">        Args:</span>
@@ -505,7 +505,7 @@ Below is an example of a reader meant to parse and extract data from <code class
                 <span class="n">outputs</span><span class="p">[</span><span class="n">extractor</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span>
         <span class="k">return</span> <span class="n">outputs</span>
 
-    <span class="k">def</span> <span class="nf">find_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Search folder(s) for h5 files.</span>
 
 <span class="sd">        Args:</span>
@@ -531,10 +531,10 @@ specific parts of the available data.</p>
 <details>
 <summary><b>Example of an Extractor</b></summary><p>Implementing an <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code> to retrieve specific parts of your data files is easy.
 Below is an example of an <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code> that will retrieve tables <code class="code docutils literal notranslate"><span class="pre">.h5</span></code> files from LiquidO.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">H5Extractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">H5Extractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Class for extracting information from LiquidO h5 files."""</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">column_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">"""Construct H5Extractor.</span>
 
 <span class="sd">        Args:</span>
@@ -549,7 +549,7 @@ Below is an example of an <code class="code docutils literal notranslate"><span 
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor_name</span><span class="o">=</span><span class="n">extractor_name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Extract information from h5 file."""</span>
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">available_tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">f</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
@@ -562,7 +562,7 @@ Below is an example of an <code class="code docutils literal notranslate"><span 
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_verify_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_verify_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_column_names</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">AssertionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -582,15 +582,15 @@ implement the <code class="code docutils literal notranslate"><span class="pre">
 which will be called by <code class="code docutils literal notranslate"><span class="pre">DataConverter</span></code> through <code class="code docutils literal notranslate"><span class="pre">DataConverter.merge_files()</span></code>.</p>
 <p>Below is a conceptual example of how easy it is to extend the data conversion API to save files in a different format.
 In this example, the writer will save the entire set of extractor outputs - a dictionary with pd.DataFrames - as a single pickle file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.writers</span> <span class="kn">import</span> <span class="n">GraphNeTWriter</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphNeTWriter</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 
-<span class="k">class</span> <span class="nc">MyPickleWriter</span><span class="p">(</span><span class="n">GraphNeTWriter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyPickleWriter</span><span class="p">(</span><span class="n">GraphNeTWriter</span><span class="p">):</span>
 
     <span class="n">_file_extension</span> <span class="o">=</span> <span class="s2">".pickle"</span>
     <span class="n">_merge_dataframes</span> <span class="o">=</span> <span class="kc">True</span>   <span class="c1"># `data` will be Dict[str, pd.DataFrame]</span>
 
-    <span class="k">def</span> <span class="nf">_save_file</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]],</span>
         <span class="n">output_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -610,7 +610,7 @@ In this example, the writer will save the entire set of extractor outputs - a di
 
 
 
-    <span class="k">def</span> <span class="nf">merge_files</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">files</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">output_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -673,7 +673,7 @@ training by <code class="code docutils literal notranslate"><span class="pre">Pa
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

@@ -120,7 +120,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -545,7 +545,7 @@ It comes with very few restrictions and you can therefore implement nearly any d
 </pre></div>
 </div>
 <p>You can then reconstruct the same model architecture from the <code class="code docutils literal notranslate"><span class="pre">.yml</span></code> file:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 
 <span class="c1"># Indicate that you `trust` the config file after inspecting it, to allow for</span>
 <span class="c1"># dynamically loading classes references in the file.</span>
@@ -621,7 +621,7 @@ It comes with very few restrictions and you can therefore implement nearly any d
 </pre></div>
 </div>
 <p>You can then load this model by calling <a class="reference internal" href="../api/graphnet.models.model.html#graphnet.models.model.Model.load" title="graphnet.models.model.Model.load"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load()</span></code></a> classmethod:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 
 <span class="n">loaded_model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"model.pth"</span><span class="p">)</span>
 </pre></div>
@@ -643,8 +643,8 @@ You can do so by:</p>
 </pre></div>
 </div>
 <p>You can then reconstruct your model again by building the model from the <cite>ModelConfig</cite> file and loading in the <cite>state_dict</cite>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">ModelConfig</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelConfig</span>
 
 <span class="n">model_config</span> <span class="o">=</span> <span class="n">ModelConfig</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"model.yml"</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="n">model_config</span><span class="p">)</span>  <span class="c1"># With randomly initialised weights.</span>
@@ -717,10 +717,10 @@ The model architecture could be based on CNNs, GNNs, transformers or any of the 
 Multiple subclasses of <code class="code docutils literal notranslate"><span class="pre">Task</span></code> exists, most popular of which is <code class="code docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code> that acts as a learnable prediction head that maps
 the latent output of <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> to the target value(s). Many instances of <code class="code docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code> has been implemented in GraphNeT to tackle a wide range of supervised learning tasks, such as binary classification and energy reconstruction.</p>
 <p>Below is an example of a <code class="code docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code> that defines binary classification in general:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.task</span> <span class="kn">import</span> <span class="n">StandardLearnedTask</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.task</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardLearnedTask</span>
 
-<span class="k">class</span> <span class="nc">BinaryClassificationTask</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BinaryClassificationTask</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Performs binary classification."""</span>
 
     <span class="c1"># Requires one feature, logit for being signal class.</span>
@@ -728,7 +728,7 @@ the latent output of <code class="code docutils literal notranslate"><span class
     <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"target"</span><span class="p">]</span>
     <span class="n">default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"target_pred"</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="c1"># transform probability of being muon</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -746,15 +746,15 @@ In this task <code class="code docutils literal notranslate"><span class="pre">x
 So to get started, all you need to do is to import your choices in these components and build the model.
 Below is a snippet that defines a <code class="code docutils literal notranslate"><span class="pre">Model</span></code> that reconstructs the zenith angle with uncertainties using the <a class="reference external" href="https://iopscience.iop.org/article/10.1088/1748-0221/17/11/P11003">GNN published by IceCube</a> for ORCA150:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Choice of graph representation, architecture, and physics task</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.detector.prometheus</span> <span class="kn">import</span> <span class="n">ORCA150</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.graphs</span> <span class="kn">import</span> <span class="n">KNNGraph</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.graphs.nodes</span> <span class="kn">import</span> <span class="n">NodesAsPulses</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.gnn.dynedge</span> <span class="kn">import</span> <span class="n">DynEdge</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.task.reconstruction</span> <span class="kn">import</span> <span class="n">ZenithReconstructionWithKappa</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.detector.prometheus</span><span class="w"> </span><span class="kn">import</span> <span class="n">ORCA150</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNNGraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs.nodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">NodesAsPulses</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.gnn.dynedge</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynEdge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.task.reconstruction</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZenithReconstructionWithKappa</span>
 
 <span class="c1"># Choice of loss function and Model class</span>
-<span class="kn">from</span> <span class="nn">graphnet.training.loss_functions</span> <span class="kn">import</span> <span class="n">VonMisesFisher2DLoss</span>
-<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">StandardModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.training.loss_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">VonMisesFisher2DLoss</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardModel</span>
 
 <span class="c1"># Configuring the components</span>
 
@@ -801,8 +801,8 @@ by switching out the <code class="code docutils literal notranslate"><span class
 allowing GraphNeT users to train <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s with the exact same functionality but with less boilerplate code.</p>
 <p>But because <code class="code docutils literal notranslate"><span class="pre">Model</span></code> s in GraphNeT are PyTorch modules and fully compatible with PyTorch-Lightning, you can also choose to write your own custom training loops if needed, or use the regular PyTorch-Lightning training functionality.
 The snippet above is equivalent to:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span>  <span class="nn">torch_lightning</span> <span class="kn">import</span> <span class="n">Trainer</span>
-<span class="kn">from</span>  <span class="nn">graphnet.training.callbacks</span> <span class="kn">import</span> <span class="n">ProgressBar</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w">  </span><span class="nn">torch_lightning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">from</span><span class="w">  </span><span class="nn">graphnet.training.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressBar</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">train_dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -829,38 +829,38 @@ The snippet above is equivalent to:</p>
 and they are configured to receive <code class="code docutils literal notranslate"><span class="pre">torch_geometric.data.Data</span></code> objects as input to their <code class="code docutils literal notranslate"><span class="pre">forward</span></code> pass.
 Therefore, adding your pytorch models to GraphNeT is as easy as changing the inheritance and adjusting the input to expect <code class="code docutils literal notranslate"><span class="pre">Data</span></code> objects.</p>
 <p>Below is an example of a simple pytorch model</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
 
-<span class="k">class</span> <span class="nc">MyModel</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModel</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">input_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
                  <span class="n">output_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Modifying this model to work in GraphNeT requires changing the inheritance to model, and configuring the input to be <code class="code docutils literal notranslate"><span class="pre">Data</span></code> objects:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
 
 
-<span class="k">class</span> <span class="nc">MyGraphNeTModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyGraphNeTModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">input_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
                  <span class="n">output_dim</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
@@ -870,9 +870,9 @@ Therefore, adding your pytorch models to GraphNeT is as easy as changing the inh
 <section id="experiment-tracking">
 <h2 id="experiment-tracking">Experiment Tracking<a class="headerlink" href="#experiment-tracking" title="Link to this heading">¶</a></h2>
 <p>You can track your experiment using <a class="reference external" href="https://wandb.ai/">Weights &amp; Biases</a> by passing the <code class="code docutils literal notranslate"><span class="pre">WandbLogger</span></code> to <code class="xref py py-func docutils literal notranslate"><span class="pre">fit()</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">pytorch_lightning.loggers</span> <span class="kn">import</span> <span class="n">WandbLogger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytorch_lightning.loggers</span><span class="w"> </span><span class="kn">import</span> <span class="n">WandbLogger</span>
 
 <span class="c1"># Create wandb directory</span>
 <span class="n">wandb_dir</span> <span class="o">=</span> <span class="s2">"./wandb/"</span>
@@ -909,12 +909,12 @@ Therefore, we strongly recommend using Weights &amp; Biases or a similar system 
 <h2 id="example-energy-reconstruction-using-modelconfig">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code><a class="headerlink" href="#example-energy-reconstruction-using-modelconfig" title="Link to this heading">¶</a></h2>
 <p>Below is a minimal example for training a GNN in GraphNeT for energy reconstruction on a small data sample in GraphNeT, using configuration files:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import(s)</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.constants</span> <span class="kn">import</span> <span class="n">CONFIG_DIR</span>  <span class="c1"># Local path to graphnet/configs</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.dataloader</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">DatasetConfig</span><span class="p">,</span> <span class="n">ModelConfig</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">CONFIG_DIR</span>  <span class="c1"># Local path to graphnet/configs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataloader</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetConfig</span><span class="p">,</span> <span class="n">ModelConfig</span>
 
 <span class="c1"># Configuration</span>
 <span class="n">dataset_config_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">CONFIG_DIR</span><span class="si">}</span><span class="s2">/datasets/training_example_data_sqlite.yml"</span>
@@ -1003,7 +1003,7 @@ Similarly, if you wanted to train on a different <code class="code docutils lite
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

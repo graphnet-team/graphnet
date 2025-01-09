@@ -119,7 +119,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css?v=79c92029" />
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
@@ -351,17 +351,17 @@
   <h1 id="modules-graphnet-data-utilities-sqlite-utilities--page-root">Source code for graphnet.data.utilities.sqlite_utilities</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""SQLite-specific utility functions for use in `graphnet.data`."""</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">sqlalchemy</span>
-<span class="kn">import</span> <span class="nn">sqlite3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlalchemy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
 
 
 <div class="viewcode-block" id="database_exists">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.database_exists">[docs]</a>
-<span class="k">def</span> <span class="nf">database_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">database_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether database exists at `database_path`."""</span>
     <span class="k">assert</span> <span class="n">database_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
         <span class="s2">".db"</span>
@@ -372,7 +372,7 @@
 
 <div class="viewcode-block" id="query_database">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.query_database">[docs]</a>
-<span class="k">def</span> <span class="nf">query_database</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">query_database</span><span class="p">(</span><span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Execute query on database, and return result.</span>
 
 <span class="sd">    Args:</span>
@@ -389,7 +389,7 @@
 
 <div class="viewcode-block" id="get_primary_keys">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.get_primary_keys">[docs]</a>
-<span class="k">def</span> <span class="nf">get_primary_keys</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_primary_keys</span><span class="p">(</span>
     <span class="n">database</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">"""Get name of primary key column for each table in database.</span>
@@ -438,7 +438,7 @@
 
 <div class="viewcode-block" id="database_table_exists">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.database_table_exists">[docs]</a>
-<span class="k">def</span> <span class="nf">database_table_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">database_table_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Check whether `table_name` exists in database at `database_path`."""</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">database_exists</span><span class="p">(</span><span class="n">database_path</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">False</span>
@@ -451,7 +451,7 @@
 
 <div class="viewcode-block" id="run_sql_code">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.run_sql_code">[docs]</a>
-<span class="k">def</span> <span class="nf">run_sql_code</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_sql_code</span><span class="p">(</span><span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Execute SQLite code.</span>
 
 <span class="sd">    Args:</span>
@@ -467,7 +467,7 @@
 
 <div class="viewcode-block" id="save_to_sql">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.save_to_sql">[docs]</a>
-<span class="k">def</span> <span class="nf">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_to_sql</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Save a dataframe `df` to a table `table_name` in SQLite `database`.</span>
 
 <span class="sd">    Table must exist already.</span>
@@ -485,7 +485,7 @@
 
 <div class="viewcode-block" id="attach_index">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.attach_index">[docs]</a>
-<span class="k">def</span> <span class="nf">attach_index</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">attach_index</span><span class="p">(</span>
     <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Attach the table (i.e., event) index.</span>
@@ -506,7 +506,7 @@
 
 <div class="viewcode-block" id="create_table">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.create_table">[docs]</a>
-<span class="k">def</span> <span class="nf">create_table</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_table</span><span class="p">(</span>
     <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -563,7 +563,7 @@
 
 <div class="viewcode-block" id="create_table_and_save_to_sql">
 <a class="viewcode-back" href="../../../../api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.create_table_and_save_to_sql">[docs]</a>
-<span class="k">def</span> <span class="nf">create_table_and_save_to_sql</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_table_and_save_to_sql</span><span class="p">(</span>
     <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">database_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -604,7 +604,7 @@
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

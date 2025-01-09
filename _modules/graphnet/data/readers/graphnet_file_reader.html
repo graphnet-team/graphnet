@@ -119,7 +119,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css?v=79c92029" />
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
@@ -355,25 +355,25 @@
 <span class="sd">file formats.</span>
 <span class="sd">"""</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABC</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">ABC</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.utilities.decorators</span> <span class="kn">import</span> <span class="n">final</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.dataclasses</span> <span class="kn">import</span> <span class="n">I3FileSet</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.extractor</span> <span class="kn">import</span> <span class="n">Extractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.icecube</span> <span class="kn">import</span> <span class="n">I3Extractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.internal</span> <span class="kn">import</span> <span class="n">ParquetExtractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.liquido</span> <span class="kn">import</span> <span class="n">H5Extractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.prometheus</span> <span class="kn">import</span> <span class="n">PrometheusExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">final</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3FileSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.icecube</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Extractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.liquido</span><span class="w"> </span><span class="kn">import</span> <span class="n">H5Extractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.prometheus</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrometheusExtractor</span>
 
 
 <div class="viewcode-block" id="GraphNeTFileReader">
 <a class="viewcode-back" href="../../../../api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader">[docs]</a>
-<span class="k">class</span> <span class="nc">GraphNeTFileReader</span><span class="p">(</span><span class="n">Logger</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphNeTFileReader</span><span class="p">(</span><span class="n">Logger</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""A generic base class for FileReaders in GraphNeT.</span>
 
 <span class="sd">    Classes inheriting from `GraphNeTFileReader` must implement a</span>
@@ -388,7 +388,7 @@
     <span class="n">_accepted_extractors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">Any</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Open and apply extractors to a single file.</span>
@@ -406,23 +406,23 @@
 <span class="sd">        """</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">accepted_file_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accepted_file_extensions</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return list of accepted file extensions."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accepted_file_extensions</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">accepted_extractors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">accepted_extractors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return list of compatible `Extractor`(s)."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_accepted_extractors</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">extracor_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extracor_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Return list of table names produced by extractors."""</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">extractor</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span><span class="p">]</span>
 
 <div class="viewcode-block" id="GraphNeTFileReader.find_files">
 <a class="viewcode-back" href="../../../../api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.find_files">[docs]</a>
-    <span class="k">def</span> <span class="nf">find_files</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3FileSet</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Search directory for input files recursively.</span>
@@ -450,7 +450,7 @@
 <div class="viewcode-block" id="GraphNeTFileReader.set_extractors">
 <a class="viewcode-back" href="../../../../api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.set_extractors">[docs]</a>
     <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">set_extractors</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_extractors</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
             <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span>
@@ -472,7 +472,7 @@
 
 
     <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">_validate_extractors</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_extractors</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractors</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
             <span class="n">List</span><span class="p">[</span><span class="n">Extractor</span><span class="p">],</span>
@@ -497,7 +497,7 @@
 <div class="viewcode-block" id="GraphNeTFileReader.validate_files">
 <a class="viewcode-back" href="../../../../api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.validate_files">[docs]</a>
     <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">validate_files</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">input_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3FileSet</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Check that the input files are accepted by the reader.</span>
@@ -515,7 +515,7 @@
 
 
     <span class="nd">@final</span>
-    <span class="k">def</span> <span class="nf">_validate_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Validate a single file path.</span>
 
 <span class="sd">        Args:</span>
@@ -553,7 +553,7 @@
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

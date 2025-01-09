@@ -120,7 +120,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -438,23 +438,23 @@ These features would normally include the sensor position, time of measurement, 
 <p><strong>truth</strong>: a single pandas.DataFrame with dimensions [n_events, t] where <cite>n_events</cite> denotes the total number of events in the file and <cite>t</cite> is the number of event-level truth variables we have available for this simulation.
 Ordinarily, these truth variables would include particle id, energy, direction etc.</p>
 <p>To convert these pickle files to a supported backend in GraphNeT, we first have to define our reader. This reader should open a pickle file and apply the <code class="code docutils literal notranslate"><span class="pre">Extractor</span></code> that we must also implement. Lets start with the reader:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 
 <span class="c1"># Import the generic file reader</span>
-<span class="kn">from</span> <span class="nn">.graphnet_file_reader</span> <span class="kn">import</span> <span class="n">GraphNeTFileReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.graphnet_file_reader</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphNeTFileReader</span>
 
 <span class="c1"># Import your own extractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors.myexperiment</span> <span class="kn">import</span> <span class="n">MyExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.myexperiment</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyExtractor</span>
 
-<span class="k">class</span> <span class="nc">MyReader</span><span class="p">(</span><span class="n">GraphNeTFileReader</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyReader</span><span class="p">(</span><span class="n">GraphNeTFileReader</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""A class for reading my pickle files from MyExperiment."""</span>
 
     <span class="n">_accepted_file_extensions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">".pickle"</span><span class="p">]</span>
     <span class="n">_accepted_extractors</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyExperiment</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Extract data from single pickle file.</span>
 
 <span class="sd">        Args:</span>
@@ -487,16 +487,16 @@ file and apply extractors to it. These calls will happen in parallel automatical
 </pre></div>
 </div>
 <p>and this name is used to select specific tables in the file.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data.extractors</span> <span class="kn">import</span> <span class="n">Extractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extractor</span>
 
-<span class="k">class</span> <span class="nc">MyExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Class for extracting information from pickles files in MyExperiment</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Extract information from pickle file."""</span>
 
         <span class="c1"># Check if the table is in the dict</span>
@@ -508,10 +508,10 @@ file and apply extractors to it. These calls will happen in parallel automatical
 </div>
 <p>We defined our reader in such a way that our extractor recieves a <code class="code docutils literal notranslate"><span class="pre">dictionary:</span> <span class="pre">Dict[str,</span> <span class="pre">pd.DataFrame]</span></code> argument. Our extractor therefore only have to find the field it needs to extract and return it.</p>
 <p>With both a reader and extractor defined, we’re ready to convert data to a supported backend in GraphNeT! Below is an example of using the code above in conversion:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.extractors.myexperiment</span> <span class="kn">import</span> <span class="n">MyExtractor</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.dataconverter</span> <span class="kn">import</span> <span class="n">DataConverter</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.readers</span> <span class="kn">import</span> <span class="n">MyReader</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.writers</span> <span class="kn">import</span> <span class="n">ParquetWriter</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.myexperiment</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataconverter</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataConverter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetWriter</span>
 
 <span class="c1"># Your settings</span>
 <span class="n">dir_with_files</span> <span class="o">=</span> <span class="s1">'/home/my_files'</span>
@@ -538,9 +538,9 @@ file and apply extractors to it. These calls will happen in parallel automatical
 <p>GraphNeT requires a <code class="code docutils literal notranslate"><span class="pre">Detector</span></code> class to represent details that are specific to your experiment.</p>
 <p>a <code class="code docutils literal notranslate"><span class="pre">Detector</span></code> holds a geometry table, standardization functions that maps your raw data into a numerical range suitable for deep learning, and names of important columns in your data.</p>
 <p>Below is an example of a <code class="code docutils literal notranslate"><span class="pre">Detector</span></code> class:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.models.detector</span> <span class="kn">import</span> <span class="n">Detector</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.detector</span><span class="w"> </span><span class="kn">import</span> <span class="n">Detector</span>
 
-<span class="k">class</span> <span class="nc">MyDetector</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyDetector</span><span class="p">(</span><span class="n">Detector</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""`Detector` class for my experiment."""</span>
 
     <span class="n">geometry_table_path</span> <span class="o">=</span> <span class="s2">"path_to_geometry_table.parquet"</span>
@@ -548,7 +548,7 @@ file and apply extractors to it. These calls will happen in parallel automatical
     <span class="n">string_id_column</span> <span class="o">=</span> <span class="s2">"string_id"</span>
     <span class="n">sensor_id_column</span> <span class="o">=</span> <span class="s2">"sensor_id"</span>
 
-    <span class="k">def</span> <span class="nf">feature_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">feature_map</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Map standardization functions to each dimension of input data."""</span>
         <span class="n">feature_map</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">"sensor_x"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sensor_xyz</span><span class="p">,</span>
@@ -558,10 +558,10 @@ file and apply extractors to it. These calls will happen in parallel automatical
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">feature_map</span>
 
-    <span class="k">def</span> <span class="nf">_sensor_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sensor_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="mf">500.0</span>
 
-    <span class="k">def</span> <span class="nf">_sensor_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sensor_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">1.0e04</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0e4</span>
 </pre></div>
 </div>
@@ -631,7 +631,7 @@ A geometry table is an array containing all sensors in your experiment and has d
 <p>Here, every row represents a unique sensor identified by <code class="code docutils literal notranslate"><span class="pre">sensor_id</span></code>.
 GraphNeT will use this id to add/remove/filter sensors from your training examples, if you specify so in your data representations.</p>
 <p>To convert the table above into a geometry table, you must set a <code class="code docutils literal notranslate"><span class="pre">MultiIndex</span></code> on the xyz position variables, and save it as <code class="code docutils literal notranslate"><span class="pre">.parquet</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="n">path_to_array</span> <span class="o">=</span> <span class="s1">'my_table.csv'</span>
 
@@ -687,7 +687,7 @@ GraphNeT will use this id to add/remove/filter sensors from your training exampl
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

@@ -119,7 +119,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/material.css?v=79c92029" />
     <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
@@ -354,21 +354,21 @@
 <span class="sd">(cannot be used as a standalone model)</span>
 <span class="sd">"""</span>
 
-<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.models.gnn.gnn</span> <span class="kn">import</span> <span class="n">GNN</span>
-<span class="kn">from</span> <span class="nn">graphnet.utilities.config</span> <span class="kn">import</span> <span class="n">save_model_config</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.nn.pool</span> <span class="kn">import</span> <span class="n">knn_graph</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.gnn.gnn</span><span class="w"> </span><span class="kn">import</span> <span class="n">GNN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_model_config</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.nn.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">knn_graph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 
-<span class="kn">from</span> <span class="nn">graphnet.models.components.embedding</span> <span class="kn">import</span> <span class="n">SinusoidalPosEmb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.components.embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">SinusoidalPosEmb</span>
 
 
 <div class="viewcode-block" id="Node_RNN">
 <a class="viewcode-back" href="../../../../api/graphnet.models.rnn.node_rnn.html#graphnet.models.rnn.node_rnn.Node_RNN">[docs]</a>
-<span class="k">class</span> <span class="nc">Node_RNN</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Node_RNN</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Implementation of the Node RNN model architecture.</span>
 
 <span class="sd">    The model takes as input the typical DOM data format and transforms it into</span>
@@ -381,7 +381,7 @@
 <span class="sd">    """</span>
 
     <span class="nd">@save_model_config</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nb_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -436,7 +436,7 @@
 
 <div class="viewcode-block" id="Node_RNN.clean_up_data_object">
 <a class="viewcode-back" href="../../../../api/graphnet.models.rnn.node_rnn.html#graphnet.models.rnn.node_rnn.Node_RNN.clean_up_data_object">[docs]</a>
-    <span class="k">def</span> <span class="nf">clean_up_data_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clean_up_data_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Update the feature names of the data object.</span>
 
 <span class="sd">        Args:</span>
@@ -455,7 +455,7 @@
 
 <div class="viewcode-block" id="Node_RNN.forward">
 <a class="viewcode-back" href="../../../../api/graphnet.models.rnn.node_rnn.html#graphnet.models.rnn.node_rnn.Node_RNN.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Apply learnable forward pass to the GNN."""</span>
         <span class="c1"># cutter = data.cutter.cumsum(0)[:-1]</span>
         <span class="c1"># Optional embedding of the time and charge time series data.</span>
@@ -523,7 +523,7 @@
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

@@ -119,7 +119,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/material.css?v=79c92029" />
     <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
@@ -351,33 +351,33 @@
   <h1 id="modules-graphnet-training-callbacks--page-root">Source code for graphnet.training.callbacks</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Callback class(es) for using during model training."""</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">tqdm.std</span> <span class="kn">import</span> <span class="n">Bar</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.std</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bar</span>
 
-<span class="kn">from</span> <span class="nn">pytorch_lightning</span> <span class="kn">import</span> <span class="n">LightningModule</span><span class="p">,</span> <span class="n">Trainer</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks</span> <span class="kn">import</span> <span class="n">TQDMProgressBar</span><span class="p">,</span> <span class="n">EarlyStopping</span>
-<span class="kn">from</span> <span class="nn">pytorch_lightning.utilities</span> <span class="kn">import</span> <span class="n">rank_zero_only</span>
-<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Optimizer</span>
-<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">_LRScheduler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytorch_lightning</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightningModule</span><span class="p">,</span> <span class="n">Trainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytorch_lightning.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">TQDMProgressBar</span><span class="p">,</span> <span class="n">EarlyStopping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pytorch_lightning.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">rank_zero_only</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.optim</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optimizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.optim.lr_scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">_LRScheduler</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.utilities.logging</span> <span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
-    <span class="kn">import</span> <span class="nn">pytorch_lightning</span> <span class="k">as</span> <span class="nn">pl</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pytorch_lightning</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 
 
 <div class="viewcode-block" id="PiecewiseLinearLR">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.PiecewiseLinearLR">[docs]</a>
-<span class="k">class</span> <span class="nc">PiecewiseLinearLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PiecewiseLinearLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Interpolate learning rate linearly between milestones."""</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
         <span class="n">milestones</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -415,13 +415,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">last_epoch</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="c1"># Linearly interpolate multiplicative factor between milestones.</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">milestones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">factors</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PiecewiseLinearLR.get_lr">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.PiecewiseLinearLR.get_lr">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Get effective learning rate(s) for each optimizer."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -437,20 +437,20 @@
 
 <div class="viewcode-block" id="ProgressBar">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar">[docs]</a>
-<span class="k">class</span> <span class="nc">ProgressBar</span><span class="p">(</span><span class="n">TQDMProgressBar</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProgressBar</span><span class="p">(</span><span class="n">TQDMProgressBar</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Custom progress bar for graphnet.</span>
 
 <span class="sd">    Customises the default progress in pytorch-lightning.</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span> <span class="nf">_common_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bar</span><span class="p">:</span> <span class="n">Bar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_common_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bar</span><span class="p">:</span> <span class="n">Bar</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
         <span class="n">bar</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="s2">" batch(es)"</span>
         <span class="n">bar</span><span class="o">.</span><span class="n">colour</span> <span class="o">=</span> <span class="s2">"green"</span>
         <span class="k">return</span> <span class="n">bar</span>
 
 <div class="viewcode-block" id="ProgressBar.init_validation_tqdm">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar.init_validation_tqdm">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_validation_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_validation_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Override for customisation."""</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_validation_tqdm</span><span class="p">()</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
@@ -459,7 +459,7 @@
 
 <div class="viewcode-block" id="ProgressBar.init_predict_tqdm">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar.init_predict_tqdm">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_predict_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_predict_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Override for customisation."""</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_predict_tqdm</span><span class="p">()</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
@@ -468,7 +468,7 @@
 
 <div class="viewcode-block" id="ProgressBar.init_test_tqdm">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar.init_test_tqdm">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_test_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_test_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Override for customisation."""</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_test_tqdm</span><span class="p">()</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
@@ -477,7 +477,7 @@
 
 <div class="viewcode-block" id="ProgressBar.init_train_tqdm">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar.init_train_tqdm">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_train_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_train_tqdm</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Bar</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Override for customisation."""</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_train_tqdm</span><span class="p">()</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_common_config</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
@@ -486,7 +486,7 @@
 
 <div class="viewcode-block" id="ProgressBar.get_metrics">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar.get_metrics">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">LightningModule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">LightningModule</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Override to not show the version number in the logging."""</span>
         <span class="n">items</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="n">items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"v_num"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -495,7 +495,7 @@
 
 <div class="viewcode-block" id="ProgressBar.on_train_epoch_start">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar.on_train_epoch_start">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_epoch_start</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_train_epoch_start</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">LightningModule</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Print the results of the previous epoch on a separate line.</span>
@@ -517,7 +517,7 @@
 
 <div class="viewcode-block" id="ProgressBar.on_train_epoch_end">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.ProgressBar.on_train_epoch_end">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_train_epoch_end</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">LightningModule</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Log the final progress bar for the epoch to file.</span>
@@ -543,10 +543,10 @@
 
 <div class="viewcode-block" id="GraphnetEarlyStopping">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping">[docs]</a>
-<span class="k">class</span> <span class="nc">GraphnetEarlyStopping</span><span class="p">(</span><span class="n">EarlyStopping</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GraphnetEarlyStopping</span><span class="p">(</span><span class="n">EarlyStopping</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Early stopping callback for graphnet."""</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Construct `GraphnetEarlyStopping` Callback.</span>
 
 <span class="sd">        Args:</span>
@@ -559,7 +559,7 @@
 
 <div class="viewcode-block" id="GraphnetEarlyStopping.setup">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.setup">[docs]</a>
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">trainer</span><span class="p">:</span> <span class="s2">"pl.Trainer"</span><span class="p">,</span>
         <span class="n">graphnet_model</span><span class="p">:</span> <span class="s2">"Model"</span><span class="p">,</span>
@@ -579,7 +579,7 @@
 
 <div class="viewcode-block" id="GraphnetEarlyStopping.on_train_epoch_end">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.on_train_epoch_end">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_train_epoch_end</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_train_epoch_end</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="s2">"pl.Trainer"</span><span class="p">,</span> <span class="n">graphnet_model</span><span class="p">:</span> <span class="s2">"Model"</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Call after each train epoch.</span>
@@ -604,7 +604,7 @@
 
 <div class="viewcode-block" id="GraphnetEarlyStopping.on_validation_end">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.on_validation_end">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_validation_end</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_validation_end</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="s2">"pl.Trainer"</span><span class="p">,</span> <span class="n">graphnet_model</span><span class="p">:</span> <span class="s2">"Model"</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Call after each validation epoch.</span>
@@ -627,7 +627,7 @@
 
 <div class="viewcode-block" id="GraphnetEarlyStopping.on_fit_end">
 <a class="viewcode-back" href="../../../api/graphnet.training.callbacks.html#graphnet.training.callbacks.GraphnetEarlyStopping.on_fit_end">[docs]</a>
-    <span class="k">def</span> <span class="nf">on_fit_end</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_fit_end</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="s2">"pl.Trainer"</span><span class="p">,</span> <span class="n">graphnet_model</span><span class="p">:</span> <span class="s2">"Model"</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Call at the end of training.</span>
@@ -663,7 +663,7 @@
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

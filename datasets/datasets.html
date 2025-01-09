@@ -120,7 +120,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../_static/doctools.js?v=9bcbadda"></script>
@@ -464,7 +464,7 @@ is responsible for reading data from a file and preparing user-specified data re
 </div>
 <p>This <code class="code docutils literal notranslate"><span class="pre">.yml</span></code> file will contain details about the path to the input data, the tables and columns that should be loaded, any selection that should be applied to data, etc.
 In another session, you can then recreate the same <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_config</span><span class="p">(</span><span class="s2">"dataset.yml"</span><span class="p">)</span>
 </pre></div>
@@ -592,10 +592,10 @@ It looks like so:</p>
 <li><p><code class="code docutils literal notranslate"><span class="pre">graph_definition</span></code>: A <cite>GraphDefinition`that prepares the raw data from the `Dataset</cite> into your choice in data representation.</p></li>
 </ul>
 <p>After that, you can construct your <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> from a SQLite database with just a few lines of code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.dataset.sqlite.sqlite_dataset</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.detector.prometheus</span>  <span class="kn">import</span>  <span class="n">Prometheus</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.graphs</span>  <span class="kn">import</span>  <span class="n">KNNGraph</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.graphs.nodes</span>  <span class="kn">import</span>  <span class="n">NodesAsPulses</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataset.sqlite.sqlite_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.detector.prometheus</span><span class="w">  </span><span class="kn">import</span>  <span class="n">Prometheus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w">  </span><span class="kn">import</span>  <span class="n">KNNGraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs.nodes</span><span class="w">  </span><span class="kn">import</span>  <span class="n">NodesAsPulses</span>
 
 <span class="n">graph_definition</span> <span class="o">=</span> <span class="n">KNNGraph</span><span class="p">(</span>
     <span class="n">detector</span><span class="o">=</span><span class="n">Prometheus</span><span class="p">(),</span>
@@ -616,10 +616,10 @@ It looks like so:</p>
 </pre></div>
 </div>
 <p>Or similarly for Parquet files:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.dataset.parquet.parquet_dataset</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.detector.prometheus</span>  <span class="kn">import</span>  <span class="n">Prometheus</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.graphs</span>  <span class="kn">import</span>  <span class="n">KNNGraph</span>
-<span class="kn">from</span> <span class="nn">graphnet.models.graphs.nodes</span>  <span class="kn">import</span>  <span class="n">NodesAsPulses</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataset.parquet.parquet_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.detector.prometheus</span><span class="w">  </span><span class="kn">import</span>  <span class="n">Prometheus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w">  </span><span class="kn">import</span>  <span class="n">KNNGraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs.nodes</span><span class="w">  </span><span class="kn">import</span>  <span class="n">NodesAsPulses</span>
 
 <span class="n">graph_definition</span> <span class="o">=</span> <span class="n">KNNGraph</span><span class="p">(</span>
     <span class="n">detector</span><span class="o">=</span><span class="n">Prometheus</span><span class="p">(),</span>
@@ -640,7 +640,7 @@ It looks like so:</p>
 </pre></div>
 </div>
 <p>It’s then straightforward to create a <code class="code docutils literal notranslate"><span class="pre">DataLoader</span></code> for training, which will take care of batching, shuffling, and such:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.dataloader</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataloader</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
     <span class="n">dataset</span><span class="p">,</span>
@@ -691,7 +691,7 @@ Conversion of files to <code class="code docutils literal notranslate"><span cla
 <p>You can choose to include only a subset of the events in your data file(s) in your <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> by providing a <code class="code docutils literal notranslate"><span class="pre">selection</span></code> and <code class="code docutils literal notranslate"><span class="pre">index_column</span></code> argument.
 <cite>selection</cite> is a list of integer event IDs that defines your subset and <code class="code docutils literal notranslate"><span class="pre">index_column</span></code> is the name of the column in your data that contains these IDs.</p>
 <p>Suppose you wanted to include only events with IDs <code class="code docutils literal notranslate"><span class="pre">[10,</span> <span class="pre">5,</span> <span class="pre">100,</span> <span class="pre">21,</span> <span class="pre">5001]</span></code> in your dataset, and that your index column was named <code class="code docutils literal notranslate"><span class="pre">"event_no"</span></code>, then</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data.sqlite</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.sqlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteDataset</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span>
     <span class="o">...</span><span class="p">,</span>
@@ -713,19 +713,19 @@ whereas for <code class="code docutils literal notranslate"><span class="pre">Pa
 <h2 id="adding-custom-labels">Adding custom <code class="code docutils literal notranslate"><span class="pre">Label</span></code>s<a class="headerlink" href="#adding-custom-labels" title="Link to this heading">¶</a></h2>
 <p>Some specific applications of <code class="code docutils literal notranslate"><span class="pre">Model</span></code>s in GraphNeT might require truth labels that are not included by default in your truth table.
 In these cases you can define a <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.training.labels.html#graphnet.training.labels.Label">Label</a> that calculates your label on the fly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.training.labels</span> <span class="kn">import</span> <span class="n">Label</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.training.labels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Label</span>
 
-<span class="k">class</span> <span class="nc">MyCustomLabel</span><span class="p">(</span><span class="n">Label</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyCustomLabel</span><span class="p">(</span><span class="n">Label</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Class for producing my label."""</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `MyCustomLabel`."""</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">"my_custom_label"</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Compute label for `graph`."""</span>
         <span class="n">label</span> <span class="o">=</span> <span class="o">...</span>  <span class="c1"># Your computations here.</span>
         <span class="k">return</span> <span class="n">label</span>
@@ -743,9 +743,9 @@ In these cases you can define a <a class="reference external" href="https://grap
 <section id="combining-multiple-datasets">
 <h2 id="combining-multiple-datasets">Combining Multiple Datasets<a class="headerlink" href="#combining-multiple-datasets" title="Link to this heading">¶</a></h2>
 <p>You can combine multiple instances of <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> from GraphNeT into a single <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> by using the <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.data.dataset.html#graphnet.data.dataset.EnsembleDataset">EnsembleDataset</a> class:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">graphnet.data</span> <span class="kn">import</span> <span class="n">EnsembleDataset</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.parquet</span> <span class="kn">import</span> <span class="n">ParquetDataset</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.sqlite</span> <span class="kn">import</span> <span class="n">SQLiteDataset</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.parquet</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.sqlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteDataset</span>
 
 <span class="n">dataset_1</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">dataset_2</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -808,7 +808,7 @@ which defines the logic of retrieving information from your files.</p>
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

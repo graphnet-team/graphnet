@@ -119,7 +119,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/material.css?v=79c92029" />
     <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
@@ -351,15 +351,15 @@
   <h1 id="modules-graphnet-models-coarsening--page-root">Source code for graphnet.models.coarsening</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Class(es) for coarsening operations (i.e., clustering, or local pooling)."""</span>
 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.data</span> <span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
-<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">DBSCAN</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">DBSCAN</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.models.components.pool</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.components.pool</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">group_by</span><span class="p">,</span>
     <span class="n">avg_pool</span><span class="p">,</span>
     <span class="n">max_pool</span><span class="p">,</span>
@@ -371,10 +371,10 @@
     <span class="n">sum_pool_x</span><span class="p">,</span>
     <span class="n">std_pool_x</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">graphnet.models</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 
 <span class="c1"># Utility method(s)</span>
-<span class="kn">from</span> <span class="nn">torch_geometric.utils</span> <span class="kn">import</span> <span class="n">degree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">degree</span>
 
 <span class="c1"># NOTE: From [https://github.com/pyg-team/pytorch_geometric/pull/4903]</span>
 <span class="c1"># TODO:  Remove once bumping to torch_geometric&gt;=2.1.0</span>
@@ -383,7 +383,7 @@
 
 <div class="viewcode-block" id="unbatch_edge_index">
 <a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.unbatch_edge_index">[docs]</a>
-<span class="k">def</span> <span class="nf">unbatch_edge_index</span><span class="p">(</span><span class="n">edge_index</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unbatch_edge_index</span><span class="p">(</span><span class="n">edge_index</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]:</span>
     <span class="c1"># noqa: D401</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">"""Splits the :obj:`edge_index` according to a :obj:`batch` vector.</span>
 
@@ -406,7 +406,7 @@
 
 <div class="viewcode-block" id="Coarsening">
 <a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening">[docs]</a>
-<span class="k">class</span> <span class="nc">Coarsening</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Coarsening</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Base class for coarsening operations."""</span>
 
     <span class="c1"># Class variables</span>
@@ -417,7 +417,7 @@
         <span class="s2">"sum"</span><span class="p">:</span> <span class="p">(</span><span class="n">sum_pool</span><span class="p">,</span> <span class="n">sum_pool_x</span><span class="p">),</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avg"</span><span class="p">,</span>
         <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -435,17 +435,17 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Cluster nodes in `data` by assigning a cluster index to each."""</span>
 
-    <span class="k">def</span> <span class="nf">_additional_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Batch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_additional_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Batch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Perform additional poolings of feature tensor `x` on `data`.</span>
 
 <span class="sd">        By default the nominal `pooling_method` is used for features as well.</span>
 <span class="sd">        This method can be overwritten for bespoke coarsening operations.</span>
 <span class="sd">        """</span>
 
-    <span class="k">def</span> <span class="nf">_transfer_attributes</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_transfer_attributes</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">original_data</span><span class="p">:</span> <span class="n">Batch</span><span class="p">,</span> <span class="n">pooled_data</span><span class="p">:</span> <span class="n">Batch</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Batch</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Transfer attributes on `original_data` to `pooled_data`."""</span>
@@ -483,7 +483,7 @@
 
 <div class="viewcode-block" id="Coarsening.forward">
 <a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening.forward">[docs]</a>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Perform coarsening operation."""</span>
         <span class="c1"># Get tensor of cluster indices for each node.</span>
         <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_perform_clustering</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
@@ -522,12 +522,12 @@
         <span class="k">return</span> <span class="n">pooled_data</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_reconstruct_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reconstruct_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="n">pooled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_slice_dict</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">pooled</span><span class="p">)</span>
         <span class="n">pooled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_inc_dict</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">pooled</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pooled</span>
 
-    <span class="k">def</span> <span class="nf">_add_slice_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_slice_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># Copy original slice_dict and count nodes in each</span>
         <span class="c1"># graph in pooled batch</span>
         <span class="n">slice_dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">original</span><span class="o">.</span><span class="n">_slice_dict</span><span class="p">)</span>
@@ -548,7 +548,7 @@
         <span class="n">pooled</span><span class="o">.</span><span class="n">_slice_dict</span> <span class="o">=</span> <span class="n">slice_dict</span>
         <span class="k">return</span> <span class="n">pooled</span>
 
-    <span class="k">def</span> <span class="nf">_add_inc_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_inc_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original</span><span class="p">:</span> <span class="n">Data</span><span class="p">,</span> <span class="n">pooled</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
         <span class="c1"># not changed by coarsening</span>
         <span class="n">pooled</span><span class="o">.</span><span class="n">_inc_dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">original</span><span class="o">.</span><span class="n">_inc_dict</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pooled</span></div>
@@ -557,10 +557,10 @@
 
 <div class="viewcode-block" id="AttributeCoarsening">
 <a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.AttributeCoarsening">[docs]</a>
-<span class="k">class</span> <span class="nc">AttributeCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AttributeCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Coarsen pulses based on specified attributes."""</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">attributes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avg"</span><span class="p">,</span>
@@ -572,7 +572,7 @@
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">reduce</span><span class="p">,</span> <span class="n">transfer_attributes</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Cluster nodes in `data` by assigning a cluster index to each."""</span>
         <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attributes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dom_index</span></div>
@@ -581,10 +581,10 @@
 
 <div class="viewcode-block" id="DOMCoarsening">
 <a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.DOMCoarsening">[docs]</a>
-<span class="k">class</span> <span class="nc">DOMCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DOMCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Coarsen pulses to DOM-level."""</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avg"</span><span class="p">,</span>
         <span class="n">transfer_attributes</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -603,7 +603,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">keys</span>
 
-    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Cluster nodes in `data` by assigning a cluster index to each."""</span>
         <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dom_index</span></div>
@@ -612,10 +612,10 @@
 
 <div class="viewcode-block" id="CustomDOMCoarsening">
 <a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.CustomDOMCoarsening">[docs]</a>
-<span class="k">class</span> <span class="nc">CustomDOMCoarsening</span><span class="p">(</span><span class="n">DOMCoarsening</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomDOMCoarsening</span><span class="p">(</span><span class="n">DOMCoarsening</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Coarsen pulses to DOM-level with additional attributes."""</span>
 
-    <span class="k">def</span> <span class="nf">_additional_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_additional_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">:</span> <span class="n">LongTensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Perform Additional poolings of feature tensor `x` on `data`."""</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span>
 
@@ -650,10 +650,10 @@
 
 <div class="viewcode-block" id="DOMAndTimeWindowCoarsening">
 <a class="viewcode-back" href="../../../api/graphnet.models.coarsening.html#graphnet.models.coarsening.DOMAndTimeWindowCoarsening">[docs]</a>
-<span class="k">class</span> <span class="nc">DOMAndTimeWindowCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DOMAndTimeWindowCoarsening</span><span class="p">(</span><span class="n">Coarsening</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Coarsen pulses to DOM-level, with additional time-window clustering."""</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">time_window</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">reduce</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"avg"</span><span class="p">,</span>
@@ -674,7 +674,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span> <span class="o">=</span> <span class="n">keys</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_time_key</span> <span class="o">=</span> <span class="n">time_key</span>
 
-    <span class="k">def</span> <span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Data</span><span class="p">,</span> <span class="n">Batch</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LongTensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Cluster nodes in `data` by assigning a cluster index to each."""</span>
         <span class="n">dom_index</span> <span class="o">=</span> <span class="n">group_by</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">batch</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -719,7 +719,7 @@
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using

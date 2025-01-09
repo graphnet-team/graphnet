@@ -119,7 +119,7 @@
   }
 
 </style>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=83e35b93" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/material.css?v=79c92029" />
     <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
@@ -351,16 +351,16 @@
   <h1 id="modules-graphnet-datasets-test-dataset--page-root">Source code for graphnet.datasets.test_dataset</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""A CuratedDataset for unit tests."""</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">graphnet.data</span> <span class="kn">import</span> <span class="n">ERDAHostedDataset</span>
-<span class="kn">from</span> <span class="nn">graphnet.data.constants</span> <span class="kn">import</span> <span class="n">FEATURES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERDAHostedDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">FEATURES</span>
 
 
 <div class="viewcode-block" id="TestDataset">
 <a class="viewcode-back" href="../../../api/graphnet.datasets.test_dataset.html#graphnet.datasets.test_dataset.TestDataset">[docs]</a>
-<span class="k">class</span> <span class="nc">TestDataset</span><span class="p">(</span><span class="n">ERDAHostedDataset</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TestDataset</span><span class="p">(</span><span class="n">ERDAHostedDataset</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""A CuratedDataset class for unit tests of ERDAHosted Datasets.</span>
 
 <span class="sd">    This dataset should not be used outside the context of unit tests.</span>
@@ -392,7 +392,7 @@
     <span class="n">_file_hashes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"sqlite"</span><span class="p">:</span> <span class="s2">"EK3hSNgYr5"</span><span class="p">}</span>
     <span class="n">_citation</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_args</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_args</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Prepare arguments for dataset.</span>
@@ -437,7 +437,7 @@
       <div class="md-footer-meta__inner md-grid">
         <div class="md-footer-copyright">
           <div class="md-footer-copyright__highlight">
-              &#169; Copyright 2021-2024, GraphNeT team.
+              &#169; Copyright 2021-2025, GraphNeT team.
               
           </div>
             Created using
