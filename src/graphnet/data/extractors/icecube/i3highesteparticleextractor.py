@@ -65,7 +65,7 @@ class I3HighestEparticleExtractor(I3Extractor):
                 self.highest_energy_cascade(frame, checked_id_list)
             )
 
-            if EonEntranceT > EonEntranceC:
+            if EonEntranceT >= EonEntranceC:
                 HEParticle = HEParticleT
                 EonEntrance = EonEntranceT
                 distance = distanceT
@@ -112,6 +112,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         """
         particle = dataclasses.I3Particle()
         EonEntrance = 0
+        distance = -1
         checked_id_list = []
         primary = frame[self.mctree].get_primaries()[0]
         for track in frame[self.mmctracklist]:
@@ -172,6 +173,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         """
         EonEntrance = 0
         HEparticle = dataclasses.I3Particle()
+        distance = -1
         if self.daughters:
             particles = dataclasses.I3MCTree.get_daughters(
                 frame[self.mctree], frame[self.mctree].get_primaries()[0]
