@@ -56,6 +56,7 @@ class I3HighestEparticleExtractor(I3Extractor):
             primary_energy = frame[self.mctree].get_primaries()[0].energy
             distance = -1
             EonEntrance: int = 0
+            interaction_type = -1
             # this part handles track particles
             HEParticleT, EonEntranceT, distanceT, checked_id_list = (
                 self.highest_energy_track(frame)
@@ -69,10 +70,12 @@ class I3HighestEparticleExtractor(I3Extractor):
                 HEParticle = HEParticleT
                 EonEntrance = EonEntranceT
                 distance = distanceT
+                interaction_type = 1
             else:
                 HEParticle = HEParticleC
                 EonEntrance = EonEntranceC
                 distance = distanceC
+                interaction_type = 0
 
             output.update(
                 {
@@ -91,6 +94,8 @@ class I3HighestEparticleExtractor(I3Extractor):
                     "time_" + self._extractor_name: HEParticle.time,
                     "speed_" + self._extractor_name: HEParticle.speed,
                     "energy_" + self._extractor_name: HEParticle.energy,
+                    "interaction_type_"
+                    + self._extractor_name: interaction_type,
                 }
             )
         return output
