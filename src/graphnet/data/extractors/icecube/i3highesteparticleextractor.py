@@ -55,15 +55,25 @@ class I3HighestEparticleExtractor(I3Extractor):
             HEParticle.energy = 0
             primary_energy = frame[self.mctree].get_primaries()[0].energy
             distance = -1
-            EonEntrance = 0
+            EonEntrance: int = 0
             # this part handles track particles
-            HEParticle, EonEntrance, distance, checked_id_list = (
+            HEParticleT, EonEntranceT, distanceT, checked_id_list = (
                 self.highest_energy_track(frame)
             )
             # this part handles non-track particles
-            HEParticle, EonEntrance, distance, checked_id_list = (
+            HEParticleC, EonEntranceC, distanceC, checked_id_list = (
                 self.highest_energy_cascade(frame, checked_id_list)
             )
+
+            if EonEntranceT > EonEntranceC:
+                HEParticle = HEParticleT
+                EonEntrance = EonEntranceT
+                distance = distanceT
+            else:
+                HEParticle = HEParticleC
+                EonEntrance = EonEntranceC
+                distance = distanceC
+
             output.update(
                 {
                     "e_fraction_"
@@ -160,8 +170,8 @@ class I3HighestEparticleExtractor(I3Extractor):
         frame: I3Frame object
         checked_id_list: list of already checked particle ids
         """
-        HEparticle = dataclasses.I3Particle()
         EonEntrance = 0
+        HEparticle = dataclasses.I3Particle()
         if self.daughters:
             particles = dataclasses.I3MCTree.get_daughters(
                 frame[self.mctree], frame[self.mctree].get_primaries()[0]

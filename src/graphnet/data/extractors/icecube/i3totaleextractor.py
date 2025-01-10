@@ -47,8 +47,8 @@ class I3TotalEExtractor(I3Extractor):
                 self.total_track_energy(frame, checked_id_list=checked_id_list)
             )
 
-            e_entrance_cascade, e_deposited_cascade, checked_id_list = (
-                self.total_cascade_energy(frame, checked_id_list)
+            e_deposited_cascade, checked_id_list = self.total_cascade_energy(
+                frame, checked_id_list
             )
 
             if self.daughters:
@@ -62,10 +62,23 @@ class I3TotalEExtractor(I3Extractor):
                         )
                     ]
                 )
-            e_total = e_entrance_track + e_entrance_cascade
-            assert (
-                e_total <= primary_energy
-            ), "Total energy is greater than primary energy"
+            e_total = e_entrance_track + e_deposited_cascade
+
+            if self.daughters:
+                assert (
+                    e_total <= primary_energy
+                ), "Total energy on entrance is greater than primary energy\
+                    \nTotal energy: {}\
+                    \nPrimary energy: {}\
+                    \nTrack energy: {}\
+                    \nCascade energy: {}\
+                    {}".format(
+                    e_total,
+                    primary_energy,
+                    e_entrance_track,
+                    e_deposited_cascade,
+                    frame["I3EventHeader"],
+                )
 
             output.update(
                 {
@@ -73,10 +86,7 @@ class I3TotalEExtractor(I3Extractor):
                     + self._extractor_name: e_entrance_track,
                     "e_deposited_track_"
                     + self._extractor_name: e_deposited_track,
-                    "e_entrance_cascade_"
-                    + self._extractor_name: e_entrance_cascade,
-                    "e_deposited_cascade_"
-                    + self._extractor_name: e_deposited_cascade,
+                    "e_cascade_" + self._extractor_name: e_deposited_cascade,
                     "e_fraction_"
                     + self._extractor_name: (e_total) / primary_energy,
                 }
@@ -130,9 +140,8 @@ class I3TotalEExtractor(I3Extractor):
 
     def total_cascade_energy(
         self, frame: "icetray.I3Frame", checked_id_list: List = []
-    ) -> Tuple[int, int, Any]:
+    ) -> Tuple[int, List]:
         """Get the total energy of cascade particles on entrance."""
-        e_entrance = 0
         e_deposited = 0
 
         if self.daughters:
@@ -149,33 +158,34 @@ class I3TotalEExtractor(I3Extractor):
                 decay_pos = particle.pos + particle.dir * particle.length
 
                 if self.hull.point_in_hull(decay_pos):
-                    e_entrance += particle.energy
-                    daughters = dataclasses.I3MCTree.get_daughters(
-                        frame[self.mctree], particle
-                    )
+                    if particle.is_cascade:
+                        e_deposited += particle.energy
+                    else:
+                        daughters = dataclasses.I3MCTree.get_daughters(
+                            frame[self.mctree], particle
+                        )
+
                     while daughters:
                         daughter = daughters[0]
                         daughters = daughters[1:]
                         length = daughter.length
+                        if (daughter.is_track) or (
+                            daughter.id in checked_id_list
+                        ):
+                            continue
                         if length == np.nan:
                             length = 0
                         decay_pos = (
                             daughter.pos + daughter.dir * daughter.length
                         )
                         checked_id_list.append(daughter.id)
-                        if self.hull.point_in_hull(decay_pos):
-                            if daughter.is_cascade:
+                        if daughter.is_cascade:
+                            if self.hull.point_in_hull(decay_pos):
                                 e_deposited += daughter.energy
-                            else:
-                                daughters.extend(
-                                    dataclasses.I3MCTree.get_daughters(
-                                        frame[self.mctree], daughter
-                                    )
-                                )
                         else:
                             daughters.extend(
                                 dataclasses.I3MCTree.get_daughters(
                                     frame[self.mctree], daughter
                                 )
                             )
-        return e_entrance, e_deposited, checked_id_list
+        return e_deposited, checked_id_list
