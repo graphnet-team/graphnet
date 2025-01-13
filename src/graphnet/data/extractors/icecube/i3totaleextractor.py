@@ -65,8 +65,8 @@ class I3TotalEExtractor(I3Extractor):
             e_total = e_entrance_track + e_deposited_cascade
 
             if self.daughters:
-                assert (
-                    e_total <= primary_energy
+                assert e_total <= (
+                    primary_energy * (1 + 1e-6)
                 ), "Total energy on entrance is greater than primary energy\
                     \nTotal energy: {}\
                     \nPrimary energy: {}\
