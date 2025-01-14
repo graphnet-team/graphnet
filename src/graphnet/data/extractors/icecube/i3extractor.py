@@ -128,7 +128,7 @@ class I3Extractor(Extractor):
         if primary.energy != primary.energy:
             self.warning_once("Primary energy is nan checking daughters")
             daughters = dataclasses.I3MCTree.get_daughters(
-                self.mctree, primary
+                frame[self.mctree], primary
             )
             if len(daughters) == 1:
                 primary = daughters[0]
