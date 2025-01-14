@@ -1,13 +1,17 @@
 """Base I3Extractor class(es)."""
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors import Extractor
 
 if has_icecube_package() or TYPE_CHECKING:
-    from icecube import icetray, dataio  # pyright: reportMissingImports=false
+    from icecube import (
+        icetray,
+        dataio,
+        dataclasses,
+    )  # pyright: reportMissingImports=false
 
 
 class I3Extractor(Extractor):
@@ -91,3 +95,48 @@ class I3Extractor(Extractor):
     def __call__(self, frame: "icetray.I3Frame") -> dict:
         """Extract information from frame."""
         pass
+
+    def check_primary_energy(
+        self,
+        frame: "icetray.I3Frame",
+        primaries: Union[
+            "dataclasses.ListI3Particle", "dataclasses.I3Particle"
+        ],
+    ) -> Union["dataclasses.ListI3Particle", "dataclasses.I3Particle"]:
+        """Check that primary energy exists for the particle(s).
+
+        If the primary energy is not available, the method will see if the
+        particle has a single daughter, and if so, return that
+        """
+        assert hasattr(
+            self, "mctree"
+        ), "mctree should be instantiated by subclass"
+
+        if isinstance(primaries, dataclasses.ListI3Particle):
+            new_primaries = dataclasses.ListI3Particle()
+            for primary in primaries:
+                primary = self.check_primary_energy(frame, primary)
+                new_primaries.append(primary)
+            return new_primaries
+        elif isinstance(primaries, dataclasses.I3Particle):
+            primary = primaries
+        else:
+            raise ValueError(
+                "primaries must be a particle or a list of particles"
+            )
+
+        if primary.energy != primary.energy:
+            self.warning_once("Primary energy is nan checking daughters")
+            daughters = dataclasses.I3MCTree.get_daughters(
+                self.mctree, primary
+            )
+            if len(daughters) == 1:
+                primary = daughters[0]
+            else:
+                assert (
+                    len(daughters) < 1
+                ), "Primary has more than one daughter, aborting."
+                assert (
+                    len(daughters) > 1
+                ), "Primary has no daughters, aborting."
+        return primary

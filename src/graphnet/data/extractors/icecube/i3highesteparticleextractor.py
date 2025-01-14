@@ -55,7 +55,9 @@ class I3HighestEparticleExtractor(I3Extractor):
         if self.frame_contains_info(frame):
             HEParticle = dataclasses.I3Particle()
             HEParticle.energy = 0
-            primary_energy = frame[self.mctree].get_primaries()[0].energy
+            primary_energy = self.check_primary_energy(
+                frame, frame[self.mctree].get_primaries()[0]
+            ).energy
             distance = -1
             EonEntrance: int = 0
             interaction_type = -1
@@ -100,6 +102,11 @@ class I3HighestEparticleExtractor(I3Extractor):
                     + self._extractor_name: interaction_type,
                 }
             )
+
+            # convert missing values padded with -1 to None
+            for key, value in output.items():
+                if value == -1:
+                    output[key] = None
         return output
 
     def frame_contains_info(self, frame: "icetray.I3Frame") -> bool:
@@ -121,7 +128,9 @@ class I3HighestEparticleExtractor(I3Extractor):
         EonEntrance = 0
         distance = -1
         checked_id_list = []
-        primary = frame[self.mctree].get_primaries()[0]
+        primary = self.check_primary_energy(
+            frame, frame[self.mctree].get_primaries()[0]
+        )
         for track in frame[self.mmctracklist]:
             track_particle = track.GetI3Particle()
             checked_id_list.append(track_particle.id)
@@ -183,7 +192,10 @@ class I3HighestEparticleExtractor(I3Extractor):
         distance = -1
         if self.daughters:
             particles = dataclasses.I3MCTree.get_daughters(
-                frame[self.mctree], frame[self.mctree].get_primaries()[0]
+                frame[self.mctree],
+                self.check_primary_energy(
+                    frame, frame[self.mctree].get_primaries()[0]
+                ),
             )
         else:
             particles = frame[self.mctree]

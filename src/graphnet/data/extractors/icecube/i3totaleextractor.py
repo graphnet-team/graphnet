@@ -53,13 +53,18 @@ class I3TotalEExtractor(I3Extractor):
             )
 
             if self.daughters:
-                primary_energy = frame[self.mctree].get_primaries()[0].energy
+                primary_energy = self.check_primary_energy(
+                    frame, frame[self.mctree].get_primaries()[0]
+                ).energy
             else:
                 primary_energy = sum(
                     [
                         p.energy
-                        for p in dataclasses.I3MCTree.get_primaries(
-                            frame[self.mctree]
+                        for p in self.check_primary_energy(
+                            frame,
+                            dataclasses.I3MCTree.get_primaries(
+                                frame[self.mctree]
+                            ),
                         )
                     ]
                 )
@@ -81,6 +86,10 @@ class I3TotalEExtractor(I3Extractor):
                     frame["I3EventHeader"],
                 )
 
+            track_fraction = None
+            if e_total > 0:
+                track_fraction = e_entrance_track / e_total
+
             output.update(
                 {
                     "e_entrance_track_"
@@ -88,8 +97,9 @@ class I3TotalEExtractor(I3Extractor):
                     "e_deposited_track_"
                     + self._extractor_name: e_deposited_track,
                     "e_cascade_" + self._extractor_name: e_deposited_cascade,
-                    "e_fraction_"
+                    "fraction_primary_"
                     + self._extractor_name: (e_total) / primary_energy,
+                    "fraction_track_" + self._extractor_name: track_fraction,
                 }
             )
 
@@ -107,6 +117,8 @@ class I3TotalEExtractor(I3Extractor):
         e_entrance = 0
         e_deposited = 0
         primary = frame[self.mctree].get_primaries()[0]
+        primary = self.check_primary_energy(frame, primary)
+
         for track in MuonGun.Track.harvest(
             frame[self.mctree], frame[self.mmctracklist]
         ):
