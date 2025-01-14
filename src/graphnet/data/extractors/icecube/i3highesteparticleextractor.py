@@ -28,16 +28,18 @@ class I3HighestEparticleExtractor(I3Extractor):
         mmctracklist: str = " MMCTrackList",
         extractor_name: str = "HighestEInVolumeParticle",
         daughters: bool = False,
+        exclude: list = [None],
     ):
         """Initialize the extractor.
 
         Args:
-        hull: GCD_hull object
-        mctree: Name of the MCTree object
-        mmctracklist: Name of the MMCTrackList object
-        extractor_name: Name of the extractor
-        daughters: forces the extractor to only consider daughters
-                   of the primary particle
+            hull: GCD_hull object
+            mctree: Name of the MCTree object
+            mmctracklist: Name of the MMCTrackList object
+            extractor_name: Name of the extractor
+            daughters: forces the extractor to only consider daughters
+                       of the primary particle
+            exclude: List of keys to exclude from the extracted data.
         """
         # Member variable(s)
         self.hull = hull
@@ -45,7 +47,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         self.mmctracklist = mmctracklist
         self.daughters = daughters
         # Base class constructor
-        super().__init__(extractor_name=extractor_name)
+        super().__init__(extractor_name=extractor_name, exclude=exclude)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract the highest energy particle in the event."""

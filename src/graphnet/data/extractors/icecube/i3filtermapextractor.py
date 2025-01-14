@@ -16,11 +16,14 @@ class I3FilterMapExtractor(I3Extractor):
     """
 
     def __init__(
-        self, key: str = "FilterMask", extractor_name: str = "I3FilterMap"
+        self,
+        key: str = "FilterMask",
+        extractor_name: str = "I3FilterMap",
+        exclude: list = [None],
     ) -> None:
         """Construct I3FilterMapExtractor."""
         # Base class constructor
-        super().__init__(extractor_name=extractor_name)
+        super().__init__(extractor_name=extractor_name, exclude=exclude)
         self._key = key
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, bool]:

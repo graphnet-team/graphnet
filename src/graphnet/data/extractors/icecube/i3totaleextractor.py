@@ -27,6 +27,7 @@ class I3TotalEExtractor(I3Extractor):
         mmctracklist: str = " MMCTrackList",
         extractor_name: str = "TotalEonEntrance",
         daughters: bool = False,
+        exclude: list = [None],
     ):
         """Create a ConvexHull object from the GCD file."""
         # Member variable(s)
@@ -35,7 +36,7 @@ class I3TotalEExtractor(I3Extractor):
         self.mmctracklist = mmctracklist
         self.daughters = daughters
         # Base class constructor
-        super().__init__(extractor_name=extractor_name)
+        super().__init__(extractor_name=extractor_name, exclude=exclude)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract all the visible particles entering the volume."""
@@ -92,6 +93,7 @@ class I3TotalEExtractor(I3Extractor):
                 }
             )
 
+        output = {k: v for k, v in output.items() if k not in self._exclude}
         return output
 
     def frame_contains_info(self, frame: "icetray.I3Frame") -> bool:

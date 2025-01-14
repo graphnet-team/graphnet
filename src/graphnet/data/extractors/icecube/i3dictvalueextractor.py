@@ -12,15 +12,19 @@ class I3DictValueExtractor(I3Extractor):
     """Extracts a dictionary of values from an I3Frame."""
 
     def __init__(
-        self, keys: List[str], extractor_name: str = "I3DictValueExtractor"
+        self,
+        keys: List[str],
+        extractor_name: str = "I3DictValueExtractor",
+        exclude: list = [None],
     ) -> None:
         """Construct I3DictValueExtractor.
 
         Args:
             keys: List of keys to extract from the I3Frame.
             extractor_name: Name of the extractor.
+            exclude: List of keys to exclude from the extracted data.
         """
-        super().__init__(extractor_name=extractor_name)
+        super().__init__(extractor_name=extractor_name, exclude=exclude)
         self._keys = keys
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:

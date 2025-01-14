@@ -11,10 +11,10 @@ if TYPE_CHECKING:
 class I3SplineMPEICExtractor(I3Extractor):
     """Class for extracting SplineMPE pointing predictions."""
 
-    def __init__(self, name: str = "spline_mpe_ic"):
+    def __init__(self, name: str = "spline_mpe_ic", exclude: list = [None]):
         """Construct I3SplineMPEICExtractor."""
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, float]:
         """Extract SplineMPE pointing predictions."""
@@ -26,5 +26,4 @@ class I3SplineMPEICExtractor(I3Extractor):
                     "azimuth_spline_mpe_ic": frame["SplineMPEIC"].dir.azimuth,
                 }
             )
-
         return output
