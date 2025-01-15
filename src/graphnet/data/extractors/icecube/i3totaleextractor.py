@@ -48,8 +48,8 @@ class I3TotalEExtractor(I3Extractor):
                 self.total_track_energy(frame, checked_id_list=checked_id_list)
             )
 
-            e_deposited_cascade, checked_id_list = self.total_cascade_energy(
-                frame, checked_id_list
+            e_deposited_cascade, e_deposited_hadronic, checked_id_list = (
+                self.total_cascade_energy(frame, checked_id_list)
             )
 
             if self.daughters:
@@ -87,8 +87,10 @@ class I3TotalEExtractor(I3Extractor):
                 )
 
             track_fraction = None
+            inelasticity = None
             if e_total > 0:
                 track_fraction = e_entrance_track / e_total
+                inelasticity = e_deposited_hadronic / e_total
 
             output.update(
                 {
@@ -100,6 +102,7 @@ class I3TotalEExtractor(I3Extractor):
                     "fraction_primary_"
                     + self._extractor_name: (e_total) / primary_energy,
                     "fraction_track_" + self._extractor_name: track_fraction,
+                    "inelasticity_" + self._extractor_name: inelasticity,
                 }
             )
 
@@ -154,10 +157,10 @@ class I3TotalEExtractor(I3Extractor):
 
     def total_cascade_energy(
         self, frame: "icetray.I3Frame", checked_id_list: List = []
-    ) -> Tuple[int, List]:
+    ) -> Tuple[int, int, List]:
         """Get the total energy of cascade particles on entrance."""
         e_deposited = 0
-
+        e_hadronic = 0
         if self.daughters:
             particles = [
                 dataclasses.I3MCTree.get_primaries(frame[self.mctree])[0]
@@ -174,6 +177,8 @@ class I3TotalEExtractor(I3Extractor):
                 if self.hull.point_in_hull(decay_pos):
                     if particle.is_cascade:
                         e_deposited += particle.energy
+                        if particle.is_hadronic:
+                            e_hadronic += particle.energy
                     else:
                         daughters = dataclasses.I3MCTree.get_daughters(
                             frame[self.mctree], particle
@@ -196,10 +201,12 @@ class I3TotalEExtractor(I3Extractor):
                         if daughter.is_cascade:
                             if self.hull.point_in_hull(decay_pos):
                                 e_deposited += daughter.energy
+                                if daughter.is_hadronic:
+                                    e_hadronic += daughter.energy
                         else:
                             daughters.extend(
                                 dataclasses.I3MCTree.get_daughters(
                                     frame[self.mctree], daughter
                                 )
                             )
-        return e_deposited, checked_id_list
+        return e_deposited, e_hadronic, checked_id_list
