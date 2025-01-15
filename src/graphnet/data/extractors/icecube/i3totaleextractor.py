@@ -86,9 +86,9 @@ class I3TotalEExtractor(I3Extractor):
                     frame["I3EventHeader"],
                 )
 
-            track_fraction = None
+            cascade_fraction = None
             if e_total > 0:
-                track_fraction = e_entrance_track / e_total
+                cascade_fraction = e_deposited_cascade / e_total
 
             output.update(
                 {
@@ -100,7 +100,8 @@ class I3TotalEExtractor(I3Extractor):
                     "e_visible_" + self._extractor_name: e_total,
                     "fraction_primary_"
                     + self._extractor_name: (e_total) / primary_energy,
-                    "fraction_track_" + self._extractor_name: track_fraction,
+                    "fraction_cascade_"
+                    + self._extractor_name: cascade_fraction,
                 }
             )
 
