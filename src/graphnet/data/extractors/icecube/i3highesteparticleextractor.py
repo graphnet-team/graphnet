@@ -25,7 +25,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         self,
         hull: GCD_hull,
         mctree: str = "I3MCTree",
-        mmctracklist: str = " MMCTrackList",
+        mmctracklist: str = "MMCTrackList",
         extractor_name: str = "HighestEInVolumeParticle",
         daughters: bool = False,
         exclude: list = [None],
@@ -60,11 +60,16 @@ class I3HighestEparticleExtractor(I3Extractor):
             ).energy
             distance = -1
             EonEntrance: int = 0
-            interaction_type = -1
+            is_track = -1
+            track_length = -1
             # this part handles track particles
-            HEParticleT, EonEntranceT, distanceT, checked_id_list = (
-                self.highest_energy_track(frame)
-            )
+            (
+                HEParticleT,
+                EonEntranceT,
+                distanceT,
+                track_length,
+                checked_id_list,
+            ) = self.highest_energy_track(frame)
             # this part handles non-track particles
             HEParticleC, EonEntranceC, distanceC, checked_id_list = (
                 self.highest_energy_cascade(frame, checked_id_list)
@@ -74,12 +79,12 @@ class I3HighestEparticleExtractor(I3Extractor):
                 HEParticle = HEParticleT
                 EonEntrance = EonEntranceT
                 distance = distanceT
-                interaction_type = 1
+                is_track = 1
             else:
                 HEParticle = HEParticleC
                 EonEntrance = EonEntranceC
                 distance = distanceC
-                interaction_type = 0
+                is_track = 0
 
             output.update(
                 {
@@ -98,8 +103,16 @@ class I3HighestEparticleExtractor(I3Extractor):
                     "time_" + self._extractor_name: HEParticle.time,
                     "speed_" + self._extractor_name: HEParticle.speed,
                     "energy_" + self._extractor_name: HEParticle.energy,
-                    "interaction_type_"
-                    + self._extractor_name: interaction_type,
+                    "length_" + self._extractor_name: HEParticle.length,
+                    "is_track_" + self._extractor_name: is_track,
+                    "interaction_shape_"
+                    + self._extractor_name: int(
+                        dataclasses.I3Particle.ParticleShape(HEParticle.shape)
+                    ),
+                    "particle_type_"
+                    + self._extractor_name: int(
+                        dataclasses.I3Particle.ParticleType(HEParticle.type)
+                    ),
                 }
             )
 
@@ -131,6 +144,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         primary = self.check_primary_energy(
             frame, frame[self.mctree].get_primaries()[0]
         )
+        track_length = -1
         for track in frame[self.mmctracklist]:
             track_particle = track.GetI3Particle()
             checked_id_list.append(track_particle.id)
@@ -176,7 +190,10 @@ class I3HighestEparticleExtractor(I3Extractor):
                             EonEntrance = Mtrack.get_energy(
                                 intersections.first
                             )
-        return particle, EonEntrance, distance, checked_id_list
+                            track_length = (
+                                intersections.first - intersections.second
+                            )
+        return particle, EonEntrance, distance, track_length, checked_id_list
 
     def highest_energy_cascade(
         self, frame: "icetray.I3Frame", checked_id_list: List = []
@@ -214,10 +231,6 @@ class I3HighestEparticleExtractor(I3Extractor):
                 if particle.energy > EonEntrance:
                     if self.hull.point_in_hull(pos):
                         HEparticle = particle
-                        distance = np.sqrt(
-                            (particle.pos.x**2)
-                            + (particle.pos.y**2)
-                            + (particle.pos.z**2)
-                        )
+                        distance = np.sqrt(pos.x**2 + pos.y**2 + pos.z**2)
                         EonEntrance = particle.energy
         return HEparticle, EonEntrance, distance, checked_id_list
