@@ -25,7 +25,7 @@ class I3TotalEExtractor(I3Extractor):
         hull: GCD_hull,
         mctree: str = "I3MCTree",
         mmctracklist: str = "MMCTrackList",
-        extractor_name: str = "TotalEonEntrance",
+        extractor_name: str = "event_energies",
         daughters: bool = False,
         exclude: list = [None],
     ):
