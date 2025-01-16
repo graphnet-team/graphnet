@@ -194,7 +194,7 @@ class I3TotalEExtractor(I3Extractor):
                             daughter.pos + daughter.dir * daughter.length
                         )
                         checked_id_list.append(daughter.id)
-                        if daughter.is_cascade:
+                        if daughter.is_cascade and daughter.shape != "Dark":
                             if self.hull.point_in_hull(decay_pos):
                                 e_deposited += daughter.energy
                         else:
