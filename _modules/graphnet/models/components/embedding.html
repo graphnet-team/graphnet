@@ -358,6 +358,63 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pytorch_lightning</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightningModule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_self_loops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">coalesce</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">full_edge_index</span>
+
+
+<div class="viewcode-block" id="LinearEdgeEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.LinearEdgeEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LinearEdgeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Linear encoding for edge attributes."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim_emb</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `LinearEdgeEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dim_emb: Embedding dimension.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_dim</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># TODO: generalize to more edge features -PW</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_dim</span><span class="p">,</span> <span class="n">dim_emb</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LinearEdgeEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.LinearEdgeEncoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_dim</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="LinearNodeEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.LinearNodeEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LinearNodeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Linear encoding for nodes."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim_in</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dim_emb</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `LinearNodeEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dim_in: Input dimension.</span>
+<span class="sd">            dim_emb: Embedding dimension.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">dim_in</span><span class="p">,</span> <span class="n">dim_emb</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LinearNodeEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.LinearNodeEncoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
 
 
 <div class="viewcode-block" id="SinusoidalPosEmb">
@@ -539,6 +596,209 @@
         <span class="n">sin_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="n">four_distance</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">rel_attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">(</span><span class="n">sin_emb</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rel_attn</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RRWPLinearNodeEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.RRWPLinearNodeEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RRWPLinearNodeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Relative random walk probability node encoder.</span>
+
+<span class="sd">    Original code:</span>
+<span class="sd">    https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emb_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">apply_norm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">norm_layer</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">,</span>
+        <span class="n">pe_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"rrwp"</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `RRWPLinearNodeEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            emb_dim: Embedding dimension.</span>
+<span class="sd">            out_dim: Output dimension.</span>
+<span class="sd">            use_bias: Apply bias to linear layer.</span>
+<span class="sd">            apply_norm: Apply normalization layer.</span>
+<span class="sd">            norm_layer: Normalization layer.</span>
+<span class="sd">            pe_name: Positional encoding name.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">pe_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_norm</span> <span class="o">=</span> <span class="n">apply_norm</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_norm</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">out_dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RRWPLinearNodeEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.RRWPLinearNodeEncoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">rrwp</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">]</span>
+        <span class="n">rrwp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">rrwp</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">:</span>
+            <span class="n">rrwp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">rrwp</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">"x"</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">rrwp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">rrwp</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RRWPLinearEdgeEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.RRWPLinearEdgeEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RRWPLinearEdgeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Relative random walk probability edge encoder.</span>
+
+<span class="sd">    Original code:</span>
+<span class="sd">    https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emb_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">apply_norm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">norm_layer</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNorm1d</span><span class="p">,</span>
+        <span class="n">pad_to_full_graph</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">add_node_attr_as_self_loop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">overwrite_old_attr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `RRWPLinearEdgeEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            emb_dim: Embedding dimension.</span>
+<span class="sd">            out_dim: Output dimension.</span>
+<span class="sd">            use_bias: Apply bias to linear layer.</span>
+<span class="sd">            apply_norm: Apply normalization layer.</span>
+<span class="sd">            norm_layer: Normalization layer.</span>
+<span class="sd">            pad_to_full_graph: Pad edges to fully-connected graph.</span>
+<span class="sd">            fill_value: Fill value for padding.</span>
+<span class="sd">            add_node_attr_as_self_loop: Add self loop edges with node attr.</span>
+<span class="sd">            overwrite_old_attr: Overwrite old edge attr.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="n">emb_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_dim</span> <span class="o">=</span> <span class="n">out_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_node_attr_as_self_loop</span> <span class="o">=</span> <span class="n">add_node_attr_as_self_loop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overwrite_old_attr</span> <span class="o">=</span> <span class="n">overwrite_old_attr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply_norm</span> <span class="o">=</span> <span class="n">apply_norm</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">)</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pad_to_full_graph</span> <span class="o">=</span> <span class="n">pad_to_full_graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="n">padding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span> <span class="o">*</span> <span class="n">fill_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s2">"padding"</span><span class="p">,</span> <span class="n">padding</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_norm</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">norm_layer</span><span class="p">(</span><span class="n">out_dim</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RRWPLinearEdgeEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.RRWPLinearEdgeEncoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">rrwp_idx</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rrwp_index</span>
+        <span class="n">rrwp_val</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rrwp_val</span>
+        <span class="n">edge_index</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span>
+        <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span>
+
+        <span class="n">rrwp_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">rrwp_val</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">edge_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">edge_index</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span>
+                <span class="n">edge_index</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">rrwp_val</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="c1"># zero padding for non-existing edges</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">overwrite_old_attr</span><span class="p">:</span>
+            <span class="n">out_idx</span><span class="p">,</span> <span class="n">out_val</span> <span class="o">=</span> <span class="n">rrwp_idx</span><span class="p">,</span> <span class="n">rrwp_val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span> <span class="o">=</span> <span class="n">add_self_loops</span><span class="p">(</span>
+                <span class="n">edge_index</span><span class="p">,</span> <span class="n">edge_attr</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mf">0.0</span>
+            <span class="p">)</span>
+
+            <span class="n">out_idx</span><span class="p">,</span> <span class="n">out_val</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">rrwp_idx</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">edge_attr</span><span class="p">,</span> <span class="n">rrwp_val</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span>
+                <span class="n">op</span><span class="o">=</span><span class="s2">"add"</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_to_full_graph</span><span class="p">:</span>
+            <span class="n">edge_index_full</span> <span class="o">=</span> <span class="n">full_edge_index</span><span class="p">(</span><span class="n">out_idx</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">edge_attr_pad</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">edge_index_full</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># zero padding to fully-connected graphs</span>
+            <span class="n">out_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">out_idx</span><span class="p">,</span> <span class="n">edge_index_full</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">out_val</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">out_val</span><span class="p">,</span> <span class="n">edge_attr_pad</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">out_idx</span><span class="p">,</span> <span class="n">out_val</span> <span class="o">=</span> <span class="n">coalesce</span><span class="p">(</span>
+                <span class="n">out_idx</span><span class="p">,</span> <span class="n">out_val</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">num_nodes</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="s2">"add"</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_norm</span><span class="p">:</span>
+            <span class="n">out_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">out_val</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">out_idx</span><span class="p">,</span> <span class="n">out_val</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RWSELinearNodeEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.RWSELinearNodeEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RWSELinearNodeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Random walk structural node encoding."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">emb_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `RWSELinearEdgeEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            emb_dim: Embedding dimension.</span>
+<span class="sd">            out_dim: Output dimension.</span>
+<span class="sd">            use_bias: Apply bias to linear layer.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">emb_dim</span> <span class="o">=</span> <span class="n">emb_dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_dim</span> <span class="o">=</span> <span class="n">out_dim</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">emb_dim</span><span class="p">,</span> <span class="n">out_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="n">use_bias</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RWSELinearNodeEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.RWSELinearNodeEncoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">rwse</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">rwse</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="n">rwse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">rwse</span><span class="p">)</span>
+
+        <span class="n">data</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">rwse</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">data</span></div>
 </div>
 
 </pre></div>

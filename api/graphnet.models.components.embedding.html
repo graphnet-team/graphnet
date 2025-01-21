@@ -381,6 +381,18 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-models-components-embedding--page-root" class="md-nav__link">embedding</a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearEdgeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LinearEdgeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearEdgeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LinearNodeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SinusoidalPosEmb" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SinusoidalPosEmb</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SinusoidalPosEmb.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -398,12 +410,58 @@
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RRWPLinearNodeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RRWPLinearEdgeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RWSELinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RWSELinearNodeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RWSELinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
   </ul>
 </nav>
       <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.LinearEdgeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LinearEdgeEncoder</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.LinearEdgeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.LinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LinearNodeEncoder</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.LinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
     <li class="md-nav__item">
     
     
@@ -441,6 +499,48 @@
     
     
       <a href="#graphnet.models.components.embedding.SpacetimeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RRWPLinearNodeEncoder</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RRWPLinearEdgeEncoder</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.RWSELinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RWSELinearNodeEncoder</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.RWSELinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
       
     
     </li></ul>
@@ -596,6 +696,18 @@
   <ul class="md-nav__list" data-md-scrollfix="">
         <li class="md-nav__item"><a href="#api-graphnet-models-components-embedding--page-root" class="md-nav__link">embedding</a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearEdgeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LinearEdgeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearEdgeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">LinearNodeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.LinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SinusoidalPosEmb" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SinusoidalPosEmb</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SinusoidalPosEmb.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -613,6 +725,24 @@
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RRWPLinearNodeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RRWPLinearEdgeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RWSELinearNodeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RWSELinearNodeEncoder</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.RWSELinearNodeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -628,6 +758,59 @@
   <section id="module-graphnet.models.components.embedding">
 <span id="embedding"></span><h1 id="api-graphnet-models-components-embedding--page-root">embedding<a class="headerlink" href="#api-graphnet-models-components-embedding--page-root" title="Link to this heading">¶</a></h1>
 <p>Classes for performing embedding of input data.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.LinearEdgeEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">LinearEdgeEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#LinearEdgeEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.LinearEdgeEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Linear encoding for edge attributes.</p>
+<p>Construct <cite>LinearEdgeEncoder</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dim_emb</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Embedding dimension.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.LinearEdgeEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#LinearEdgeEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.LinearEdgeEncoder.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.LinearNodeEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">LinearNodeEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_emb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#LinearNodeEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.LinearNodeEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Linear encoding for nodes.</p>
+<p>Construct <cite>LinearNodeEncoder</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim_in</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Input dimension.</p></li>
+<li><p><strong>dim_emb</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Embedding dimension.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.LinearNodeEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#LinearNodeEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.LinearNodeEncoder.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.components.embedding.SinusoidalPosEmb">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">SinusoidalPosEmb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#SinusoidalPosEmb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.SinusoidalPosEmb" title="Link to this definition">¶</a></dt>
@@ -728,6 +911,106 @@ sequences.</p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>x</strong> (<em>Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.RRWPLinearNodeEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">RRWPLinearNodeEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_layer=&lt;class</span> <span class="pre">'torch.nn.modules.batchnorm.BatchNorm1d'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pe_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#RRWPLinearNodeEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Relative random walk probability node encoder.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py">https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py</a></p>
+<p>Construct <cite>RRWPLinearNodeEncoder</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>emb_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Embedding dimension.</p></li>
+<li><p><strong>out_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Output dimension.</p></li>
+<li><p><strong>use_bias</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Apply bias to linear layer.</p></li>
+<li><p><strong>apply_norm</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Apply normalization layer.</p></li>
+<li><p><strong>norm_layer</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.batchnorm.BatchNorm1d'&gt;</span></code>) – Normalization layer.</p></li>
+<li><p><strong>pe_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'rrwp'</span></code>) – Positional encoding name.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.RRWPLinearNodeEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#RRWPLinearNodeEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.RRWPLinearNodeEncoder.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.RRWPLinearEdgeEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">RRWPLinearEdgeEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_norm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_layer=&lt;class</span> <span class="pre">'torch.nn.modules.batchnorm.BatchNorm1d'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad_to_full_graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_node_attr_as_self_loop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite_old_attr</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#RRWPLinearEdgeEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Relative random walk probability edge encoder.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py">https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py</a></p>
+<p>Construct <cite>RRWPLinearEdgeEncoder</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>emb_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Embedding dimension.</p></li>
+<li><p><strong>out_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Output dimension.</p></li>
+<li><p><strong>use_bias</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Apply bias to linear layer.</p></li>
+<li><p><strong>apply_norm</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Apply normalization layer.</p></li>
+<li><p><strong>norm_layer</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.batchnorm.BatchNorm1d'&gt;</span></code>) – Normalization layer.</p></li>
+<li><p><strong>pad_to_full_graph</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Pad edges to fully-connected graph.</p></li>
+<li><p><strong>fill_value</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) – Fill value for padding.</p></li>
+<li><p><strong>add_node_attr_as_self_loop</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Add self loop edges with node attr.</p></li>
+<li><p><strong>overwrite_old_attr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Overwrite old edge attr.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.RRWPLinearEdgeEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#RRWPLinearEdgeEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.RRWPLinearEdgeEncoder.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.RWSELinearNodeEncoder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">RWSELinearNodeEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">emb_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bias</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#RWSELinearNodeEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.RWSELinearNodeEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Random walk structural node encoding.</p>
+<p>Construct <cite>RWSELinearEdgeEncoder</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>emb_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Embedding dimension.</p></li>
+<li><p><strong>out_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Output dimension.</p></li>
+<li><p><strong>use_bias</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Apply bias to linear layer.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.RWSELinearNodeEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#RWSELinearNodeEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.RWSELinearNodeEncoder.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
 </dd>
 </dl>
 </dd></dl>

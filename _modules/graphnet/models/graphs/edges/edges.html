@@ -357,6 +357,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">knn_graph</span><span class="p">,</span> <span class="n">radius_graph</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_undirected</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.utils.num_nodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">maybe_num_nodes</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_distance_matrix</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
@@ -437,6 +439,62 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_nb_nearest_neighbours</span><span class="p">,</span>
             <span class="n">graph</span><span class="o">.</span><span class="n">batch</span><span class="p">,</span>
         <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">graph</span></div>
+
+
+
+<div class="viewcode-block" id="KNNDistanceEdges">
+<a class="viewcode-back" href="../../../../../api/graphnet.models.graphs.edges.edges.html#graphnet.models.graphs.edges.edges.KNNDistanceEdges">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KNNDistanceEdges</span><span class="p">(</span><span class="n">KNNEdges</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Builds edges from the k-nearest neighbours with distance attribute."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">nb_nearest_neighbours</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""K-NN Edge definition with edge distances.</span>
+
+<span class="sd">        Will connect nodes together with their `nb_nearest_neighbours`</span>
+<span class="sd">        nearest neighbours in the feature space given by `columns`. The</span>
+<span class="sd">        edges will be assigned values of the distance between the connecting</span>
+<span class="sd">        nodes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            nb_nearest_neighbours: number of neighbours.</span>
+<span class="sd">            columns: Node features to use for distance calculation.</span>
+<span class="sd">            Defaults to [0,1,2].</span>
+<span class="sd">        """</span>
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">nb_nearest_neighbours</span><span class="o">=</span><span class="n">nb_nearest_neighbours</span><span class="p">,</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_construct_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Define K-NN edges."""</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_construct_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">edge_index</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Check if edge_index is empty</span>
+            <span class="n">num_nodes</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">num_nodes</span>
+            <span class="n">self_loops</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">num_nodes</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">self_loops</span>
+
+        <span class="n">graph</span><span class="o">.</span><span class="n">num_nodes</span> <span class="o">=</span> <span class="n">maybe_num_nodes</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edge_index</span><span class="p">)</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">edge_index</span> <span class="o">=</span> <span class="n">to_undirected</span><span class="p">(</span>
+            <span class="n">graph</span><span class="o">.</span><span class="n">edge_index</span><span class="p">,</span> <span class="n">num_nodes</span><span class="o">=</span><span class="n">graph</span><span class="o">.</span><span class="n">num_nodes</span>
+        <span class="p">)</span>
+        <span class="n">position_data</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">x</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_columns</span><span class="p">]</span>
+
+        <span class="n">src</span><span class="p">,</span> <span class="n">tgt</span> <span class="o">=</span> <span class="n">graph</span><span class="o">.</span><span class="n">edge_index</span>
+
+        <span class="n">src_pos</span> <span class="o">=</span> <span class="n">position_data</span><span class="p">[</span><span class="n">src</span><span class="p">]</span>
+        <span class="n">tgt_pos</span> <span class="o">=</span> <span class="n">position_data</span><span class="p">[</span><span class="n">tgt</span><span class="p">]</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">src_pos</span> <span class="o">-</span> <span class="n">tgt_pos</span>
+
+        <span class="c1"># Shape: [num_edges, 1]</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">edge_attr</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">diff</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">graph</span></div>
 

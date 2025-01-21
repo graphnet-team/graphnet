@@ -21,6 +21,7 @@ gnn
    graphnet.models.gnn.dynedge_jinst
    graphnet.models.gnn.dynedge_kaggle_tito
    graphnet.models.gnn.gnn
+   graphnet.models.gnn.grit
    graphnet.models.gnn.icemix
    graphnet.models.gnn.particlenet
 

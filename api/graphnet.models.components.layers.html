@@ -441,6 +441,24 @@
         <li class="md-nav__item"><a href="#graphnet.models.components.layers.Block.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritSparseMHA" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GritSparseMHA</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritSparseMHA.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritTransformerLayer" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GritTransformerLayer</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritTransformerLayer.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.SANGraphHead" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SANGraphHead</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.SANGraphHead.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -575,6 +593,48 @@
     
     
       <a href="#graphnet.models.components.layers.Block.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.layers.GritSparseMHA" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GritSparseMHA</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.layers.GritSparseMHA.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.layers.GritTransformerLayer" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GritTransformerLayer</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.layers.GritTransformerLayer.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.layers.SANGraphHead" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SANGraphHead</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.layers.SANGraphHead.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
       
     
     </li></ul>
@@ -774,6 +834,24 @@
         <li class="md-nav__item"><a href="#graphnet.models.components.layers.Block" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.components.layers.Block.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritSparseMHA" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GritSparseMHA</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritSparseMHA.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritTransformerLayer" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GritTransformerLayer</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.GritTransformerLayer.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.SANGraphHead" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SANGraphHead</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.layers.SANGraphHead.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -1131,6 +1209,130 @@ parameters if not <cite>None</cite>.</p></li>
 <li><p><strong>attn_mask</strong> (<em>Tensor</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>key_padding_mask</strong> (<em>Tensor</em><em> | </em><em>None</em>)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.layers.GritSparseMHA">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.layers.</span></span><span class="sig-name descname"><span class="pre">GritSparseMHA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation=&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_enhance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/layers.html#GritSparseMHA"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.GritSparseMHA" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Proposed Attention Computation for GRIT.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py">https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py</a></p>
+<p>Construct ‘GritSparseMHA’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Dimension of the input tensor.</p></li>
+<li><p><strong>out_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Dimension of the output tensor.</p></li>
+<li><p><strong>num_heads</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of attention heads.</p></li>
+<li><p><strong>use_bias</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Apply bias the key and value linear layers.</p></li>
+<li><p><strong>clamp</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">5.0</span></code>) – Clamp the absolute value of the attention scores to a value.</p></li>
+<li><p><strong>dropout</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) – Dropout layer probability.</p></li>
+<li><p><strong>activation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></code>) – Uninstantiated activation function.
+E.g. <cite>torch.nn.ReLU</cite></p></li>
+<li><p><strong>edge_enhance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Applies learnable weight matrix with node-pair in
+output node calculation.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.layers.GritSparseMHA.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/layers.html#GritSparseMHA.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.GritSparseMHA.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.layers.GritTransformerLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.layers.</span></span><span class="sig-name descname"><span class="pre">GritTransformerLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_heads</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm=&lt;class</span> <span class="pre">'torch.nn.modules.batchnorm.BatchNorm1d'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg_scaler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation=&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">norm_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_norm_momentum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_norm_runner</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rezero</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enable_edge_transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_dropout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_clamp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_activation=&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attn_edge_enhance</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/layers.html#GritTransformerLayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.GritTransformerLayer" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Proposed Transformer Layer for GRIT.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py">https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py</a></p>
+<p>Construct ‘GritTransformerLayer’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Dimension of the input tensor.</p></li>
+<li><p><strong>out_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Dimension of theo output tensor.</p></li>
+<li><p><strong>num_heads</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of attention heads.</p></li>
+<li><p><strong>dropout</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) – Dropout layer probability.</p></li>
+<li><p><strong>norm</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.batchnorm.BatchNorm1d'&gt;</span></code>) – Uninstantiated normalization layer.
+Must be either <cite>torch.nn.BatchNorm1d</cite> or <cite>torch.nn.LayerNorm</cite>.</p></li>
+<li><p><strong>residual</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Apply residual connections.</p></li>
+<li><p><strong>deg_scaler</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Apply degree scaling after MHA.</p></li>
+<li><p><strong>activation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></code>) – Uninstantiated activation function.
+E.g. <cite>torch.nn.ReLU</cite></p></li>
+<li><p><strong>norm_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Apply normalization to edges.</p></li>
+<li><p><strong>update_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Update edges after layer.</p></li>
+<li><p><strong>batch_norm_momentum</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.1</span></code>) – Momentum of batch normalization.</p></li>
+<li><p><strong>batch_norm_runner</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Track running stats of batch normalization.</p></li>
+<li><p><strong>rezero</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Apply learnable scaling parameters.</p></li>
+<li><p><strong>enable_edge_transform</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Apply a FC to edges at the start
+of the layer.</p></li>
+<li><p><strong>attn_bias</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Add bias to keys and values in MHA block.</p></li>
+<li><p><strong>attn_dropout</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.0</span></code>) – Attention droput.</p></li>
+<li><p><strong>attn_clamp</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">5.0</span></code>) – Clamp absolute value of attention scores to a value.</p></li>
+<li><p><strong>attn_activation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></code>) – Uninstantiated activation function for MHA block.
+E.g. <cite>torch.nn.ReLU</cite></p></li>
+<li><p><strong>attn_edge_enhance</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Applies learnable weight matrix with node-pair
+in output node calculation in MHA block.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.layers.GritTransformerLayer.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/layers.html#GritTransformerLayer.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.GritTransformerLayer.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.layers.SANGraphHead">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.layers.</span></span><span class="sig-name descname"><span class="pre">SANGraphHead</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim_in</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim_out</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">L</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">activation=&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pooling</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/layers.html#SANGraphHead"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.SANGraphHead" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>SAN prediction head for graph prediction tasks.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/LiamMa/GRIT/blob/main/grit/head/san_graph.py">https://github.com/LiamMa/GRIT/blob/main/grit/head/san_graph.py</a></p>
+<p>Construct <cite>SANGraphHead</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dim_in</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Input dimension.</p></li>
+<li><p><strong>dim_out</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – Output dimension.</p></li>
+<li><p><strong>L</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">2</span></code>) – Number of hidden layers.</p></li>
+<li><p><strong>activation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">&lt;class</span> <span class="pre">'torch.nn.modules.activation.ReLU'&gt;</span></code>) – Uninstantiated activation function.
+E.g. <cite>torch.nn.ReLU</cite></p></li>
+<li><p><strong>pooling</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'mean'</span></code>) – Node-wise pooling operation. Either “mean” or “add”.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.layers.SANGraphHead.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/layers.html#SANGraphHead.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.layers.SANGraphHead.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward Pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>data</strong> (<em>Data</em>)</p>
 </dd>
 </dl>
 </dd></dl>

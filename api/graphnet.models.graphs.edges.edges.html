@@ -416,6 +416,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.KNNEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNEdges</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.KNNDistanceEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNDistanceEdges</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.RadialEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RadialEdges</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.EuclideanEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EuclideanEdges</span></code></a>
@@ -443,6 +445,13 @@
     
     
       <a href="#graphnet.models.graphs.edges.edges.KNNEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNEdges</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.graphs.edges.edges.KNNDistanceEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNDistanceEdges</span></code></a>
       
     
     </li>
@@ -620,6 +629,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.KNNEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNEdges</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.KNNDistanceEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">KNNDistanceEdges</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.RadialEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RadialEdges</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.edges.EuclideanEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EuclideanEdges</span></code></a>
@@ -681,6 +692,33 @@
 <p>K-NN Edge definition.</p>
 <p>Will connect nodes together with their ´nb_nearest_neighbours´
 nearest neighbours in the feature space given by ´columns´.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_nearest_neighbours</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – number of neighbours.</p></li>
+<li><p><strong>columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></code>) – Node features to use for distance calculation.</p></li>
+<li><p><strong>[</strong><strong>0</strong> (<em>Defaults to</em>)</p></li>
+<li><p><strong>1</strong></p></li>
+<li><p><strong>2</strong><strong>]</strong><strong>.</strong></p></li>
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.graphs.edges.edges.KNNDistanceEdges">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.edges.edges.</span></span><span class="sig-name descname"><span class="pre">KNNDistanceEdges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/edges/edges.html#KNNDistanceEdges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.edges.edges.KNNDistanceEdges" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.edges.edges.KNNEdges" title="graphnet.models.graphs.edges.edges.KNNEdges"><code class="xref py py-class docutils literal notranslate"><span class="pre">KNNEdges</span></code></a></p>
+<p>Builds edges from the k-nearest neighbours with distance attribute.</p>
+<p>K-NN Edge definition with edge distances.</p>
+<p>Will connect nodes together with their <cite>nb_nearest_neighbours</cite>
+nearest neighbours in the feature space given by <cite>columns</cite>. The
+edges will be assigned values of the distance between the connecting
+nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

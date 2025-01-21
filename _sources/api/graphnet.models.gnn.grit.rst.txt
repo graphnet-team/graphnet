@@ -1,0 +1,8 @@
+
+grit
+====
+
+.. automodule:: graphnet.models.gnn.grit
+   :members:
+   :undoc-members:
+   :show-inheritance:

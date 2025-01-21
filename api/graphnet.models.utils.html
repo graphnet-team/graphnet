@@ -475,6 +475,12 @@
         <li class="md-nav__item"><a href="#graphnet.models.utils.array_to_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">array_to_sequence()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.utils.get_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_fields()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.full_edge_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">full_edge_index()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.add_full_rrwp" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_full_rrwp()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.get_rw_landing_probs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_rw_landing_probs()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -513,6 +519,27 @@
     
     
       <a href="#graphnet.models.utils.get_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_fields()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.utils.full_edge_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">full_edge_index()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.utils.add_full_rrwp" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_full_rrwp()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.utils.get_rw_landing_probs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_rw_landing_probs()</span></code></a>
       
     
     </li></ul>
@@ -568,6 +595,12 @@
         <li class="md-nav__item"><a href="#graphnet.models.utils.array_to_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">array_to_sequence()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.utils.get_fields" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_fields()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.full_edge_index" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">full_edge_index()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.add_full_rrwp" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_full_rrwp()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.utils.get_rw_landing_probs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_rw_landing_probs()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -690,6 +723,92 @@ mask: A tensor that identifies masked entries in <cite>x</cite>.</p>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>data</strong> (<em>Data</em><em> | </em><em>List</em><em>[</em><em>Data</em><em>]</em>)</p></li>
 <li><p><strong>fields</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.utils.full_edge_index">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.utils.</span></span><span class="sig-name descname"><span class="pre">full_edge_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/utils.html#full_edge_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.utils.full_edge_index" title="Link to this definition">¶</a></dt>
+<dd><p>Return the full batched sparse adjacency matrices given by edge indices.</p>
+<p>Return batched sparse adjacency matrices with exactly those edges that
+are not in the input <cite>edge_index</cite> while ignoring self-loops. Implementation
+inspired by <cite>torch_geometric.utils.to_dense_adj</cite>.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py">https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edge_index</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – The edge indices.</p></li>
+<li><p><strong>batch</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Batch vector, which assigns each node to a specific example.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Complementary edge index.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.utils.add_full_rrwp">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.utils.</span></span><span class="sig-name descname"><span class="pre">add_full_rrwp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walk_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name_abs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attr_name_rel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_identity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spd</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/utils.html#add_full_rrwp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.utils.add_full_rrwp" title="Link to this definition">¶</a></dt>
+<dd><p>Add relative random walk probabilities.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/LiamMa/GRIT/blob/main/grit/transform/rrwp.py">https://github.com/LiamMa/GRIT/blob/main/grit/transform/rrwp.py</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span>) – Input data.</p></li>
+<li><p><strong>walk_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">8</span></code>) – Number of random walks for encoding.</p></li>
+<li><p><strong>attr_name_abs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'rrwp'</span></code>) – Absolute position encoding name.</p></li>
+<li><p><strong>attr_name_rel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'rrwp'</span></code>) – Relative position encoding name.</p></li>
+<li><p><strong>add_identity</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Add identity matrix to position encoding.</p></li>
+<li><p><strong>spd</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Use shortest path distances.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.utils.get_rw_landing_probs">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.utils.</span></span><span class="sig-name descname"><span class="pre">get_rw_landing_probs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ksteps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_nodes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_dim</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/utils.html#get_rw_landing_probs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.utils.get_rw_landing_probs" title="Link to this definition">¶</a></dt>
+<dd><p>Compute Random Walk landing probabilities for given list of K steps.</p>
+<p>Original code:
+<a class="reference external" href="https://github.com/ETH-DISCO/Benchmarking-PEs">https://github.com/ETH-DISCO/Benchmarking-PEs</a>
+:type ksteps: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></span>
+:param ksteps: List of k-steps for which to compute the RW landings
+:type edge_index: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>
+:param edge_index: PyG sparse representation of the graph
+:type edge_weight: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>
+:param edge_weight: (optional) Edge weights
+:type num_nodes: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>
+:param num_nodes: (optional) Number of nodes in the graph
+:type space_dim: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0</span></code>
+:param space_dim: (optional) Estimated dimensionality of the space. Used to</p>
+<blockquote>
+<div><p>correct the random-walk diagonal by a factor <cite>k^(space_dim/2)</cite>.
+In euclidean space, this correction means that the height of
+the gaussian distribution stays almost constant across the number
+of steps, if <cite>space_dim</cite> is the dimension of the euclidean space.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>2D Tensor with shape (num_nodes, len(ksteps)) with RW landing probs</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ksteps</strong> (<em>List</em>)</p></li>
+<li><p><strong>edge_index</strong> (<em>Tensor</em>)</p></li>
+<li><p><strong>edge_weight</strong> (<em>Tensor</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>num_nodes</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>space_dim</strong> (<em>int</em>)</p></li>
 </ul>
 </dd>
 </dl>
