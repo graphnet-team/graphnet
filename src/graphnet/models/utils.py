@@ -1,13 +1,17 @@
 """Utility functions for `graphnet.models`."""
 
-from typing import List, Tuple, Any, Union
-from torch_geometric.nn import knn_graph
-from torch_geometric.data import Batch
+from typing import List, Tuple, Any, Union, Optional
+
 import torch
 from torch import Tensor, LongTensor
 
-from torch_geometric.utils import homophily
-from torch_geometric.data import Data
+from torch_geometric.nn import knn_graph
+from torch_geometric.data import Batch, Data
+from torch_geometric.utils import homophily, to_dense_adj
+from torch_geometric.utils.num_nodes import maybe_num_nodes
+
+from torch_scatter import scatter, scatter_add
+from torch_sparse import SparseTensor
 
 
 def calculate_xyzt_homophily(
@@ -116,3 +120,188 @@ def get_fields(data: Union[Data, List[Data]], fields: List[str]) -> Tensor:
             torch.cat([d[label].reshape(-1, 1) for d in data], dim=0)
         )
     return torch.cat(labels, dim=1)
+
+
+def full_edge_index(
+    edge_index: Tensor, batch: Optional[Tensor] = None
+) -> Tensor:
+    """Return the full batched sparse adjacency matrices given by edge indices.
+
+    Return batched sparse adjacency matrices with exactly those edges that
+    are not in the input `edge_index` while ignoring self-loops. Implementation
+    inspired by `torch_geometric.utils.to_dense_adj`.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py
+
+    Args:
+        edge_index: The edge indices.
+        batch: Batch vector, which assigns each node to a specific example.
+
+    Returns:
+        Complementary edge index.
+    """
+    if batch is None:
+        batch = edge_index.new_zeros(edge_index.max().item() + 1)
+
+    batch_size = batch.max().item() + 1
+    one = batch.new_ones(batch.size(0))
+    num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce="add")
+    cum_nodes = torch.cat([batch.new_zeros(1), num_nodes.cumsum(dim=0)])
+
+    negative_index_list = []
+    for i in range(batch_size):
+        n = num_nodes[i].item()
+        size = [n, n]
+        adj = torch.ones(size, dtype=torch.short, device=edge_index.device)
+
+        adj = adj.view(size)
+        _edge_index = adj.nonzero(as_tuple=False).t().contiguous()
+        negative_index_list.append(_edge_index + cum_nodes[i])
+
+    edge_index_full = torch.cat(negative_index_list, dim=1).contiguous()
+    return edge_index_full
+
+
+@torch.no_grad()
+def add_full_rrwp(
+    data: Data,
+    walk_length: int = 8,
+    attr_name_abs: str = "rrwp",
+    attr_name_rel: str = "rrwp",
+    add_identity: bool = True,
+    spd: bool = False,
+) -> Data:
+    """Add relative random walk probabilities.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/transform/rrwp.py
+
+    Args:
+        data: Input data.
+        walk_length: Number of random walks for encoding.
+        attr_name_abs: Absolute position encoding name.
+        attr_name_rel: Relative position encoding name.
+        add_identity: Add identity matrix to position encoding.
+        spd: Use shortest path distances.
+    """
+    num_nodes = data.num_nodes
+    edge_index, edge_weight = data.edge_index, data.edge_weight
+
+    adj = SparseTensor.from_edge_index(
+        edge_index,
+        edge_weight,
+        sparse_sizes=(num_nodes, num_nodes),
+    )
+
+    # Compute D^{-1} A:
+    deg_inv = 1.0 / adj.sum(dim=1)
+    deg_inv[deg_inv == float("inf")] = 0
+    adj = adj * deg_inv.view(-1, 1)
+    adj = adj.to_dense()
+
+    pe_list = []
+    i = 0
+    if add_identity:
+        pe_list.append(torch.eye(num_nodes, dtype=data.x.dtype))
+        i = i + 1
+
+    out = adj
+    pe_list.append(adj)
+
+    if walk_length > 2:
+        for j in range(i + 1, walk_length):
+            out = out @ adj
+            pe_list.append(out)
+
+    pe = torch.stack(pe_list, dim=-1)  # n x n x k
+
+    abs_pe = pe.diagonal().transpose(0, 1)  # n x k
+
+    rel_pe = SparseTensor.from_dense(pe, has_value=True)
+    rel_pe_row, rel_pe_col, rel_pe_val = rel_pe.coo()
+    rel_pe_idx = torch.stack([rel_pe_col, rel_pe_row], dim=0)
+    # The framework of GRIT performing right-mul while adj is row-normalized,
+    # need to switch the order or row and col.
+    # Note: both can work but the current version is more reasonable.
+
+    if spd:
+        spd_idx = walk_length - torch.arange(walk_length)
+        val = (rel_pe_val > 0).type(torch.float) * spd_idx.unsqueeze(0)
+        val = torch.argmax(val, dim=-1)
+        rel_pe_val = torch.nn.functional.one_hot(val, walk_length).type(
+            torch.float
+        )
+        abs_pe = torch.zeros_like(abs_pe)
+
+    data[attr_name_abs] = abs_pe
+    data[f"{attr_name_rel}_index"] = rel_pe_idx
+    data[f"{attr_name_rel}_val"] = rel_pe_val
+
+    return data
+
+
+def get_rw_landing_probs(
+    ksteps: List,
+    edge_index: Tensor,
+    edge_weight: Tensor = None,
+    num_nodes: Optional[int] = None,
+    space_dim: int = 0,
+) -> Tensor:
+    """Compute Random Walk landing probabilities for given list of K steps.
+
+    Original code:
+    https://github.com/ETH-DISCO/Benchmarking-PEs
+    Args:
+        ksteps: List of k-steps for which to compute the RW landings
+        edge_index: PyG sparse representation of the graph
+        edge_weight: (optional) Edge weights
+        num_nodes: (optional) Number of nodes in the graph
+        space_dim: (optional) Estimated dimensionality of the space. Used to
+            correct the random-walk diagonal by a factor `k^(space_dim/2)`.
+            In euclidean space, this correction means that the height of
+            the gaussian distribution stays almost constant across the number
+            of steps, if `space_dim` is the dimension of the euclidean space.
+
+    Returns:
+        2D Tensor with shape (num_nodes, len(ksteps)) with RW landing probs
+    """
+    print(edge_index.shape)
+    if edge_weight is None:
+        edge_weight = torch.ones(edge_index.size(1), device=edge_index.device)
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    source = edge_index[0]
+
+    # Out degrees
+    deg = scatter_add(edge_weight, source, dim=0, dim_size=num_nodes)
+    deg_inv = deg.pow(-1.0)
+    deg_inv.masked_fill_(deg_inv == float("inf"), 0)
+
+    if edge_index.numel() == 0:
+        P = edge_index.new_zeros((1, num_nodes, num_nodes))
+    else:
+        # P = D^-1 * A
+        # 1 x (Num nodes) x (Num nodes)
+        P = torch.diag(deg_inv) @ to_dense_adj(
+            edge_index, max_num_nodes=num_nodes
+        )
+    rws = []
+    if ksteps == list(range(min(ksteps), max(ksteps) + 1)):
+        # Efficient way if ksteps are a consecutive sequence
+        Pk = P.clone().detach().matrix_power(min(ksteps))
+        for k in range(min(ksteps), max(ksteps) + 1):
+            rws.append(
+                torch.diagonal(Pk, dim1=-2, dim2=-1) * (k ** (space_dim / 2))
+            )
+            Pk = Pk @ P
+    else:
+        # Explicitly raising P to power k for each k \in ksteps.
+        for k in ksteps:
+            rws.append(
+                torch.diagonal(P.matrix_power(k), dim1=-2, dim2=-1)
+                * (k ** (space_dim / 2))
+            )
+
+    # (Num nodes) x (K steps)
+    rw_landing = torch.cat(rws, dim=0).transpose(0, 1)
+    return rw_landing
