@@ -254,16 +254,14 @@ class LearnedTask(Task):
         # Mapping from last hidden layer to required size of input
         self._loss_function = loss_function
         self._disable_affine = disable_affine
-        
+
         if self._disable_affine:
             self._affine = Linear(hidden_size, self.nb_inputs)
         else:
             self._affine = None
 
     @abstractmethod
-    def _forward(  # type: ignore
-        self, x: Union[Tensor, Data]
-    ) -> Union[Tensor, Data]:
+    def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Syntax like `.forward`, for implentation in inheriting classes."""
         raise NotImplementedError
 
@@ -280,9 +278,7 @@ class LearnedTask(Task):
         """Return number of inputs assumed by task."""
 
     @final
-    def forward(  # type: ignore
-        self, x: Union[Tensor, Data]
-    ) -> Union[Tensor, Data]:
+    def forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
         """Forward call for `LearnedTask`.
 
         The learned embedding transforms last latent layer of Model to meet
