@@ -8,7 +8,7 @@ from copy import deepcopy
 
 import torch
 from torch import Tensor
-from torch.nn import Linear
+from torch.nn import Linear, Identity
 from torch_geometric.data import Data
 
 if TYPE_CHECKING:
@@ -256,9 +256,9 @@ class LearnedTask(Task):
         self._disable_affine = disable_affine
 
         if self._disable_affine:
-            self._affine = Linear(hidden_size, self.nb_inputs)
+            self._affine = Identity()
         else:
-            self._affine = None
+            self._affine = Linear(hidden_size, self.nb_inputs)
 
     @abstractmethod
     def _forward(self, x: Union[Tensor, Data]) -> Union[Tensor, Data]:
@@ -285,8 +285,7 @@ class LearnedTask(Task):
         target dimensions.
         """
         self._regularisation_loss = 0  # Reset
-        if not self._disable_affine:  # Apply affine layer if not disabled
-            x = self._affine(x)
+        x = self._affine(x)
         x = self._forward(x=x)
         return self._transform_prediction(x)
 
