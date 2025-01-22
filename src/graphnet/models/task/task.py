@@ -235,6 +235,7 @@ class LearnedTask(Task):
         self,
         hidden_size: int,
         loss_function: "LossFunction",
+        disable_affine: bool = False,
         **task_kwargs: Any,
     ):
         """Construct `LearnedTask`.
@@ -244,13 +245,20 @@ class LearnedTask(Task):
                          the last latent layer of `Model` using this Task.
                          Available through `Model.nb_outputs`
             loss_function: Loss function appropriate to the task.
+            disable_affine: Disable linear layer mapping hidden layer size
+                            to number of inputs.
         """
         # Base class constructor
         super().__init__(**task_kwargs)
 
         # Mapping from last hidden layer to required size of input
         self._loss_function = loss_function
-        self._affine = Linear(hidden_size, self.nb_inputs)
+        self._disable_affine = disable_affine
+        
+        if self._disable_affine:
+            self._affine = Linear(hidden_size, self.nb_inputs)
+        else:
+            self._affine = None
 
     @abstractmethod
     def _forward(  # type: ignore
@@ -281,7 +289,8 @@ class LearnedTask(Task):
         target dimensions.
         """
         self._regularisation_loss = 0  # Reset
-        x = self._affine(x)
+        if not self._disable_affine:  # Apply affine layer if not disabled
+            x = self._affine(x)
         x = self._forward(x=x)
         return self._transform_prediction(x)
 
