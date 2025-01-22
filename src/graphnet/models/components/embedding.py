@@ -7,6 +7,51 @@ from torch.functional import Tensor
 from typing import Optional
 
 from pytorch_lightning import LightningModule
+from torch_geometric.utils import add_self_loops
+from torch_geometric.data import Data
+from torch_sparse import coalesce
+
+from graphnet.models.utils import full_edge_index
+
+
+class LinearEdgeEncoder(LightningModule):
+    """Linear encoding for edge attributes."""
+
+    def __init__(self, dim_emb: int):
+        """Construct `LinearEdgeEncoder`.
+
+        Args:
+            dim_emb: Embedding dimension.
+        """
+        super().__init__()
+
+        self.in_dim = 1  # TODO: generalize to more edge features -PW
+        self.encoder = torch.nn.Linear(self.in_dim, dim_emb)
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
+        data.edge_attr = self.encoder(data.edge_attr.view(-1, self.in_dim))
+        return data
+
+
+class LinearNodeEncoder(LightningModule):
+    """Linear encoding for nodes."""
+
+    def __init__(self, dim_in: int, dim_emb: int):
+        """Construct `LinearNodeEncoder`.
+
+        Args:
+            dim_in: Input dimension.
+            dim_emb: Embedding dimension.
+        """
+        super().__init__()
+
+        self.encoder = torch.nn.Linear(dim_in, dim_emb)
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
+        data.x = self.encoder(data.x)
+        return data
 
 
 class SinusoidalPosEmb(LightningModule):
@@ -172,3 +217,188 @@ class SpacetimeEncoder(LightningModule):
         sin_emb = self.sin_emb(1024 * four_distance.clip(-4, 4))
         rel_attn = self.projection(sin_emb)
         return rel_attn
+
+
+class RRWPLinearNodeEncoder(LightningModule):
+    """Relative random walk probability node encoder.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py
+    """
+
+    def __init__(
+        self,
+        emb_dim: int,
+        out_dim: int,
+        use_bias: bool = False,
+        apply_norm: bool = True,
+        norm_layer: nn.Module = nn.BatchNorm1d,
+        pe_name: str = "rrwp",
+    ):
+        """Construct `RRWPLinearNodeEncoder`.
+
+        Args:
+            emb_dim: Embedding dimension.
+            out_dim: Output dimension.
+            use_bias: Apply bias to linear layer.
+            apply_norm: Apply normalization layer.
+            norm_layer: Normalization layer.
+            pe_name: Positional encoding name.
+        """
+        super().__init__()
+        self.name = pe_name
+        self.apply_norm = apply_norm
+
+        self.fc = nn.Linear(emb_dim, out_dim, bias=use_bias)
+        torch.nn.init.xavier_uniform_(self.fc.weight)
+
+        if self.apply_norm:
+            self.norm = norm_layer(out_dim)
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
+        rrwp = data[f"{self.name}"]
+        rrwp = self.fc(rrwp)
+
+        if self.norm:
+            rrwp = self.norm(rrwp)
+
+        if "x" in data:
+            data.x = data.x + rrwp
+        else:
+            data.x = rrwp
+
+        return data
+
+
+class RRWPLinearEdgeEncoder(LightningModule):
+    """Relative random walk probability edge encoder.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/encoder/rrwp_encoder.py
+    """
+
+    def __init__(
+        self,
+        emb_dim: int,
+        out_dim: int,
+        use_bias: bool = False,
+        apply_norm: bool = True,
+        norm_layer: nn.Module = nn.BatchNorm1d,
+        pad_to_full_graph: bool = True,
+        fill_value: float = 0.0,
+        add_node_attr_as_self_loop: bool = False,
+        overwrite_old_attr: bool = False,
+    ):
+        """Construct `RRWPLinearEdgeEncoder`.
+
+        Args:
+            emb_dim: Embedding dimension.
+            out_dim: Output dimension.
+            use_bias: Apply bias to linear layer.
+            apply_norm: Apply normalization layer.
+            norm_layer: Normalization layer.
+            pad_to_full_graph: Pad edges to fully-connected graph.
+            fill_value: Fill value for padding.
+            add_node_attr_as_self_loop: Add self loop edges with node attr.
+            overwrite_old_attr: Overwrite old edge attr.
+        """
+        super().__init__()
+
+        self.emb_dim = emb_dim
+        self.out_dim = out_dim
+        self.add_node_attr_as_self_loop = add_node_attr_as_self_loop
+        self.overwrite_old_attr = overwrite_old_attr
+        self.apply_norm = apply_norm
+
+        self.fc = nn.Linear(emb_dim, out_dim, bias=use_bias)
+        torch.nn.init.xavier_uniform_(self.fc.weight)
+        self.pad_to_full_graph = pad_to_full_graph
+        self.fill_value = 0.0
+
+        padding = torch.ones(1, out_dim, dtype=torch.float) * fill_value
+        self.register_buffer("padding", padding)
+
+        if self.apply_norm:
+            self.norm = norm_layer(out_dim)
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
+        rrwp_idx = data.rrwp_index
+        rrwp_val = data.rrwp_val
+        edge_index = data.edge_index
+        edge_attr = data.edge_attr
+
+        rrwp_val = self.fc(rrwp_val)
+
+        if edge_attr is None:
+            edge_attr = edge_index.new_zeros(
+                edge_index.size(1), rrwp_val.size(1)
+            )
+            # zero padding for non-existing edges
+
+        if self.overwrite_old_attr:
+            out_idx, out_val = rrwp_idx, rrwp_val
+        else:
+            edge_index, edge_attr = add_self_loops(
+                edge_index, edge_attr, num_nodes=data.num_nodes, fill_value=0.0
+            )
+
+            out_idx, out_val = coalesce(
+                torch.cat([edge_index, rrwp_idx], dim=1),
+                torch.cat([edge_attr, rrwp_val], dim=0),
+                data.num_nodes,
+                data.num_nodes,
+                op="add",
+            )
+
+        if self.pad_to_full_graph:
+            edge_index_full = full_edge_index(out_idx, batch=data.batch)
+            edge_attr_pad = self.padding.repeat(edge_index_full.size(1), 1)
+            # zero padding to fully-connected graphs
+            out_idx = torch.cat([out_idx, edge_index_full], dim=1)
+            out_val = torch.cat([out_val, edge_attr_pad], dim=0)
+            out_idx, out_val = coalesce(
+                out_idx, out_val, data.num_nodes, data.num_nodes, op="add"
+            )
+
+        if self.apply_norm:
+            out_val = self.norm(out_val)
+
+        data.edge_index, data.edge_attr = out_idx, out_val
+        return data
+
+
+class RWSELinearNodeEncoder(LightningModule):
+    """Random walk structural node encoding."""
+
+    def __init__(
+        self,
+        emb_dim: int,
+        out_dim: int,
+        use_bias: bool = False,
+    ):
+        """Construct `RWSELinearEdgeEncoder`.
+
+        Args:
+            emb_dim: Embedding dimension.
+            out_dim: Output dimension.
+            use_bias: Apply bias to linear layer.
+        """
+        super().__init__()
+
+        self.emb_dim = emb_dim
+        self.out_dim = out_dim
+
+        self.encoder = nn.Linear(emb_dim, out_dim, bias=use_bias)
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
+        rwse = data.rwse
+        x = data.x
+
+        rwse = self.encoder(rwse)
+
+        data.x = torch.cat((x, rwse), dim=1)
+
+        return data
