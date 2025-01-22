@@ -245,7 +245,7 @@ class LearnedTask(Task):
                          the last latent layer of `Model` using this Task.
                          Available through `Model.nb_outputs`
             loss_function: Loss function appropriate to the task.
-            disable_affine: Disable linear layer mapping hidden layer size
+            disable_affine: Disable linear layer mapping from hidden layer size
                             to number of inputs.
         """
         # Base class constructor
