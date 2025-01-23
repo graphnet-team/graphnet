@@ -182,10 +182,7 @@ def main(
     converter(inputs)
     # merge files removing the db files after merging to save space.
     if merge is True:
-        if remove is True:
-            converter.merge_files(remove_originals=True)
-        else:
-            converter.merge_files(remove_originals=False)
+        converter.merge_files(remove_original=remove)
 
 
 if __name__ == "__main__":
