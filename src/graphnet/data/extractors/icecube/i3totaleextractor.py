@@ -41,16 +41,13 @@ class I3TotalEExtractor(I3Extractor):
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract all the visible particles entering the volume."""
         output = {}
-        checked_id_list: List = []
         if self.frame_contains_info(frame):
 
-            e_entrance_track, e_deposited_track, checked_id_list = (
-                self.total_track_energy(frame, checked_id_list=checked_id_list)
+            e_entrance_track, e_deposited_track = self.total_track_energy(
+                frame
             )
 
-            e_deposited_cascade, checked_id_list = self.total_cascade_energy(
-                frame, checked_id_list
-            )
+            e_deposited_cascade = self.total_cascade_energy(frame)
 
             if self.daughters:
                 primary_energy = self.check_primary_energy(
@@ -113,14 +110,13 @@ class I3TotalEExtractor(I3Extractor):
         return self.mctree in frame and self.mmctracklist in frame
 
     def total_track_energy(
-        self, frame: "icetray.I3Frame", checked_id_list: List = []
-    ) -> Tuple[int, int, Any]:
+        self, frame: "icetray.I3Frame"
+    ) -> Tuple[int, int, dict]:
         """Get the total energy of track particles on entrance."""
         e_entrance = 0
         e_deposited = 0
         primary = frame[self.mctree].get_primaries()[0]
         primary = self.check_primary_energy(frame, primary)
-
         for track in MuonGun.Track.harvest(
             frame[self.mctree], frame[self.mmctracklist]
         ):
@@ -131,8 +127,6 @@ class I3TotalEExtractor(I3Extractor):
                 ):
                     continue
 
-            if track.id in checked_id_list:
-                continue
             # Find distance to entrance and exit from sampling volume
             intersections = self.hull.surface.intersection(
                 track.pos, track.dir
@@ -150,12 +144,11 @@ class I3TotalEExtractor(I3Extractor):
                 assert (
                     e_deposited <= primary.energy
                 ), "Energy deposited is greater than primary energy"
-            checked_id_list.append(track.id)
-
-        return e_entrance, e_deposited, checked_id_list
+        return e_entrance, e_deposited
 
     def total_cascade_energy(
-        self, frame: "icetray.I3Frame", checked_id_list: List = []
+        self,
+        frame: "icetray.I3Frame",
     ) -> Tuple[int, List]:
         """Get the total energy of cascade particles on entrance."""
         e_deposited = 0
@@ -166,41 +159,34 @@ class I3TotalEExtractor(I3Extractor):
         else:
             particles = dataclasses.I3MCTree.get_primaries(frame[self.mctree])
 
+        particles = np.array([p for p in particles if (not p.is_track)])
         for particle in particles:
-            if (particle.id not in checked_id_list) & (not particle.is_track):
-                checked_id_list.append(particle.id)
+            decay_pos = particle.pos + particle.dir * particle.length
 
-                decay_pos = particle.pos + particle.dir * particle.length
+            if self.hull.point_in_hull(decay_pos):
+                if particle.is_cascade:
+                    e_deposited += particle.energy
+                else:
+                    daughters = dataclasses.I3MCTree.get_daughters(
+                        frame[self.mctree], particle
+                    )
 
-                if self.hull.point_in_hull(decay_pos):
-                    if particle.is_cascade:
-                        e_deposited += particle.energy
+                while daughters:
+                    daughter = daughters[0]
+                    daughters = daughters[1:]
+                    length = daughter.length
+                    if daughter.is_track:
+                        continue
+                    if length == np.nan:
+                        length = 0
+                    decay_pos = daughter.pos + daughter.dir * daughter.length
+                    if daughter.is_cascade and daughter.shape != "Dark":
+                        if self.hull.point_in_hull(decay_pos):
+                            e_deposited += daughter.energy
                     else:
-                        daughters = dataclasses.I3MCTree.get_daughters(
-                            frame[self.mctree], particle
-                        )
-
-                    while daughters:
-                        daughter = daughters[0]
-                        daughters = daughters[1:]
-                        length = daughter.length
-                        if (daughter.is_track) or (
-                            daughter.id in checked_id_list
-                        ):
-                            continue
-                        if length == np.nan:
-                            length = 0
-                        decay_pos = (
-                            daughter.pos + daughter.dir * daughter.length
-                        )
-                        checked_id_list.append(daughter.id)
-                        if daughter.is_cascade and daughter.shape != "Dark":
-                            if self.hull.point_in_hull(decay_pos):
-                                e_deposited += daughter.energy
-                        else:
-                            daughters.extend(
-                                dataclasses.I3MCTree.get_daughters(
-                                    frame[self.mctree], daughter
-                                )
+                        daughters.extend(
+                            dataclasses.I3MCTree.get_daughters(
+                                frame[self.mctree], daughter
                             )
-        return e_deposited, checked_id_list
+                        )
+        return e_deposited

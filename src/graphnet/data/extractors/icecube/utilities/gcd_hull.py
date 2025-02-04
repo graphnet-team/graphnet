@@ -44,6 +44,7 @@ class GCD_hull(ConvexHull):
         self.coords = np.concatenate([lower.T, upper.T])
         # Base class constructor
         super().__init__(self.coords)
+        self.furthest_distance = np.sqrt((self.points**2).sum(axis=1).max())
 
     def point_in_hull(
         self, point: "dataclasses.I3Particle", tolerance: float = 1e-12
