@@ -1,6 +1,6 @@
 """Extract all the visible particles entering the volume."""
 
-from typing import Dict, Any, List, TYPE_CHECKING, Tuple
+from typing import Dict, Any, TYPE_CHECKING, Tuple
 
 from .utilities.gcd_hull import GCD_hull
 from .i3extractor import I3Extractor
@@ -111,7 +111,7 @@ class I3TotalEExtractor(I3Extractor):
 
     def total_track_energy(
         self, frame: "icetray.I3Frame"
-    ) -> Tuple[int, int, dict]:
+    ) -> Tuple[float, float]:
         """Get the total energy of track particles on entrance."""
         e_entrance = 0
         e_deposited = 0
@@ -149,15 +149,17 @@ class I3TotalEExtractor(I3Extractor):
     def total_cascade_energy(
         self,
         frame: "icetray.I3Frame",
-    ) -> Tuple[int, List]:
+    ) -> float:
         """Get the total energy of cascade particles on entrance."""
         e_deposited = 0
         if self.daughters:
-            particles = [
-                dataclasses.I3MCTree.get_primaries(frame[self.mctree])[0]
-            ]
+            particles = np.array(
+                [dataclasses.I3MCTree.get_primaries(frame[self.mctree])[0]]
+            )
         else:
-            particles = dataclasses.I3MCTree.get_primaries(frame[self.mctree])
+            particles = np.array(
+                dataclasses.I3MCTree.get_primaries(frame[self.mctree])
+            )
 
         particles = np.array([p for p in particles if (not p.is_track)])
         for particle in particles:
