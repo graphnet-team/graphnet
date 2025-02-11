@@ -12,6 +12,12 @@ from graphnet.data.curated_datamodule import IceCubeHostedDataset
 from graphnet.data.utilities import query_database
 from graphnet.models.graphs import GraphDefinition
 
+AVAILABLE_RUN_IDS = [
+    *list(range(22010, 22019)),
+    *list(range(22042, 22051)),
+    *list(range(22078, 22087)),
+]
+
 
 class SnowStormDataset(IceCubeHostedDataset):
     """IceCube SnowStorm simulation dataset.
@@ -23,7 +29,7 @@ class SnowStormDataset(IceCubeHostedDataset):
     """
 
     _experiment = "IceCube SnowStorm dataset"
-    _creator = "Severin Magel"
+    _creator = "Aske Rosted"
     _citation = "arXiv:1909.01530"
     _available_backends = ["sqlite"]
 
@@ -45,7 +51,27 @@ class SnowStormDataset(IceCubeHostedDataset):
         validation_dataloader_kwargs: Optional[Dict[str, Any]] = None,
         test_dataloader_kwargs: Optional[Dict[str, Any]] = None,
     ):
-        """Initialize SnowStorm dataset."""
+        """Construct SnowStormDataset.
+
+        Args:
+            run_ids: List of RunIDs to include.
+            graph_definition: Method that defines the data representation.
+            download_dir: Directory to download dataset to.
+            truth (Optional): List of event-level truth to include. Will
+                            include all available information if not given.
+            features (Optional): List of input features from pulsemap to use.
+                                If not given, all available features will be
+                                used.
+            train_dataloader_kwargs (Optional): Arguments for the training
+                                        DataLoader. Default None.
+            validation_dataloader_kwargs (Optional): Arguments for the
+                                        validation DataLoader, Default None.
+            test_dataloader_kwargs (Optional): Arguments for the test
+                                    DataLoader. Default None.
+        """
+        assert all(
+            [i in AVAILABLE_RUN_IDS for i in run_ids]
+        ), f"RunIDs must be in {AVAILABLE_RUN_IDS}. You provided {run_ids}"
         self._run_ids = run_ids
         self._zipped_files = [
             os.path.join(self._data_root_dir, f"{s}.tar.gz") for s in run_ids
