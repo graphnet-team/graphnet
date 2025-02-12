@@ -7,7 +7,7 @@ from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors import Extractor
 
 if has_icecube_package() or TYPE_CHECKING:
-    from icecube import (
+    from icecube import (  # noqa: F401
         icetray,
         dataio,
         dataclasses,
@@ -90,6 +90,10 @@ class I3Extractor(Extractor):
         # Save information as member variables of I3Extractor
         self._gcd_dict = g_frame["I3Geometry"].omgeo
         self._calibration = c_frame["I3Calibration"]
+        if gcd_file is not None:
+            self._gcd_file = gcd_file
+        if i3_file is not None:
+            self._i3_file = i3_file
 
     @abstractmethod
     def __call__(self, frame: "icetray.I3Frame") -> dict:
