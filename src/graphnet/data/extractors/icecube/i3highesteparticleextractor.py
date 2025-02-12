@@ -161,6 +161,39 @@ class I3HighestEparticleExtractor(I3Extractor):
         energies = energies[min_e_mask]
         MuonGun_tracks = MuonGun_tracks[min_e_mask]
         MCTracklist_tracks = MCTracklist_tracks[min_e_mask]
+        track_particles = np.array(
+            [track.GetI3Particle() for track in MCTracklist_tracks]
+        )
+
+        pos, direc, length = np.asarray(
+            [
+                [
+                    np.array(p.pos),
+                    np.array([p.dir.x, p.dir.y, p.dir.z]),
+                    p.length,
+                ]
+                for p in track_particles
+            ],
+            dtype=object,
+        ).T
+
+        # check if the rays intersect with the sphere approximating the hull
+        length = length.astype(float)
+        # replace length nan with 0
+        length[np.isnan(length)] = 0
+        pos = np.stack(pos)
+        direc = np.stack(direc)
+
+        sphere_mask, t_pos, t_neg = (
+            self.hull.rays_and_sphere_intersection_check(pos, direc, length)
+        )
+        # apply sphere mask
+        energies = energies[sphere_mask]
+        MuonGun_tracks = MuonGun_tracks[sphere_mask]
+        MCTracklist_tracks = MCTracklist_tracks[sphere_mask]
+        track_particles = track_particles[sphere_mask]
+        t_pos = t_pos[sphere_mask]
+        t_neg = t_neg[sphere_mask]
 
         assert len(MuonGun_tracks) == len(
             MCTracklist_tracks
@@ -169,7 +202,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         while len(energies) > 0:
             loc = np.argmax(energies)
             track = MCTracklist_tracks[loc]
-            track_particle = track.GetI3Particle()
+            track_particle = track_particles[loc]
             energies = np.delete(energies, loc)
             MCTracklist_tracks = np.delete(MCTracklist_tracks, loc)
             MGtrack = MuonGun_tracks[loc]
@@ -177,9 +210,9 @@ class I3HighestEparticleExtractor(I3Extractor):
             if self.daughters:
                 if (
                     dataclasses.I3MCTree.parent(
-                        frame[self.mctree], track_particle
+                        frame[self.mctree], track_particle.id
                     )
-                    == primary
+                    != primary
                 ):
                     continue
 
@@ -187,7 +220,7 @@ class I3HighestEparticleExtractor(I3Extractor):
                 intersections = self.hull.surface.intersection(
                     track_particle.pos, track_particle.dir
                 )
-                if intersections.first is not np.nan:
+                if not np.isnan(intersections.first):
                     if MGtrack.get_energy(intersections.first) > EonEntrance:
                         particle = track_particle
                         distance = np.sqrt(
@@ -250,18 +283,27 @@ class I3HighestEparticleExtractor(I3Extractor):
         else:
             energies = e_p[0]
             particles = e_p[1]
-        while len(particles) > 0:
-            particle = particles[np.argmax(energies)]
-            particles = np.delete(particles, np.argmax(energies))
-            energies = np.delete(energies, np.argmax(energies))
-            if particle.length == np.nan:
-                pos = np.array(particle.pos)
-            else:
-                pos = np.array(particle.pos + particle.dir * particle.length)
-            distance = np.sqrt((pos**2).sum())
-            if distance < self.hull.furthest_distance:
-                if self.hull.point_in_hull(pos):
-                    HEparticle = particle
-                    EonEntrance = particle.energy
-                    break
+        # effectively get the pos dir and length of the particle in one pass
+        pos, direc, length = np.asarray(
+            [[np.array(p.pos), p.dir, p.length] for p in particles],
+            dtype=object,
+        ).T
+        length = length.astype(float)
+
+        # replace length nan with 0
+        length[np.isnan(length)] = 0
+        pos = pos + direc * length
+        pos = np.stack(pos)
+        in_volume = self.hull.point_in_hull(pos)
+        particles = particles[in_volume]
+        energies = energies[in_volume]
+
+        if len(particles) == 0:
+            return HEparticle, EonEntrance, distance
+
+        HE_loc = np.argmax(energies)
+        HEparticle = particles[HE_loc]
+        EonEntrance = HEparticle.energy
+        distance = np.sqrt((pos[HE_loc] ** 2).sum())
+
         return HEparticle, EonEntrance, distance

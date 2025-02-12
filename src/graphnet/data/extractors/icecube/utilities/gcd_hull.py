@@ -47,18 +47,56 @@ class GCD_hull(ConvexHull):
         self.furthest_distance = np.sqrt((self.points**2).sum(axis=1).max())
 
     def point_in_hull(
-        self, point: "dataclasses.I3Particle", tolerance: float = 1e-12
+        self, points: "dataclasses.I3Particle", tolerance: float = 1e-12
     ) -> bool:
         """Check if a point is inside the convex hull.
 
         Args:
-        point: I3Position object
+        points: I3Position object
         tolerance: Tolerance for the dot product
         """
-        return all(
-            (np.dot(eq[:-1], point) + eq[-1] <= tolerance)
-            for eq in self.equations
-        )
+        return np.array(
+            [
+                (np.dot(eq[:-1], points.T) + eq[-1] <= tolerance)
+                for eq in self.equations
+            ]
+        ).all(axis=0)
+
+    def rays_and_sphere_intersection_check(
+        self,
+        points: np.ndarray,
+        directions: np.ndarray,
+        length: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Check if rays intersect with the sphere approximating the hull.
+
+        Args:
+            points: Points from which the rays originate.
+            directions: Directions of the rays.
+            length: Length of the rays.
+
+        Returns:
+            Intersection points of the rays with the sphere.
+        """
+        w = directions * length[:, np.newaxis]
+        a = (w**2).sum(-1)
+        b = 2 * (w * points).sum(-1)
+        c = (points**2).sum(-1) - self.furthest_distance**2
+
+        # Check if the discriminant is negative
+        discriminant = b**2 - 4 * a * c
+
+        with np.errstate(divide="ignore", invalid="ignore"):
+            t_pos = (-b + np.sqrt(discriminant)) / (2 * a)
+            t_neg = (-b - np.sqrt(discriminant)) / (2 * a)
+        t_pos_copy = t_pos.copy()
+        t_neg_copy = t_neg.copy()
+        # check if t_pos are large than 1 or nan/imaginary
+        t_pos = np.isnan(np.where(t_pos > 1, np.nan, t_pos))
+        t_neg = np.isnan(np.where(t_neg > 1, np.nan, t_neg))
+
+        t_mask = (t_pos & t_neg) == 0
+        return (discriminant >= 0) & t_mask, t_pos_copy, t_neg_copy
 
     def __getstate__(self) -> dict:
         """Return the state of the object for pickling."""
