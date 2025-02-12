@@ -1,6 +1,6 @@
 """Convex hull object for IceCube geometry."""
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Tuple
 
 from scipy.spatial import ConvexHull
 
@@ -67,7 +67,7 @@ class GCD_hull(ConvexHull):
         points: np.ndarray,
         directions: np.ndarray,
         length: np.ndarray,
-    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Check if rays intersect with the sphere approximating the hull.
 
         Args:
