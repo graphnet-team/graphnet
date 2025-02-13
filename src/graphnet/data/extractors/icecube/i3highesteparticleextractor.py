@@ -1,10 +1,11 @@
 """Extract the highest energy particle in the event."""
 
-from typing import Dict, Any, TYPE_CHECKING
+from typing import Dict, Any, TYPE_CHECKING, Tuple
 
 
 from .i3extractor import I3Extractor
 from .utilities.gcd_hull import GCD_hull
+from .utilities.track_containment import track_containment
 
 import numpy as np
 
@@ -16,6 +17,11 @@ if has_icecube_package() or TYPE_CHECKING:
         dataclasses,
         MuonGun,
     )  # pyright: reportMissingImports=false
+    from icecube.sim_services.label_events.enums import (
+        containments_types,
+    )  # pyright: reportMissingImports=false
+
+partly_contained_cascade = max([val.value for val in containments_types]) + 1
 
 
 class I3HighestEparticleExtractor(I3Extractor):
@@ -62,8 +68,8 @@ class I3HighestEparticleExtractor(I3Extractor):
             primary_energy = self.check_primary_energy(
                 frame, frame[self.mctree].get_primaries()[0]
             ).energy
-            distance = -1
-            EonEntrance: int = 0
+            distance = -1.0
+            EonEntrance = 0.0
             is_track = -1
             track_length = -1
             # this part handles track particles
@@ -72,9 +78,12 @@ class I3HighestEparticleExtractor(I3Extractor):
                 EonEntranceT,
                 distanceT,
                 track_length,
+                containmentT,
             ) = self.highest_energy_track(frame, self.min_e)
-            HEParticleC, EonEntranceC, distanceC = self.highest_energy_cascade(
-                frame, min_e=max(EonEntranceT, self.min_e)
+            (HEParticleC, EonEntranceC, distanceC, containmentC) = (
+                self.highest_energy_cascade(
+                    frame, min_e=max(EonEntranceT, self.min_e)
+                )
             )
 
             if EonEntranceT >= EonEntranceC:
@@ -82,11 +91,13 @@ class I3HighestEparticleExtractor(I3Extractor):
                 EonEntrance = EonEntranceT
                 distance = distanceT
                 is_track = 1
+                containment = containmentT
             else:
                 HEParticle = HEParticleC
                 EonEntrance = EonEntranceC
                 distance = distanceC
                 is_track = 0
+                containment = containmentC
 
             output.update(
                 {
@@ -116,6 +127,15 @@ class I3HighestEparticleExtractor(I3Extractor):
                     + self._extractor_name: int(
                         dataclasses.I3Particle.ParticleType(HEParticle.type)
                     ),
+                    "containment_" + self._extractor_name: int(containment),
+                    "parent_type_"
+                    + self._extractor_name: int(
+                        dataclasses.I3Particle.ParticleType(
+                            dataclasses.I3MCTree.parent(
+                                frame[self.mctree], HEParticle.id
+                            ).type
+                        )
+                    ),
                 }
             )
 
@@ -144,6 +164,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         particle = dataclasses.I3Particle()
         EonEntrance = 0
         distance = -1
+        containment = -1
         # checked_id = {"major": np.array([]), "minor": np.array([])}
         primary = self.check_primary_energy(
             frame, frame[self.mctree].get_primaries()[0]
@@ -165,7 +186,7 @@ class I3HighestEparticleExtractor(I3Extractor):
             [track.GetI3Particle() for track in MCTracklist_tracks]
         )
 
-        pos, direc, length = np.asarray(
+        pos, direc, lengths = np.asarray(
             [
                 [
                     np.array(p.pos),
@@ -178,20 +199,21 @@ class I3HighestEparticleExtractor(I3Extractor):
         ).T
 
         # check if the rays intersect with the sphere approximating the hull
-        length = length.astype(float)
+        lengths = lengths.astype(float)
         # replace length nan with 0
-        length[np.isnan(length)] = 0
+        lengths[np.isnan(lengths)] = 0
         pos = np.stack(pos)
         direc = np.stack(direc)
 
         sphere_mask, t_pos, t_neg = (
-            self.hull.rays_and_sphere_intersection_check(pos, direc, length)
+            self.hull.rays_and_sphere_intersection_check(pos, direc, lengths)
         )
         # apply sphere mask
         energies = energies[sphere_mask]
         MuonGun_tracks = MuonGun_tracks[sphere_mask]
         MCTracklist_tracks = MCTracklist_tracks[sphere_mask]
         track_particles = track_particles[sphere_mask]
+        lengths = lengths[sphere_mask]
         t_pos = t_pos[sphere_mask]
         t_neg = t_neg[sphere_mask]
 
@@ -203,10 +225,12 @@ class I3HighestEparticleExtractor(I3Extractor):
             loc = np.argmax(energies)
             track = MCTracklist_tracks[loc]
             track_particle = track_particles[loc]
+            length = lengths[loc]
             energies = np.delete(energies, loc)
             MCTracklist_tracks = np.delete(MCTracklist_tracks, loc)
             MGtrack = MuonGun_tracks[loc]
             MuonGun_tracks = np.delete(MuonGun_tracks, loc)
+            lengths = np.delete(lengths, loc)
             if self.daughters:
                 if (
                     dataclasses.I3MCTree.parent(
@@ -220,7 +244,9 @@ class I3HighestEparticleExtractor(I3Extractor):
                 intersections = self.hull.surface.intersection(
                     track_particle.pos, track_particle.dir
                 )
-                if not np.isnan(intersections.first):
+                if not np.isnan(intersections.first) & (
+                    intersections.first < length
+                ):
                     if MGtrack.get_energy(intersections.first) > EonEntrance:
                         particle = track_particle
                         distance = np.sqrt(
@@ -243,23 +269,24 @@ class I3HighestEparticleExtractor(I3Extractor):
                         energies = energies[e_mask]
                         MCTracklist_tracks = MCTracklist_tracks[e_mask]
                         MuonGun_tracks = MuonGun_tracks[e_mask]
-                        continue
-        return particle, EonEntrance, distance, track_length  # , checked_id
+                        containment = track_containment(
+                            intersections.first, intersections.second, length
+                        )
+        return particle, EonEntrance, distance, track_length, containment
 
     def highest_energy_cascade(
         self, frame: "icetray.I3Frame", min_e: float = 0
-    ) -> "dataclasses.I3Particle":
+    ) -> Tuple["dataclasses.I3Particle", float, float, int]:
         """Get the highest energy cascade in the event.
 
         Args:
         frame: I3Frame object
-        checked_id: list of already checked particle ids
         min_e: minimum energy for a particle to be considered
         """
         EonEntrance = 0
         HEparticle = dataclasses.I3Particle()
         distance = -1
-
+        containment = -1
         if self.daughters:
             particles = dataclasses.I3MCTree.get_daughters(
                 frame[self.mctree],
@@ -274,12 +301,11 @@ class I3HighestEparticleExtractor(I3Extractor):
             [
                 np.array([p.energy, p])
                 for p in particles
-                if ((not p.is_track) & (not p.is_neutrino))
-                & (p.energy > min_e)
+                if ((p.is_cascade) & (not p.is_neutrino)) & (p.energy > min_e)
             ]
         ).T
         if len(e_p) == 0:
-            return HEparticle, EonEntrance, distance
+            return HEparticle, EonEntrance, distance, containment
         else:
             energies = e_p[0]
             particles = e_p[1]
@@ -299,11 +325,26 @@ class I3HighestEparticleExtractor(I3Extractor):
         energies = energies[in_volume]
 
         if len(particles) == 0:
-            return HEparticle, EonEntrance, distance
+            return HEparticle, EonEntrance, distance, containment
 
         HE_loc = np.argmax(energies)
         HEparticle = particles[HE_loc]
         EonEntrance = HEparticle.energy
         distance = np.sqrt((pos[HE_loc] ** 2).sum())
 
-        return HEparticle, EonEntrance, distance
+        cascade_daughters = dataclasses.I3MCTree.get_daughters(
+            frame[self.mctree], HEparticle
+        )
+        pos, direc, length = np.asarray(
+            [[np.array(p.pos), p.dir, p.length] for p in cascade_daughters],
+            dtype=object,
+        ).T
+        pos = pos + direc * length
+        pos = np.stack(pos)
+        in_volume = self.hull.point_in_hull(pos)
+        if not np.all(in_volume):
+            containment = partly_contained_cascade
+        else:
+            containment = containments_types.contained.value
+
+        return HEparticle, EonEntrance, distance, containment
