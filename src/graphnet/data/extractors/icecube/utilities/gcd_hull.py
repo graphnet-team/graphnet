@@ -11,7 +11,6 @@ from graphnet.utilities.imports import has_icecube_package
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         MuonGun,
-        dataclasses,
     )  # pyright: reportMissingImports=false
 
 
@@ -47,7 +46,7 @@ class GCD_hull(ConvexHull):
         self.furthest_distance = np.sqrt((self.points**2).sum(axis=1).max())
 
     def point_in_hull(
-        self, points: "dataclasses.I3Particle", tolerance: float = 1e-12
+        self, points: np.array, tolerance: float = 1e-12
     ) -> bool:
         """Check if a point is inside the convex hull.
 
