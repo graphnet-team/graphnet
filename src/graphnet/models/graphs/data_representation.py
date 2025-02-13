@@ -7,6 +7,7 @@ import numpy as np
 from numpy.random import default_rng, Generator
 
 from graphnet.models.detector import Detector
+from graphnet.utilities.decorators import final
 from graphnet.models import Model
 from abc import abstractmethod
 
@@ -108,6 +109,7 @@ class DataRepresentation(Model):
         else:
             self.rng = default_rng()
 
+    @final
     def forward(  # type: ignore
         self,
         input_features: np.ndarray,
@@ -195,11 +197,9 @@ class DataRepresentation(Model):
                 data=data, custom_label_functions=custom_label_functions
             )
 
-        # Attach data representation features as seperate fields.
+        # Attach features as seperate fields.
         # MAY NOT CONTAIN 'x'
-        data = self._add_features_individually(
-            data=data, data_feature_names=data_feature_names
-        )
+        data = self._forward_end(data, data_feature_names)
 
         # Add GraphDefinition Stamp
         data["graph_definition"] = self.__class__.__name__
@@ -357,60 +357,6 @@ class DataRepresentation(Model):
                 ).reshape(-1, 1)
         return data
 
-    def _add_truth(
-        self, data: Data, truth_dicts: List[Dict[str, Any]]
-    ) -> Data:
-        """Add truth labels from ´truth_dicts´ to ´data´.
-
-        I.e. ´data[key] = truth_dict[key]´
-
-
-        Args:
-            data: data where the label will be stored
-            truth_dicts: dictionary containing the labels
-
-        Returns:
-            data with labels
-        """
-        # Write attributes, either target labels, truth info or original
-        # features.
-
-        for truth_dict in truth_dicts:
-            for key, value in truth_dict.items():
-                try:
-                    label = torch.tensor(value)
-                    if self._repeat_labels:
-                        label = label.repeat(data.x.shape[0], 1)
-                    data[key] = label
-                except TypeError:
-                    # Cannot convert `value` to Tensor due to its data type,
-                    # e.g. `str`.
-                    self.debug(
-                        (
-                            f"Could not assign `{key}` with type "
-                            f"'{type(value).__name__}' as attribute to data."
-                        )
-                    )
-        return data
-
-    def _add_features_individually(
-        self,
-        data: Data,
-        data_feature_names: List[str],
-    ) -> Data:
-        # Additionally add original features as (static) attributes
-        data.features = data_feature_names
-        for index, feature in enumerate(data_feature_names):
-            if feature not in ["x"]:  # reserved for graph features.
-                data[feature] = data.x[:, index].detach()
-            else:
-                self.warning_once(
-                    """Cannot assign data['x']. This field is reserved for
-                      graph node features. Please rename your input feature."""
-                )  # noqa
-
-        return data
-
     def _add_custom_labels(
         self,
         data: Data,
@@ -420,7 +366,7 @@ class DataRepresentation(Model):
         for key, fn in custom_label_functions.items():
             label = fn(data)
             if self._repeat_labels:
-                label = label.repeat(data.x.shape[0], 1)
+                label = self._label_repeater(label, data)
             data[key] = label
         return data
 
@@ -452,4 +398,37 @@ class DataRepresentation(Model):
             - data: torch_geometric.data.Data object representing the event.
             - data_feature_names: List of feature names in the data object.
         """
+        raise NotImplementedError
+
+    @abstractmethod
+    def _add_truth(
+        self, data: Data, truth_dicts: List[Dict[str, Any]]
+    ) -> Data:
+        """Add truth labels from ´truth_dicts´ to ´data´.
+
+        I.e. ´data[key] = truth_dict[key]´
+
+
+        Args:
+            data: data where the label will be stored
+            truth_dicts: dictionary containing the labels
+
+        Returns:
+            data with labels
+        """
+
+    def _forward_end(
+        self,
+        data: Data,
+        data_feature_names: List[str],
+    ) -> Data:
+        """Place to add any final data processing steps.
+
+        Override this method to add any final processing steps in the end of
+        the forward pass.
+        """
+        return data
+
+    def _label_repeater(self, label: torch.Tensor, data: Data) -> torch.Tensor:
+        """Handle the label repetition."""
         raise NotImplementedError

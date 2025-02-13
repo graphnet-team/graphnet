@@ -6,6 +6,7 @@ and their features.
 """
 
 from .graph_definition import GraphDefinition
+from .data_representation import DataRepresentation
 from .graphs import (
     KNNGraph,
     EdgelessGraph,

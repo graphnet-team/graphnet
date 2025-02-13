@@ -5,7 +5,7 @@ code in graphnet. These modules define what graph-based models sees as input
 and can be passed to dataloaders during training and deployment.
 """
 
-from typing import List, Optional, Dict, Union, Tuple
+from typing import List, Optional, Dict, Union, Tuple, Any
 import torch
 from numpy.random import Generator
 
@@ -19,7 +19,7 @@ from torch_geometric.data import Data
 class GraphDefinition(DataRepresentation):
     """An Abstract class to create graph definitions from."""
 
-    def _pre_init(  # type: ignore
+    def _pre_init(  # type: ignore[override]
         self, node_definition: NodeDefinition
     ) -> None:
         """Pre-initialization steps."""
@@ -40,6 +40,7 @@ class GraphDefinition(DataRepresentation):
         string_mask: Optional[List[int]] = None,
         sort_by: Optional[str] = None,
         repeat_labels: bool = False,
+        add_static_features: bool = True,
     ):
         """Construct ´GraphDefinition´. The ´detector´ holds.
 
@@ -76,6 +77,8 @@ class GraphDefinition(DataRepresentation):
             repeat_labels: If True, labels will be repeated to match the
                 the number of rows in the output of the GraphDefinition.
                 Defaults to False.
+            add_static_features: If True, the original features will be
+                added as static attributes to the graph. Defaults to True.
         """
         if node_definition is None:
             node_definition = NodesAsPulses()
@@ -114,6 +117,7 @@ class GraphDefinition(DataRepresentation):
                 )
                 raise e
         self._sort_by = sort_by
+        self._add_static_features = add_static_features
 
     def _set_output_feature_names(
         self, input_feature_names: List[str]
@@ -139,3 +143,76 @@ class GraphDefinition(DataRepresentation):
             data = self._edge_definition(data)
 
         return data, data_feature_names
+
+    def _forward_end(
+        self,
+        data: Data,
+        data_feature_names: List[str],
+    ) -> Data:
+        """Add processing steps at the end of the forward pass."""
+        # Add original features as attributes
+        if self._add_static_features:
+            data = self._add_features_individually(data, data_feature_names)
+        return data
+
+    def _add_truth(
+        self, data: Data, truth_dicts: List[Dict[str, Any]]
+    ) -> Data:
+        """Add truth labels from ´truth_dicts´ to ´data´.
+
+        I.e. ´data[key] = truth_dict[key]´
+
+
+        Args:
+            data: data where the label will be stored
+            truth_dicts: dictionary containing the labels
+
+        Returns:
+            data with labels
+        """
+        # Write attributes, either target labels, truth info or original
+        # features.
+
+        for truth_dict in truth_dicts:
+            for key, value in truth_dict.items():
+                try:
+                    label = torch.tensor(value)
+                    if self._repeat_labels:
+                        label = label.repeat(data.x.shape[0], 1)
+                    data[key] = label
+                except TypeError:
+                    # Cannot convert `value` to Tensor due to its data type,
+                    # e.g. `str`.
+                    self.debug(
+                        (
+                            f"Could not assign `{key}` with type "
+                            f"'{type(value).__name__}' as attribute to data."
+                        )
+                    )
+        return data
+
+    def _add_features_individually(
+        self,
+        data: Data,
+        data_feature_names: List[str],
+    ) -> Data:
+        # Additionally add original features as (static) attributes
+        data.features = data_feature_names
+        for index, feature in enumerate(data_feature_names):
+            if feature not in ["x"]:  # reserved for graph features.
+                data[feature] = data.x[:, index].detach()
+            else:
+                self.warning_once(
+                    """Cannot assign data['x']. This field is reserved for
+                      graph node features. Please rename your input feature."""
+                )  # noqa
+
+        return data
+
+    def _label_repeater(self, label: torch.Tensor, data: Data) -> torch.Tensor:
+        """Handle the label repetition.
+
+        Not a classmethod because it is not necessary for all data
+        representations.
+        """
+        return label.repeat(data.x.shape[0], 1)
