@@ -162,33 +162,73 @@ class I3TotalEExtractor(I3Extractor):
             )
 
         particles = np.array([p for p in particles if (not p.is_track)])
+
+        pos, direc, length = np.asarray(
+            [
+                [
+                    np.array(p.pos),
+                    np.array([p.dir.x, p.dir.y, p.dir.z]),
+                    p.length,
+                ]
+                for p in particles
+            ],
+            dtype=object,
+        ).T
+
+        length = length.astype(float)
+
+        # replace length nan with 0
+        length[np.isnan(length)] = 0
+        pos = pos + direc * length
+        pos = np.stack(pos)
+
+        in_volume = self.hull.point_in_hull(pos)
+        particles = particles[in_volume]
+
         for particle in particles:
-            decay_pos = particle.pos + particle.dir * particle.length
+            if particle.is_cascade:
+                e_deposited += particle.energy
+            else:
+                daughters = dataclasses.I3MCTree.get_daughters(
+                    frame[self.mctree], particle
+                )
 
-            if self.hull.point_in_hull(decay_pos):
-                if particle.is_cascade:
-                    e_deposited += particle.energy
+                pos, direc, length = np.asarray(
+                    [
+                        [
+                            np.array(p.pos),
+                            np.array([p.dir.x, p.dir.y, p.dir.z]),
+                            p.length,
+                        ]
+                        for p in daughters
+                    ],
+                    dtype=object,
+                ).T
+
+                length = length.astype(float)
+
+                # replace length nan with 0
+                length[np.isnan(length)] = 0
+                pos = pos + direc * length
+                pos = np.stack(pos)
+
+                in_volume = self.hull.point_in_hull(pos)
+                daughters = daughters[in_volume]
+
+            while daughters:
+                daughter = daughters[0]
+                daughters = daughters[1:]
+                length = daughter.length
+                if daughter.is_track:
+                    continue
+                if length == np.nan:
+                    length = 0
+                if daughter.is_cascade and daughter.shape != "Dark":
+                    e_deposited += daughter.energy
                 else:
-                    daughters = dataclasses.I3MCTree.get_daughters(
-                        frame[self.mctree], particle
-                    )
-
-                while daughters:
-                    daughter = daughters[0]
-                    daughters = daughters[1:]
-                    length = daughter.length
-                    if daughter.is_track:
-                        continue
-                    if length == np.nan:
-                        length = 0
-                    decay_pos = daughter.pos + daughter.dir * daughter.length
-                    if daughter.is_cascade and daughter.shape != "Dark":
-                        if self.hull.point_in_hull(decay_pos):
-                            e_deposited += daughter.energy
-                    else:
-                        daughters.extend(
-                            dataclasses.I3MCTree.get_daughters(
-                                frame[self.mctree], daughter
-                            )
+                    daughters.extend(
+                        dataclasses.I3MCTree.get_daughters(
+                            frame[self.mctree], daughter
                         )
+                    )
         return e_deposited
