@@ -99,6 +99,15 @@ class I3HighestEparticleExtractor(I3Extractor):
                 is_track = 0
                 containment = containmentC
 
+            try:
+                parent_type = dataclasses.I3Particle.ParticleType(
+                    dataclasses.I3MCTree.parent(
+                        frame[self.mctree], HEParticle.id
+                    ).type
+                )
+            except IndexError:
+                parent_type = None
+
             output.update(
                 {
                     "e_fraction_"
@@ -128,14 +137,7 @@ class I3HighestEparticleExtractor(I3Extractor):
                         dataclasses.I3Particle.ParticleType(HEParticle.type)
                     ),
                     "containment_" + self._extractor_name: int(containment),
-                    "parent_type_"
-                    + self._extractor_name: int(
-                        dataclasses.I3Particle.ParticleType(
-                            dataclasses.I3MCTree.parent(
-                                frame[self.mctree], HEParticle.id
-                            ).type
-                        )
-                    ),
+                    "parent_type_" + self._extractor_name: parent_type,
                 }
             )
 
