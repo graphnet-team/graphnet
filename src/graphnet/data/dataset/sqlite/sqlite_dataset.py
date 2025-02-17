@@ -81,6 +81,8 @@ class SQLiteDataset(Dataset):
                 raise ColumnMissingException(str(e))
             else:
                 raise e
+        finally:
+            self._close_connection()
         return np.asarray(result)
 
     def _get_all_indices(self) -> List[int]:
