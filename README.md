@@ -84,7 +84,7 @@ These are categorised as either "Reconstruction challenges" that are considered 
 
 ## :handshake:  Contributing
 
-To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in the [contributing guide](CONTRIBUTING.md) that we encourage contributors to follow.
+To make sure that the process of contributing is as smooth and effective as possible, we provide a few guidelines in the [contributing guide](https://graphnet-team.github.io/graphnet/contribute/contribute.html) that we encourage contributors to follow.
 
 In short, everyone who wants to contribute to this project is more than welcome to do so! Contributions are handled through pull requests, that should be linked to a [GitHub issue](https://github.com/graphnet-team/graphnet/issues) describing the feature to be added or bug to be fixed. Pull requests will be reviewed by the project maintainers and merged into the main branch when accepted.
 
