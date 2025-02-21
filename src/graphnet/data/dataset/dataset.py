@@ -60,11 +60,11 @@ def load_module(class_name: str) -> Type:
     return namespace_classes[class_name]
 
 
-def parse_data_representation(cfg: dict) -> DataRepresentation:
+def parse_data_representation(data_rep_cfg: dict) -> DataRepresentation:
     """Construct DataRepresentation from DatasetConfig."""
-    assert "data_representation" in cfg.keys()
+    assert data_rep_cfg is not None
 
-    args = cfg["data_representation"]["arguments"]
+    args = data_rep_cfg["arguments"]
     classes = {}
     for arg in args.keys():
         if isinstance(args[arg], dict):
@@ -77,9 +77,7 @@ def parse_data_representation(cfg: dict) -> DataRepresentation:
 
     new_cfg = deepcopy(args)
     new_cfg.update(classes)
-    data_representation = load_module(
-        cfg["data_representation"]["class_name"]
-    )(**new_cfg)
+    data_representation = load_module(data_rep_cfg["class_name"])(**new_cfg)
     return data_representation
 
 
@@ -153,16 +151,18 @@ class Dataset(
             "data_representation" in cfg
             and cfg["data_representation"] is not None
         ):
-            cfg["data_representation"] = parse_data_representation(cfg)
+            cfg["data_representation"] = parse_data_representation(
+                cfg["data_representation"]
+            )
         elif "graph_definition" in cfg and cfg["graph_definition"] is not None:
             Logger(log_folder=None).warning_once(
                 "DeprecationWarning: Field `graph_definition` will be"
                 " deprecated in GraphNeT 2.0. Please use "
                 "`data_representation` instead."
             )
-            cfg["data_representation"] = cfg["graph_definition"]
-            cfg["data_representation"] = parse_data_representation(cfg)
-            cfg.pop("graph_definition")
+            cfg["graph_definition"] = parse_data_representation(
+                cfg["graph_definition"]
+            )
 
         if cfg["labels"] is not None:
             cfg["labels"] = parse_labels(cfg)
