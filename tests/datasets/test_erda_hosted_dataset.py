@@ -40,3 +40,6 @@ def test_erda_hosted_dataset(backend: str) -> None:
     iterate_dataloader(data_module.train_dataloader)
     iterate_dataloader(data_module.val_dataloader)
     return
+
+
+test_erda_hosted_dataset("sqlite")

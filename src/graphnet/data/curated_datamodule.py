@@ -17,6 +17,8 @@ from graphnet.models.data_representation import (
 )
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset
 
+from graphnet.utilities.logging import Logger
+
 
 class CuratedDataset(GraphNeTDataModule):
     """Generic base class for curated datasets.
@@ -62,13 +64,6 @@ class CuratedDataset(GraphNeTDataModule):
         """
         if (data_representation is None) & (graph_definition is not None):
             data_representation = graph_definition
-            # Code continues after warning
-            self.warning(
-                "DeprecationWarning: Argument `graph_definition` will be"
-                " deprecated in GraphNeT 2.0. Please use `data_representation`"
-                " instead."
-                ""
-            )
         elif (data_representation is None) & (graph_definition is None):
             # Code stops
             raise TypeError(
@@ -105,6 +100,15 @@ class CuratedDataset(GraphNeTDataModule):
             selection=selec,
             test_selection=test_selec,
         )
+
+        if graph_definition is not None:
+            # Code continues after warning
+            self.warning(
+                "DeprecationWarning: Argument `graph_definition` will be"
+                " deprecated in GraphNeT 2.0. Please use `data_representation`"
+                " instead."
+                ""
+            )
 
     @abstractmethod
     def prepare_data(self) -> None:
@@ -270,13 +274,26 @@ class CuratedDataset(GraphNeTDataModule):
         )
         return dataset_dir
 
+    # DEPRECATION: REMOVE AT 2.0 LAUNCH
+    # See https://github.com/graphnet-team/graphnet/issues/647
     @property
     def _graph_definition(self) -> DataRepresentation:
         """Return the graph definition."""
-        self.warning(
-            "DeprecationWarning: `_graph_definition` will be deprecated in"
-            " GraphNeT 2.0. Please use `_data_representation` instead."
-        )
+        # needed for the call in _prepare_args
+        # call before Logger init
+        if hasattr(self, "_logger"):
+            self.warning(
+                "DeprecationWarning: `_graph_definition` will be deprecated in"
+                " GraphNeT 2.0. Please use `_data_representation` instead."
+            )
+        else:
+            Logger(log_folder=None).warning_once(
+                (
+                    "`graphnet.models.graphs` will be depricated soon. "
+                    "All functionality has been moved to "
+                    "`graphnet.models.data_representation`."
+                )
+            )
         return self._data_representation  # type: ignore
 
 
