@@ -8,7 +8,7 @@ from torch_geometric.data import Data
 
 from graphnet.utilities.decorators import final
 from graphnet.models import Model
-from graphnet.models.graphs.utils import (
+from ..utils import (
     cluster_and_pad,
     identify_indices,
     lex_sort,
@@ -44,7 +44,6 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
 
         Returns:
             graph: a graph without edges
-            new_features_name: List of new feature names.
         """
         graph = self._construct_nodes(x=x)
         try:
@@ -105,7 +104,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         """
 
     @abstractmethod
-    def _construct_nodes(self, x: torch.tensor) -> Tuple[Data, List[str]]:
+    def _construct_nodes(self, x: torch.tensor) -> Data:
         """Construct nodes from raw node features ´x´.
 
         Args:
@@ -128,7 +127,7 @@ class NodesAsPulses(NodeDefinition):
     ) -> List[str]:
         return input_feature_names
 
-    def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
         return Data(x=x)
 
 
@@ -435,7 +434,7 @@ class IceMixNodes(NodeDefinition):
 
         return ids
 
-    def _construct_nodes(self, x: torch.Tensor) -> Tuple[Data, List[str]]:
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
 
         event_length = x.shape[0]
         if self.hlc_name is not None:

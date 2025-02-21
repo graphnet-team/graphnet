@@ -14,7 +14,10 @@ from torch.optim.swa_utils import (
 from torch_geometric.data import Data
 
 from graphnet.models import StandardModel
-from graphnet.models.graphs import GraphDefinition
+from graphnet.models.data_representation import (
+    GraphDefinition,
+    DataRepresentation,
+)
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.task import Task
 
@@ -25,8 +28,9 @@ class StandardAveragedModel(StandardModel):
     def __init__(
         self,
         *,
-        graph_definition: GraphDefinition,
         backbone: GNN,
+        data_representation: Optional[DataRepresentation] = None,
+        graph_definition: Optional[GraphDefinition] = None,
         gnn: Optional[GNN] = None,
         tasks: Union[Task, List[Task]],
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
@@ -38,8 +42,12 @@ class StandardAveragedModel(StandardModel):
         ema_decay: Optional[float] = None,
     ) -> None:
         """Construct `StandardAverageModel`."""
+        # DEPRECATION ARG GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH
+        # See https://github.com/graphnet-team/graphnet/issues/647
+
         # Base class constructor
         super().__init__(
+            data_representation=data_representation,
             graph_definition=graph_definition,
             backbone=backbone,
             gnn=gnn,

@@ -201,8 +201,12 @@ class DataRepresentation(Model):
         # MAY NOT CONTAIN 'x'
         data = self._forward_end(data, data_feature_names)
 
-        # Add GraphDefinition Stamp
+        # DEPRECATION STAMP GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH
+        # See https://github.com/graphnet-team/graphnet/issues/647
         data["graph_definition"] = self.__class__.__name__
+
+        # Add data representation Stamp
+        data["data_representation"] = self.__class__.__name__
         return data
 
     def _resolve_masks(self) -> None:
@@ -390,7 +394,7 @@ class DataRepresentation(Model):
     def _create_data(self, input_features: torch.Tensor) -> Data:
         """Create data from input features.
 
-        Enfore the dtype of the feature tensor.
+        Enforce the dtype of the feature tensor.
         E.g.: `data.x = data.x.type(self.dtype)`
         if the training data is stored in `data.x`.
 
@@ -430,5 +434,9 @@ class DataRepresentation(Model):
         return data
 
     def _label_repeater(self, label: torch.Tensor, data: Data) -> torch.Tensor:
-        """Handle the label repetition."""
+        """Handle the label repetition.
+
+        Necessary only if the `repeat_labels` argument is being used
+        E.g: for graphs: `label.repeat(data.x.shape[0], 1)`
+        """
         raise NotImplementedError

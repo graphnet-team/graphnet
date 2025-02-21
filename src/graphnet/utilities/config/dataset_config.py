@@ -55,7 +55,12 @@ class DatasetConfig(BaseConfig):
     loss_weight_column: Optional[str] = None
     loss_weight_default_value: Optional[float] = None
     seed: Optional[int] = None
+
+    # DEPRECATION FIELD: REMOVE AT 2.0 LAUNCH
+    # See https://github.com/graphnet-team/graphnet/issues/647
     graph_definition: Any = None
+
+    data_representation: Any = None
     labels: Optional[Dict[str, Any]] = None
 
     def __init__(self, **data: Any) -> None:

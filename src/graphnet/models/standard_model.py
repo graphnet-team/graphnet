@@ -10,7 +10,10 @@ from graphnet.models.gnn.gnn import GNN
 from graphnet.models import Model
 from .easy_model import EasySyntax
 from graphnet.models.task import StandardLearnedTask
-from graphnet.models.graphs import GraphDefinition
+from graphnet.models.data_representation import (
+    GraphDefinition,
+    DataRepresentation,
+)
 
 
 class StandardModel(EasySyntax):
@@ -24,8 +27,9 @@ class StandardModel(EasySyntax):
 
     def __init__(
         self,
-        graph_definition: GraphDefinition,
         tasks: Union[StandardLearnedTask, List[StandardLearnedTask]],
+        data_representation: Optional[DataRepresentation] = None,
+        graph_definition: Optional[GraphDefinition] = None,
         backbone: Optional[Model] = None,
         gnn: Optional[GNN] = None,
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
@@ -44,6 +48,24 @@ class StandardModel(EasySyntax):
             scheduler_kwargs=scheduler_kwargs,
             scheduler_config=scheduler_config,
         )
+        # DEPRECATION ARG GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH
+        # See https://github.com/graphnet-team/graphnet/issues/647
+
+        if (data_representation is None) & (graph_definition is not None):
+            data_representation = graph_definition
+            # Code continues after warning
+            self.warning(
+                "DeprecationWarning: Argument `graph_definition` will be"
+                " deprecated in GraphNeT 2.0. Please use `data_representation`"
+                " instead."
+                ""
+            )
+        elif (data_representation is None) & (graph_definition is None):
+            # Code stops
+            raise TypeError(
+                "__init__() missing 1 required keyword argument:"
+                "'data_representation'"
+            )
 
         # deprecation warnings
         if (backbone is None) & (gnn is not None):
@@ -62,10 +84,10 @@ class StandardModel(EasySyntax):
 
         # Checks
         assert isinstance(backbone, Model)
-        assert isinstance(graph_definition, GraphDefinition)
+        assert isinstance(data_representation, DataRepresentation)
 
         # Member variable(s)
-        self._graph_definition = graph_definition
+        self._data_representation = data_representation
         self.backbone = backbone
 
     def compute_loss(
@@ -123,3 +145,14 @@ class StandardModel(EasySyntax):
         accepted_tasks = StandardLearnedTask
         for task in self._tasks:
             assert isinstance(task, accepted_tasks)
+
+    # DEPRECATION ARG GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH
+    # See https://github.com/graphnet-team/graphnet/issues/647
+    @property
+    def _graph_definition(self) -> DataRepresentation:
+        """Return the graph definition."""
+        self.warning(
+            "DeprecationWarning: `_graph_definition` will be deprecated in"
+            " GraphNeT 2.0. Please use `_data_representation` instead."
+        )
+        return self._data_representation

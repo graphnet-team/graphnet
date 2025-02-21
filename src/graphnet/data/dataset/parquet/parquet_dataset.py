@@ -18,7 +18,10 @@ from glob import glob
 from bisect import bisect_right
 from collections import OrderedDict
 
-from graphnet.models.graphs import GraphDefinition
+from graphnet.models.data_representation import (
+    GraphDefinition,
+    DataRepresentation,
+)
 from graphnet.data.dataset import Dataset
 from graphnet.exceptions.exceptions import ColumnMissingException
 
@@ -29,11 +32,12 @@ class ParquetDataset(Dataset):
     def __init__(
         self,
         path: str,
-        graph_definition: GraphDefinition,
         pulsemaps: Union[str, List[str]],
         features: List[str],
         truth: List[str],
         *,
+        data_representation: Optional[DataRepresentation] = None,
+        graph_definition: Optional[GraphDefinition] = None,
         node_truth: Optional[List[str]] = None,
         index_column: str = "event_no",
         truth_table: str = "truth",
@@ -92,7 +96,9 @@ class ParquetDataset(Dataset):
                 subset of events when resolving a string-based selection (e.g.,
                 `"10000 random events ~ event_no % 5 > 0"` or `"20% random
                 events ~ event_no % 5 > 0"`).
+            data_representation: Method that defines the data representation.
             graph_definition: Method that defines the graph representation.
+                NOTE: DEPRECATED Use `data_representation` instead.
             cache_size: Number of files to cache in memory.
                         Must be at least 1. Defaults to 1.
             labels: Dictionary of labels to be added to the dataset.
@@ -116,6 +122,7 @@ class ParquetDataset(Dataset):
             loss_weight_default_value=loss_weight_default_value,
             seed=seed,
             graph_definition=graph_definition,
+            data_representation=data_representation,
             labels=labels,
         )
 

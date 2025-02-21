@@ -12,7 +12,7 @@ from numpy.random import Generator
 from graphnet.models.detector import Detector
 from .edges import EdgeDefinition
 from .nodes import NodeDefinition, NodesAsPulses
-from .data_representation import DataRepresentation
+from ..data_representation import DataRepresentation
 from torch_geometric.data import Data
 
 

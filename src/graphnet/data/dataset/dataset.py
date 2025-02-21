@@ -31,8 +31,10 @@ from graphnet.utilities.config import (
 )
 from graphnet.exceptions.exceptions import ColumnMissingException
 from graphnet.utilities.logging import Logger
-from graphnet.models.graphs import GraphDefinition
-
+from graphnet.models.data_representation import (
+    GraphDefinition,
+    DataRepresentation,
+)
 from graphnet.utilities.config.parsing import (
     get_all_grapnet_classes,
 )
@@ -58,11 +60,11 @@ def load_module(class_name: str) -> Type:
     return namespace_classes[class_name]
 
 
-def parse_graph_definition(cfg: dict) -> GraphDefinition:
-    """Construct GraphDefinition from DatasetConfig."""
-    assert cfg["graph_definition"] is not None
+def parse_data_representation(cfg: dict) -> DataRepresentation:
+    """Construct DataRepresentation from DatasetConfig."""
+    assert "data_representation" in cfg.keys()
 
-    args = cfg["graph_definition"]["arguments"]
+    args = cfg["data_representation"]["arguments"]
     classes = {}
     for arg in args.keys():
         if isinstance(args[arg], dict):
@@ -75,10 +77,10 @@ def parse_graph_definition(cfg: dict) -> GraphDefinition:
 
     new_cfg = deepcopy(args)
     new_cfg.update(classes)
-    graph_definition = load_module(cfg["graph_definition"]["class_name"])(
-        **new_cfg
-    )
-    return graph_definition
+    data_representation = load_module(
+        cfg["data_representation"]["class_name"]
+    )(**new_cfg)
+    return data_representation
 
 
 def parse_labels(cfg: dict) -> Dict[str, Label]:
@@ -122,9 +124,18 @@ class Dataset(
             "`DatasetConfig`"
         )
 
-        assert (
-            "graph_definition" in source.dict().keys()
-        ), "`DatasetConfig` incompatible with current GraphNeT version."
+        if "data_representation" not in source.dict().keys():
+            if "graph_definition" in source.dict().keys():
+                Logger(log_folder=None).warning_once(
+                    "DeprecationWarning: Field `graph_definition` will be"
+                    " deprecated in GraphNeT 2.0. Please use "
+                    "`data_representation` instead."
+                )
+            else:
+                raise TypeError(
+                    "`DatasetConfig` incompatible with "
+                    "current GraphNeT version."
+                )
 
         # Parse set of `selection``.
         if isinstance(source.selection, dict):
@@ -137,8 +148,22 @@ class Dataset(
             return cls._construct_dataset_from_list_of_strings(source)
 
         cfg = source.dict()
-        if cfg["graph_definition"] is not None:
-            cfg["graph_definition"] = parse_graph_definition(cfg)
+
+        if (
+            "data_representation" in cfg
+            and cfg["data_representation"] is not None
+        ):
+            cfg["data_representation"] = parse_data_representation(cfg)
+        elif "graph_definition" in cfg and cfg["graph_definition"] is not None:
+            Logger(log_folder=None).warning_once(
+                "DeprecationWarning: Field `graph_definition` will be"
+                " deprecated in GraphNeT 2.0. Please use "
+                "`data_representation` instead."
+            )
+            cfg["data_representation"] = cfg["graph_definition"]
+            cfg["data_representation"] = parse_data_representation(cfg)
+            cfg.pop("graph_definition")
+
         if cfg["labels"] is not None:
             cfg["labels"] = parse_labels(cfg)
 
@@ -216,11 +241,12 @@ class Dataset(
     def __init__(
         self,
         path: Union[str, List[str]],
-        graph_definition: GraphDefinition,
         pulsemaps: Union[str, List[str]],
         features: List[str],
         truth: List[str],
         *,
+        graph_definition: Optional[GraphDefinition] = None,
+        data_representation: Optional[DataRepresentation] = None,
         node_truth: Optional[List[str]] = None,
         index_column: str = "event_no",
         truth_table: str = "truth",
@@ -278,8 +304,13 @@ class Dataset(
                 subset of events when resolving a string-based selection (e.g.,
                 `"10000 random events ~ event_no % 5 > 0"` or `"20% random
                 events ~ event_no % 5 > 0"`).
-            graph_definition: Method that defines the graph representation.
+            data_representation: Method that defines the data representation.
             labels: Dictionary of labels to be added to the dataset.
+
+            graph_definition: Method that defines the graph representation.
+                NOTE: DEPRECATED Use `data_representation` instead.
+                # DEPRECATION: REMOVE AT 2.0 LAUNCH
+                # See https://github.com/graphnet-team/graphnet/issues/647
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -303,9 +334,26 @@ class Dataset(
         self._index_column = index_column
         self._truth_table = truth_table
         self._loss_weight_default_value = loss_weight_default_value
-        self._graph_definition = deepcopy(graph_definition)
+
+        if data_representation is None:
+            if graph_definition is not None:
+                data_representation = graph_definition
+                # Code continues after warning
+                self.warning(
+                    "DeprecationWarning: Argument `graph_definition` "
+                    "will be deprecated in GraphNeT 2.0. "
+                    "Please use `data_representation` instead."
+                )
+            else:
+                # Code stops
+                raise TypeError(
+                    "__init__() missing 1 required keyword argument:"
+                    "'data_representation'"
+                )
+
+        self._data_representation = deepcopy(data_representation)
         self._labels = labels
-        self._string_column = graph_definition._detector.string_index_name
+        self._string_column = data_representation._detector.string_index_name
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -389,6 +437,17 @@ class Dataset(
     def truth_table(self) -> str:
         """Name of the table containing event-level truth information."""
         return self._truth_table
+
+    # DEPRECATION PROPERTY: REMOVE AT 2.0 LAUNCH
+    # See https://github.com/graphnet-team/graphnet/issues/647
+    @property
+    def _graph_definition(self) -> DataRepresentation:
+        """Return the graph definition."""
+        self.warning(
+            "DeprecationWarning: `_graph_definition` will be deprecated in"
+            " GraphNeT 2.0. Please use `_data_representation` instead."
+        )
+        return self._data_representation
 
     # Abstract method(s)
     @abstractmethod
@@ -647,8 +706,8 @@ class Dataset(
 
         assert isinstance(features, np.ndarray)
         # Construct graph data object
-        assert self._graph_definition is not None
-        graph = self._graph_definition(
+        assert self._data_representation is not None
+        graph = self._data_representation(
             input_features=node_features,
             input_feature_names=self._features,
             truth_dicts=truth_dicts,
