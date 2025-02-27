@@ -1,23 +1,36 @@
-# KM3Net Data Conversion
+# KM3NeT Data Conversion
 
-The example in this folder is designed to extract information from ROOT files of KM3NeT offline files and re-write the information into intermediate file formats suitable for deep learning, such as Sqlite or parquet. Then, after this conversion trainings and inferences on KM3NeT data can be performed
+This folder contains an example script for extracting information from ROOT files of KM3NeT offline data and converting it into intermediate file formats suitable for deep learning training or inference using GraphNeT. Supported output formats include SQLite and Parquet. After this conversion, training and inference on KM3NeT data can be performed efficiently.
 
 ## Example Usage
 
-To prove how to perform this conversion the following example converts a KM3NeT alike file with few example events with random information. To convert KM3Net data, you can use the following command:
+The following example demonstrates how to perform the conversion using a sample KM3NeT-like file containing a few events with random information:
 
 ```bash
-python 01_convert_km3net.py sqlite/parquet Triggered/Snapshot km3net-vars/hnl-vars OUTPUT_DIR
+python 01_convert_km3net.py <output_format> <pulse_option> <variable_set> [OUTPUT_DIR]
 ```
-where the first argument passed will decide the output format of your file, the second one decide whether you extract all the pulses into your new database or only the triggered ones, and the third one specifies whether to write some extra quantities to related to Heavy Neutral Lepton searches or just neutrino related information. There is a fourth optional flag you can specify so that the output will be written there. If not specified, the output will be by defaut stored in graphnet's example output dir whose location can be found by running in python
-```bash
+
+### Arguments:
+- `<output_format>`: Specifies the output format, either `sqlite` or `parquet`.
+- `<pulse_option>`: Determines whether to extract all pulses (`Snapshot`) or only the triggered ones (`Triggered`).
+- `<variable_set>`: Defines the variables to include, such as `km3net-vars` for standard neutrino-related data or `hnl-vars` for additional quantities related to Heavy Neutral Lepton searches.
+- `[OUTPUT_DIR]` (optional): Specifies the output directory. If not provided, the output will be stored in GraphNeT's default example output directory, which can be found using:
+
+```python
 from graphnet.constants import EXAMPLE_OUTPUT_DIR
 print(EXAMPLE_OUTPUT_DIR)
 ```
 
+### Output Structure
+
+The generated SQLite or Parquet file contains:
+- A **pulse table**, storing hit-by-hit information for each event, with a unique identifier linking pulses to their respective events.
+- A **true Monte Carlo event table**, including ground-truth event information. If available and selected, it may also contain reconstructed information from likelihood-based methods.
+- Unavailable variables (e.g., true Monte Carlo information in real data files) will be filled with unphysical placeholder values.
+
 ## Help
 
-For more information on the available options for the parser, you can use the help flag:
+For more information on available options, use the help flag:
 
 ```bash
 python 01_convert_km3net.py -h
@@ -28,3 +41,4 @@ or
 ```bash
 python 01_convert_km3net.py --help
 ```
+

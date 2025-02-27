@@ -41,6 +41,30 @@ To achieve this, we recommend installing |graphnet|\ GraphNeT into a CVMFS with 
 
 Once installed, |graphnet|\ GraphNeT is available whenever you open the CVMFS locally.
 
+Installation with km3io (KM3NeT)
+-----------------------------------------------
+
+This installation is only necessary if you want to process KM3NeT/ARCA or KM3NeT/ORCA files. Processing means converting them from a `.root` offline format into a suitable format for training using |graphnet|. If you already have your KM3NeT data in `SQLite` or `parquet` format and only want to train a model or perform inference on this database, this specific installation is not needed.
+
+Note that this installation will add `km3io`, `km3db`, and `km3pipe`, ensuring they are built with compatible versions. The steps below are provided for a conda environment, but feel free to choose a different enviroment setup.
+
+.. code-block:: bash
+
+   # Create an environment with Python 3.8
+   conda create -p <path-to-env> python=3.8 -c conda-forge -y
+   # Activate the environment and install dependencies
+   cd graphnet
+   # Choose the appropriate requirements file based on your system
+   pip install -r requirements/torch_cpu.txt -e .[torch,develop]
+   # or
+   pip install -r requirements/torch_cu118.txt -e .[torch,develop]
+   # or
+   pip install -r requirements/torch_cu121.txt -e .[torch,develop]
+   
+   # Install the correct versions of KM3NeT-related libraries
+   pip install km3io==1.1.0 km3db==0.11.3 kmpipe==9.13.9
+   # Downgrade setuptools for compatibility
+   pip install --force-reinstall setuptools==70.3.0
+
 .. note::
    We recommend installing |graphnet|\ GraphNeT without GPU in clean metaprojects.
-
