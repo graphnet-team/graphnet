@@ -197,8 +197,7 @@ class DataRepresentation(Model):
                 data=data, custom_label_functions=custom_label_functions
             )
 
-        # Attach features as seperate fields.
-        # MAY NOT CONTAIN 'x'
+        # Do final processing steps
         data = self._forward_end(data, data_feature_names)
 
         # DEPRECATION STAMP GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH
@@ -374,6 +373,42 @@ class DataRepresentation(Model):
             data[key] = label
         return data
 
+    def _add_truth(
+        self, data: Data, truth_dicts: List[Dict[str, Any]]
+    ) -> Data:
+        """Add truth labels from ´truth_dicts´ to ´data´.
+
+        I.e. ´data[key] = truth_dict[key]´
+
+
+        Args:
+            data: data where the label will be stored
+            truth_dicts: dictionary containing the labels
+
+        Returns:
+            data with labels
+        """
+        # Write attributes, either target labels, truth info or original
+        # features.
+
+        for truth_dict in truth_dicts:
+            for key, value in truth_dict.items():
+                try:
+                    label = torch.tensor(value)
+                    if self._repeat_labels:
+                        label = self._label_repeater(label, data)
+                    data[key] = label
+                except TypeError:
+                    # Cannot convert `value` to Tensor due to its data type,
+                    # e.g. `str`.
+                    self.debug(
+                        (
+                            f"Could not assign `{key}` with type "
+                            f"'{type(value).__name__}' as attribute to data."
+                        )
+                    )
+        return data
+
     @abstractmethod
     def _set_output_feature_names(
         self, input_feature_names: List[str]
@@ -403,23 +438,6 @@ class DataRepresentation(Model):
             - data_feature_names: List of feature names in the data object.
         """
         raise NotImplementedError
-
-    @abstractmethod
-    def _add_truth(
-        self, data: Data, truth_dicts: List[Dict[str, Any]]
-    ) -> Data:
-        """Add truth labels from ´truth_dicts´ to ´data´.
-
-        I.e. ´data[key] = truth_dict[key]´
-
-
-        Args:
-            data: data where the label will be stored
-            truth_dicts: dictionary containing the labels
-
-        Returns:
-            data with labels
-        """
 
     def _forward_end(
         self,

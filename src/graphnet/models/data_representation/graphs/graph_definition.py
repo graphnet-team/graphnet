@@ -5,7 +5,7 @@ code in graphnet. These modules define what graph-based models sees as input
 and can be passed to dataloaders during training and deployment.
 """
 
-from typing import List, Optional, Dict, Union, Tuple, Any
+from typing import List, Optional, Dict, Union, Tuple
 import torch
 from numpy.random import Generator
 
@@ -153,42 +153,6 @@ class GraphDefinition(DataRepresentation):
         # Add original features as attributes
         if self._add_static_features:
             data = self._add_features_individually(data, data_feature_names)
-        return data
-
-    def _add_truth(
-        self, data: Data, truth_dicts: List[Dict[str, Any]]
-    ) -> Data:
-        """Add truth labels from ´truth_dicts´ to ´data´.
-
-        I.e. ´data[key] = truth_dict[key]´
-
-
-        Args:
-            data: data where the label will be stored
-            truth_dicts: dictionary containing the labels
-
-        Returns:
-            data with labels
-        """
-        # Write attributes, either target labels, truth info or original
-        # features.
-
-        for truth_dict in truth_dicts:
-            for key, value in truth_dict.items():
-                try:
-                    label = torch.tensor(value)
-                    if self._repeat_labels:
-                        label = label.repeat(data.x.shape[0], 1)
-                    data[key] = label
-                except TypeError:
-                    # Cannot convert `value` to Tensor due to its data type,
-                    # e.g. `str`.
-                    self.debug(
-                        (
-                            f"Could not assign `{key}` with type "
-                            f"'{type(value).__name__}' as attribute to data."
-                        )
-                    )
         return data
 
     def _add_features_individually(
