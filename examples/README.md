@@ -7,7 +7,9 @@ Examples are grouped into five numbered subfolders, roughly in order of how you 
 2. **Data.** Reading in data in intermediate formats, plotting feature distributions, and converting data between intermediate file formats. These examples are entirely self-contained and can be run by anyone.
 3. **Weights.** Fitting per-event weights.
 4. **Training.** Training GNN models on various physics tasks.
-5**LiquidO.** Converting h5 files from the LiquidO experiment into intermediate formats suitable for deep learning. 
+5. **LiquidO.** Converting h5 files from the LiquidO experiment into intermediate formats suitable for deep learning.
+6. **Prometheus.** Converting parquet files from the Prometheus simulation software into intermediate formats suitable for deep learning.
+7. **KM3NeT.** Converting root files from the KM3NeT experiment into intermediate formats suitable for deep learning.
 
 Each subfolder contains similarly numbered example scripts.
 Each example script comes with a simple command-line interface and help functionality, e.g.
