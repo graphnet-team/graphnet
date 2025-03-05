@@ -5,9 +5,10 @@ code in graphnet. These modules define what graph-based models sees as input
 and can be passed to dataloaders during training and deployment.
 """
 
-from typing import List, Optional, Dict, Union, Tuple
+from typing import List, Optional, Dict, Union, Tuple, Any, Callable
 import torch
 from numpy.random import Generator
+import numpy as np
 
 from graphnet.models.detector import Detector
 from .edges import EdgeDefinition
@@ -143,6 +144,55 @@ class GraphDefinition(DataRepresentation):
             data = self._edge_definition(data)
 
         return data, data_feature_names
+
+    def forward(  # type: ignore
+        self,
+        input_features: np.ndarray,
+        input_feature_names: List[str],
+        truth_dicts: Optional[List[Dict[str, Any]]] = None,
+        custom_label_functions: Optional[Dict[str, Callable[..., Any]]] = None,
+        loss_weight_column: Optional[str] = None,
+        loss_weight: Optional[float] = None,
+        loss_weight_default_value: Optional[float] = None,
+        data_path: Optional[str] = None,
+    ) -> Data:
+        """Construct graph as ´Data´ object.
+
+        Args:
+            input_features: Input features for graph construction.
+                Shape ´[num_rows, d]´
+            input_feature_names: name of each column. Shape ´[,d]´.
+            truth_dicts: Dictionary containing truth labels.
+            custom_label_functions: Custom label functions.
+            loss_weight_column: Name of column that holds loss weight.
+                                Defaults to None.
+            loss_weight: Loss weight associated with event. Defaults to None.
+            loss_weight_default_value: default value for loss weight.
+                    Used in instances where some events have
+                    no pre-defined loss weight. Defaults to None.
+            data_path: Path to dataset data files. Defaults to None.
+
+        Returns:
+            graph
+        """
+        data = super().forward(
+            input_features=input_features,
+            input_feature_names=input_feature_names,
+            truth_dicts=truth_dicts,
+            custom_label_functions=custom_label_functions,
+            loss_weight_column=loss_weight_column,
+            loss_weight=loss_weight,
+            loss_weight_default_value=loss_weight_default_value,
+            data_path=data_path,
+        )
+
+        if self._add_static_features:
+            data = self._add_features_individually(
+                data,
+                self._node_definition._output_feature_names,
+            )
+
+        return data
 
     def _forward_end(
         self,

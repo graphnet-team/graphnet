@@ -7,7 +7,6 @@ import numpy as np
 from numpy.random import default_rng, Generator
 
 from graphnet.models.detector import Detector
-from graphnet.utilities.decorators import final
 from graphnet.models import Model
 from abc import abstractmethod
 
@@ -109,7 +108,6 @@ class DataRepresentation(Model):
         else:
             self.rng = default_rng()
 
-    @final
     def forward(  # type: ignore
         self,
         input_features: np.ndarray,
@@ -121,10 +119,10 @@ class DataRepresentation(Model):
         loss_weight_default_value: Optional[float] = None,
         data_path: Optional[str] = None,
     ) -> Data:
-        """Construct graph as ´Data´ object.
+        """Construct data as ´Data´ object.
 
         Args:
-            input_features: Input features for graph construction.
+            input_features: Input features for data construction.
                 Shape ´[num_rows, d]´
             input_feature_names: name of each column. Shape ´[,d]´.
             truth_dicts: Dictionary containing truth labels.
@@ -138,7 +136,7 @@ class DataRepresentation(Model):
             data_path: Path to dataset data files. Defaults to None.
 
         Returns:
-            graph
+            data
         """
         # Checks
         self._validate_input(
@@ -196,9 +194,6 @@ class DataRepresentation(Model):
             data = self._add_custom_labels(
                 data=data, custom_label_functions=custom_label_functions
             )
-
-        # Do final processing steps
-        data = self._forward_end(data, data_feature_names)
 
         # DEPRECATION STAMP GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH
         # See https://github.com/graphnet-team/graphnet/issues/647
@@ -438,18 +433,6 @@ class DataRepresentation(Model):
             - data_feature_names: List of feature names in the data object.
         """
         raise NotImplementedError
-
-    def _forward_end(
-        self,
-        data: Data,
-        data_feature_names: List[str],
-    ) -> Data:
-        """Place to add any final data processing steps.
-
-        Override this method to add any final processing steps in the end of
-        the forward pass.
-        """
-        return data
 
     def _label_repeater(self, label: torch.Tensor, data: Data) -> torch.Tensor:
         """Handle the label repetition.
