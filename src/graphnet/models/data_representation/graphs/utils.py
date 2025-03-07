@@ -174,6 +174,13 @@ def cluster_summarize_with_percentiles(
     return array
 
 
+def weighted_median(values: np.array, weights: np.array) -> float:
+    """Compute the weighted median of values."""
+    i = np.argsort(values)
+    c = np.cumsum(weights[i])
+    return values[i[np.searchsorted(c, 0.5 * c[-1])]]
+
+
 class cluster_and_pad:
     """Cluster and pad the data for further summarization.
 
@@ -318,6 +325,21 @@ class cluster_and_pad:
         self._charge_weights = (
             self._padded_x[:, :, charge_index]
             / self._charge_sum[:, np.newaxis]
+        )
+
+    def _calculate_reference_time(self, time_index: int) -> np.ndarray:
+        """Calculate the charge weighted median time of the whole event."""
+        assert not hasattr(
+            self, "_reference_time"
+        ), "Reference time has already been calculated, \
+            re-calculation is not allowed"
+        assert hasattr(
+            self, "_charge_weights"
+        ), "Charge weights has not been calculated, \
+            please run calculate_charge_weights"
+        self._reference_time = weighted_median(
+            values=self._padded_x[:, :, time_index].flatten(),
+            weights=self._charge_weights.flatten(),
         )
 
     def add_charge_threshold_summary(
@@ -484,6 +506,65 @@ class cluster_and_pad:
         # update the cluster names
         if self._input_names is not None:
             new_names = [self._input_names[i] + "_mean" for i in columns]
+            self._add_column_names(new_names, location)
+
+    def add_time_first_pulse(
+        self,
+        time_index: int,
+        location: Optional[int] = None,
+        reference_time: bool = True,
+        charge_index: Optional[int] = None,
+    ) -> np.ndarray:
+        """Add the time of the first pulse.
+
+        Args:
+            time_index: Index of the time column in the padded tensor
+            location: Location to insert the time of the first pulse in the
+                      clustered tensor defaults to adding at the end
+            reference_time: If True the time of the first pulse is calculated
+                            with respect to the charge weighted median time
+            charge_index: Index of the charge column in the padded tensor
+                          required if reference_time is True
+        Altered:
+            clustered_x: The time of the first pulse is added at the end of
+                         the tensor or inserted at the specified location
+            _cluster_names: The names are added at the end of the tensor
+                            or inserted at the specified location
+        """
+        if reference_time:
+            if not hasattr(self, "_charge_weights"):
+                assert (
+                    charge_index is not None
+                ), "Charge index must be provided"
+                self._calculate_charge_weights(charge_index)
+            if not hasattr(self, "_reference_time"):
+                self._calculate_reference_time(time_index)
+            time_first_pulse = (
+                np.nanmin(self._padded_x[:, :, time_index], axis=1)
+                - self._reference_time
+            )
+        else:
+            time_first_pulse = np.nanmin(
+                self._padded_x[:, :, time_index], axis=1
+            )
+        self._add_column(time_first_pulse, location)
+        # update the cluster names
+        if self._input_names is not None:
+            new_name = [self._input_names[time_index] + "_first_pulse"]
+            self._add_column_names(new_name, location)
+
+    def add_spread(
+        self, columns: List[int], location: Optional[int] = None
+    ) -> np.ndarray:
+        """Add the spread of the columns."""
+        self._add_column(
+            np.nanmax(self._padded_x[:, :, columns], axis=1)
+            - np.nanmin(self._padded_x[:, :, columns], axis=1),
+            location,
+        )
+        # update the cluster names
+        if self._input_names is not None:
+            new_names = [self._input_names[i] + "_spread" for i in columns]
             self._add_column_names(new_names, location)
 
 
