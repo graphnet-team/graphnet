@@ -46,6 +46,17 @@ def has_jammy_flows_package() -> bool:
         )
         return False
 
+def has_km3net_package() -> bool:
+    """Check whether the `km3net` packages are available."""
+    try:
+        import km3io  # pyright: reportMissingImports=false
+
+        return True
+    except ImportError:
+        Logger(log_folder=None).warning_once(
+            "`km3net` not available. Some functionality may be missing.",
+        )
+        return False
 
 def requires_icecube(test_function: Callable) -> Callable:
     """Decorate `test_function` for use only if `icecube` module is present."""
