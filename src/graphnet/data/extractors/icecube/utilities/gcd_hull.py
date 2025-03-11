@@ -47,7 +47,7 @@ class GCD_hull(ConvexHull):
 
     def point_in_hull(
         self, points: np.array, tolerance: float = 1e-12
-    ) -> bool:
+    ) -> np.array:
         """Check if a point is inside the convex hull.
 
         Args:

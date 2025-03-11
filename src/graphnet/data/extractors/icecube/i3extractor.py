@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors import Extractor
+import numpy as np
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (  # noqa: F401
@@ -24,7 +25,12 @@ class I3Extractor(Extractor):
     method.
     """
 
-    def __init__(self, extractor_name: str, exclude: list = [None]):
+    def __init__(
+        self,
+        extractor_name: str,
+        exclude: list = [None],
+        is_corsika: bool = False,
+    ):
         """Construct I3Extractor.
 
         Args:
@@ -32,12 +38,15 @@ class I3Extractor(Extractor):
                 track of the provenance of different data, and to name tables
                 to which this data is saved.
             exclude: List of keys to exclude from the extracted data.
+            is_corsika: Boolean indicating if the event files being processed
+                are Corsika simulations. Defaults to False.
         """
         # Member variable(s)
         self._i3_file: str = ""
         self._gcd_file: str = ""
         self._gcd_dict: Dict[int, Any] = {}
         self._calibration: Optional["icetray.I3Frame.Calibration"] = None
+        self._is_corsika: bool = is_corsika
 
         # Base class constructor
         super().__init__(extractor_name=extractor_name, exclude=exclude)
@@ -120,7 +129,14 @@ class I3Extractor(Extractor):
             new_primaries = dataclasses.ListI3Particle()
             for primary in primaries:
                 primary = self.check_primary_energy(frame, primary)
-                new_primaries.append(primary)
+                if isinstance(primary, dataclasses.ListI3Particle):
+                    new_primaries.extend(primary)
+                elif isinstance(primary, dataclasses.I3Particle):
+                    new_primaries.append(primary)
+                else:
+                    raise ValueError(
+                        "primaries must be a particle or a list of particles"
+                    )
             return new_primaries
         elif isinstance(primaries, dataclasses.I3Particle):
             primary = primaries
@@ -134,13 +150,65 @@ class I3Extractor(Extractor):
             daughters = dataclasses.I3MCTree.get_daughters(
                 frame[self.mctree], primary
             )
-            if len(daughters) == 1:
-                primary = daughters[0]
-            else:
-                assert (
-                    len(daughters) < 1
-                ), "Primary has more than one daughter, aborting."
-                assert (
-                    len(daughters) > 1
-                ), "Primary has no daughters, aborting."
+            if len(daughters) == 0:
+                raise ValueError(
+                    "Primary energy is nan and no daughters found"
+                )
+            primary = dataclasses.ListI3Particle()
+            for daughter in daughters:
+                primary.append(daughter)
         return primary
+
+    def get_primaries(
+        self, frame: "icetray.I3Frame", daughters: bool = False
+    ) -> "dataclasses.ListI3Particle":
+        """Get the primary particles in the event.
+
+        For Corsika events the primary particles are the all the primaries,
+        for Nugen we are only interested in the in-ice neutrino.
+        Input:
+        frame: I3Frame object
+        """
+        assert hasattr(
+            self, "mctree"
+        ), "mctree should be instantiated by subclass"
+
+        if not self._is_corsika:
+            primaries = frame[self.mctree].get_primaries()
+            if daughters:
+                primaries = [
+                    p
+                    for p in primaries
+                    if (
+                        p.is_neutrino
+                        & (
+                            p.location_type
+                            == dataclasses.I3Particle.LocationType.InIce.real
+                        )
+                    )
+                ]
+
+            if len(primaries) == 0:
+                primaries = [
+                    p
+                    for p in frame[self.mctree]
+                    if (
+                        p.is_neutrino
+                        & (
+                            p.location_type
+                            == dataclasses.I3Particle.LocationType.InIce.real
+                        )
+                    )
+                ]
+
+            if len(primaries) == 0:
+                self.warning_once("No in-ice neutrino found for NuGen event")
+                return dataclasses.ListI3Particle()
+
+            energies = np.array([p.energy for p in primaries])
+
+            primaries = np.array(primaries)[np.argmax(energies)]
+            primaries = dataclasses.ListI3Particle([primaries])
+        if self._is_corsika:
+            primaries = frame[self.mctree].get_primaries()
+        return primaries
