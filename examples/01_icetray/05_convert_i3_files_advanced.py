@@ -10,13 +10,14 @@ from graphnet.data.extractors.icecube import (
     I3GenericExtractor,
     I3DictValueExtractor,
     I3FilterMapExtractor,
-    I3TotalEExtractor,
     I3HighestEparticleExtractor,
+    I3Calorimetry,
 )
 
 from graphnet.data.extractors.icecube.utilities.i3_filters import (
     TableFilter,
     NullSplitI3Filter,
+    ChargeFilter,
 )
 
 from graphnet.data.extractors.icecube.utilities.gcd_hull import GCD_hull
@@ -59,7 +60,6 @@ def main(
     )[0]
 
     # Create hulls, these need to be global for the multiprocessing.
-    IceCube_hull = GCD_hull(gcd_rescue, padding=0)
     IceCube_hull_extended = GCD_hull(gcd_rescue, padding=padding)
 
     # Create Extractors
@@ -69,32 +69,12 @@ def main(
     homogenized_qtot = I3GenericExtractor(
         keys=["Homogenized_QTot"], extractor_name="Homogenized_QTot"
     )
-    E_daughter = I3TotalEExtractor(
-        hull=IceCube_hull,
-        mctree="I3MCTree",
-        mmctracklist="MMCTrackList",
-        extractor_name="daughters_energy",
-        daughters=True,
-    )
-    E_Highest = I3TotalEExtractor(
-        hull=IceCube_hull,
-        mctree="I3MCTree",
-        mmctracklist="MMCTrackList",
-        extractor_name="total_energy",
-        daughters=False,
-    )
-    E_daughter_extended = I3TotalEExtractor(
+    # calorimetry features
+    Calorimetry = I3Calorimetry(
         hull=IceCube_hull_extended,
         mctree="I3MCTree",
         mmctracklist="MMCTrackList",
-        extractor_name="daughters_energy_extended" + str(padding),
-        daughters=True,
-    )
-    E_Highest_extended = I3TotalEExtractor(
-        hull=IceCube_hull_extended,
-        mctree="I3MCTree",
-        mmctracklist="MMCTrackList",
-        extractor_name="total_energy_extended" + str(padding),
+        extractor_name=f"calorimetry_pad_{str(padding)}",
         daughters=False,
     )
 
@@ -105,10 +85,7 @@ def main(
         extractors=[
             truth,
             homogenized_qtot,
-            E_daughter,
-            E_Highest,
-            E_daughter_extended,
-            E_Highest_extended,
+            Calorimetry,
         ],
         extractor_name="truth",
     )
@@ -116,23 +93,12 @@ def main(
     # Detector readout features
     SRTInIcePulses = I3FeatureExtractorIceCube86("SRTInIcePulses")
 
-    # Particle extractors
-    highest_e_in_ice = I3HighestEparticleExtractor(
-        extractor_name="highest_energy_particle", hull=IceCube_hull
-    )
-    highest_e_daughter = I3HighestEparticleExtractor(
-        extractor_name="highest_energy_daughter",
-        hull=IceCube_hull,
-        daughters=True,
-    )
-    highest_e_in_ice_extended = I3HighestEparticleExtractor(
-        extractor_name="highest_energy_particle_extended" + str(padding),
-        hull=IceCube_hull_extended,
-    )
-    highest_e_daughter_extended = I3HighestEparticleExtractor(
-        extractor_name="highest_energy_daughter_extended" + str(padding),
+    # Particle extractor
+    highest_e_particle = I3HighestEparticleExtractor(
+        extractor_name="HEP",
         hull=IceCube_hull_extended,
         daughters=True,
+        is_corsika=False,
     )
 
     # Comparisons to other reconstruction methods
@@ -142,7 +108,7 @@ def main(
 
     # misc features
     weight_dict = I3DictValueExtractor(
-        keys=["I3MCWeightDict"], extractor_name="MCWeightDict"
+        keys=["I3MCWeightDict"], extractor_name="WeightDict"
     )
     filter_mask = I3FilterMapExtractor(
         key="FilterMask", extractor_name="FilterMask"
@@ -156,17 +122,14 @@ def main(
         LineFit,
         weight_dict,
         filter_mask,
-        highest_e_in_ice,
-        highest_e_daughter,
-        highest_e_in_ice_extended,
-        highest_e_daughter_extended,
+        highest_e_particle,
     ]
 
     # filters
     filters = [
         NullSplitI3Filter(),
         TableFilter(table_name="SRTInIcePulses"),
-        TableFilter(table_name="Homogenized_QTot"),
+        ChargeFilter(table_name="Homogenized_QTot", min_charge=1000),
     ]
 
     # Create the converter object
@@ -179,9 +142,12 @@ def main(
         max_table_size=max_table_size,
     )
     # run the converter
+
+    print(f"converting {inputs} to {outdir}")
     converter(inputs)
     # merge files removing the db files after merging to save space.
     if merge is True:
+        print(f"Merging files in {outdir}")
         converter.merge_files(remove_original=remove)
 
 
