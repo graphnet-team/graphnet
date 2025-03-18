@@ -124,7 +124,7 @@ class GraphDefinition(DataRepresentation):
         self, input_features: torch.Tensor
     ) -> Tuple[Data, List[str]]:
         # Create graph & get new node feature names
-        data, data_feature_names = self._node_definition(input_features)
+        data = self._node_definition(input_features)
         if self._sort_by is not None:
             data.x = data.x[data.x[:, self._sort_by].sort()[1]]
 
@@ -135,7 +135,7 @@ class GraphDefinition(DataRepresentation):
         if self._edge_definition is not None:
             data = self._edge_definition(data)
 
-        return data, data_feature_names
+        return data
 
     def forward(  # type: ignore
         self,
@@ -181,7 +181,7 @@ class GraphDefinition(DataRepresentation):
         if self._add_static_features:
             data = self._add_features_individually(
                 data,
-                self._node_definition._output_feature_names,
+                self.output_feature_names,
             )
 
         return data

@@ -173,9 +173,7 @@ class DataRepresentation(Model):
         input_features = self._detector(input_features, input_feature_names)
 
         # Create data & get new final data feature names
-        data, data_feature_names = self._create_data(
-            input_features=input_features
-        )
+        data = self._create_data(input_features=input_features)
 
         # Attach number of pulses as static attribute.
         data.n_pulses = torch.tensor(len(input_features), dtype=torch.int32)

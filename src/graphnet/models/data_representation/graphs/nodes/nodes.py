@@ -46,8 +46,14 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             graph: a graph without edges
         """
         graph = self._construct_nodes(x=x)
+
+        return graph
+
+    @property
+    def _output_feature_names(self) -> List[str]:
+        """Return output feature names."""
         try:
-            self._output_feature_names
+            self._hidden_output_feature_names
         except AttributeError as e:
             self.error(
                 f"""{self.__class__.__name__} was instantiated without
@@ -57,7 +63,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
                        with `input_feature_names`."""
             )  # noqa
             raise e
-        return graph, self._output_feature_names
+        return self._hidden_output_feature_names
 
     @property
     def nb_outputs(self) -> int:
@@ -85,7 +91,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             input_feature_names: List of column names of the input to the
             node definition.
         """
-        self._output_feature_names = self._define_output_feature_names(
+        self._hidden_output_feature_names = self._define_output_feature_names(
             input_feature_names
         )
 
