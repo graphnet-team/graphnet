@@ -75,6 +75,8 @@ class DataRepresentation(Model):
             )  # noqa: E501 # type: ignore
         self._input_feature_names = input_feature_names
 
+        self.nb_inputs = len(self._input_feature_names)
+
         # Set data type
         self.to(dtype)
 
@@ -95,11 +97,6 @@ class DataRepresentation(Model):
                 )
         else:
             self.rng = default_rng()
-
-    @property
-    def nb_inputs(self) -> int:
-        """Return the number of input features."""
-        return len(self._input_feature_names)
 
     @property
     def nb_outputs(self) -> int:
