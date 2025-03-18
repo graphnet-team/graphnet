@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 class I3FilterMapExtractor(I3Extractor):
     """Class for extracting I3FilterMap properties.
 
-    Can be used to extract predictions from other algorithms for comparisons
-    with GraphNeT.
+    This class extracts the boolean condition of the I3FilterMask from the
+    I3FilterMap in the frame.
     """
 
     def __init__(
