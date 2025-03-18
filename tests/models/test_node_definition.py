@@ -38,7 +38,8 @@ def test_percentile_cluster() -> None:
     )
 
     # Apply node definition to torch tensor with raw pulses
-    graph, new_features = node_definition(tensor)
+    graph = node_definition(tensor)
+    new_features = node_definition._output_feature_names
     x_tilde = graph.x.numpy()
 
     # Calculate percentiles "the normal way" and compare that output of
