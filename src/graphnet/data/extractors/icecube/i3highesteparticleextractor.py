@@ -78,8 +78,8 @@ class I3HighestEparticleExtractor(I3Extractor):
                     HEParticle,
                     EonEntrance,
                     distance,
-                    containment,
                     visible_length,
+                    containment,
                 ) = self.highest_energy_bundle(frame, self.min_e)
                 trackness = 1.0
 
@@ -244,7 +244,7 @@ class I3HighestEparticleExtractor(I3Extractor):
 
     def highest_energy_track(
         self, frame: "icetray.I3Frame", min_e: float = 0
-    ) -> "dataclasses.I3Particle":
+    ) -> Tuple["dataclasses.I3Particle", float, float, float, int]:
         """Get the highest energy track in the event.
 
         Args:
@@ -253,10 +253,10 @@ class I3HighestEparticleExtractor(I3Extractor):
         min_e: minimum energy for a particle to be considered
         """
         particle = dataclasses.I3Particle()
-        EonEntrance = 0
-        distance = None
-        containment = None
-        visible_length = None
+        EonEntrance = 0.0
+        distance = -1.0
+        visible_length = -1.0
+        containment = -1
 
         MuonGun_tracks, MMCTrackList = self.get_tracks(frame)
 
@@ -607,7 +607,7 @@ class I3HighestEparticleExtractor(I3Extractor):
 
     def highest_energy_bundle(
         self, frame: "icetray.I3Frame", min_e: float = 0
-    ) -> "dataclasses.I3Particle":
+    ) -> Tuple["dataclasses.I3Particle", float, float, float, int]:
         """Get the highest energy bundle in the event.
 
         Args:
@@ -615,8 +615,8 @@ class I3HighestEparticleExtractor(I3Extractor):
         min_e: minimum energy for a particle to be considered
         """
         particle = dataclasses.I3Particle()
-        EonEntrance = 0
-        distance = None
+        EonEntrance = 0.0
+        distance = -1.0
         containment = None
         visible_length = -1
         closest_time = None
