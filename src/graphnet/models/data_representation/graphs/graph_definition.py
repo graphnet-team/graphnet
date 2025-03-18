@@ -20,13 +20,6 @@ from torch_geometric.data import Data
 class GraphDefinition(DataRepresentation):
     """An Abstract class to create graph definitions from."""
 
-    def _pre_init(  # type: ignore[override]
-        self, node_definition: NodeDefinition
-    ) -> None:
-        """Pre-initialization steps."""
-        # Pre-initialization steps
-        self._node_definition = node_definition
-
     def __init__(
         self,
         detector: Detector,
@@ -81,9 +74,6 @@ class GraphDefinition(DataRepresentation):
             add_static_features: If True, the original features will be
                 added as static attributes to the graph. Defaults to True.
         """
-        if node_definition is None:
-            node_definition = NodesAsPulses()
-
         # Base class constructor
         super().__init__(
             detector=detector,
@@ -95,9 +85,11 @@ class GraphDefinition(DataRepresentation):
             sensor_mask=sensor_mask,
             string_mask=string_mask,
             repeat_labels=repeat_labels,
-            node_definition=node_definition,  # -> kwargs
         )
 
+        if node_definition is None:
+            node_definition = NodesAsPulses()
+        self._node_definition = node_definition
         self._edge_definition = edge_definition
         if self._edge_definition is None:
             self.warning_once(

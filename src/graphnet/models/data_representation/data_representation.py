@@ -25,7 +25,6 @@ class DataRepresentation(Model):
         sensor_mask: Optional[List[int]] = None,
         string_mask: Optional[List[int]] = None,
         repeat_labels: bool = False,
-        **kwargs: Any,
     ):
         """Construct´DataRepresentation´. The ´detector´ holds.
 
@@ -59,8 +58,6 @@ class DataRepresentation(Model):
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
-        self._pre_init(**kwargs)
-
         # Member Variables
         self._detector = detector
         self._perturbation_dict = perturbation_dict
@@ -78,17 +75,8 @@ class DataRepresentation(Model):
             )  # noqa: E501 # type: ignore
         self._input_feature_names = input_feature_names
 
-        # Set final data column names
-        self.output_feature_names = self._set_output_feature_names(
-            self._input_feature_names
-        )
-
         # Set data type
         self.to(dtype)
-
-        # Set Input / Output dimensions
-        self.nb_inputs = len(self._input_feature_names)
-        self.nb_outputs = len(self.output_feature_names)
 
         # Set perturbation_cols if needed
         if isinstance(self._perturbation_dict, dict):
@@ -107,6 +95,25 @@ class DataRepresentation(Model):
                 )
         else:
             self.rng = default_rng()
+
+    @property
+    def nb_inputs(self) -> int:
+        """Return the number of input features."""
+        return len(self._input_feature_names)
+
+    @property
+    def nb_outputs(self) -> int:
+        """Return the number of output features."""
+        return len(self.output_feature_names)
+
+    @property
+    def output_feature_names(self) -> List[str]:
+        """Initialize / return the names of output features."""
+        if not hasattr(self, "_output_feature_names"):
+            self._output_feature_names = self._set_output_feature_names(
+                self._input_feature_names
+            )
+        return self._output_feature_names
 
     def forward(  # type: ignore
         self,
@@ -409,15 +416,6 @@ class DataRepresentation(Model):
         self, input_feature_names: List[str]
     ) -> List[str]:
         """Set the final data output feature names."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def _pre_init(self, **kwargs: Any) -> None:
-        """Assign member varibales within `__init__()`.
-
-        E.g. Necessary member varibales for the `_set_output_feature_names()`
-        call in `__init__()`.
-        """
         raise NotImplementedError
 
     @abstractmethod
