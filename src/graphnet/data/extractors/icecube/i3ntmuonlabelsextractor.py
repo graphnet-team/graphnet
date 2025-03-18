@@ -15,10 +15,11 @@ class I3NTMuonLabelExtractor(I3Extractor):
         self,
         name: str = "northeren_tracks_muon_labels",
         padding_value: int = -1,
+        exclude: list = [None],
     ):
         """Construct I3NTMuonLabelExtractor."""
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
         self._padding_value = padding_value
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, float]:

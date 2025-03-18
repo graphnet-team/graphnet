@@ -15,10 +15,10 @@ if TYPE_CHECKING:
 class I3RetroExtractor(I3Extractor):
     """Class for extracting RETRO reconstruction."""
 
-    def __init__(self, name: str = "retro"):
+    def __init__(self, name: str = "retro", exclude: list = [None]):
         """Construct `I3RetroExtractor`."""
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract RETRO reconstruction and associated quantities."""
@@ -100,6 +100,7 @@ class I3RetroExtractor(I3Extractor):
                     frame["I3MCWeightDict"], "weight", default_value=-1
                 )
 
+        output = {k: v for k, v in output.items() if k not in self._exclude}
         return output
 
     def _frame_contains_retro(self, frame: "icetray.I3Frame") -> bool:

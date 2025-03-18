@@ -31,6 +31,7 @@ class I3TruthExtractor(I3Extractor):
         borders: Optional[List[np.ndarray]] = None,
         mctree: Optional[str] = "I3MCTree",
         extend_boundary: Optional[float] = 0.0,
+        exclude: list = [None],
     ):
         """Construct I3TruthExtractor.
 
@@ -43,9 +44,10 @@ class I3TruthExtractor(I3Extractor):
             mctree: Str of which MCTree to use for truth values.
             extend_boundary: Distance to extend the convex hull of the detector
                 for defining starting events.
+            exclude: List of keys to exclude from the extracted data.
         """
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
 
         if borders is None:
             border_xy = np.array(

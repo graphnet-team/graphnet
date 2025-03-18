@@ -1,6 +1,6 @@
 """Base I3Extractor class(es)."""
 
-from typing import Any, Union
+from typing import Any, Union, Callable
 from abc import ABC, abstractmethod
 import pandas as pd
 
@@ -23,7 +23,7 @@ class Extractor(ABC, Logger):
     An extractor is used in conjunction with a specific `FileReader`.
     """
 
-    def __init__(self, extractor_name: str):
+    def __init__(self, extractor_name: str, exclude: list = [None]):
         """Construct Extractor.
 
         Args:
@@ -31,12 +31,33 @@ class Extractor(ABC, Logger):
                             Used to keep track of the provenance of different
                             data, and to name tables to which this data is
                             saved. E.g. "mc_truth".
+            exclude: List of keys to exclude from the extracted data.
         """
         # Member variable(s)
         self._extractor_name: str = extractor_name
+        self._exclude = exclude
 
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
+
+    def exclude(func: Callable) -> Callable:
+        """Exclude specified keys from the extracted data."""
+
+        def wrapper(
+            self: "Extractor", *args: Any
+        ) -> Union[dict, pd.DataFrame]:
+            result = func(self, *args)
+            if isinstance(result, dict):
+                for key in self._exclude:
+                    if key in result:
+                        del result[key]
+            elif isinstance(result, pd.DataFrame):
+                for key in self._exclude:
+                    if key in result.columns:
+                        result = result.drop(columns=[key])
+            return result
+
+        return wrapper
 
     @abstractmethod
     def __call__(self, data: Any) -> Union[dict, pd.DataFrame]:
@@ -47,3 +68,8 @@ class Extractor(ABC, Logger):
     def name(self) -> str:
         """Get the name of the `Extractor` instance."""
         return self._extractor_name
+
+    def __init_subclass__(cls) -> None:
+        """Initialize subclass and apply the exclude decorator to __call__."""
+        super().__init_subclass__()
+        cls.__call__ = cls.exclude(cls.__call__)  # type: ignore

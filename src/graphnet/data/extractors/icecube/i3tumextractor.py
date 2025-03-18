@@ -11,10 +11,10 @@ if TYPE_CHECKING:
 class I3TUMExtractor(I3Extractor):
     """Class for extracting TUM DNN predictions."""
 
-    def __init__(self, name: str = "tum_dnn"):
+    def __init__(self, name: str = "tum_dnn", exclude: list = [None]):
         """Construct I3TUMExtractor."""
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, float]:
         """Extract TUM DNN recoconstruction and associated variables."""
@@ -29,5 +29,4 @@ class I3TUMExtractor(I3Extractor):
                     "tum_bdt_sigma": frame["TUM_bdt_sigma"].value,
                 }
             )
-
         return output

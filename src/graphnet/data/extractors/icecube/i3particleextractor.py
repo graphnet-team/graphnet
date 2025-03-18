@@ -15,10 +15,10 @@ class I3ParticleExtractor(I3Extractor):
     with GraphNeT.
     """
 
-    def __init__(self, extractor_name: str):
+    def __init__(self, extractor_name: str, exclude: list = [None]):
         """Construct I3ParticleExtractor."""
         # Base class constructor
-        super().__init__(extractor_name=extractor_name)
+        super().__init__(extractor_name=extractor_name, exclude=exclude)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, float]:
         """Extract I3Particle properties from I3Particle in frame."""

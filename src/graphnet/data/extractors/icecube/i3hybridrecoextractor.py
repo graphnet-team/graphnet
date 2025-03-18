@@ -11,10 +11,10 @@ if TYPE_CHECKING:
 class I3GalacticPlaneHybridRecoExtractor(I3Extractor):
     """Class for extracting galatictic plane hybrid reconstruction."""
 
-    def __init__(self, name: str = "dnn_hybrid"):
+    def __init__(self, name: str = "dnn_hybrid", exclude: list = [None]):
         """Construct I3GalacticPlaneHybridRecoExtractor."""
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract TUMs DNN reconcstructions and associated variables."""
