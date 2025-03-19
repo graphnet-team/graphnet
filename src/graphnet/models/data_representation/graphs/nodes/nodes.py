@@ -582,7 +582,6 @@ class DOMSummaryFeatures(NodeDefinition):
             charge_index=self._charge_idx,
             time_index=self._time_idx,
         )
-        print(ref_time)
 
         # add total charge
         if self._total_charge:
@@ -637,3 +636,14 @@ class DOMSummaryFeatures(NodeDefinition):
             ] *= self._time_standardization
 
         return Data(x=torch.tensor(cluster_class.clustered_x))
+
+    def set_indeces(self, feature_names: List[str]) -> None:
+        """Set the indices for the input features."""
+        assert set(feature_names) == set(
+            self._cluster_on + [self._charge_label, self._time_label]
+        ), f"Input feature names do not match: {feature_names}"
+        self._cluster_idx = [
+            feature_names.index(column) for column in self._cluster_on
+        ]
+        self._charge_idx = feature_names.index(self._charge_label)
+        self._time_idx = feature_names.index(self._time_label)
