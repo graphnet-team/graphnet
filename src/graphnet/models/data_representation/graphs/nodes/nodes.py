@@ -468,4 +468,172 @@ class IceMixNodes(NodeDefinition):
         for idx, feature in enumerate(non_ice_features):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 
-        return graph
+        return Data(x=graph)
+
+
+class DOMSummaryFeatures(NodeDefinition):
+    """Represent DOMs as clusters with summary features.
+
+    If `cluster_on` is set to the xyz coordinates of DOMs
+    e.g. `cluster_on = ['dom_x', 'dom_y', 'dom_z']`, each node will be a
+    unique DOM and the pulse information (charge, time) is summarized by
+    NOTE: Intended to be used with features [dom_x, dom_y, dom_z, charge, time]
+
+    - total charge
+    - charge after t
+    - time of first hit
+    - time spread
+    - time std
+    - time after charge percentiles
+
+    Taken from Theo Glauchs PhD thesis:
+    https://nbn-resolving.org/urn:nbn:de:bvb:91-diss-20210208-1584755-1-7
+    """
+
+    def __init__(
+        self,
+        cluster_on: List[str],
+        input_feature_names: List[str],
+        charge_label: str = "charge",
+        time_label: str = "dom_time",
+        total_charge: bool = True,
+        charge_after_t: List[int] = [10, 50, 100],
+        time_of_first_hit: bool = True,
+        time_spread: bool = True,
+        time_std: bool = True,
+        time_after_charge_pct: List[int] = [1, 3, 5, 11, 15, 20, 50, 80],
+        charge_standardization: float = 1e-2,
+        time_standardization: float = 1e-3,
+    ) -> None:
+        """Construct `PercentileClusters`.
+
+        Args:
+            cluster_on: Names of features to create clusters from.
+            input_feature_names: Column names for input features.
+            charge_label: Name of the charge column.
+            time_label: Name of the time column.
+            total_charge: If True, total charge is added to the output.
+            charge_after_t: List of times to calculate charge after.
+            time_of_first_hit: If True, time of first hit is added
+                to the output.
+            time_spread: If True, time spread is added to the output.
+            time_std: If True, time std is added to the output.
+            time_after_charge_pct: List of percentiles to calculate time after
+                charge.
+            charge_standardization: Standardization factor for charge.
+            time_standardization: Standardization factor for time
+        """
+        # Set member variables
+        self._cluster_on = cluster_on
+        self._charge_label = charge_label
+        self._time_label = time_label
+        self._charge_standardization = charge_standardization
+        self._time_standardization = time_standardization
+
+        # feature member variables
+        self._total_charge = total_charge
+        self._charge_after_t = charge_after_t
+        self._time_of_first_hit = time_of_first_hit
+        self._time_spread = time_spread
+        self._time_std = time_std
+        self._time_after_charge_pct = time_after_charge_pct
+
+        # check for correct features
+        if input_feature_names is not None:
+            assert set(input_feature_names) == set(
+                cluster_on + [charge_label, time_label]
+            ), f"Input feature names do not match: {input_feature_names}"
+        # Base class constructor
+        super().__init__(input_feature_names=input_feature_names)
+
+    def _define_output_feature_names(
+        self,
+        input_feature_names: List[str],
+    ) -> List[str]:
+        """Set the output feature names."""
+        self.set_indeces(input_feature_names)
+        new_feature_names = deepcopy(self._cluster_on)
+        if self._total_charge:
+            new_feature_names.append("total_charge")
+        for t in self._charge_after_t:
+            new_feature_names.append(f"charge_after_{t}ns")
+        if self._time_of_first_hit:
+            new_feature_names.append("time_of_first_hit")
+        if self._time_spread:
+            new_feature_names.append("time_spread")
+        if self._time_std:
+            new_feature_names.append("time_std")
+        for pct in self._time_after_charge_pct:
+            new_feature_names.append(f"time_after_charge_pct{pct}")
+        return new_feature_names
+
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
+        """Construct nodes from raw node features ´x´."""
+        # Cast to Numpy
+        x = x.numpy()
+        # Construct clusters with percentile-summarized features
+        cluster_class = cluster_and_pad(
+            x=x,
+            cluster_columns=self._cluster_idx,
+            sort_by=[self._time_idx],
+        )
+        # calculate charge weighted median time as reference
+        ref_time = cluster_class.reference_time(
+            charge_index=self._charge_idx,
+            time_index=self._time_idx,
+        )
+        print(ref_time)
+
+        # add total charge
+        if self._total_charge:
+            cluster_class.add_sum_charge(charge_index=self._charge_idx)
+            cluster_class.clustered_x[:, -1] *= self._charge_standardization
+
+        # add charge after t
+        if len(self._charge_after_t) > 0:
+            cluster_class.add_accumulated_value_after_t(
+                time_index=self._time_idx,
+                summarization_indices=[self._charge_idx],
+                times=self._charge_after_t,
+            )
+            cluster_class.clustered_x[
+                :, -len(self._charge_after_t) :
+            ] *= self._charge_standardization
+
+        # add time of first hit
+        if self._time_of_first_hit:
+            cluster_class.add_time_first_pulse(
+                time_index=self._time_idx,
+            )
+            cluster_class.clustered_x[:, -1] -= ref_time
+            cluster_class.clustered_x[:, -1] *= self._time_standardization
+
+        # add time spread
+        if self._time_spread:
+            cluster_class.add_spread(
+                columns=[self._time_idx],
+            )
+            cluster_class.clustered_x[:, -1] *= self._time_standardization
+
+        # add time std
+        if self._time_std:
+            cluster_class.add_std(
+                columns=[self._time_idx],
+            )
+            cluster_class.clustered_x[:, -1] *= self._time_standardization
+
+        # add time after charge percentiles
+        if len(self._time_after_charge_pct) > 0:
+            cluster_class.add_charge_threshold_summary(
+                summarization_indices=[self._time_idx],
+                percentiles=self._time_after_charge_pct,
+                charge_index=self._charge_idx,
+            )
+            cluster_class.clustered_x[
+                :, -len(self._time_after_charge_pct) :
+            ] -= ref_time
+            cluster_class.clustered_x[
+                :, -len(self._time_after_charge_pct) :
+            ] *= self._time_standardization
+
+        return Data(x=torch.tensor(cluster_class.clustered_x))
