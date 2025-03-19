@@ -468,7 +468,7 @@ class IceMixNodes(NodeDefinition):
         for idx, feature in enumerate(non_ice_features):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 
-        return Data(x=graph)
+        return graph
 
 
 class DOMSummaryFeatures(NodeDefinition):
