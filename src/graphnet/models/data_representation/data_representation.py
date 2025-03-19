@@ -170,7 +170,7 @@ class DataRepresentation(Model):
         input_features = self._detector(input_features, input_feature_names)
 
         # Create data & get new final data feature names
-        data = self._create_data(input_features=input_features)
+        data = Data(x=input_features)
 
         # Attach number of pulses as static attribute.
         data.n_pulses = torch.tensor(len(input_features), dtype=torch.int32)
@@ -411,20 +411,6 @@ class DataRepresentation(Model):
         self, input_feature_names: List[str]
     ) -> List[str]:
         """Set the final data output feature names."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def _create_data(self, input_features: torch.Tensor) -> Data:
-        """Create data from input features.
-
-        Enforce the dtype of the feature tensor.
-        E.g.: `data.x = data.x.type(self.dtype)`
-        if the training data is stored in `data.x`.
-
-        Should return:
-            - data: torch_geometric.data.Data object representing the event.
-            - data_feature_names: List of feature names in the data object.
-        """
         raise NotImplementedError
 
     def _label_repeater(self, label: torch.Tensor, data: Data) -> torch.Tensor:

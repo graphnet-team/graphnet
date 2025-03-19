@@ -5,7 +5,7 @@ code in graphnet. These modules define what graph-based models sees as input
 and can be passed to dataloaders during training and deployment.
 """
 
-from typing import List, Optional, Dict, Union, Tuple, Any, Callable
+from typing import List, Optional, Dict, Union, Any, Callable
 import torch
 from numpy.random import Generator
 import numpy as np
@@ -120,23 +120,6 @@ class GraphDefinition(DataRepresentation):
         self._node_definition.set_output_feature_names(input_feature_names)
         return self._node_definition._output_feature_names
 
-    def _create_data(
-        self, input_features: torch.Tensor
-    ) -> Tuple[Data, List[str]]:
-        # Create graph & get new node feature names
-        data = self._node_definition(input_features)
-        if self._sort_by is not None:
-            data.x = data.x[data.x[:, self._sort_by].sort()[1]]
-
-        # Enforce dtype
-        data.x = data.x.type(self.dtype)
-
-        # Assign edges
-        if self._edge_definition is not None:
-            data = self._edge_definition(data)
-
-        return data
-
     def forward(  # type: ignore
         self,
         input_features: np.ndarray,
@@ -178,23 +161,24 @@ class GraphDefinition(DataRepresentation):
             data_path=data_path,
         )
 
+        # Create graph & get new node feature names
+        data = self._node_definition(data.x)
+        if self._sort_by is not None:
+            data.x = data.x[data.x[:, self._sort_by].sort()[1]]
+
+        # Enforce dtype
+        data.x = data.x.type(self.dtype)
+
+        # Assign edges
+        if self._edge_definition is not None:
+            data = self._edge_definition(data)
+
         if self._add_static_features:
             data = self._add_features_individually(
                 data,
                 self.output_feature_names,
             )
 
-        return data
-
-    def _forward_end(
-        self,
-        data: Data,
-        data_feature_names: List[str],
-    ) -> Data:
-        """Add processing steps at the end of the forward pass."""
-        # Add original features as attributes
-        if self._add_static_features:
-            data = self._add_features_individually(data, data_feature_names)
         return data
 
     def _add_features_individually(
