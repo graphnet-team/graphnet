@@ -42,3 +42,9 @@ ICECUBE_GEOMETRY_TABLE_DIR = os.path.join(GEOMETRY_TABLE_DIR, "icecube")
 PROMETHEUS_GEOMETRY_TABLE_DIR = os.path.join(GEOMETRY_TABLE_DIR, "prometheus")
 LIQUIDO_GEOMETRY_TABLE_DIR = os.path.join(GEOMETRY_TABLE_DIR, "liquid-o")
 MAGIC_GEOMETRY_TABLE_DIR = os.path.join(GEOMETRY_TABLE_DIR, "magic")
+
+# Image Mapping Tables
+IMAGE_MAPPING_TABLE_DIR = os.path.join(DATA_DIR, "image_mapping_tables")
+IC86_CNN_MAPPING = os.path.join(
+    IMAGE_MAPPING_TABLE_DIR, "IC86_CNN_mapping.parquet"
+)
