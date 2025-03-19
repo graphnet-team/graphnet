@@ -34,7 +34,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             )
 
     @final
-    def forward(self, x: torch.tensor) -> Tuple[Data, List[str]]:
+    def forward(self, x: torch.tensor) -> torch.tensor:
         """Construct nodes from raw node features.
 
         Args:
@@ -45,9 +45,9 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         Returns:
             graph: a graph without edges
         """
-        graph = self._construct_nodes(x=x)
+        data = self._construct_nodes(x=x)
 
-        return graph
+        return data
 
     @property
     def _output_feature_names(self) -> List[str]:
@@ -110,7 +110,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         """
 
     @abstractmethod
-    def _construct_nodes(self, x: torch.tensor) -> Data:
+    def _construct_nodes(self, x: torch.tensor) -> torch.tensor:
         """Construct nodes from raw node features ´x´.
 
         Args:
@@ -133,8 +133,8 @@ class NodesAsPulses(NodeDefinition):
     ) -> List[str]:
         return input_feature_names
 
-    def _construct_nodes(self, x: torch.Tensor) -> Data:
-        return Data(x=x)
+    def _construct_nodes(self, x: torch.Tensor) -> torch.Tensor:
+        return x
 
 
 class PercentileClusters(NodeDefinition):
@@ -195,7 +195,7 @@ class PercentileClusters(NodeDefinition):
             new_feature_names.append("counts")
         return cluster_idx, summ_idx, new_feature_names
 
-    def _construct_nodes(self, x: torch.Tensor) -> Data:
+    def _construct_nodes(self, x: torch.Tensor) -> torch.Tensor:
         # Cast to Numpy
         x = x.numpy()
         # Construct clusters with percentile-summarized features
@@ -219,7 +219,7 @@ class PercentileClusters(NodeDefinition):
             )  # noqa
             raise AttributeError
 
-        return Data(x=torch.tensor(array))
+        return torch.tensor(array)
 
 
 class NodeAsDOMTimeSeries(NodeDefinition):
@@ -270,7 +270,7 @@ class NodeAsDOMTimeSeries(NodeDefinition):
     ) -> List[str]:
         return input_feature_names + ["new_node_col"]
 
-    def _construct_nodes(self, x: torch.Tensor) -> Data:
+    def _construct_nodes(self, x: torch.Tensor) -> torch.Tensor:
         """Construct nodes from raw node features ´x´."""
         # Cast to Numpy
         x = x.numpy()
@@ -309,7 +309,7 @@ class NodeAsDOMTimeSeries(NodeDefinition):
         new_node_col[0] = 1
         x = np.column_stack([x, new_node_col])
 
-        return Data(x=torch.tensor(x))
+        return torch.tensor(x)
 
 
 class IceMixNodes(NodeDefinition):
@@ -440,7 +440,7 @@ class IceMixNodes(NodeDefinition):
 
         return ids
 
-    def _construct_nodes(self, x: torch.Tensor) -> Data:
+    def _construct_nodes(self, x: torch.Tensor) -> torch.Tensor:
 
         event_length = x.shape[0]
         if self.hlc_name is not None:
@@ -468,4 +468,4 @@ class IceMixNodes(NodeDefinition):
         for idx, feature in enumerate(non_ice_features):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 
-        return Data(x=graph)
+        return graph

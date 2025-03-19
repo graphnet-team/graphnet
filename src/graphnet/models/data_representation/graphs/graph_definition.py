@@ -112,6 +112,9 @@ class GraphDefinition(DataRepresentation):
         self._sort_by = sort_by
         self._add_static_features = add_static_features
 
+        # make sure output feature names are set also in node definition
+        self._set_output_feature_names(self._input_feature_names)
+
     def _set_output_feature_names(
         self, input_feature_names: List[str]
     ) -> List[str]:
@@ -160,9 +163,8 @@ class GraphDefinition(DataRepresentation):
             loss_weight_default_value=loss_weight_default_value,
             data_path=data_path,
         )
-
         # Create graph & get new node feature names
-        data = self._node_definition(data.x)
+        data.x = self._node_definition(data.x)
         if self._sort_by is not None:
             data.x = data.x[data.x[:, self._sort_by].sort()[1]]
 
@@ -178,7 +180,6 @@ class GraphDefinition(DataRepresentation):
                 data,
                 self.output_feature_names,
             )
-
         return data
 
     def _add_features_individually(
