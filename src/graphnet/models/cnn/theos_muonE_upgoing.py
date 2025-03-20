@@ -4,7 +4,7 @@ Mimics `upgoing_muon_energy` model from
 https://github.com/IceCubeOpenSource/i3deepice/tree/master
 """
 
-from typing import Tuple
+from typing import Tuple, Union
 
 import torch
 from torch import nn
@@ -21,7 +21,7 @@ class Conv3dBN(LightningModule):
         in_channels: int,
         out_channels: int,
         kernel_size: Tuple[int, int, int],
-        padding: Tuple[int, int, int],
+        padding: Union[str, Tuple[int, int, int]],
         bias: bool = False,
     ):
         """Create a Conv3dBN module.
@@ -80,19 +80,19 @@ class InceptionBlock4(LightningModule):
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=(t0, 1, 1),
-                padding=(t0 // 2, 0, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, t0, 1),
-                padding=(0, t0 // 2, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, t0),
-                padding=(0, 0, t0 // 2),
+                padding="same",
             ),
         )
 
@@ -101,28 +101,28 @@ class InceptionBlock4(LightningModule):
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=(t1, 1, 1),
-                padding=(t1 // 2, 0, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, t1, 1),
-                padding=(0, t1 // 2, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, t1),
-                padding=(0, 0, t1 // 2),
+                padding="same",
             ),
         )
 
-        self.tower_4 = nn.Sequential(
+        self.tower4 = nn.Sequential(
             Conv3dBN(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, t2),
-                padding=(0, 0, t2 // 2),
+                padding="same",
             ),
         )
 
@@ -136,12 +136,13 @@ class InceptionBlock4(LightningModule):
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, 1),
-                padding=(0, 0, 0),
+                padding="same",
             ),
         )
+        self.out_channels = out_channels * 4
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the ConvResBlock."""
+        """Forward pass of the InceptionBlock4."""
         ret = torch.cat(
             [
                 self.tower0(x),
@@ -177,31 +178,31 @@ class InceptionResnet(LightningModule):
             scale: Scaling factor for the residual connection.
         """
         super().__init__()
-        self.scale = scale
+        self._scale = scale
         self.tower1 = nn.Sequential(
             Conv3dBN(
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, 1),
-                padding=(0, 0, 0),
+                padding="same",
             ),
             Conv3dBN(
-                in_channels=in_channels,
+                in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(t1, 1, 1),
-                padding=(t1 // 2, 0, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, t1, 1),
-                padding=(0, t1 // 2, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, t1),
-                padding=(0, 0, t1 // 2),
+                padding="same",
             ),
         )
         self.tower2 = nn.Sequential(
@@ -209,25 +210,25 @@ class InceptionResnet(LightningModule):
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, 1),
-                padding=(0, 0, 0),
+                padding="same",
             ),
             Conv3dBN(
-                in_channels=in_channels,
+                in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(t2, 1, 1),
-                padding=(t2 // 2, 0, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, t2, 1),
-                padding=(0, t2 // 2, 0),
+                padding="same",
             ),
             Conv3dBN(
                 in_channels=out_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, t2),
-                padding=(0, 0, t2 // 2),
+                padding="same",
             ),
         )
         self.tower3 = nn.Sequential(
@@ -240,7 +241,7 @@ class InceptionResnet(LightningModule):
                 in_channels=in_channels,
                 out_channels=out_channels,
                 kernel_size=(1, 1, 1),
-                padding=(0, 0, 0),
+                padding="same",
             ),
         )
 
@@ -277,28 +278,28 @@ class TheosMuonEUpgoing(CNN):
                 t2=8,
             ),
             InceptionBlock4(
-                in_channels=18,
+                in_channels=18 * 4,
                 out_channels=18,
                 t0=2,
                 t1=3,
                 t2=7,
             ),
             InceptionBlock4(
-                in_channels=18,
+                in_channels=18 * 4,
                 out_channels=18,
                 t0=2,
                 t1=4,
                 t2=8,
             ),
             InceptionBlock4(
-                in_channels=18,
+                in_channels=18 * 4,
                 out_channels=18,
                 t0=3,
                 t1=5,
                 t2=9,
             ),
             InceptionBlock4(
-                in_channels=18,
+                in_channels=18 * 4,
                 out_channels=18,
                 t0=2,
                 t1=8,
@@ -306,20 +307,20 @@ class TheosMuonEUpgoing(CNN):
             ),
         )
         self.avgpool1 = nn.AvgPool3d((2, 2, 3))
-        self.bn1 = nn.BatchNorm3d(18)
+        self.bn1 = nn.BatchNorm3d(18 * 4)
         tmp = [
             InceptionResnet(
-                in_channels=18,
+                in_channels=18 * 4,
                 out_channels=24,
                 t2=3,
             ),
             InceptionResnet(
-                in_channels=24,
+                in_channels=24 * 3,
                 out_channels=24,
                 t2=4,
             ),
             InceptionResnet(
-                in_channels=24,
+                in_channels=24 * 3,
                 out_channels=24,
                 t2=5,
             ),
@@ -327,17 +328,17 @@ class TheosMuonEUpgoing(CNN):
         for _ in range(5):
             tmp = tmp + [
                 InceptionResnet(
-                    in_channels=18,
+                    in_channels=24 * 3,
                     out_channels=24,
                     t2=3,
                 ),
                 InceptionResnet(
-                    in_channels=24,
+                    in_channels=24 * 3,
                     out_channels=24,
                     t2=4,
                 ),
                 InceptionResnet(
-                    in_channels=24,
+                    in_channels=24 * 3,
                     out_channels=24,
                     t2=5,
                 ),
@@ -345,22 +346,22 @@ class TheosMuonEUpgoing(CNN):
 
         self.resblocks1 = nn.Sequential(*tmp)
         self.avgpool2 = nn.AvgPool3d((1, 1, 2))
-        self.bn2 = nn.BatchNorm3d(24)
+        self.bn2 = nn.BatchNorm3d(24 * 3)
         tmp = []
         for _ in range(6):
             tmp = tmp + [
                 InceptionResnet(
-                    in_channels=24,
+                    in_channels=24 * 3,
                     out_channels=24,
                     t2=3,
                 ),
                 InceptionResnet(
-                    in_channels=24,
+                    in_channels=24 * 3,
                     out_channels=24,
                     t2=4,
                 ),
                 InceptionResnet(
-                    in_channels=24,
+                    in_channels=24 * 3,
                     out_channels=24,
                     t2=5,
                 ),
@@ -368,7 +369,7 @@ class TheosMuonEUpgoing(CNN):
         self.resblocks2 = nn.Sequential(*tmp)
         self.convs111 = nn.Sequential(
             nn.Conv3d(
-                in_channels=24,
+                in_channels=24 * 3,
                 out_channels=64,
                 kernel_size=(1, 1, 1),
                 padding=(0, 0, 0),
@@ -391,7 +392,8 @@ class TheosMuonEUpgoing(CNN):
 
     def forward(self, data: Data) -> torch.Tensor:
         """Apply learnable forward pass in model."""
-        x = data.x
+        assert len(data.x) == 1, "Only one image expected"
+        x = data.x[0]
         print(f"At beginning {x.size()}")
         x = self.inceptionblocks4(x)
         print(f"After inceptionblocks4 {x.size()}")
