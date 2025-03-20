@@ -385,7 +385,7 @@ class TheosMuonEUpgoing(CNN):
         )
         self.avgpool3 = nn.AvgPool3d((1, 1, 2))
         self.mlps = nn.Sequential(
-            nn.LazyLinear(120),
+            nn.Linear(500, 120),
             nn.Linear(120, 64),
             nn.Linear(64, 16),
         )
@@ -394,26 +394,15 @@ class TheosMuonEUpgoing(CNN):
         """Apply learnable forward pass in model."""
         assert len(data.x) == 1, "Only one image expected"
         x = data.x[0]
-        print(f"At beginning {x.size()}")
         x = self.inceptionblocks4(x)
-        print(f"After inceptionblocks4 {x.size()}")
         x = self.avgpool1(x)
-        print(f"After avgpool1 {x.size()}")
         x = self.bn1(x)
-        print(f"After bn1 {x.size()}")
         x = self.resblocks1(x)
-        print(f"After resblocks1 {x.size()}")
         x = self.avgpool2(x)
-        print(f"After avgpool2 {x.size()}")
         x = self.bn2(x)
-        print(f"After bn2 {x.size()}")
         x = self.resblocks2(x)
-        print(f"After resblocks2 {x.size()}")
         x = self.convs111(x)
-        print(f"After convs111 {x.size()}")
         x = self.avgpool3(x)
-        print(f"After avgpool3 {x.size()}")
         x = nn.Flatten()(x)
-        print(f"After flatten {x.size()}")
         x = self.mlps(x)
         return x
