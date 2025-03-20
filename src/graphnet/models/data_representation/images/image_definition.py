@@ -5,8 +5,9 @@ code in graphnet. These modules define what image-based models sees as input
 and can be passed to dataloaders during training and deployment.
 """
 
-from typing import List, Optional, Dict, Union, Tuple
+from typing import List, Optional, Dict, Union, Any, Callable
 import torch
+import numpy as np
 from numpy.random import Generator
 
 from graphnet.models.detector import Detector
@@ -96,15 +97,51 @@ class ImageDefinition(DataRepresentation):
         )
         return self._pixel_mapping.image_feature_names
 
-    def _create_data(
-        self, input_features: torch.Tensor
-    ) -> Tuple[Data, List[str]]:
-        # Create image & get new pixel feature names
-        data, data_feature_names = self._node_definition(input_features)
+    def forward(  # type: ignore
+        self,
+        input_features: np.ndarray,
+        input_feature_names: List[str],
+        truth_dicts: Optional[List[Dict[str, Any]]] = None,
+        custom_label_functions: Optional[Dict[str, Callable[..., Any]]] = None,
+        loss_weight_column: Optional[str] = None,
+        loss_weight: Optional[float] = None,
+        loss_weight_default_value: Optional[float] = None,
+        data_path: Optional[str] = None,
+    ) -> Data:
+        """Construct graph as ´Data´ object.
+
+        Args:
+            input_features: Input features for graph construction.
+                Shape ´[num_rows, d]´
+            input_feature_names: name of each column. Shape ´[,d]´.
+            truth_dicts: Dictionary containing truth labels.
+            custom_label_functions: Custom label functions.
+            loss_weight_column: Name of column that holds loss weight.
+                                Defaults to None.
+            loss_weight: Loss weight associated with event. Defaults to None.
+            loss_weight_default_value: default value for loss weight.
+                    Used in instances where some events have
+                    no pre-defined loss weight. Defaults to None.
+            data_path: Path to dataset data files. Defaults to None.
+
+        Returns:
+            graph
+        """
+        data = super().forward(
+            input_features=input_features,
+            input_feature_names=input_feature_names,
+            truth_dicts=truth_dicts,
+            custom_label_functions=custom_label_functions,
+            loss_weight_column=loss_weight_column,
+            loss_weight=loss_weight,
+            loss_weight_default_value=loss_weight_default_value,
+            data_path=data_path,
+        )
+        data.x = self._node_definition(data.x)
 
         data.x = data.x.type(self.dtype)
 
-        data = self._pixel_mapping(data, data_feature_names)
+        data = self._pixel_mapping(data, self.output_feature_names)
 
         if not isinstance(data.x, list):
             data.x = [data.x]
@@ -112,4 +149,4 @@ class ImageDefinition(DataRepresentation):
         for i, x in enumerate(data.x):
             data.x[i] = x.type(self.dtype)
 
-        return data, data_feature_names
+        return data
