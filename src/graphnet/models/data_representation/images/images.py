@@ -4,7 +4,7 @@ from typing import List, Optional, Any
 import torch
 
 from graphnet.models.data_representation.graphs import NodeDefinition
-from graphnet.models.detector import IceCube86
+from graphnet.models.detector import Detector, IceCube86
 
 from .image_definition import ImageDefinition
 from .mappings import IC86DNNMapping
@@ -20,6 +20,7 @@ class IC86DNNImage(ImageDefinition):
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
         dtype: Optional[torch.dtype] = torch.float,
+        detector: Optional[Detector] = None,
         **kwargs: Any,
     ) -> None:
         """Construct `IC86DNNImage`.
@@ -31,7 +32,15 @@ class IC86DNNImage(ImageDefinition):
             include_lower_dc: If True, the lower DeepCore will be included.
             include_upper_dc: If True, the upper DeepCore will be included.
             dtype: data type used for node features. e.g. ´torch.float´
+            detector: The corresponding ´Detector´ representing the data.
         """
+        # Default detector with unstandardized input features
+        if detector is None:
+            detector = IceCube86(
+                replace_with_identity=input_feature_names,
+            )
+        else:
+            assert isinstance(detector, IceCube86)
         node_definition.set_output_feature_names(input_feature_names)
         dom_labels = node_definition._cluster_on
 
@@ -43,8 +52,9 @@ class IC86DNNImage(ImageDefinition):
             include_upper_dc=include_upper_dc,
             dtype=dtype,
         )
+
         super().__init__(
-            detector=IceCube86(replace_with_identity=dom_labels),
+            detector=detector,
             node_definition=node_definition,
             pixel_mapping=pixel_mapping,  # PixelMapping,
             input_feature_names=input_feature_names,
