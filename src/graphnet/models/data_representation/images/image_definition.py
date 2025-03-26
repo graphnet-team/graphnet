@@ -137,16 +137,27 @@ class ImageDefinition(DataRepresentation):
             loss_weight_default_value=loss_weight_default_value,
             data_path=data_path,
         )
+
+        # data processing
         data.x = self._node_definition(data.x)
 
+        # set data type
         data.x = data.x.type(self.dtype)
 
+        # create image
         data = self._pixel_mapping(data, self.output_feature_names)
 
         if not isinstance(data.x, list):
             data.x = [data.x]
 
+        nb_nodes = []
         for i, x in enumerate(data.x):
             data.x[i] = x.type(self.dtype)
+
+            # setting number of nodes as product of C*(D*)H*W
+            nb_nodes.append(np.prod(list(data.x[i].size()[2:])))
+
+        # set num_nodes to surpress warning
+        data.num_nodes = torch.tensor(nb_nodes)
 
         return data
