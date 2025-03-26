@@ -21,7 +21,11 @@ class PixelMapping(Model):
 
     @abstractmethod
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
-        """Map pixel data to images."""
+        """Map pixel data to images.
+
+        Make sure to add a batch dimension to the output. E.g picture with
+        dimensions CxHxW = 10x64x64 should be returned as 1x10x64x64.
+        """
         raise NotImplementedError
 
     @abstractmethod
@@ -158,11 +162,12 @@ class IC86DNNMapping(PixelMapping):
                         int(self._tensor_mapping[geom_idx, 4]),
                     ] = batch_row_features[match_row]
 
-        ret = [main_arr]
+        # unqueeze to add batch dimension
+        ret = [main_arr.unsqueeze(0)]
         if self._include_upper_dc:
-            ret.append(upper_dc_arr)
+            ret.append(upper_dc_arr.unsqueeze(0))
         if self._include_lower_dc:
-            ret.append(lower_dc_arr)
+            ret.append(lower_dc_arr.unsqueeze(0))
 
         data.x = ret
 
