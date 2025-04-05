@@ -8,7 +8,7 @@ from torch_geometric.data import Data
 
 from graphnet.utilities.decorators import final
 from graphnet.models import Model
-from ..utils import (
+from graphnet.models.data_representation.graphs.utils import (
     cluster_and_pad,
     identify_indices,
     lex_sort,
