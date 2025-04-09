@@ -233,6 +233,7 @@ class Dataset(
         loss_weight_default_value: Optional[float] = None,
         seed: Optional[int] = None,
         labels: Optional[Dict[str, Any]] = None,
+        use_super_selection: bool = False,
     ):
         """Construct Dataset.
 
@@ -280,6 +281,10 @@ class Dataset(
                 events ~ event_no % 5 > 0"`).
             graph_definition: Method that defines the graph representation.
             labels: Dictionary of labels to be added to the dataset.
+            use_super_selection: If True, the string selection is handled by
+                the query function of the dataset class, rather than
+                pd.DataFrame.query. Defaults to False and should
+                only be used with sqlite.
         """
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -306,6 +311,7 @@ class Dataset(
         self._graph_definition = deepcopy(graph_definition)
         self._labels = labels
         self._string_column = graph_definition._detector.string_index_name
+        self._use_super_selection = use_super_selection
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -356,6 +362,7 @@ class Dataset(
             self,
             index_column=index_column,
             seed=seed,
+            use_super_selection=self._use_super_selection,
         )
 
         if self._labels is not None:
@@ -618,10 +625,13 @@ class Dataset(
         """
         # Convert truth to dict
         if len(truth.shape) == 1:
-            truth = truth.reshape(1, -1)
-        truth_dict = {
-            key: truth[:, index] for index, key in enumerate(self._truth)
-        }
+            truth_dict = {
+                key: truth[0][index] for index, key in enumerate(self._truth)
+            }
+        else:
+            truth_dict = {
+                key: truth[:, index] for index, key in enumerate(self._truth)
+            }
 
         # Define custom labels
         labels_dict = self._get_labels(truth_dict)
