@@ -1,15 +1,23 @@
-"""Modules for constructing graphs.
+"""Deprecated imports.
 
-´GraphDefinition´ defines the nodes and their features,  and contains general
-graph-manipulation.´EdgeDefinition´ defines how edges are drawn between nodes
-and their features.
+moved to graphnet.models.data_representation.graphs.edges.
 """
 
-from .edges import (
+from graphnet.utilities.logging import Logger
+
+from graphnet.models.data_representation.graphs import (
     EdgeDefinition,
     KNNEdges,
     RadialEdges,
     EuclideanEdges,
     KNNDistanceEdges,
+    MinkowskiKNNEdges,
 )
-from .minkowski import MinkowskiKNNEdges
+
+Logger(log_folder=None).warning_once(
+    (
+        "`graphnet.models.graphs` will be depricated soon. "
+        "All functionality has been moved to "
+        "`graphnet.models.data_representation`."
+    )
+)
