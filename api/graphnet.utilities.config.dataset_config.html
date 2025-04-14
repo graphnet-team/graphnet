@@ -441,6 +441,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">graph_definition</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.data_representation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">data_representation</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">labels</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.as_dict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">as_dict()</span></code></a>
@@ -567,6 +569,13 @@
     
     
       <a href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">graph_definition</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.utilities.config.dataset_config.DatasetConfig.data_representation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">data_representation</span></code></a>
       
     
     </li>
@@ -747,6 +756,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">graph_definition</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.data_representation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">data_representation</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">labels</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.utilities.config.dataset_config.DatasetConfig.as_dict" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">as_dict()</span></code></a>
@@ -777,7 +788,7 @@
 <p>Config classes for the <cite>graphnet.data.dataset</cite> module.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.dataset_config.</span></span><span class="sig-name descname"><span class="pre">DatasetConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string_selection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/dataset_config.html#DatasetConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.utilities.config.dataset_config.</span></span><span class="sig-name descname"><span class="pre">DatasetConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemaps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_truth_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">string_selection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/utilities/config/dataset_config.html#DatasetConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.utilities.config.base_config.html#graphnet.utilities.config.base_config.BaseConfig" title="graphnet.utilities.config.base_config.BaseConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseConfig</span></code></a></p>
 <p>Configuration for all <a href="#id1"><span class="problematic" id="id2">`</span></a>Dataset`s.</p>
 <p>Construct <cite>DataConfig</cite>.</p>
@@ -870,6 +881,7 @@ construction more transparent and reproducible.</p>
 <li><p><strong>loss_weight_default_value</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>seed</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>graph_definition</strong> (<em>Any</em>)</p></li>
+<li><p><strong>data_representation</strong> (<em>Any</em>)</p></li>
 <li><p><strong>labels</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>] </em><em>| </em><em>None</em>)</p></li>
 </ul>
 </dd>
@@ -933,6 +945,10 @@ construction more transparent and reproducible.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition">
 <span class="sig-name descname"><span class="pre">graph_definition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.graph_definition" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.data_representation">
+<span class="sig-name descname"><span class="pre">data_representation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></em><a class="headerlink" href="#graphnet.utilities.config.dataset_config.DatasetConfig.data_representation" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.utilities.config.dataset_config.DatasetConfig.labels">

@@ -128,8 +128,8 @@
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="rnn" href="graphnet.models.rnn.html" />
-    <link rel="prev" title="graphs" href="graphnet.models.graphs.graphs.html" />
+    <link rel="next" title="data_representation" href="graphnet.models.data_representation.data_representation.html" />
+    <link rel="prev" title="graphs" href="graphnet.models.data_representation.graphs.graphs.html" />
   
    
 
@@ -148,7 +148,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.models.graphs.utils" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.models.data_representation.graphs.utils" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -243,7 +243,8 @@
             <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
           <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
           <li class="md-tabs__item"><a href="graphnet.models.html" class="md-tabs__link">models</a></li>
-          <li class="md-tabs__item"><a href="graphnet.models.graphs.html" class="md-tabs__link">graphs</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.data_representation.html" class="md-tabs__link">data_representation</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.data_representation.graphs.html" class="md-tabs__link">graphs</a></li>
       </ul>
     </div>
   </nav>
@@ -372,47 +373,38 @@
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.detector.html" class="md-nav__link">detector</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.gnn.html" class="md-nav__link">gnn</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.html" class="md-nav__link">graphs</a>
+      <a href="graphnet.models.data_representation.html" class="md-nav__link">data_representation</a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.graphs.edges.html" class="md-nav__link">edges</a>
+      <a href="graphnet.models.data_representation.graphs.html" class="md-nav__link">graphs</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.graphs.edges.html" class="md-nav__link">edges</a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.graphs.nodes.html" class="md-nav__link">nodes</a>
+      <a href="graphnet.models.data_representation.graphs.nodes.html" class="md-nav__link">nodes</a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.graphs.graph_definition.html" class="md-nav__link">graph_definition</a>
+      <a href="graphnet.models.data_representation.graphs.graph_definition.html" class="md-nav__link">graph_definition</a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.graphs.graphs.html" class="md-nav__link">graphs</a>
+      <a href="graphnet.models.data_representation.graphs.graphs.html" class="md-nav__link">graphs</a>
       
     
     </li>
@@ -428,33 +420,33 @@
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-utils--page-root" class="md-nav__link">utils</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-graphs-utils--page-root" class="md-nav__link">utils</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.lex_sort" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">lex_sort()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.lex_sort" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">lex_sort()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.gather_cluster_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gather_cluster_sequence()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.gather_cluster_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gather_cluster_sequence()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.identify_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">identify_indices()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.identify_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">identify_indices()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_percentile_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_percentile_summary()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_percentile_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_percentile_summary()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_counts" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_counts()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_counts" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_counts()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_sum_charge" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_sum_charge()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_sum_charge" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_sum_charge()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
         </li></ul>
             </nav>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.ice_transparency" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ice_transparency()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.ice_transparency" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ice_transparency()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -464,75 +456,75 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.lex_sort" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">lex_sort()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.lex_sort" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">lex_sort()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.gather_cluster_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gather_cluster_sequence()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.gather_cluster_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gather_cluster_sequence()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.identify_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">identify_indices()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.identify_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">identify_indices()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_and_pad.add_percentile_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_percentile_summary()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_percentile_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_percentile_summary()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_and_pad.add_counts" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_counts()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_counts" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_counts()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_and_pad.add_sum_charge" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_sum_charge()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_sum_charge" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_sum_charge()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
       
     
     </li></ul>
@@ -541,12 +533,42 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.graphs.utils.ice_transparency" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ice_transparency()</span></code></a>
+      <a href="#graphnet.models.data_representation.graphs.utils.ice_transparency" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ice_transparency()</span></code></a>
       
     
     </li></ul>
     
     </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.data_representation.html" class="md-nav__link">data_representation</a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.detector.html" class="md-nav__link">detector</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.gnn.html" class="md-nav__link">gnn</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.graphs.html" class="md-nav__link">graphs</a>
+      
     
     </li>
     <li class="md-nav__item">
@@ -658,33 +680,33 @@
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-utils--page-root" class="md-nav__link">utils</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-graphs-utils--page-root" class="md-nav__link">utils</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.lex_sort" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">lex_sort()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.lex_sort" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">lex_sort()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.gather_cluster_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gather_cluster_sequence()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.gather_cluster_sequence" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">gather_cluster_sequence()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.identify_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">identify_indices()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.identify_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">identify_indices()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_percentile_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_percentile_summary()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_percentile_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_percentile_summary()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_counts" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_counts()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_counts" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_counts()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_sum_charge" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_sum_charge()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_sum_charge" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_sum_charge()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
         </li></ul>
             </nav>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.utils.ice_transparency" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ice_transparency()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.ice_transparency" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ice_transparency()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -697,12 +719,12 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.models.graphs.utils">
-<span id="utils"></span><h1 id="api-graphnet-models-graphs-utils--page-root">utils<a class="headerlink" href="#api-graphnet-models-graphs-utils--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.models.data_representation.graphs.utils">
+<span id="utils"></span><h1 id="api-graphnet-models-data-representation-graphs-utils--page-root">utils<a class="headerlink" href="#api-graphnet-models-data-representation-graphs-utils--page-root" title="Link to this heading">¶</a></h1>
 <p>Utility functions for construction of graphs.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.lex_sort">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">lex_sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#lex_sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.lex_sort" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.lex_sort">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">lex_sort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#lex_sort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.lex_sort" title="Link to this definition">¶</a></dt>
 <dd><p>Sort numpy arrays according to columns on ´cluster_columns´.</p>
 <p>Note that <cite>x</cite> is sorted along the dimensions in <cite>cluster_columns</cite>
 backwards. I.e. <cite>cluster_columns = [0,1,2]</cite>
@@ -723,8 +745,8 @@ means <cite>x</cite> is sorted along <cite>[2,1,0]</cite>.</p>
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.gather_cluster_sequence">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">gather_cluster_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#gather_cluster_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.gather_cluster_sequence" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.gather_cluster_sequence">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">gather_cluster_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#gather_cluster_sequence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.gather_cluster_sequence" title="Link to this definition">¶</a></dt>
 <dd><p>Turn <cite>x</cite> into rows of clusters with sequences along columns.</p>
 <p>Sequences along columns are added which correspond to
 gathered sequences of the feature in <cite>x</cite> specified by column index
@@ -756,8 +778,8 @@ column_offset: Indices of the columns in <cite>array</cite> that defines cluster
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.identify_indices">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">identify_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_on</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#identify_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.identify_indices" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.identify_indices">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">identify_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_on</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#identify_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.identify_indices" title="Link to this definition">¶</a></dt>
 <dd><p>Identify indices for clustering and summarization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -772,8 +794,8 @@ column_offset: Indices of the columns in <cite>array</cite> that defines cluster
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_summarize_with_percentiles">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">cluster_summarize_with_percentiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summarization_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_summarize_with_percentiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_summarize_with_percentiles" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">cluster_summarize_with_percentiles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summarization_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_counts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_summarize_with_percentiles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles" title="Link to this definition">¶</a></dt>
 <dd><p>Turn <cite>x</cite> into clusters with percentile summary.</p>
 <p>From variables specified by column indices <cite>cluster_indices</cite>, <cite>x</cite> is turned
 into clusters. Information in columns of <cite>x</cite> specified by indices
@@ -810,8 +832,8 @@ are constructed.</p></li>
 </dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_and_pad">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">cluster_and_pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_and_pad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_and_pad" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">cluster_and_pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Cluster and pad the data for further summarization.</p>
 <p>Clusters the inptut data according to the specified columns
@@ -854,8 +876,8 @@ _padded_x: Added to the class</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_and_pad.add_charge_threshold_summary">
-<span class="sig-name descname"><span class="pre">add_charge_threshold_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summarization_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_and_pad.add_charge_threshold_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_and_pad.add_charge_threshold_summary" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_charge_threshold_summary">
+<span class="sig-name descname"><span class="pre">add_charge_threshold_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summarization_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">charge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_charge_threshold_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_charge_threshold_summary" title="Link to this definition">¶</a></dt>
 <dd><p>Summarize features through percentiles on charge of sensor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -888,8 +910,8 @@ _charge_weights: Added to the class</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_and_pad.add_percentile_summary">
-<span class="sig-name descname"><span class="pre">add_percentile_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summarization_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_and_pad.add_percentile_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_and_pad.add_percentile_summary" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_percentile_summary">
+<span class="sig-name descname"><span class="pre">add_percentile_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summarization_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">percentiles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_percentile_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_percentile_summary" title="Link to this definition">¶</a></dt>
 <dd><p>Summarize the features of the sensors using percentiles.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -917,8 +939,8 @@ clustered tensor defaults to adding at the end</p></li>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_and_pad.add_counts">
-<span class="sig-name descname"><span class="pre">add_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_and_pad.add_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_and_pad.add_counts" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_counts">
+<span class="sig-name descname"><span class="pre">add_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_counts" title="Link to this definition">¶</a></dt>
 <dd><p>Add the counts of the sensor to the summarization features.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -930,8 +952,8 @@ clustered tensor defaults to adding at the end</p></li>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_and_pad.add_sum_charge">
-<span class="sig-name descname"><span class="pre">add_sum_charge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">charge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_and_pad.add_sum_charge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_and_pad.add_sum_charge" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_sum_charge">
+<span class="sig-name descname"><span class="pre">add_sum_charge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">charge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_sum_charge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_sum_charge" title="Link to this definition">¶</a></dt>
 <dd><p>Add the sum of the charge to the summarization features.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -946,8 +968,8 @@ clustered tensor defaults to adding at the end</p></li>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_and_pad.add_std">
-<span class="sig-name descname"><span class="pre">add_std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_and_pad.add_std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_and_pad.add_std" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_std">
+<span class="sig-name descname"><span class="pre">add_std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_std" title="Link to this definition">¶</a></dt>
 <dd><p>Add the standard deviation of the column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -965,8 +987,8 @@ clustered tensor defaults to adding at the end</p></li>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.cluster_and_pad.add_mean">
-<span class="sig-name descname"><span class="pre">add_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#cluster_and_pad.add_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.cluster_and_pad.add_mean" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean">
+<span class="sig-name descname"><span class="pre">add_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_mean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean" title="Link to this definition">¶</a></dt>
 <dd><p>Add the mean of the column.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -983,8 +1005,8 @@ clustered tensor defaults to adding at the end</p></li>
 </dd></dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.graphs.utils.ice_transparency">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">ice_transparency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_scaling</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/utils.html#ice_transparency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.utils.ice_transparency" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.ice_transparency">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">ice_transparency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">z_offset</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_scaling</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#ice_transparency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.ice_transparency" title="Link to this definition">¶</a></dt>
 <dd><p>Return interpolation functions for optical properties of IceCube.</p>
 <blockquote>
 <div><p>NOTE: The resulting interpolation functions assumes that the
@@ -1021,7 +1043,7 @@ corresponding normalized absorption length.</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.models.graphs.graphs.html" title="graphs"
+            <a href="graphnet.models.data_representation.graphs.graphs.html" title="graphs"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -1035,12 +1057,12 @@ corresponding normalized absorption length.</p>
             </a>
           
           
-            <a href="graphnet.models.rnn.html" title="rnn"
+            <a href="graphnet.models.data_representation.data_representation.html" title="data_representation"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> rnn </span>
+                class="md-footer-nav__direction"> "Next" </span> data_representation </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

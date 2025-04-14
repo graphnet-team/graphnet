@@ -359,10 +359,16 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">glob</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.datamodule</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphNeTDataModule</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.data_representation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GraphDefinition</span><span class="p">,</span>
+    <span class="n">DataRepresentation</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetDataset</span><span class="p">,</span> <span class="n">SQLiteDataset</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 
 
 <div class="viewcode-block" id="CuratedDataset">
@@ -378,8 +384,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">graph_definition</span><span class="p">:</span> <span class="n">GraphDefinition</span><span class="p">,</span>
         <span class="n">download_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">data_representation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataRepresentation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">graph_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GraphDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">features</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"parquet"</span><span class="p">,</span>
@@ -390,8 +397,10 @@
 <span class="w">        </span><span class="sd">"""Construct CuratedDataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            graph_definition: Method that defines the data representation.</span>
 <span class="sd">            download_dir: Directory to download dataset to.</span>
+<span class="sd">            data_representation: Method that defines the data representation.</span>
+<span class="sd">            graph_definition: Method that defines the graph representation.</span>
+<span class="sd">                NOTE: DEPRECATED Use `data_representation` instead.</span>
 <span class="sd">            truth (Optional): List of event-level truth to include. Will</span>
 <span class="sd">                            include all available information if not given.</span>
 <span class="sd">            features (Optional): List of input features from pulsemap to use.</span>
@@ -406,9 +415,17 @@
 <span class="sd">            test_dataloader_kwargs (Optional): Arguments for the test</span>
 <span class="sd">                                    DataLoader. Default None.</span>
 <span class="sd">        """</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">graph_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">data_representation</span> <span class="o">=</span> <span class="n">graph_definition</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">data_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">graph_definition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># Code stops</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">"__init__() missing 1 required keyword argument:"</span>
+                <span class="s2">"'data_representation'"</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="o">=</span> <span class="n">data_representation</span>
         <span class="c1"># From user</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_download_dir</span> <span class="o">=</span> <span class="n">download_dir</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">graph_definition</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
         <span class="c1"># Checks</span>
@@ -436,6 +453,15 @@
             <span class="n">selection</span><span class="o">=</span><span class="n">selec</span><span class="p">,</span>
             <span class="n">test_selection</span><span class="o">=</span><span class="n">test_selec</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">graph_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Code continues after warning</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"DeprecationWarning: Argument `graph_definition` will be"</span>
+                <span class="s2">" deprecated in GraphNeT 2.0. Please use `data_representation`"</span>
+                <span class="s2">" instead."</span>
+                <span class="s2">""</span>
+            <span class="p">)</span>
 
 <div class="viewcode-block" id="CuratedDataset.prepare_data">
 <a class="viewcode-back" href="../../../api/graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.CuratedDataset.prepare_data">[docs]</a>
@@ -605,7 +631,29 @@
         <span class="n">dataset_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_download_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">dataset_dir</span></div>
+        <span class="k">return</span> <span class="n">dataset_dir</span>
+
+    <span class="c1"># DEPRECATION: REMOVE AT 2.0 LAUNCH</span>
+    <span class="c1"># See https://github.com/graphnet-team/graphnet/issues/647</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataRepresentation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the graph definition."""</span>
+        <span class="c1"># needed for the call in _prepare_args</span>
+        <span class="c1"># call before Logger init</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_logger"</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"DeprecationWarning: `_graph_definition` will be deprecated in"</span>
+                <span class="s2">" GraphNeT 2.0. Please use `_data_representation` instead."</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Logger</span><span class="p">(</span><span class="n">log_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">"`graphnet.models.graphs` will be depricated soon. "</span>
+                    <span class="s2">"All functionality has been moved to "</span>
+                    <span class="s2">"`graphnet.models.data_representation`."</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span>  <span class="c1"># type: ignore</span></div>
 
 
 
@@ -645,6 +693,84 @@
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"tar -xf </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> -C </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
             <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rm </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
 </div>
+
+
+
+<div class="viewcode-block" id="IceCubeHostedDataset">
+<a class="viewcode-back" href="../../../api/graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.IceCubeHostedDataset">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IceCubeHostedDataset</span><span class="p">(</span><span class="n">CuratedDataset</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A base class for dataset/datamodule hosted on the IceCube cluster.</span>
+
+<span class="sd">    Inheriting subclasses will need to do:</span>
+<span class="sd">    - fill out the `_zipped_files` attribute, which</span>
+<span class="sd">        should be a list of paths to files that are compressed using `tar` with</span>
+<span class="sd">        extension ".tar.gz" and are stored on the IceCube Cluster in "/data/".</span>
+<span class="sd">    - implement the `_get_dir_name` method, which should return the</span>
+<span class="sd">        directory name where the files resulting from the unzipping of a</span>
+<span class="sd">        compressed file should end up.</span>
+<span class="sd">    """</span>
+
+    <span class="n">_mirror</span> <span class="o">=</span> <span class="s2">"https://convey.icecube.wisc.edu"</span>
+
+<div class="viewcode-block" id="IceCubeHostedDataset.prepare_data">
+<a class="viewcode-back" href="../../../api/graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.IceCubeHostedDataset.prepare_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Prepare the dataset for training."""</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_zipped_files"</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_zipped_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Check which files still need to be downloaded</span>
+        <span class="n">files_to_dl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resolve_downloads</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">files_to_dl</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Download files</span>
+        <span class="n">USER</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">"Username: "</span><span class="p">)</span>
+        <span class="n">source_file_paths</span> <span class="o">=</span> <span class="s2">" "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mirror</span><span class="si">}{</span><span class="n">f</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files_to_dl</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"wget -P </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="si">}</span><span class="s2"> --user=</span><span class="si">{</span><span class="n">USER</span><span class="si">}</span><span class="s2"> "</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">"--ask-password </span><span class="si">{</span><span class="n">source_file_paths</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+
+        <span class="c1"># unzip files</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="s2">"*.tar.gz"</span><span class="p">)):</span>
+            <span class="n">tmp_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="s2">"tmp"</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"tar -xzf </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2"> -C </span><span class="si">{</span><span class="n">tmp_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">unzip_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dir_name</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">unzip_dir</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">db_file</span> <span class="ow">in</span> <span class="n">glob</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="s2">"**/*.db"</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"mv </span><span class="si">{</span><span class="n">db_file</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unzip_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rm </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rm -r </span><span class="si">{</span><span class="n">tmp_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_dir_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source_file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get directory name from source file path.</span>
+
+<span class="sd">        E.g. if `source_file_path` is "/data/set/file.tar.gz",</span>
+<span class="sd">        return os.path.join(self.dataset_dir, source_file_path.split("/")[-2])</span>
+<span class="sd">        to have 'set' as the directory name where all files resulting from the</span>
+<span class="sd">        unzipping of `source_file_path` end up. If no substrucutre is desired,</span>
+<span class="sd">        just return `self.dataset_dir`</span>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_resolve_downloads</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Resolve which files still need to be downloaded."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zipped_files</span>
+        <span class="n">dir_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_dir_name</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zipped_files</span><span class="p">]</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">dir</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dir_names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="nb">dir</span><span class="p">):</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_zipped_files</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 
 </pre></div>
 

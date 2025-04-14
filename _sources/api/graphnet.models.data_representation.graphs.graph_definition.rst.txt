@@ -2,7 +2,7 @@
 graph\_definition
 =================
 
-.. automodule:: graphnet.models.graphs.graph_definition
+.. automodule:: graphnet.models.data_representation.graphs.graph_definition
    :members:
    :undoc-members:
    :show-inheritance:

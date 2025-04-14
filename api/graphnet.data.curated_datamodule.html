@@ -447,6 +447,12 @@
         <li class="md-nav__item"><a href="#graphnet.data.curated_datamodule.ERDAHostedDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
         </li></ul>
             </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.curated_datamodule.IceCubeHostedDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceCubeHostedDataset</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.curated_datamodule.IceCubeHostedDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -567,6 +573,20 @@
     
     
       <a href="#graphnet.data.curated_datamodule.ERDAHostedDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.curated_datamodule.IceCubeHostedDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceCubeHostedDataset</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.curated_datamodule.IceCubeHostedDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
       
     
     </li></ul>
@@ -708,6 +728,12 @@
         <li class="md-nav__item"><a href="#graphnet.data.curated_datamodule.ERDAHostedDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
         </li></ul>
             </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.curated_datamodule.IceCubeHostedDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceCubeHostedDataset</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.curated_datamodule.IceCubeHostedDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -728,7 +754,7 @@ import and download pre-converteddatasets for training of deep learning based
 methods in GraphNeT.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.curated_datamodule.CuratedDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.curated_datamodule.</span></span><span class="sig-name descname"><span class="pre">CuratedDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dataloader_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/curated_datamodule.html#CuratedDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.curated_datamodule.CuratedDataset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.curated_datamodule.</span></span><span class="sig-name descname"><span class="pre">CuratedDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dataloader_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/curated_datamodule.html#CuratedDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.curated_datamodule.CuratedDataset" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.datamodule.html#graphnet.data.datamodule.GraphNeTDataModule" title="graphnet.data.datamodule.GraphNeTDataModule"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphNeTDataModule</span></code></a></p>
 <p>Generic base class for curated datasets.</p>
 <p>Curated Datasets in GraphNeT are pre-converted datasets that have been
@@ -739,8 +765,10 @@ methods.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></span>) – Method that defines the data representation.</p></li>
 <li><p><strong>download_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory to download dataset to.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the data representation.</p></li>
+<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.graphs.graph_definition.html#graphnet.models.data_representation.graphs.graph_definition.GraphDefinition" title="graphnet.models.data_representation.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the graph representation.
+NOTE: DEPRECATED Use <cite>data_representation</cite> instead.</p></li>
 <li><p><strong>truth</strong> (<em>Optional</em>) – List of event-level truth to include. Will
 include all available information if not given.</p></li>
 <li><p><strong>features</strong> (<em>Optional</em>) – List of input features from pulsemap to use.
@@ -840,7 +868,7 @@ DataLoader. Default None.</p></li>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.curated_datamodule.ERDAHostedDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.curated_datamodule.</span></span><span class="sig-name descname"><span class="pre">ERDAHostedDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dataloader_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/curated_datamodule.html#ERDAHostedDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.curated_datamodule.ERDAHostedDataset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.curated_datamodule.</span></span><span class="sig-name descname"><span class="pre">ERDAHostedDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dataloader_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/curated_datamodule.html#ERDAHostedDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.curated_datamodule.ERDAHostedDataset" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.data.curated_datamodule.CuratedDataset" title="graphnet.data.curated_datamodule.CuratedDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">CuratedDataset</span></code></a></p>
 <p>A base class for dataset/datamodule hosted at ERDA.</p>
 <p>Inheriting subclasses will just need to fill out the <cite>_file_hashes</cite>
@@ -855,8 +883,10 @@ _file_hashes = {‘sqlite’ : “FbEEzAbg5A”}</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></span>) – Method that defines the data representation.</p></li>
 <li><p><strong>download_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory to download dataset to.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the data representation.</p></li>
+<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.graphs.graph_definition.html#graphnet.models.data_representation.graphs.graph_definition.GraphDefinition" title="graphnet.models.data_representation.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the graph representation.
+NOTE: DEPRECATED Use <cite>data_representation</cite> instead.</p></li>
 <li><p><strong>truth</strong> (<em>Optional</em>) – List of event-level truth to include. Will
 include all available information if not given.</p></li>
 <li><p><strong>features</strong> (<em>Optional</em>) – List of input features from pulsemap to use.
@@ -876,6 +906,60 @@ DataLoader. Default None.</p></li>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.curated_datamodule.ERDAHostedDataset.prepare_data">
 <span class="sig-name descname"><span class="pre">prepare_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/curated_datamodule.html#ERDAHostedDataset.prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.curated_datamodule.ERDAHostedDataset.prepare_data" title="Link to this definition">¶</a></dt>
+<dd><p>Prepare the dataset for training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.curated_datamodule.IceCubeHostedDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.curated_datamodule.</span></span><span class="sig-name descname"><span class="pre">IceCubeHostedDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dataloader_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/curated_datamodule.html#IceCubeHostedDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.curated_datamodule.IceCubeHostedDataset" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.curated_datamodule.CuratedDataset" title="graphnet.data.curated_datamodule.CuratedDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">CuratedDataset</span></code></a></p>
+<p>A base class for dataset/datamodule hosted on the IceCube cluster.</p>
+<p>Inheriting subclasses will need to do:
+- fill out the <cite>_zipped_files</cite> attribute, which</p>
+<blockquote>
+<div><p>should be a list of paths to files that are compressed using <cite>tar</cite> with
+extension “.tar.gz” and are stored on the IceCube Cluster in “/data/”.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>implement the <cite>_get_dir_name</cite> method, which should return the</dt><dd><p>directory name where the files resulting from the unzipping of a
+compressed file should end up.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Construct CuratedDataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>download_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory to download dataset to.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the data representation.</p></li>
+<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.graphs.graph_definition.html#graphnet.models.data_representation.graphs.graph_definition.GraphDefinition" title="graphnet.models.data_representation.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the graph representation.
+NOTE: DEPRECATED Use <cite>data_representation</cite> instead.</p></li>
+<li><p><strong>truth</strong> (<em>Optional</em>) – List of event-level truth to include. Will
+include all available information if not given.</p></li>
+<li><p><strong>features</strong> (<em>Optional</em>) – List of input features from pulsemap to use.
+If not given, all available features will be
+used.</p></li>
+<li><p><strong>backend</strong> (<em>Optional</em>) – data backend to use. Either “parquet” or
+“sqlite”. Defaults to “parquet”.</p></li>
+<li><p><strong>train_dataloader_kwargs</strong> (<em>Optional</em>) – Arguments for the training
+DataLoader. Default None.</p></li>
+<li><p><strong>validation_dataloader_kwargs</strong> (<em>Optional</em>) – Arguments for the
+validation DataLoader, Default None.</p></li>
+<li><p><strong>test_dataloader_kwargs</strong> (<em>Optional</em>) – Arguments for the test
+DataLoader. Default None.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.curated_datamodule.IceCubeHostedDataset.prepare_data">
+<span class="sig-name descname"><span class="pre">prepare_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/curated_datamodule.html#IceCubeHostedDataset.prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.curated_datamodule.IceCubeHostedDataset.prepare_data" title="Link to this definition">¶</a></dt>
 <dd><p>Prepare the dataset for training.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>

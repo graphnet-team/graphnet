@@ -15,6 +15,7 @@ models
    :maxdepth: 2
 
    graphnet.models.components
+   graphnet.models.data_representation
    graphnet.models.detector
    graphnet.models.gnn
    graphnet.models.graphs

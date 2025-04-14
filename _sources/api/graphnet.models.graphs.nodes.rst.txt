@@ -9,15 +9,6 @@ nodes
    :show-inheritance:
 
 
-|start-h2| Submodules |end-h2|
-
-
-.. toctree::
-   :maxdepth: 2
-
-   graphnet.models.graphs.nodes.nodes
-
-
 
 .. |start-h2| raw:: html
 

@@ -16,6 +16,7 @@ datasets
    :maxdepth: 2
 
    graphnet.datasets.prometheus_datasets
+   graphnet.datasets.snowstorm_dataset
    graphnet.datasets.test_dataset
 
 

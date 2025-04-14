@@ -382,8 +382,10 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.exceptions.exceptions</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColumnMissingException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDefinition</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.data_representation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GraphDefinition</span><span class="p">,</span>
+    <span class="n">DataRepresentation</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.config.parsing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_all_grapnet_classes</span><span class="p">,</span>
 <span class="p">)</span>
@@ -412,13 +414,13 @@
 
 
 
-<div class="viewcode-block" id="parse_graph_definition">
-<a class="viewcode-back" href="../../../../api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.parse_graph_definition">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_graph_definition</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GraphDefinition</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">"""Construct GraphDefinition from DatasetConfig."""</span>
-    <span class="k">assert</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+<div class="viewcode-block" id="parse_data_representation">
+<a class="viewcode-back" href="../../../../api/graphnet.data.dataset.dataset.html#graphnet.data.dataset.dataset.parse_data_representation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_data_representation</span><span class="p">(</span><span class="n">data_rep_cfg</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataRepresentation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Construct DataRepresentation from DatasetConfig."""</span>
+    <span class="k">assert</span> <span class="n">data_rep_cfg</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="n">args</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">][</span><span class="s2">"arguments"</span><span class="p">]</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">data_rep_cfg</span><span class="p">[</span><span class="s2">"arguments"</span><span class="p">]</span>
     <span class="n">classes</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">arg</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
@@ -431,10 +433,8 @@
 
     <span class="n">new_cfg</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
     <span class="n">new_cfg</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span>
-    <span class="n">graph_definition</span> <span class="o">=</span> <span class="n">load_module</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">][</span><span class="s2">"class_name"</span><span class="p">])(</span>
-        <span class="o">**</span><span class="n">new_cfg</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">graph_definition</span></div>
+    <span class="n">data_representation</span> <span class="o">=</span> <span class="n">load_module</span><span class="p">(</span><span class="n">data_rep_cfg</span><span class="p">[</span><span class="s2">"class_name"</span><span class="p">])(</span><span class="o">**</span><span class="n">new_cfg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data_representation</span></div>
 
 
 
@@ -486,9 +486,18 @@
             <span class="s2">"`DatasetConfig`"</span>
         <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="s2">"graph_definition"</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="p">),</span> <span class="s2">"`DatasetConfig` incompatible with current GraphNeT version."</span>
+        <span class="k">if</span> <span class="s2">"data_representation"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">"graph_definition"</span> <span class="ow">in</span> <span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">Logger</span><span class="p">(</span><span class="n">log_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                    <span class="s2">"DeprecationWarning: Field `graph_definition` will be"</span>
+                    <span class="s2">" deprecated in GraphNeT 2.0. Please use "</span>
+                    <span class="s2">"`data_representation` instead."</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">"`DatasetConfig` incompatible with "</span>
+                    <span class="s2">"current GraphNeT version."</span>
+                <span class="p">)</span>
 
         <span class="c1"># Parse set of `selection``.</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">selection</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -501,8 +510,24 @@
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_construct_dataset_from_list_of_strings</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 
         <span class="n">cfg</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_graph_definition</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">"data_representation"</span> <span class="ow">in</span> <span class="n">cfg</span>
+            <span class="ow">and</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"data_representation"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s2">"data_representation"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_data_representation</span><span class="p">(</span>
+                <span class="n">cfg</span><span class="p">[</span><span class="s2">"data_representation"</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="s2">"graph_definition"</span> <span class="ow">in</span> <span class="n">cfg</span> <span class="ow">and</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Logger</span><span class="p">(</span><span class="n">log_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                <span class="s2">"DeprecationWarning: Field `graph_definition` will be"</span>
+                <span class="s2">" deprecated in GraphNeT 2.0. Please use "</span>
+                <span class="s2">"`data_representation` instead."</span>
+            <span class="p">)</span>
+            <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_data_representation</span><span class="p">(</span>
+                <span class="n">cfg</span><span class="p">[</span><span class="s2">"graph_definition"</span><span class="p">]</span>
+            <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">cfg</span><span class="p">[</span><span class="s2">"labels"</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_labels</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
@@ -584,11 +609,12 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-        <span class="n">graph_definition</span><span class="p">:</span> <span class="n">GraphDefinition</span><span class="p">,</span>
         <span class="n">pulsemaps</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
         <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
+        <span class="n">graph_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GraphDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data_representation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataRepresentation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">node_truth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
         <span class="n">truth_table</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"truth"</span><span class="p">,</span>
@@ -646,8 +672,13 @@
 <span class="sd">                subset of events when resolving a string-based selection (e.g.,</span>
 <span class="sd">                `"10000 random events ~ event_no % 5 &gt; 0"` or `"20% random</span>
 <span class="sd">                events ~ event_no % 5 &gt; 0"`).</span>
-<span class="sd">            graph_definition: Method that defines the graph representation.</span>
+<span class="sd">            data_representation: Method that defines the data representation.</span>
 <span class="sd">            labels: Dictionary of labels to be added to the dataset.</span>
+
+<span class="sd">            graph_definition: Method that defines the graph representation.</span>
+<span class="sd">                NOTE: DEPRECATED Use `data_representation` instead.</span>
+<span class="sd">                # DEPRECATION: REMOVE AT 2.0 LAUNCH</span>
+<span class="sd">                # See https://github.com/graphnet-team/graphnet/issues/647</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
@@ -671,9 +702,26 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_index_column</span> <span class="o">=</span> <span class="n">index_column</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span> <span class="o">=</span> <span class="n">truth_table</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_weight_default_value</span> <span class="o">=</span> <span class="n">loss_weight_default_value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">graph_definition</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">graph_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">data_representation</span> <span class="o">=</span> <span class="n">graph_definition</span>
+                <span class="c1"># Code continues after warning</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">"DeprecationWarning: Argument `graph_definition` "</span>
+                    <span class="s2">"will be deprecated in GraphNeT 2.0. "</span>
+                    <span class="s2">"Please use `data_representation` instead."</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Code stops</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">"__init__() missing 1 required keyword argument:"</span>
+                    <span class="s2">"'data_representation'"</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data_representation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_string_column</span> <span class="o">=</span> <span class="n">graph_definition</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">string_index_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_string_column</span> <span class="o">=</span> <span class="n">data_representation</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">string_index_name</span>
 
         <span class="k">if</span> <span class="n">node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_truth_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -757,6 +805,17 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">truth_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Name of the table containing event-level truth information."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_truth_table</span>
+
+    <span class="c1"># DEPRECATION PROPERTY: REMOVE AT 2.0 LAUNCH</span>
+    <span class="c1"># See https://github.com/graphnet-team/graphnet/issues/647</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataRepresentation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the graph definition."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"DeprecationWarning: `_graph_definition` will be deprecated in"</span>
+            <span class="s2">" GraphNeT 2.0. Please use `_data_representation` instead."</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span>
 
     <span class="c1"># Abstract method(s)</span>
     <span class="nd">@abstractmethod</span>
@@ -1021,8 +1080,8 @@
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
         <span class="c1"># Construct graph data object</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span><span class="p">(</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span><span class="p">(</span>
             <span class="n">input_features</span><span class="o">=</span><span class="n">node_features</span><span class="p">,</span>
             <span class="n">input_feature_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span>
             <span class="n">truth_dicts</span><span class="o">=</span><span class="n">truth_dicts</span><span class="p">,</span>

@@ -361,7 +361,10 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.easy_model</span><span class="w"> </span><span class="kn">import</span> <span class="n">EasySyntax</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.task</span><span class="w"> </span><span class="kn">import</span> <span class="n">StandardLearnedTask</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphDefinition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.data_representation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GraphDefinition</span><span class="p">,</span>
+    <span class="n">DataRepresentation</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="StandardModel">
@@ -377,8 +380,9 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">graph_definition</span><span class="p">:</span> <span class="n">GraphDefinition</span><span class="p">,</span>
         <span class="n">tasks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">StandardLearnedTask</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StandardLearnedTask</span><span class="p">]],</span>
+        <span class="n">data_representation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataRepresentation</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">graph_definition</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GraphDefinition</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">backbone</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Model</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">gnn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GNN</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">optimizer_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">]</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">,</span>
@@ -397,6 +401,24 @@
             <span class="n">scheduler_kwargs</span><span class="o">=</span><span class="n">scheduler_kwargs</span><span class="p">,</span>
             <span class="n">scheduler_config</span><span class="o">=</span><span class="n">scheduler_config</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="c1"># DEPRECATION ARG GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH</span>
+        <span class="c1"># See https://github.com/graphnet-team/graphnet/issues/647</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">data_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">graph_definition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">data_representation</span> <span class="o">=</span> <span class="n">graph_definition</span>
+            <span class="c1"># Code continues after warning</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">"DeprecationWarning: Argument `graph_definition` will be"</span>
+                <span class="s2">" deprecated in GraphNeT 2.0. Please use `data_representation`"</span>
+                <span class="s2">" instead."</span>
+                <span class="s2">""</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">data_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">graph_definition</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="c1"># Code stops</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">"__init__() missing 1 required keyword argument:"</span>
+                <span class="s2">"'data_representation'"</span>
+            <span class="p">)</span>
 
         <span class="c1"># deprecation warnings</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">backbone</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gnn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
@@ -415,10 +437,10 @@
 
         <span class="c1"># Checks</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backbone</span><span class="p">,</span> <span class="n">Model</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">graph_definition</span><span class="p">,</span> <span class="n">GraphDefinition</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_representation</span><span class="p">,</span> <span class="n">DataRepresentation</span><span class="p">)</span>
 
         <span class="c1"># Member variable(s)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_graph_definition</span> <span class="o">=</span> <span class="n">graph_definition</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="o">=</span> <span class="n">data_representation</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span> <span class="o">=</span> <span class="n">backbone</span>
 
 <div class="viewcode-block" id="StandardModel.compute_loss">
@@ -487,7 +509,18 @@
         <span class="n">accepted_tasks</span> <span class="o">=</span> <span class="n">StandardLearnedTask</span>
         <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">accepted_tasks</span><span class="p">)</span></div>
-</div>
+
+
+    <span class="c1"># DEPRECATION ARG GRAPH_DEFINITION: REMOVE AT 2.0 LAUNCH</span>
+    <span class="c1"># See https://github.com/graphnet-team/graphnet/issues/647</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_graph_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataRepresentation</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return the graph definition."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">"DeprecationWarning: `_graph_definition` will be deprecated in"</span>
+            <span class="s2">" GraphNeT 2.0. Please use `_data_representation` instead."</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span></div>
 
 </pre></div>
 

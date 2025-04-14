@@ -129,7 +129,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="nodes" href="graphnet.models.graphs.nodes.html" />
-    <link rel="prev" title="edges" href="graphnet.models.graphs.edges.edges.html" />
+    <link rel="prev" title="edges" href="graphnet.models.graphs.edges.html" />
   
    
 
@@ -373,6 +373,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.models.data_representation.html" class="md-nav__link">data_representation</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.detector.html" class="md-nav__link">detector</a>
       
     
@@ -397,13 +404,6 @@
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.graphs.edges.edges.html" class="md-nav__link">edges</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     <label class="md-nav__link md-nav__link--active" for="__toc"> minkowski </label>
     
@@ -411,33 +411,10 @@
       
         
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-edges-minkowski--page-root" class="md-nav__link">minkowski</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.minkowski.compute_minkowski_distance_mat" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">compute_minkowski_distance_mat()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.minkowski.MinkowskiKNNEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">MinkowskiKNNEdges</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
   </ul>
 </nav>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.edges.minkowski.compute_minkowski_distance_mat" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">compute_minkowski_distance_mat()</span></code></a>
       
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.edges.minkowski.MinkowskiKNNEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">MinkowskiKNNEdges</span></code></a>
-      
-    
-    </li></ul>
     
     </li></ul>
     
@@ -446,27 +423,6 @@
     
     
       <a href="graphnet.models.graphs.nodes.html" class="md-nav__link">nodes</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.graph_definition.html" class="md-nav__link">graph_definition</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.graphs.html" class="md-nav__link">graphs</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.utils.html" class="md-nav__link">utils</a>
       
     
     </li></ul>
@@ -579,16 +535,7 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-edges-minkowski--page-root" class="md-nav__link">minkowski</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.minkowski.compute_minkowski_distance_mat" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">compute_minkowski_distance_mat()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.edges.minkowski.MinkowskiKNNEdges" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">MinkowskiKNNEdges</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
   </ul>
 </nav>
               </div>
@@ -600,52 +547,8 @@
             
   <section id="module-graphnet.models.graphs.edges.minkowski">
 <span id="minkowski"></span><h1 id="api-graphnet-models-graphs-edges-minkowski--page-root">minkowski<a class="headerlink" href="#api-graphnet-models-graphs-edges-minkowski--page-root" title="Link to this heading">¶</a></h1>
-<p>Module containing EdgeDefinitions based on the Minkowski Metric.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.models.graphs.edges.minkowski.compute_minkowski_distance_mat">
-<span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.edges.minkowski.</span></span><span class="sig-name descname"><span class="pre">compute_minkowski_distance_mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space_coords</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_coord</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/edges/minkowski.html#compute_minkowski_distance_mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.edges.minkowski.compute_minkowski_distance_mat" title="Link to this definition">¶</a></dt>
-<dd><p>Compute all pairwise Minkowski distances.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – First tensor of shape (n, d).</p></li>
-<li><p><strong>y</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – Second tensor of shape (m, d).</p></li>
-<li><p><strong>c</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Speed of light, in scaled units.</p></li>
-<li><p><strong>space_coords</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Indices of space coordinates.</p></li>
-<li><p><strong>time_coord</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">3</span></code>) – Index of time coordinate.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
-</dd>
-</dl>
-<p>Returns: Matrix of shape (n, m) of all pairwise Minkowski distances.</p>
-</dd></dl>
-<dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graphs.edges.minkowski.MinkowskiKNNEdges">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.edges.minkowski.</span></span><span class="sig-name descname"><span class="pre">MinkowskiKNNEdges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/edges/minkowski.html#MinkowskiKNNEdges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.edges.minkowski.MinkowskiKNNEdges" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="graphnet.models.graphs.edges.edges.html#graphnet.models.graphs.edges.edges.EdgeDefinition" title="graphnet.models.graphs.edges.edges.EdgeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">EdgeDefinition</span></code></a></p>
-<p>Builds edges between most light-like separated.</p>
-<p>Initialize MinkowskiKNNEdges.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>nb_nearest_neighbours</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of neighbours to connect to.</p></li>
-<li><p><strong>c</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Speed of light, in scaled units.</p></li>
-<li><p><strong>time_like_weight</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) – Preference to time-like over space-like edges.
-Scales time_like distances by this value, before finding
-nearest neighbours.</p></li>
-<li><p><strong>space_coords</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Coordinates of x, y, z.</p></li>
-<li><p><strong>time_coord</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">3</span></code>) – Coordinate of time.</p></li>
-<li><p><strong>args</strong> (<em>Any</em>)</p></li>
-<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>object</p>
-</dd>
-</dl>
-</dd></dl>
+<p>Deprecated imports.</p>
+<p>moved to graphnet.models.data_representation.graphs.edges.</p>
 </section>
 
 
@@ -658,7 +561,7 @@ nearest neighbours.</p></li>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.models.graphs.edges.edges.html" title="edges"
+            <a href="graphnet.models.graphs.edges.html" title="edges"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">

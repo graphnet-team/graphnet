@@ -2,7 +2,26 @@
 minkowski
 =========
 
+
 .. automodule:: graphnet.models.graphs.edges.minkowski
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

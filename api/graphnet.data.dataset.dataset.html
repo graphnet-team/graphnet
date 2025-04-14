@@ -369,7 +369,7 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.load_module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">load_module()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.parse_graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_graph_definition()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.parse_data_representation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_data_representation()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.parse_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_labels()</span></code></a>
         </li>
@@ -406,7 +406,7 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.data.dataset.dataset.parse_graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_graph_definition()</span></code></a>
+      <a href="#graphnet.data.dataset.dataset.parse_data_representation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_data_representation()</span></code></a>
       
     
     </li>
@@ -646,7 +646,7 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.load_module" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">load_module()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.parse_graph_definition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_graph_definition()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.parse_data_representation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_data_representation()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.dataset.dataset.parse_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">parse_labels()</span></code></a>
         </li>
@@ -699,15 +699,15 @@
 </dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.dataset.dataset.parse_graph_definition">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.dataset.</span></span><span class="sig-name descname"><span class="pre">parse_graph_definition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset/dataset.html#parse_graph_definition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.dataset.parse_graph_definition" title="Link to this definition">¶</a></dt>
-<dd><p>Construct GraphDefinition from DatasetConfig.</p>
+<dt class="sig sig-object py" id="graphnet.data.dataset.dataset.parse_data_representation">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.dataset.dataset.</span></span><span class="sig-name descname"><span class="pre">parse_data_representation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_rep_cfg</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/dataset/dataset.html#parse_data_representation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.dataset.dataset.parse_data_representation" title="Link to this definition">¶</a></dt>
+<dd><p>Construct DataRepresentation from DatasetConfig.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>cfg</strong> (<em>dict</em>)</p>
+<dd class="field-even"><p><strong>data_rep_cfg</strong> (<em>dict</em>)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -774,8 +774,12 @@ is provided, this value is ignored. Defaults to None.</p></li>
 subset of events when resolving a string-based selection (e.g.,
 <cite>“10000 random events ~ event_no % 5 &gt; 0”</cite> or <cite>“20% random
 events ~ event_no % 5 &gt; 0”</cite>).</p></li>
-<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></span>) – Method that defines the graph representation.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the data representation.</p></li>
 <li><p><strong>labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Dictionary of labels to be added to the dataset.</p></li>
+<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.graphs.graph_definition.html#graphnet.models.data_representation.graphs.graph_definition.GraphDefinition" title="graphnet.models.data_representation.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the graph representation.
+NOTE: DEPRECATED Use <cite>data_representation</cite> instead.
+# DEPRECATION: REMOVE AT 2.0 LAUNCH
+# See <a class="reference external" href="https://github.com/graphnet-team/graphnet/issues/647">https://github.com/graphnet-team/graphnet/issues/647</a></p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>

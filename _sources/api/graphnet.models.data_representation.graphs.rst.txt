@@ -1,0 +1,46 @@
+
+graphs
+======
+
+
+.. automodule:: graphnet.models.data_representation.graphs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+|start-h2| Subpackages |end-h2|
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.models.data_representation.graphs.edges
+   graphnet.models.data_representation.graphs.nodes
+
+|start-h2| Submodules |end-h2|
+
+
+.. toctree::
+   :maxdepth: 2
+
+   graphnet.models.data_representation.graphs.graph_definition
+   graphnet.models.data_representation.graphs.graphs
+   graphnet.models.data_representation.graphs.utils
+
+
+
+.. |start-h2| raw:: html
+
+     <h2>
+
+.. |end-h2| raw:: html
+
+     </h2>
+
+.. |start-h3| raw:: html
+
+     <h3>
+
+.. |end-h3| raw:: html
+
+     </h3>

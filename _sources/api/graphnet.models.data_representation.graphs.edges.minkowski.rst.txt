@@ -1,0 +1,8 @@
+
+minkowski
+=========
+
+.. automodule:: graphnet.models.data_representation.graphs.edges.minkowski
+   :members:
+   :undoc-members:
+   :show-inheritance:

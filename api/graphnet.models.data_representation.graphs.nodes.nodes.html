@@ -128,8 +128,8 @@
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="graph_definition" href="graphnet.models.graphs.graph_definition.html" />
-    <link rel="prev" title="nodes" href="graphnet.models.graphs.nodes.html" />
+    <link rel="next" title="graph_definition" href="graphnet.models.data_representation.graphs.graph_definition.html" />
+    <link rel="prev" title="nodes" href="graphnet.models.data_representation.graphs.nodes.html" />
   
    
 
@@ -148,7 +148,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.models.graphs.nodes.nodes" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.models.data_representation.graphs.nodes.nodes" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -243,8 +243,9 @@
             <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
           <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
           <li class="md-tabs__item"><a href="graphnet.models.html" class="md-tabs__link">models</a></li>
-          <li class="md-tabs__item"><a href="graphnet.models.graphs.html" class="md-tabs__link">graphs</a></li>
-          <li class="md-tabs__item"><a href="graphnet.models.graphs.nodes.html" class="md-tabs__link">nodes</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.data_representation.html" class="md-tabs__link">data_representation</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.data_representation.graphs.html" class="md-tabs__link">graphs</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.data_representation.graphs.nodes.html" class="md-tabs__link">nodes</a></li>
       </ul>
     </div>
   </nav>
@@ -373,6 +374,166 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.models.data_representation.html" class="md-nav__link">data_representation</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.graphs.html" class="md-nav__link">graphs</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.graphs.edges.html" class="md-nav__link">edges</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.graphs.nodes.html" class="md-nav__link">nodes</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> nodes </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">nodes</a>
+      
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-graphs-nodes-nodes--page-root" class="md-nav__link">nodes</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.graphs.graph_definition.html" class="md-nav__link">graph_definition</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.graphs.graphs.html" class="md-nav__link">graphs</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.graphs.utils.html" class="md-nav__link">utils</a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.data_representation.html" class="md-nav__link">data_representation</a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.detector.html" class="md-nav__link">detector</a>
       
     
@@ -388,146 +549,7 @@
     
     
       <a href="graphnet.models.graphs.html" class="md-nav__link">graphs</a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.edges.html" class="md-nav__link">edges</a>
       
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.nodes.html" class="md-nav__link">nodes</a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> nodes </label>
-    
-      <a href="#" class="md-nav__link md-nav__link--active">nodes</a>
-      
-        
-<nav class="md-nav md-nav--secondary">
-    <label class="md-nav__title" for="__toc">"Contents"</label>
-  <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-nodes-nodes--page-root" class="md-nav__link">nodes</a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a><nav class="md-nav">
-              <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
-        </li></ul>
-            </nav>
-        </li>
-  </ul>
-</nav>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a>
-      <ul class="md-nav__list"> 
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
-      
-    
-    </li></ul>
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
-      
-    
-    </li></ul>
-    
-    </li></ul>
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.graph_definition.html" class="md-nav__link">graph_definition</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.graphs.html" class="md-nav__link">graphs</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="graphnet.models.graphs.utils.html" class="md-nav__link">utils</a>
-      
-    
-    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -639,27 +661,27 @@
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-graphs-nodes-nodes--page-root" class="md-nav__link">nodes</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-graphs-nodes-nodes--page-root" class="md-nav__link">nodes</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_number_of_inputs()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_output_feature_names()</span></code></a>
         </li></ul>
             </nav>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodesAsPulses" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodesAsPulses</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.PercentileClusters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">PercentileClusters</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -672,12 +694,12 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.models.graphs.nodes.nodes">
-<span id="nodes"></span><h1 id="api-graphnet-models-graphs-nodes-nodes--page-root">nodes<a class="headerlink" href="#api-graphnet-models-graphs-nodes-nodes--page-root" title="Link to this heading">¶</a></h1>
+  <section id="module-graphnet.models.data_representation.graphs.nodes.nodes">
+<span id="nodes"></span><h1 id="api-graphnet-models-data-representation-graphs-nodes-nodes--page-root">nodes<a class="headerlink" href="#api-graphnet-models-data-representation-graphs-nodes-nodes--page-root" title="Link to this heading">¶</a></h1>
 <p>Class(es) for building/connecting graphs.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeDefinition">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">NodeDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">NodeDefinition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#NodeDefinition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 <p>Base class for graph building.</p>
 <p>Construct <cite>Detector</cite>.</p>
@@ -693,8 +715,8 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeDefinition.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeDefinition.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.forward" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#NodeDefinition.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Construct nodes from raw node features.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -705,8 +727,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>a graph without edges
-new_features_name: List of new feature names.</p>
+<dd class="field-even"><p>a graph without edges</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>graph</p>
@@ -714,14 +735,14 @@ new_features_name: List of new feature names.</p>
 </dl>
 </dd></dl>
 <dl class="py property">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeDefinition.nb_outputs">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.nb_outputs" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.nb_outputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_outputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.nb_outputs" title="Link to this definition">¶</a></dt>
 <dd><p>Return number of output features.</p>
 <p>This the default, but may be overridden by specific inheriting classes.</p>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs">
-<span class="sig-name descname"><span class="pre">set_number_of_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeDefinition.set_number_of_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs">
+<span class="sig-name descname"><span class="pre">set_number_of_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#NodeDefinition.set_number_of_inputs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_number_of_inputs" title="Link to this definition">¶</a></dt>
 <dd><p>Return number of inputs expected by node definition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -733,8 +754,8 @@ new_features_name: List of new feature names.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names">
-<span class="sig-name descname"><span class="pre">set_output_feature_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeDefinition.set_output_feature_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_output_feature_names">
+<span class="sig-name descname"><span class="pre">set_output_feature_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#NodeDefinition.set_output_feature_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.set_output_feature_names" title="Link to this definition">¶</a></dt>
 <dd><p>Set output features names as a member variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -750,9 +771,9 @@ new_features_name: List of new feature names.</p>
 </dd></dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodesAsPulses">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">NodesAsPulses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodesAsPulses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodesAsPulses" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.NodesAsPulses">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">NodesAsPulses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#NodesAsPulses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodesAsPulses" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
 <p>Represent each measured pulse of Cherenkov Radiation as a node.</p>
 <p>Construct <cite>Detector</cite>.</p>
 <dl class="field-list simple">
@@ -768,9 +789,9 @@ new_features_name: List of new feature names.</p>
 </dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.PercentileClusters">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">PercentileClusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#PercentileClusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.PercentileClusters" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.PercentileClusters">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">PercentileClusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#PercentileClusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.PercentileClusters" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
 <p>Represent nodes as clusters with percentile summary node features.</p>
 <p>If <cite>cluster_on</cite> is set to the xyz coordinates of DOMs
 e.g. <cite>cluster_on = [‘dom_x’, ‘dom_y’, ‘dom_z’]</cite>, each node will be a
@@ -794,9 +815,9 @@ percentiles.</p>
 </dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">NodeAsDOMTimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#NodeAsDOMTimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.NodeAsDOMTimeSeries" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.NodeAsDOMTimeSeries">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">NodeAsDOMTimeSeries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#NodeAsDOMTimeSeries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeAsDOMTimeSeries" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
 <p>Represent each node as a DOM with time and charge time series data.</p>
 <p>Construct <cite>NodeAsDOMTimeSeries</cite>.</p>
 <dl class="field-list simple">
@@ -818,9 +839,9 @@ the time series.</p></li>
 </dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.graphs.nodes.nodes.IceMixNodes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">IceMixNodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/graphs/nodes/nodes.html#IceMixNodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.graphs.nodes.nodes.IceMixNodes" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.models.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">IceMixNodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#IceMixNodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
 <p>Calculate ice properties and perform random sampling.</p>
 <p>Ice properties are calculated based on the z-coordinate of the pulse. For
 each event, a random sampling is performed to keep the number of pulses
@@ -864,7 +885,7 @@ below a maximum number of pulses if n_pulses is over the limit.</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.models.graphs.nodes.html" title="nodes"
+            <a href="graphnet.models.data_representation.graphs.nodes.html" title="nodes"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -878,7 +899,7 @@ below a maximum number of pulses if n_pulses is over the limit.</p>
             </a>
           
           
-            <a href="graphnet.models.graphs.graph_definition.html" title="graph_definition"
+            <a href="graphnet.models.data_representation.graphs.graph_definition.html" title="graph_definition"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span

@@ -129,7 +129,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deployment" href="graphnet.deployment.html" />
-    <link rel="prev" title="prometheus_datasets" href="graphnet.datasets.prometheus_datasets.html" />
+    <link rel="prev" title="snowstorm_dataset" href="graphnet.datasets.snowstorm_dataset.html" />
   
    
 
@@ -350,6 +350,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.datasets.snowstorm_dataset.html" class="md-nav__link">snowstorm_dataset</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     <label class="md-nav__link md-nav__link--active" for="__toc"> test_dataset </label>
     
@@ -457,7 +464,7 @@
 <p>A CuratedDataset for unit tests.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.datasets.test_dataset.TestDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.datasets.test_dataset.</span></span><span class="sig-name descname"><span class="pre">TestDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dataloader_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/datasets/test_dataset.html#TestDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.datasets.test_dataset.TestDataset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.datasets.test_dataset.</span></span><span class="sig-name descname"><span class="pre">TestDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">backend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">validation_dataloader_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_dataloader_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/datasets/test_dataset.html#TestDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.datasets.test_dataset.TestDataset" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.ERDAHostedDataset" title="graphnet.data.curated_datamodule.ERDAHostedDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">ERDAHostedDataset</span></code></a></p>
 <p>A CuratedDataset class for unit tests of ERDAHosted Datasets.</p>
 <p>This dataset should not be used outside the context of unit tests.</p>
@@ -465,8 +472,10 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.graphs.graph_definition.html#graphnet.models.graphs.graph_definition.GraphDefinition" title="graphnet.models.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a></span>) – Method that defines the data representation.</p></li>
 <li><p><strong>download_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory to download dataset to.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the data representation.</p></li>
+<li><p><strong>graph_definition</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="graphnet.models.data_representation.graphs.graph_definition.html#graphnet.models.data_representation.graphs.graph_definition.GraphDefinition" title="graphnet.models.data_representation.graphs.graph_definition.GraphDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphDefinition</span></code></a>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Method that defines the graph representation.
+NOTE: DEPRECATED Use <cite>data_representation</cite> instead.</p></li>
 <li><p><strong>truth</strong> (<em>Optional</em>) – List of event-level truth to include. Will
 include all available information if not given.</p></li>
 <li><p><strong>features</strong> (<em>Optional</em>) – List of input features from pulsemap to use.
@@ -496,7 +505,7 @@ DataLoader. Default None.</p></li>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.datasets.prometheus_datasets.html" title="prometheus_datasets"
+            <a href="graphnet.datasets.snowstorm_dataset.html" title="snowstorm_dataset"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -505,7 +514,7 @@ DataLoader. Default None.</p></li>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> prometheus_datasets </span>
+                      class="md-footer-nav__direction"> "Previous" </span> snowstorm_dataset </span>
               </div>
             </a>
           
