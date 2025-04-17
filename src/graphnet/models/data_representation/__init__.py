@@ -18,3 +18,7 @@ from .graphs import (
     NodeAsDOMTimeSeries,
     IceMixNodes,
 )
+from .images import (
+    ImageDefinition,
+    IC86DNNImage,
+)
