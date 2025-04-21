@@ -9,12 +9,12 @@ from torch_geometric.data import Data
 
 from .graph_definition import GraphDefinition
 from graphnet.models.detector import Detector
-from graphnet.models.graphs.edges import (
+from graphnet.models.data_representation.graphs.edges import (
     EdgeDefinition,
     KNNEdges,
     KNNDistanceEdges,
 )
-from graphnet.models.graphs.nodes import NodeDefinition, NodesAsPulses
+from .nodes import NodeDefinition, NodesAsPulses
 from graphnet.models.utils import add_full_rrwp, get_rw_landing_probs
 
 
