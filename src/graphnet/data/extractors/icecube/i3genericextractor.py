@@ -46,6 +46,7 @@ class I3GenericExtractor(I3Extractor):
         keys: Optional[Union[str, List[str]]] = None,
         exclude_keys: Optional[Union[str, List[str]]] = None,
         extractor_name: str = GENERIC_EXTRACTOR_NAME,
+        exclude: list = [None],
     ):
         """Construct I3GenericExtractor.
 
@@ -73,7 +74,7 @@ class I3GenericExtractor(I3Extractor):
         self._exclude_keys: Optional[List[str]] = exclude_keys
 
         # Base class constructor
-        super().__init__(extractor_name)
+        super().__init__(extractor_name, exclude=exclude)
 
     def _get_keys(self, frame: "icetray.I3Frame") -> List[str]:
         """Get the list of keys to be queried from `frame`.

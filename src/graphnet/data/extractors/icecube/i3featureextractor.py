@@ -14,18 +14,19 @@ if has_icecube_package() or TYPE_CHECKING:
 class I3FeatureExtractor(I3Extractor):
     """Base class for extracting specific, reconstructed features."""
 
-    def __init__(self, pulsemap: str):
+    def __init__(self, pulsemap: str, exclude: list = [None]):
         """Construct I3FeatureExtractor.
 
         Args:
             pulsemap: Name of the pulse (series) map for which to extract
                 reconstructed features.
+            exclude: List of keys to exclude from the extracted data.
         """
         # Member variable(s)
         self._pulsemap = pulsemap
 
         # Base class constructor
-        super().__init__(pulsemap)
+        super().__init__(pulsemap, exclude=exclude)
 
 
 class I3FeatureExtractorIceCube86(I3FeatureExtractor):
