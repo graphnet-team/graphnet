@@ -1,13 +1,18 @@
 """Base I3Extractor class(es)."""
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors import Extractor
+import numpy as np
 
 if has_icecube_package() or TYPE_CHECKING:
-    from icecube import icetray, dataio  # pyright: reportMissingImports=false
+    from icecube import (  # noqa: F401
+        icetray,
+        dataio,
+        dataclasses,
+    )  # pyright: reportMissingImports=false
 
 
 class I3Extractor(Extractor):
@@ -20,19 +25,27 @@ class I3Extractor(Extractor):
     method.
     """
 
-    def __init__(self, extractor_name: str):
+    def __init__(
+        self,
+        extractor_name: str,
+        is_corsika: bool = False,
+    ):
         """Construct I3Extractor.
 
         Args:
             extractor_name: Name of the `I3Extractor` instance. Used to keep
                 track of the provenance of different data, and to name tables
                 to which this data is saved.
+            exclude: List of keys to exclude from the extracted data.
+            is_corsika: Boolean indicating if the event files being processed
+                are Corsika simulations. Defaults to False.
         """
         # Member variable(s)
         self._i3_file: str = ""
         self._gcd_file: str = ""
         self._gcd_dict: Dict[int, Any] = {}
         self._calibration: Optional["icetray.I3Frame.Calibration"] = None
+        self._is_corsika: bool = is_corsika
 
         # Base class constructor
         super().__init__(extractor_name=extractor_name)
@@ -85,8 +98,116 @@ class I3Extractor(Extractor):
         # Save information as member variables of I3Extractor
         self._gcd_dict = g_frame["I3Geometry"].omgeo
         self._calibration = c_frame["I3Calibration"]
+        if gcd_file is not None:
+            self._gcd_file = gcd_file
+        if i3_file is not None:
+            self._i3_file = i3_file
 
     @abstractmethod
     def __call__(self, frame: "icetray.I3Frame") -> dict:
         """Extract information from frame."""
         pass
+
+    def check_primary_energy(
+        self,
+        frame: "icetray.I3Frame",
+        primaries: Union[
+            "dataclasses.ListI3Particle", "dataclasses.I3Particle"
+        ],
+    ) -> Union["dataclasses.ListI3Particle", "dataclasses.I3Particle"]:
+        """Check that primary energy exists for the particle(s).
+
+        If the primary energy is not available, the method will see if the
+        particle has a single daughter, and if so, return that
+        """
+        assert hasattr(
+            self, "mctree"
+        ), "mctree should be instantiated by subclass"
+
+        if isinstance(primaries, dataclasses.ListI3Particle):
+            new_primaries = dataclasses.ListI3Particle()
+            for primary in primaries:
+                primary = self.check_primary_energy(frame, primary)
+                if isinstance(primary, dataclasses.ListI3Particle):
+                    new_primaries.extend(primary)
+                elif isinstance(primary, dataclasses.I3Particle):
+                    new_primaries.append(primary)
+                else:
+                    raise ValueError(
+                        "primaries must be a particle or a list of particles"
+                    )
+            return new_primaries
+        elif isinstance(primaries, dataclasses.I3Particle):
+            primary = primaries
+        else:
+            raise ValueError(
+                "primaries must be a particle or a list of particles"
+            )
+
+        if primary.energy != primary.energy:
+            self.warning_once("Primary energy is nan checking daughters")
+            daughters = dataclasses.I3MCTree.get_daughters(
+                frame[self.mctree], primary
+            )
+            if len(daughters) == 0:
+                raise ValueError(
+                    "Primary energy is nan and no daughters found"
+                )
+            primary = dataclasses.ListI3Particle()
+            for daughter in daughters:
+                primary.append(daughter)
+        return primary
+
+    def get_primaries(
+        self, frame: "icetray.I3Frame", daughters: bool = False
+    ) -> "dataclasses.ListI3Particle":
+        """Get the primary particles in the event.
+
+        For Corsika events the primary particles are the all the primaries,
+        for Nugen we are only interested in the in-ice neutrino.
+        Input:
+        frame: I3Frame object
+        """
+        assert hasattr(
+            self, "mctree"
+        ), "mctree should be instantiated by subclass"
+
+        if not self._is_corsika:
+            primaries = frame[self.mctree].get_primaries()
+            if daughters:
+                primaries = [
+                    p
+                    for p in primaries
+                    if (
+                        p.is_neutrino
+                        & (
+                            p.location_type
+                            == dataclasses.I3Particle.LocationType.InIce.real
+                        )
+                    )
+                ]
+
+            if len(primaries) == 0:
+                primaries = [
+                    p
+                    for p in frame[self.mctree]
+                    if (
+                        p.is_neutrino
+                        & (
+                            p.location_type
+                            == dataclasses.I3Particle.LocationType.InIce.real
+                        )
+                    )
+                ]
+
+            if len(primaries) == 0:
+                self.warning_once("No in-ice neutrino found for NuGen event")
+                return dataclasses.ListI3Particle()
+
+            energies = np.array([p.energy for p in primaries])
+
+            primaries = np.array(primaries)[np.argmax(energies)]
+            primaries = dataclasses.ListI3Particle([primaries])
+        if self._is_corsika:
+            primaries = frame[self.mctree].get_primaries()
+        return primaries
