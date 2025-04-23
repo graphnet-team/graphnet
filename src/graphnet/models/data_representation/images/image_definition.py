@@ -157,7 +157,7 @@ class ImageDefinition(DataRepresentation):
             # setting number of nodes as product of C*(D*)H*W
             nb_nodes.append(np.prod(list(data.x[i].size()[2:])))
 
-        # set num_nodes to surpress warning
-        data.num_nodes = torch.tensor(nb_nodes)
+        # set num_nodes equals number of pixels in all imagessurpress warning
+        data.num_nodes = torch.tensor(np.sum(nb_nodes))
 
         return data
