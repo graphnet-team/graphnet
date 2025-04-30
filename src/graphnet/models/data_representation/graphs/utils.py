@@ -228,7 +228,8 @@ class cluster_and_pad:
                     addition to cluster on, if None the data will be
                     sorted only by the cluster columns.
                     NOTE: The priority of ordering is first by the
-                    cluster_on columns and then by the `sort_by` columns.
+                    `cluster_columns` columns and then by the
+                    `sort_by` columns.
             Adds:
                 clustered_x: Added to the class
                 _counts: Added to the class
