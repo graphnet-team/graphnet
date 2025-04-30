@@ -19,6 +19,8 @@ class IC86DNNImage(ImageDefinition):
         input_feature_names: List[str],
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
+        string_label: str = "string",
+        dom_number_label: str = "dom_number",
         dtype: Optional[torch.dtype] = torch.float,
         detector: Optional[Detector] = None,
         **kwargs: Any,
@@ -31,6 +33,8 @@ class IC86DNNImage(ImageDefinition):
                 that will be built into a image.
             include_lower_dc: If True, the lower DeepCore will be included.
             include_upper_dc: If True, the upper DeepCore will be included.
+            string_label: The label for the string number in the data.
+            dom_number_label: The label for the DOM number in the data.
             dtype: data type used for node features. e.g. ´torch.float´
             detector: The corresponding ´Detector´ representing the data.
         """
@@ -42,11 +46,17 @@ class IC86DNNImage(ImageDefinition):
         else:
             assert isinstance(detector, IceCube86)
         node_definition.set_output_feature_names(input_feature_names)
-        dom_labels = node_definition._cluster_on
+        assert (
+            string_label in input_feature_names
+        ), f"String label '{string_label}' not in input feature names"
+        assert (
+            dom_number_label in input_feature_names
+        ), f"DOM number label '{dom_number_label}' not in input feature names"
 
         # Base class constructor
         pixel_mapping = IC86DNNMapping(
-            dom_pos_names=dom_labels,
+            string_label=string_label,
+            dom_number_label=dom_number_label,
             pixel_feature_names=node_definition._output_feature_names,
             include_lower_dc=include_lower_dc,
             include_upper_dc=include_upper_dc,
