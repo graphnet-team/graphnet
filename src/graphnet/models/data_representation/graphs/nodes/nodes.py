@@ -546,11 +546,6 @@ class DOMSummaryFeatures(NodeDefinition):
         self._time_after_charge_pct = time_after_charge_pct
         self._add_counts = add_counts
 
-        # check for correct features
-        if input_feature_names is not None:
-            assert set(input_feature_names) == set(
-                cluster_on + [charge_label, time_label]
-            ), f"Input feature names do not match: {input_feature_names}"
         # Base class constructor
         super().__init__(input_feature_names=input_feature_names)
 
