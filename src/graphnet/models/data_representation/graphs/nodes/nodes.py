@@ -480,14 +480,15 @@ class DOMSummaryFeatures(NodeDefinition):
     NOTE: Intended to be used with features [dom_x, dom_y, dom_z, charge, time]
 
     - total charge
-    - charge after t
-    - time of first hit
-    - time spread
-    - time std
-    - time after charge percentiles
+    - charge accumulated after times `charge_after_t`
+    - time of first hit per DOM
+    - time spread per DOM
+    - time std per DOM
+    - time took to collect the charge percentiles `time_after_charge_pct`
+    - number of pulses per DOM
 
     Taken from Theo Glauchs PhD thesis:
-    https://nbn-resolving.org/urn:nbn:de:bvb:91-diss-20210208-1584755-1-7
+    https://mediatum.ub.tum.de/node?id=1584755
     """
 
     def __init__(
@@ -504,7 +505,7 @@ class DOMSummaryFeatures(NodeDefinition):
         time_after_charge_pct: List[int] = [1, 3, 5, 11, 15, 20, 50, 80],
         charge_standardization: float = 1e-2,
         time_standardization: float = 1e-3,
-        add_counts: bool = True,
+        add_counts: bool = False,
     ) -> None:
         """Construct `PercentileClusters`.
 
@@ -513,18 +514,21 @@ class DOMSummaryFeatures(NodeDefinition):
             input_feature_names: Column names for input features.
             charge_label: Name of the charge column.
             time_label: Name of the time column.
-            total_charge: If True, total charge is added to the output.
-            charge_after_t: List of times to calculate charge after.
+            total_charge: If True, calculates total charge as feature.
+            charge_after_t: List of times at which the accumulated charge
+                is calculated as a feature.
             time_of_first_hit: If True, time of first hit is added
-                to the output.
-            time_spread: If True, time spread is added to the output.
-            time_std: If True, time std is added to the output.
+                as a feature.
+            time_spread: If True, time spread is added as a feature.
+            time_std: If True, time std is added as a feature.
             time_after_charge_pct: List of percentiles to calculate time after
                 charge.
-            charge_standardization: Standardization factor for charge.
-            time_standardization: Standardization factor for time
+            charge_standardization: Standardization factor for features
+                with a charge value.
+            time_standardization: Standardization factor for features
+                with a time
             add_counts: If True, number of log10(counts per DOM) is added as
-                a nodefeature.
+                a feature.
         """
         # Set member variables
         self._cluster_on = cluster_on
