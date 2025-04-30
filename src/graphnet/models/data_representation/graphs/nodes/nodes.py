@@ -29,6 +29,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
         if input_feature_names is not None:
+            print(input_feature_names)
             self.set_output_feature_names(
                 input_feature_names=input_feature_names
             )
