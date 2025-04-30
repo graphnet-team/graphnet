@@ -44,8 +44,9 @@ class IC86DNNMapping(PixelMapping):
     def __init__(
         self,
         dtype: torch.dtype,
-        dom_pos_names: List[str],
         pixel_feature_names: List[str],
+        string_label: str = "string",
+        dom_number_label: str = "dom_number",
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
     ):
@@ -53,7 +54,8 @@ class IC86DNNMapping(PixelMapping):
 
         Args:
             dtype: data type used for node features. e.g. ´torch.float´
-            dom_pos_names: Names of the DOM position features.
+            string_label: Names of the DOM string feature.
+            dom_number_label: Names of the DOM number feature.
             pixel_feature_names: Names of each column in expected input data
                 that will be built into a image.
             include_lower_dc: If True, the lower DeepCore will be included.
@@ -61,31 +63,43 @@ class IC86DNNMapping(PixelMapping):
         """
         super().__init__()
         self._dtype = dtype
-        self._dom_pos_names = dom_pos_names
+        self._string_label = string_label
+        self._dom_number_label = dom_number_label
         self._pixel_feature_names = pixel_feature_names
 
-        self._set_indeces(pixel_feature_names, dom_pos_names)
+        self._set_indeces(pixel_feature_names, dom_number_label, string_label)
 
-        self._nb_cnn_features = len(pixel_feature_names) - len(dom_pos_names)
+        self._nb_cnn_features = (
+            len(pixel_feature_names) - 2
+        )  # 2 for string and dom_number
 
         self._include_lower_dc = include_lower_dc
         self._include_upper_dc = include_upper_dc
 
+        df = pd.read_parquet(IC86_CNN_MAPPING)
+        df.sort_values(
+            by=["string", "dom_number"],
+            ascending=[True, True],
+            inplace=True,
+        )
+
         self._tensor_mapping = torch.tensor(
-            pd.read_parquet(IC86_CNN_MAPPING).values,
+            df.values,
             dtype=dtype,
         )
 
     def _set_indeces(
         self,
         feature_names: List[str],
-        dom_pos_names: List[str],
+        dom_number_label: str,
+        string_label: str,
     ) -> None:
-        self._dom_pos_idx = []
         self._cnn_features_idx = []
         for feature in feature_names:
-            if feature in dom_pos_names:
-                self._dom_pos_idx.append(feature_names.index(feature))
+            if feature == dom_number_label:
+                self._dom_number_idx = feature_names.index(feature)
+            elif feature == string_label:
+                self._string_idx = feature_names.index(feature)
             else:
                 self._cnn_features_idx.append(feature_names.index(feature))
 
@@ -113,15 +127,14 @@ class IC86DNNMapping(PixelMapping):
         x = data.x
 
         # Direct coordinate and feature extraction
-        batch_coords = x[:, self._dom_pos_idx]
+        string_dom_number = x[:, [self._string_idx, self._dom_number_idx]]
         batch_row_features = x[:, self._cnn_features_idx]
 
         # Compute coordinate matches directly
         coord_matches = torch.all(
-            torch.isclose(
-                batch_coords.unsqueeze(1),
-                self._tensor_mapping[:, :3].unsqueeze(0),
-                rtol=1e-5,
+            torch.eq(
+                string_dom_number.unsqueeze(1),
+                self._tensor_mapping[:, [6, 7]].unsqueeze(0),
             ),
             dim=-1,
         )
@@ -178,5 +191,5 @@ class IC86DNNMapping(PixelMapping):
         self.image_feature_names = [
             infeature
             for infeature in input_feature_names
-            if infeature not in self._dom_pos_names
+            if infeature not in [self._string_label, self._dom_number_label]
         ]
