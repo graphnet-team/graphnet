@@ -41,7 +41,8 @@ class TestImageIC86Mapping(ImageDefinition):
 
         # Base class constructor
         pixel_mapping = IC86DNNMapping(
-            dom_pos_names=["dom_x", "dom_y", "dom_z"],
+            string_label="string",
+            dom_number_label="dom_number",
             pixel_feature_names=node_definition._output_feature_names,
             include_lower_dc=include_lower_dc,
             include_upper_dc=include_upper_dc,
