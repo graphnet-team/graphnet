@@ -645,9 +645,6 @@ class DOMSummaryFeatures(NodeDefinition):
 
     def set_indeces(self, feature_names: List[str]) -> None:
         """Set the indices for the input features."""
-        assert set(feature_names) == set(
-            self._cluster_on + [self._charge_label, self._time_label]
-        ), f"Input feature names do not match: {feature_names}"
         self._cluster_idx = [
             feature_names.index(column) for column in self._cluster_on
         ]
