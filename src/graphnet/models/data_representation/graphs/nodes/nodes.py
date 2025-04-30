@@ -504,6 +504,7 @@ class DOMSummaryFeatures(NodeDefinition):
         time_after_charge_pct: List[int] = [1, 3, 5, 11, 15, 20, 50, 80],
         charge_standardization: float = 1e-2,
         time_standardization: float = 1e-3,
+        add_counts: bool = True,
     ) -> None:
         """Construct `PercentileClusters`.
 
@@ -522,6 +523,8 @@ class DOMSummaryFeatures(NodeDefinition):
                 charge.
             charge_standardization: Standardization factor for charge.
             time_standardization: Standardization factor for time
+            add_counts: If True, number of log10(counts per DOM) is added as
+                a nodefeature.
         """
         # Set member variables
         self._cluster_on = cluster_on
@@ -537,6 +540,7 @@ class DOMSummaryFeatures(NodeDefinition):
         self._time_spread = time_spread
         self._time_std = time_std
         self._time_after_charge_pct = time_after_charge_pct
+        self._add_counts = add_counts
 
         # check for correct features
         if input_feature_names is not None:
@@ -565,6 +569,8 @@ class DOMSummaryFeatures(NodeDefinition):
             new_feature_names.append("time_std")
         for pct in self._time_after_charge_pct:
             new_feature_names.append(f"time_after_charge_pct{pct}")
+        if self._add_counts:
+            new_feature_names.append("counts")
         return new_feature_names
 
     def _construct_nodes(self, x: torch.Tensor) -> Data:
@@ -634,8 +640,9 @@ class DOMSummaryFeatures(NodeDefinition):
             cluster_class.clustered_x[
                 :, -len(self._time_after_charge_pct) :
             ] *= self._time_standardization
-
-        return Data(x=torch.tensor(cluster_class.clustered_x))
+        if self._add_counts:
+            cluster_class.add_counts()
+        return torch.tensor(cluster_class.clustered_x)
 
     def set_indeces(self, feature_names: List[str]) -> None:
         """Set the indices for the input features."""
