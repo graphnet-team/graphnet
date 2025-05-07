@@ -24,9 +24,10 @@ def main(backend: str, triggered: str, HNL: str, OUTPUT_DIR: str) -> None:
     warnings.simplefilter(action="ignore", category=FutureWarning)
 
     input_dir = [f"{TEST_DATA_DIR}/km3net"]
-    if OUTPUT_DIR is not "None":
+    if OUTPUT_DIR != "None":
         outdir = f"{OUTPUT_DIR}/{backend}"
-    outdir = f"{EXAMPLE_OUTPUT_DIR}/{backend}"
+    else:
+        outdir = f"{EXAMPLE_OUTPUT_DIR}/{backend}"
     os.makedirs(outdir, exist_ok=True)
     print(60*'*')
     print(f"Saving to {outdir}")
