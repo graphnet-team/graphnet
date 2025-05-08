@@ -11,8 +11,13 @@ import os
 from glob import glob
 
 from .datamodule import GraphNeTDataModule
-from graphnet.models.graphs import GraphDefinition
+from graphnet.models.data_representation import (
+    GraphDefinition,
+    DataRepresentation,
+)
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset
+
+from graphnet.utilities.logging import Logger
 
 
 class CuratedDataset(GraphNeTDataModule):
@@ -26,8 +31,9 @@ class CuratedDataset(GraphNeTDataModule):
 
     def __init__(
         self,
-        graph_definition: GraphDefinition,
         download_dir: str,
+        data_representation: Optional[DataRepresentation] = None,
+        graph_definition: Optional[GraphDefinition] = None,
         truth: Optional[List[str]] = None,
         features: Optional[List[str]] = None,
         backend: str = "parquet",
@@ -38,8 +44,10 @@ class CuratedDataset(GraphNeTDataModule):
         """Construct CuratedDataset.
 
         Args:
-            graph_definition: Method that defines the data representation.
             download_dir: Directory to download dataset to.
+            data_representation: Method that defines the data representation.
+            graph_definition: Method that defines the graph representation.
+                NOTE: DEPRECATED Use `data_representation` instead.
             truth (Optional): List of event-level truth to include. Will
                             include all available information if not given.
             features (Optional): List of input features from pulsemap to use.
@@ -54,9 +62,17 @@ class CuratedDataset(GraphNeTDataModule):
             test_dataloader_kwargs (Optional): Arguments for the test
                                     DataLoader. Default None.
         """
+        if (data_representation is None) & (graph_definition is not None):
+            data_representation = graph_definition
+        elif (data_representation is None) & (graph_definition is None):
+            # Code stops
+            raise TypeError(
+                "__init__() missing 1 required keyword argument:"
+                "'data_representation'"
+            )
+        self._data_representation = data_representation
         # From user
         self._download_dir = download_dir
-        self._graph_definition = graph_definition
         self._backend = backend.lower()
 
         # Checks
@@ -84,6 +100,15 @@ class CuratedDataset(GraphNeTDataModule):
             selection=selec,
             test_selection=test_selec,
         )
+
+        if graph_definition is not None:
+            # Code continues after warning
+            self.warning(
+                "DeprecationWarning: Argument `graph_definition` will be"
+                " deprecated in GraphNeT 2.0. Please use `data_representation`"
+                " instead."
+                ""
+            )
 
     @abstractmethod
     def prepare_data(self) -> None:
@@ -248,6 +273,28 @@ class CuratedDataset(GraphNeTDataModule):
             self._download_dir, self.__class__.__name__, self._backend
         )
         return dataset_dir
+
+    # DEPRECATION: REMOVE AT 2.0 LAUNCH
+    # See https://github.com/graphnet-team/graphnet/issues/647
+    @property
+    def _graph_definition(self) -> DataRepresentation:
+        """Return the graph definition."""
+        # needed for the call in _prepare_args
+        # call before Logger init
+        if hasattr(self, "_logger"):
+            self.warning(
+                "DeprecationWarning: `_graph_definition` will be deprecated in"
+                " GraphNeT 2.0. Please use `_data_representation` instead."
+            )
+        else:
+            Logger(log_folder=None).warning_once(
+                (
+                    "`graphnet.models.graphs` will be depricated soon. "
+                    "All functionality has been moved to "
+                    "`graphnet.models.data_representation`."
+                )
+            )
+        return self._data_representation  # type: ignore
 
 
 class ERDAHostedDataset(CuratedDataset):
