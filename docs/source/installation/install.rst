@@ -54,12 +54,15 @@ Note that this installation will add `km3io`, `km3db`, and `km3pipe`, ensuring t
    conda create -p <path-to-env> python=3.8 -c conda-forge -y
    # Activate the environment and move to the graphnet repository you just cloned. If using conda:
    conda activate <path-to-env>
+
+   git clone https://github.com/graphnet-team/graphnet.git
    cd graphnet
    # Choose the appropriate requirements file based on your system
+   # For CPU-only enviroments:
    pip install -r requirements/torch_cpu.txt -e .[torch,develop]
-   # or
+   # For GPU enviroments with CUDA 11.8 drivers:
    pip install -r requirements/torch_cu118.txt -e .[torch,develop]
-   # or
+   # For GPU enviroments with CUDA 12.1 drivers:
    pip install -r requirements/torch_cu121.txt -e .[torch,develop]
    
    # Install the correct versions of KM3NeT-related libraries
