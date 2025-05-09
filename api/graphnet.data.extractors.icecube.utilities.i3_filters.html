@@ -393,6 +393,10 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SubEventStreamI3Filter</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3FilterMask" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3FilterMask</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.TableFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">TableFilter</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.ChargeFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ChargeFilter</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -424,6 +428,20 @@
     
     
       <a href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3FilterMask" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3FilterMask</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.i3_filters.TableFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">TableFilter</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.i3_filters.ChargeFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ChargeFilter</span></code></a>
       
     
     </li></ul>
@@ -721,6 +739,10 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.SubEventStreamI3Filter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SubEventStreamI3Filter</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3FilterMask" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3FilterMask</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.TableFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">TableFilter</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.i3_filters.ChargeFilter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ChargeFilter</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -806,6 +828,35 @@ If False, the frame is kept if all of the filter names are present.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filter_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
 <li><p><strong>filter_any</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.i3_filters.TableFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.i3_filters.</span></span><span class="sig-name descname"><span class="pre">TableFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/i3_filters.html#TableFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.i3_filters.TableFilter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter" title="graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Filter</span></code></a></p>
+<p>A filter that checks if a table is present in the frame.</p>
+<p>Initialize TableFilter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>table_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – str
+The name of the table to check for.</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.i3_filters.ChargeFilter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.i3_filters.</span></span><span class="sig-name descname"><span class="pre">ChargeFilter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_charge</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/i3_filters.html#ChargeFilter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.i3_filters.ChargeFilter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter" title="graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Filter</span></code></a></p>
+<p>A filter that checks the recorded charge and requires a lower limit.</p>
+<p>This also requires that the charge table is present in the frame.</p>
+<p>Initialize ChargeFilter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>min_charge</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – The minimum charge required to keep the frame.</p></li>
+<li><p><strong>table_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'Homogenized_QTot'</span></code>) – The name of the charge table.</p></li>
 </ul>
 </dd>
 </dl>

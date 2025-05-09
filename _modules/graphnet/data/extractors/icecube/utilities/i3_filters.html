@@ -518,6 +518,75 @@
             <span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span></div>
 
+
+
+<div class="viewcode-block" id="TableFilter">
+<a class="viewcode-back" href="../../../../../../api/graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.TableFilter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TableFilter</span><span class="p">(</span><span class="n">I3Filter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A filter that checks if a table is present in the frame."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize TableFilter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            table_name: str</span>
+<span class="sd">                The name of the table to check for.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_keep_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Check that the frame has a table.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: I3-frame</span>
+<span class="sd">                The I3-frame to check.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">frame</span><span class="o">.</span><span class="n">Has</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_name</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ChargeFilter">
+<a class="viewcode-back" href="../../../../../../api/graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.ChargeFilter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChargeFilter</span><span class="p">(</span><span class="n">I3Filter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A filter that checks the recorded charge and requires a lower limit.</span>
+
+<span class="sd">    This also requires that the charge table is present in the frame.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">min_charge</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Homogenized_QTot"</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize ChargeFilter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            min_charge: The minimum charge required to keep the frame.</span>
+<span class="sd">            table_name: The name of the charge table.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_charge</span> <span class="o">=</span> <span class="n">min_charge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_table_name</span> <span class="o">=</span> <span class="n">table_name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_keep_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Check that the frame has a charge and that it is within the limits.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: I3-frame</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">frame</span><span class="o">.</span><span class="n">Has</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_name</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">charge</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_name</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">return</span> <span class="n">charge</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_charge</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">charge</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_name</span><span class="p">]</span><span class="o">.</span><span class="n">charge</span>
+                    <span class="k">return</span> <span class="n">charge</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_charge</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"Charge table </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_table_name</span><span class="si">}</span><span class="s2"> has no attribute</span><span class="se">\</span>
+<span class="s2">                          'value' or 'charge'."</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
 </pre></div>
 
           </article>
