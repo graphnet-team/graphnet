@@ -15,10 +15,11 @@ class I3QUESOExtractor(I3Extractor):
         self,
         name: str = "queso",
         padding_value: int = -1,
+        exclude: list = [None],
     ):
         """Construct I3QUESOExtractor."""
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
         self._padding_value = padding_value
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, float]:
@@ -42,5 +43,4 @@ class I3QUESOExtractor(I3Extractor):
                     key: value,
                 }
             )
-
         return output

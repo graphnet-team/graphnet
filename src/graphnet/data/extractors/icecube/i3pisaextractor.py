@@ -11,10 +11,12 @@ if TYPE_CHECKING:
 class I3PISAExtractor(I3Extractor):
     """Class for extracting quantities required by PISA."""
 
-    def __init__(self, name: str = "pisa_dependencies"):
+    def __init__(
+        self, name: str = "pisa_dependencies", exclude: list = [None]
+    ):
         """Construct `I3PISAExtractor`."""
         # Base class constructor
-        super().__init__(name)
+        super().__init__(name, exclude=exclude)
 
     def __call__(
         self, frame: "icetray.I3Frame", padding_value: float = -1.0
