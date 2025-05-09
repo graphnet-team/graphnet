@@ -571,16 +571,17 @@
                         <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">extractor_name</span><span class="p">],</span>
                         <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">n_rows</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="p">)</span>
-                    <span class="k">if</span> <span class="n">extractor_name</span> <span class="ow">in</span> <span class="n">dataframe_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                        <span class="n">dataframe_dict</span><span class="p">[</span><span class="n">extractor_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">dataframe_dict</span><span class="p">[</span><span class="n">extractor_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">extractor_name</span> <span class="ow">in</span> <span class="n">dataframe_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                            <span class="n">dataframe_dict</span><span class="p">[</span><span class="n">extractor_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">dataframe_dict</span><span class="p">[</span><span class="n">extractor_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">df</span><span class="p">]</span>
 
         <span class="c1"># Merge each list of dataframes if wanted by writer</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_method</span><span class="o">.</span><span class="n">expects_merged_dataframes</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dataframe_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">dataframe_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-                    <span class="n">dataframe_dict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+                    <span class="p">[</span><span class="n">df</span> <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="n">dataframe_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">df</span><span class="o">.</span><span class="n">empty</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
                 <span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dataframe_dict</span>
 
@@ -633,10 +634,11 @@
 <span class="w">        </span><span class="sd">"""Identify map function to use (pure python or multiprocess)."""</span>
         <span class="c1"># Choose relevant map-function given the requested number of workers.</span>
         <span class="n">n_workers</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">,</span> <span class="n">nb_files</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">n_workers</span>
         <span class="k">if</span> <span class="n">n_workers</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">"Starting pool of </span><span class="si">{</span><span class="n">n_workers</span><span class="si">}</span><span class="s2"> workers to process"</span>
-                <span class="s2">" </span><span class="si">{nb_files}</span><span class="s2"> </span><span class="si">{unit}</span><span class="s2">"</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">nb_files</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">unit</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
             <span class="n">manager</span> <span class="o">=</span> <span class="n">Manager</span><span class="p">()</span>
@@ -682,7 +684,10 @@
 <a class="viewcode-back" href="../../../api/graphnet.data.dataconverter.html#graphnet.data.dataconverter.DataConverter.merge_files">[docs]</a>
     <span class="nd">@final</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">merge_files</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">files</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Merge converted files.</span>
 
@@ -691,6 +696,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            files: Intermediate files to be merged.</span>
+<span class="sd">            output_dir: Directory to save the merged files in.</span>
+<span class="sd">            **kwargs: Additional keyword arguments to be passed to the</span>
+<span class="sd">                      `GraphNeTWriter.merge_files` method.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">files</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="c1"># If no input files are given, but output files from conversion</span>
@@ -710,9 +718,10 @@
                 <span class="s2">"and you must therefore specify argument `files`."</span>
             <span class="p">)</span>
             <span class="k">assert</span> <span class="n">files</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
+        <span class="k">if</span> <span class="n">output_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span>
         <span class="c1"># Merge files</span>
-        <span class="n">merge_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_dir</span><span class="p">,</span> <span class="s2">"merged"</span><span class="p">)</span>
+        <span class="n">merge_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="s2">"merged"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Merging files to </span><span class="si">{</span><span class="n">merge_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_method</span><span class="o">.</span><span class="n">merge_files</span><span class="p">(</span>
             <span class="n">files</span><span class="o">=</span><span class="n">files_to_merge</span><span class="p">,</span> <span class="n">output_dir</span><span class="o">=</span><span class="n">merge_path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>

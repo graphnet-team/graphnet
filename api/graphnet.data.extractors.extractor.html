@@ -397,6 +397,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.extractors.extractor.Extractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.extractor.Extractor.exclude" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">exclude()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.extractor.Extractor.name" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">name</span></code></a>
         </li></ul>
             </nav>
@@ -411,6 +413,13 @@
     
       <a href="#graphnet.data.extractors.extractor.Extractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a>
       <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.extractor.Extractor.exclude" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">exclude()</span></code></a>
+      
+    
+    </li>
     <li class="md-nav__item">
     
     
@@ -579,6 +588,8 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.extractors.extractor.Extractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">Extractor</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.extractor.Extractor.exclude" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">exclude()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.extractor.Extractor.name" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">name</span></code></a>
         </li></ul>
             </nav>
@@ -599,7 +610,7 @@
 <p>Base I3Extractor class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.extractors.extractor.Extractor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.extractor.</span></span><span class="sig-name descname"><span class="pre">Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/extractor.html#Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.extractor.Extractor" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.extractor.</span></span><span class="sig-name descname"><span class="pre">Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/extractor.html#Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.extractor.Extractor" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code>, <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a></p>
 <p>Base class for extracting information from data files.</p>
 <p>All classes inheriting from <cite>Extractor</cite> should implement the <cite>__call__</cite>
@@ -617,12 +628,28 @@ number of elements in the array, and 1 the number of columns.</p>
 <p>Construct Extractor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the <cite>Extractor</cite> instance.
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the <cite>Extractor</cite> instance.
 Used to keep track of the provenance of different
 data, and to name tables to which this data is
-saved. E.g. “mc_truth”.</p>
+saved. E.g. “mc_truth”.</p></li>
+<li><p><strong>exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">[None]</span></code>) – List of keys to exclude from the extracted data.</p></li>
+</ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.extractor.Extractor.exclude">
+<span class="sig-name descname"><span class="pre">exclude</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/extractor.html#Extractor.exclude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.extractor.Extractor.exclude" title="Link to this definition">¶</a></dt>
+<dd><p>Exclude specified keys from the extracted data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>func</strong> (<em>Callable</em>)</p>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.data.extractors.extractor.Extractor.name">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#graphnet.data.extractors.extractor.Extractor.name" title="Link to this definition">¶</a></dt>

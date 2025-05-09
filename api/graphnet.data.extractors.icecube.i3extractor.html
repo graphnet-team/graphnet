@@ -691,7 +691,7 @@
 <p>Base I3Extractor class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3extractor.I3Extractor">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.extractors.extractor.html#graphnet.data.extractors.extractor.Extractor" title="graphnet.data.extractors.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
 <p>Base class for extracting information from physics I3-frames.</p>
 <p>Contains functionality required to extract data from i3 files, used by
@@ -701,9 +701,12 @@ method.</p>
 <p>Construct I3Extractor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the <cite>I3Extractor</cite> instance. Used to keep
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the <cite>I3Extractor</cite> instance. Used to keep
 track of the provenance of different data, and to name tables
-to which this data is saved.</p>
+to which this data is saved.</p></li>
+<li><p><strong>exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">[None]</span></code>) – List of features to exclude from the extractor.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">

@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-data-extractors-combine-extractors--page-root">Source code for graphnet.data.extractors.combine_extractors</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Module for combining multiple extractors into a single extractor."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.imports</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_icecube_package</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.icecube.i3extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Extractor</span>
@@ -383,6 +383,14 @@
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor_name</span><span class="o">=</span><span class="n">extractor_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span> <span class="o">=</span> <span class="n">extractors</span>
+
+<div class="viewcode-block" id="CombinedExtractor.set_gcd">
+<a class="viewcode-back" href="../../../../api/graphnet.data.extractors.combine_extractors.html#graphnet.data.extractors.combine_extractors.CombinedExtractor.set_gcd">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_gcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i3_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Set the GCD file for all extractors."""</span>
+        <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span><span class="p">:</span>
+            <span class="n">extractor</span><span class="o">.</span><span class="n">set_gcd</span><span class="p">(</span><span class="n">i3_file</span><span class="p">,</span> <span class="n">gcd_file</span><span class="p">)</span></div>
+
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Extract data from frame using all extractors.</span>
