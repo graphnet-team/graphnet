@@ -20,13 +20,14 @@ class I3Extractor(Extractor):
     method.
     """
 
-    def __init__(self, extractor_name: str):
+    def __init__(self, extractor_name: str, exclude: list = [None]):
         """Construct I3Extractor.
 
         Args:
             extractor_name: Name of the `I3Extractor` instance. Used to keep
                 track of the provenance of different data, and to name tables
                 to which this data is saved.
+            exclude: List of features to exclude from the extractor.
         """
         # Member variable(s)
         self._i3_file: str = ""
@@ -35,7 +36,7 @@ class I3Extractor(Extractor):
         self._calibration: Optional["icetray.I3Frame.Calibration"] = None
 
         # Base class constructor
-        super().__init__(extractor_name=extractor_name)
+        super().__init__(extractor_name=extractor_name, exclude=exclude)
 
     def set_gcd(self, i3_file: str, gcd_file: Optional[str] = None) -> None:
         """Extract GFrame and CFrame from i3/gcd-file pair.
