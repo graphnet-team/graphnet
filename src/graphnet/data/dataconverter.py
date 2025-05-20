@@ -215,16 +215,17 @@ class DataConverter(ABC, Logger):
                         data[k][extractor_name],
                         index=[0] if n_rows == 1 else None,
                     )
-                    if extractor_name in dataframe_dict.keys():
-                        dataframe_dict[extractor_name].append(df)
-                    else:
-                        dataframe_dict[extractor_name] = [df]
+                    if not df.empty:
+                        if extractor_name in dataframe_dict.keys():
+                            dataframe_dict[extractor_name].append(df)
+                        else:
+                            dataframe_dict[extractor_name] = [df]
 
         # Merge each list of dataframes if wanted by writer
         if self._save_method.expects_merged_dataframes:
             for key in dataframe_dict.keys():
                 dataframe_dict[key] = pd.concat(
-                    dataframe_dict[key], axis=0
+                    [df for df in dataframe_dict[key] if not df.empty], axis=0
                 ).reset_index(drop=True)
         return dataframe_dict
 
@@ -275,10 +276,11 @@ class DataConverter(ABC, Logger):
         """Identify map function to use (pure python or multiprocess)."""
         # Choose relevant map-function given the requested number of workers.
         n_workers = min(self._num_workers, nb_files)
+        self._num_workers = n_workers
         if n_workers > 1:
             self.info(
                 f"Starting pool of {n_workers} workers to process"
-                " {nb_files} {unit}"
+                f"{nb_files} {unit}"
             )
 
             manager = Manager()
@@ -321,7 +323,10 @@ class DataConverter(ABC, Logger):
 
     @final
     def merge_files(
-        self, files: Optional[Union[List[str], str]] = None, **kwargs: Any
+        self,
+        files: Optional[Union[List[str], str]] = None,
+        output_dir: Optional[str] = None,
+        **kwargs: Any,
     ) -> None:
         """Merge converted files.
 
@@ -330,6 +335,9 @@ class DataConverter(ABC, Logger):
 
         Args:
             files: Intermediate files to be merged.
+            output_dir: Directory to save the merged files in.
+            **kwargs: Additional keyword arguments to be passed to the
+                      `GraphNeTWriter.merge_files` method.
         """
         if (files is None) & (len(self._output_files) > 0):
             # If no input files are given, but output files from conversion
@@ -349,9 +357,10 @@ class DataConverter(ABC, Logger):
                 "and you must therefore specify argument `files`."
             )
             assert files is not None
-
+        if output_dir is None:
+            output_dir = self._output_dir
         # Merge files
-        merge_path = os.path.join(self._output_dir, "merged")
+        merge_path = os.path.join(output_dir, "merged")
         self.info(f"Merging files to {merge_path}")
         self._save_method.merge_files(
             files=files_to_merge, output_dir=merge_path, **kwargs

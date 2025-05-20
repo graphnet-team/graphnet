@@ -42,7 +42,7 @@ def main_icecube86(backend: str) -> None:
     inputs = [f"{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02"]
     outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86"
     gcd_rescue = glob(
-        "{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02/*GeoCalib*"
+        f"{TEST_DATA_DIR}/i3/oscNext_genie_level7_v02/*GeoCalib*"
     )[0]
 
     converter = CONVERTER_CLASS[backend](

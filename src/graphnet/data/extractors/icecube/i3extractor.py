@@ -28,6 +28,7 @@ class I3Extractor(Extractor):
     def __init__(
         self,
         extractor_name: str,
+        exclude: list = [None],
         is_corsika: bool = False,
     ):
         """Construct I3Extractor.
@@ -48,7 +49,7 @@ class I3Extractor(Extractor):
         self._is_corsika: bool = is_corsika
 
         # Base class constructor
-        super().__init__(extractor_name=extractor_name)
+        super().__init__(extractor_name=extractor_name, exclude=exclude)
 
     def set_gcd(self, i3_file: str, gcd_file: Optional[str] = None) -> None:
         """Extract GFrame and CFrame from i3/gcd-file pair.
