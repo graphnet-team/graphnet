@@ -155,3 +155,66 @@ class I3FilterMask(I3Filter):
                 "FilterMask filters will not be applied."
             )
             return True
+
+
+class TableFilter(I3Filter):
+    """A filter that checks if a table is present in the frame."""
+
+    def __init__(self, table_name: str):
+        """Initialize TableFilter.
+
+        Args:
+            table_name: str
+                The name of the table to check for.
+        """
+        self._table_name = table_name
+
+    def _keep_frame(self, frame: "icetray.I3Frame") -> bool:
+        """Check that the frame has a table.
+
+        Args:
+            frame: I3-frame
+                The I3-frame to check.
+        """
+        return frame.Has(self._table_name)
+
+
+class ChargeFilter(I3Filter):
+    """A filter that checks the recorded charge and requires a lower limit.
+
+    This also requires that the charge table is present in the frame.
+    """
+
+    def __init__(
+        self, min_charge: float, table_name: str = "Homogenized_QTot"
+    ):
+        """Initialize ChargeFilter.
+
+        Args:
+            min_charge: The minimum charge required to keep the frame.
+            table_name: The name of the charge table.
+        """
+        self._min_charge = min_charge
+        self._table_name = table_name
+
+    def _keep_frame(self, frame: "icetray.I3Frame") -> bool:
+        """Check that the frame has a charge and that it is within the limits.
+
+        Args:
+            frame: I3-frame
+        """
+        if frame.Has(self._table_name):
+            try:
+                charge = frame[self._table_name].value
+                return charge >= self._min_charge
+            except AttributeError:
+                try:
+                    charge = frame[self._table_name].charge
+                    return charge >= self._min_charge
+                except AttributeError:
+                    self.warning_once(
+                        f"Charge table {self._table_name} has no attribute\
+                          'value' or 'charge'."
+                    )
+                    return False
+        return False
