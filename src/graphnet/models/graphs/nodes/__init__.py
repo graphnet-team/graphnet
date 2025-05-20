@@ -12,6 +12,7 @@ from graphnet.models.data_representation.graphs import (
     PercentileClusters,
     NodeAsDOMTimeSeries,
     IceMixNodes,
+    DOMSummaryFeatures,
 )
 
 
