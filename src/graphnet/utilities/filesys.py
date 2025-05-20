@@ -2,6 +2,7 @@
 
 from pathlib import Path
 import re
+import os
 from typing import List, Optional, Tuple, Union
 
 
@@ -31,7 +32,7 @@ def has_extension(filename: str, extensions: List[str]) -> bool:
 
 
 def find_i3_files(
-    directories: Union[str, List[str]],
+    inputs: Union[str, List[str]],
     gcd_rescue: Optional[str] = None,
     recursive: Optional[bool] = True,
 ) -> Tuple[List[str], List[str]]:
@@ -42,7 +43,8 @@ def find_i3_files(
     in the directory.
 
     Args:
-        directories: Directories to search recursively for I3 files.
+        inputs: Directories to search recursively for I3 files.
+            Or list of I3 files.
         gcd_rescue: Path to the GCD that will be default if no GCD is present
             in the directory.
         recursive: Whether or not to search the directories recursively.
@@ -51,46 +53,61 @@ def find_i3_files(
         i3_list: Paths to I3 files in `directories`
         gcd_list: Paths to GCD files for each I3 file.
     """
-    if isinstance(directories, str):
-        directories = [directories]
+    if isinstance(inputs, str):
+        inputs = [inputs]
 
     # Output containers
     i3_files = []
     gcd_files = []
+    if all([is_i3_file(input) for input in inputs]):
+        print("Assuming list of files.")
+        assert gcd_rescue is not None
+        gcd_files = [gcd_rescue] * len(inputs)
+        return inputs, gcd_files
 
-    for directory in directories:
+    elif all(os.path.isdir(input) for input in inputs):
+        print("Assuming list of directories.")
 
-        # Find all I3-like files in `directory`, may or may not be recursively.
-        paths = []
-        i3_patterns = ["*.bz2", "*.zst", "*.gz"]
-        for i3_pattern in i3_patterns:
-            if recursive:
-                paths.extend(list(Path(directory).rglob(i3_pattern)))
-            else:
-                paths.extend(list(Path(directory).glob(i3_pattern)))
+        for directory in inputs:
 
-        # Loop over all folders containing such I3-like files.
-        folders = sorted(set([path.parent for path in paths]))
-        for folder in folders:
+            # Find all I3-like files in `directory`.
+            paths = []
+            i3_patterns = ["*.bz2", "*.zst", "*.gz"]
+            for i3_pattern in i3_patterns:
+                if recursive:
+                    paths.extend(list(Path(directory).rglob(i3_pattern)))
+                else:
+                    paths.extend(list(Path(directory).glob(i3_pattern)))
 
-            # List all I3 and GCD files, respectively, in the current folder.
-            folder_files = [
-                str(path) for path in paths if path.parent == folder
-            ]
-            folder_i3_files = list(filter(is_i3_file, folder_files))
-            folder_gcd_files = list(filter(is_gcd_file, folder_files))
+            # Loop over all folders containing such I3-like files.
+            folders = sorted(set([path.parent for path in paths]))
+            for folder in folders:
 
-            # Make sure that no more than one GCD file is found;
-            # and use rescue file if none is found.
-            assert len(folder_gcd_files) <= 1
-            if len(folder_gcd_files) == 0:
-                assert gcd_rescue is not None
-                folder_gcd_files = [gcd_rescue]
+                # List all I3 and GCD files, in the current folder.
+                folder_files = [
+                    str(path) for path in paths if path.parent == folder
+                ]
+                folder_i3_files = list(filter(is_i3_file, folder_files))
+                folder_gcd_files = list(filter(is_gcd_file, folder_files))
 
-            # Store list of I3 files and corresponding GCD files.
-            folder_gcd_files = folder_gcd_files * len(folder_i3_files)
+                # Make sure that no more than one GCD file is found;
+                # and use rescue file if none is found.
+                assert len(folder_gcd_files) <= 1
+                if len(folder_gcd_files) == 0:
+                    assert gcd_rescue is not None
+                    folder_gcd_files = [gcd_rescue]
 
-            gcd_files.extend(folder_gcd_files)
-            i3_files.extend(folder_i3_files)
+                # Store list of I3 files and corresponding GCD files.
+                folder_gcd_files = folder_gcd_files * len(folder_i3_files)
 
-    return i3_files, gcd_files
+                gcd_files.extend(folder_gcd_files)
+                i3_files.extend(folder_i3_files)
+        return i3_files, gcd_files
+    else:
+        if any([os.path.isdir(input) for input in inputs]):
+            raise ValueError(
+                "Inputs contains a mix of files and directories \
+                which is not supported."
+            )
+        else:
+            raise ValueError("Some inputs are not valid directories or files.")
