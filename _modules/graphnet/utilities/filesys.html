@@ -353,6 +353,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 
@@ -393,7 +394,7 @@
 <div class="viewcode-block" id="find_i3_files">
 <a class="viewcode-back" href="../../../api/graphnet.utilities.filesys.html#graphnet.utilities.filesys.find_i3_files">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">find_i3_files</span><span class="p">(</span>
-    <span class="n">directories</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">inputs</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">gcd_rescue</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">recursive</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
@@ -404,7 +405,8 @@
 <span class="sd">    in the directory.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        directories: Directories to search recursively for I3 files.</span>
+<span class="sd">        inputs: Directories to search recursively for I3 files.</span>
+<span class="sd">            Or list of I3 files.</span>
 <span class="sd">        gcd_rescue: Path to the GCD that will be default if no GCD is present</span>
 <span class="sd">            in the directory.</span>
 <span class="sd">        recursive: Whether or not to search the directories recursively.</span>
@@ -413,49 +415,64 @@
 <span class="sd">        i3_list: Paths to I3 files in `directories`</span>
 <span class="sd">        gcd_list: Paths to GCD files for each I3 file.</span>
 <span class="sd">    """</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">directories</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">directories</span> <span class="o">=</span> <span class="p">[</span><span class="n">directories</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">inputs</span><span class="p">]</span>
 
     <span class="c1"># Output containers</span>
     <span class="n">i3_files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">gcd_files</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">is_i3_file</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Assuming list of files."</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">gcd_rescue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">gcd_files</span>
 
-    <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">directories</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Assuming list of directories."</span><span class="p">)</span>
 
-        <span class="c1"># Find all I3-like files in `directory`, may or may not be recursively.</span>
-        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">i3_patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"*.bz2"</span><span class="p">,</span> <span class="s2">"*.zst"</span><span class="p">,</span> <span class="s2">"*.gz"</span><span class="p">]</span>
-        <span class="k">for</span> <span class="n">i3_pattern</span> <span class="ow">in</span> <span class="n">i3_patterns</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
-                <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">directory</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
 
-        <span class="c1"># Loop over all folders containing such I3-like files.</span>
-        <span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]))</span>
-        <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+            <span class="c1"># Find all I3-like files in `directory`.</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">i3_patterns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"*.bz2"</span><span class="p">,</span> <span class="s2">"*.zst"</span><span class="p">,</span> <span class="s2">"*.gz"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i3_pattern</span> <span class="ow">in</span> <span class="n">i3_patterns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">recursive</span><span class="p">:</span>
+                    <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">paths</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">i3_pattern</span><span class="p">)))</span>
 
-            <span class="c1"># List all I3 and GCD files, respectively, in the current folder.</span>
-            <span class="n">folder_files</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="n">folder</span>
-            <span class="p">]</span>
-            <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
-            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+            <span class="c1"># Loop over all folders containing such I3-like files.</span>
+            <span class="n">folders</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">path</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">]))</span>
+            <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
 
-            <span class="c1"># Make sure that no more than one GCD file is found;</span>
-            <span class="c1"># and use rescue file if none is found.</span>
-            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">gcd_rescue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span>
+                <span class="c1"># List all I3 and GCD files, in the current folder.</span>
+                <span class="n">folder_files</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span> <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">parent</span> <span class="o">==</span> <span class="n">folder</span>
+                <span class="p">]</span>
+                <span class="n">folder_i3_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_i3_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
+                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">is_gcd_file</span><span class="p">,</span> <span class="n">folder_files</span><span class="p">))</span>
 
-            <span class="c1"># Store list of I3 files and corresponding GCD files.</span>
-            <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="n">folder_gcd_files</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+                <span class="c1"># Make sure that no more than one GCD file is found;</span>
+                <span class="c1"># and use rescue file if none is found.</span>
+                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">assert</span> <span class="n">gcd_rescue</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                    <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcd_rescue</span><span class="p">]</span>
 
-            <span class="n">gcd_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span>
-            <span class="n">i3_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+                <span class="c1"># Store list of I3 files and corresponding GCD files.</span>
+                <span class="n">folder_gcd_files</span> <span class="o">=</span> <span class="n">folder_gcd_files</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span></div>
+                <span class="n">gcd_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_gcd_files</span><span class="p">)</span>
+                <span class="n">i3_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">folder_i3_files</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Inputs contains a mix of files and directories </span><span class="se">\</span>
+<span class="s2">                which is not supported."</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Some inputs are not valid directories or files."</span><span class="p">)</span></div>
 
 </pre></div>
 

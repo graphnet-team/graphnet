@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-data-pre-configured-dataconverters--page-root">Source code for graphnet.data.pre_configured.dataconverters</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Pre-configured combinations of writers and readers."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataConverter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Reader</span><span class="p">,</span> <span class="n">ParquetReader</span>
@@ -424,6 +424,7 @@
         <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">i3_filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">max_table_size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Convert I3 files to SQLite.</span>
 
@@ -448,10 +449,11 @@
 <span class="sd">                         Defaults to 1 (no multiprocessing).</span>
 <span class="sd">            i3_filters: Instances of `I3Filter` to filter PFrames. Defaults to</span>
 <span class="sd">                        `NullSplitI3Filter`.</span>
+<span class="sd">            max_table_size: Maximum size of the SQLite tables. Default None.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">file_reader</span><span class="o">=</span><span class="n">I3Reader</span><span class="p">(</span><span class="n">gcd_rescue</span><span class="o">=</span><span class="n">gcd_rescue</span><span class="p">,</span> <span class="n">i3_filters</span><span class="o">=</span><span class="n">i3_filters</span><span class="p">),</span>
-            <span class="n">save_method</span><span class="o">=</span><span class="n">SQLiteWriter</span><span class="p">(),</span>
+            <span class="n">save_method</span><span class="o">=</span><span class="n">SQLiteWriter</span><span class="p">(</span><span class="n">max_table_size</span><span class="o">=</span><span class="n">max_table_size</span><span class="p">),</span>
             <span class="n">extractors</span><span class="o">=</span><span class="n">extractors</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
