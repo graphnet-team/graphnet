@@ -539,12 +539,12 @@ class ClusterSummaryFeatures(NodeDefinition):
                 with a charge value.
             time_standardization: Standardization factor for features
                 with a time
-            order_in_time: If True, clusters are sorted by time.
-                    If your data is already sorted by time, you can set this
+            order_in_time: If True, clusters are ordered in time.
+                    If your data is already ordered in time, you can set this
                     to False to avoid a potential overhead.
                 NOTE: Should only be set to False if you are sure that
-                    the input data is already sorted by time. Will lead to
-                    incorrect results if the data is not sorted by time.
+                    the input data is already ordered in time. Will lead to
+                    incorrect results otherwise.
             add_counts: If True, number of log10(event counts per clusters)
                 is added as a feature.
         """
@@ -573,7 +573,7 @@ class ClusterSummaryFeatures(NodeDefinition):
         if self._order_in_time is False:
             self.info(
                 "Setting `order_by_time` to False. "
-                "Make sure that the input data is already sorted by time."
+                "Make sure that the input data is already ordered in time."
             )
 
     def _define_output_feature_names(
@@ -705,17 +705,13 @@ class ClusterSummaryFeatures(NodeDefinition):
         x: np.ndarray,
         standardization: Union[float, str],
     ) -> np.ndarray:
-        """Standardize the features in the input tensor."""
+        """Standardize the features in the input array."""
         if isinstance(standardization, float):
             return x * standardization
-        elif isinstance(standardization, str):
-            if standardization != "log":
-                raise ValueError(
-                    f"standardization must be either a float or 'log', "
-                    f"but got {standardization}"
-                )
+        elif standardization == "log":
             return np.log10(x)
         else:
+            # should never happen, but just in case
             raise ValueError(
                 f"standardization must be either a float or 'log', "
                 f"but got {standardization}"
@@ -724,7 +720,7 @@ class ClusterSummaryFeatures(NodeDefinition):
     def _verify_standardization(
         self,
     ) -> torch.Tensor:
-        """Verify the standardization of the features."""
+        """Verify settings of standardization of the features."""
         if not isinstance(self._charge_standardization, float):
             if isinstance(self._charge_standardization, str):
                 if self._charge_standardization != "log":
