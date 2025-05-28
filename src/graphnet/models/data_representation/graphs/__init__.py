@@ -18,7 +18,7 @@ from .nodes import (
     NodeAsDOMTimeSeries,
     PercentileClusters,
     IceMixNodes,
-    DOMSummaryFeatures,
+    ClusterSummaryFeatures,
 )
 
 from .edges import (

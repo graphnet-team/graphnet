@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional, Dict, Union, Callable
 from abc import abstractmethod
 
 import torch
@@ -471,21 +471,29 @@ class IceMixNodes(NodeDefinition):
         return graph
 
 
-class DOMSummaryFeatures(NodeDefinition):
-    """Represent DOMs as clusters with summary features.
+class ClusterSummaryFeatures(NodeDefinition):
+    """Represent pulse maps as clusters with summary features.
 
-    If `cluster_on` is set to the xyz coordinates of DOMs
+    If `cluster_on` is set to the xyz coordinates of optical modules
     e.g. `cluster_on = ['dom_x', 'dom_y', 'dom_z']`, each node will be a
-    unique DOM and the pulse information (charge, time) is summarized by
+    unique optical module and the pulse information (charge, time) is summarized.
     NOTE: Intended to be used with features [dom_x, dom_y, dom_z, charge, time]
 
+    Possible features per cluster:
     - total charge
-    - charge accumulated after times `charge_after_t`
-    - time of first hit per DOM
-    - time spread per DOM
-    - time std per DOM
-    - time took to collect the charge percentiles `time_after_charge_pct`
-    - number of pulses per DOM
+        feature name: `total_charge`
+    - charge accumulated after <X> time units
+        feature name: `charge_after_<X>ns`
+    - time of first hit in the optical module
+        feature name: `time_of_first_hit`
+    - time spread per optical module
+        feature name: `time_spread`
+    - time std per optical module
+        feature name: `time_std`
+    - time took to collect <X> percent of total charge per cluster
+        feature name: `time_after_charge_pct<X>`
+    - number of pulses per clusters
+        feature name: `counts`
 
     Taken from Theo Glauchs PhD thesis:
     https://mediatum.ub.tum.de/node?id=1584755
@@ -503,11 +511,12 @@ class DOMSummaryFeatures(NodeDefinition):
         time_spread: bool = True,
         time_std: bool = True,
         time_after_charge_pct: List[int] = [1, 3, 5, 11, 15, 20, 50, 80],
-        charge_standardization: float = 1e-2,
+        charge_standardization: Union[float, str] = 1e-2,
         time_standardization: float = 1e-3,
+        order_in_time: bool = True,
         add_counts: bool = False,
     ) -> None:
-        """Construct `PercentileClusters`.
+        """Construct `ClusterSummaryFeatures`.
 
         Args:
             cluster_on: Names of features to create clusters from.
@@ -527,15 +536,34 @@ class DOMSummaryFeatures(NodeDefinition):
                 with a charge value.
             time_standardization: Standardization factor for features
                 with a time
-            add_counts: If True, number of log10(counts per DOM) is added as
+            order_in_time: If True, clusters are sorted by time.
+                    If your data is already sorted by time, you can set this
+                    to False to avoid a potential overhead.
+                NOTE: Should only be set to False if you are sure that 
+                    the input data is already sorted by time. Will lead to
+                    incorrect results if the data is not sorted by time.
+            add_counts: If True, number of log10(event counts per clusters) is added as
                 a feature.
         """
         # Set member variables
         self._cluster_on = cluster_on
         self._charge_label = charge_label
         self._time_label = time_label
-        self._charge_standardization = charge_standardization
+        if isinstance(charge_standardization, float):
+            charge_std_fn = lambda x: x * charge_standardization
+        elif isinstance(
+            charge_standardization, str
+        ):
+            if charge_standardization != "log":
+                raise ValueError(
+                    f"charge_standardization must be either a float or 'log', "
+                    f"but got {charge_standardization}"
+                )
+            charge_std_fn = lambda x: np.log10(x)
+        self._charge_std_fn = charge_std_fn
         self._time_standardization = time_standardization
+        self._order_in_time = order_in_time
+
 
         # feature member variables
         self._total_charge = total_charge
@@ -548,13 +576,18 @@ class DOMSummaryFeatures(NodeDefinition):
 
         # Base class constructor
         super().__init__(input_feature_names=input_feature_names)
+        if self._order_in_time is False:
+            self.info(
+                "Setting `order_by_time` to False. "
+                "Make sure that the input data is already sorted by time."
+            )
 
     def _define_output_feature_names(
         self,
         input_feature_names: List[str],
     ) -> List[str]:
         """Set the output feature names."""
-        self.set_indeces(input_feature_names)
+        self.set_indices(input_feature_names)
         new_feature_names = deepcopy(self._cluster_on)
         if self._total_charge:
             new_feature_names.append("total_charge")
@@ -580,7 +613,7 @@ class DOMSummaryFeatures(NodeDefinition):
         cluster_class = cluster_and_pad(
             x=x,
             cluster_columns=self._cluster_idx,
-            sort_by=[self._time_idx],
+            sort_by=[self._time_idx] if self._order_in_time else [],
         )
         # calculate charge weighted median time as reference
         ref_time = cluster_class.reference_time(
@@ -591,7 +624,9 @@ class DOMSummaryFeatures(NodeDefinition):
         # add total charge
         if self._total_charge:
             cluster_class.add_sum_charge(charge_index=self._charge_idx)
-            cluster_class.clustered_x[:, -1] *= self._charge_standardization
+            cluster_class.clustered_x[:, -1] = self._charge_std_fn(
+                cluster_class.clustered_x[:, -1]
+            )
 
         # add charge after t
         if len(self._charge_after_t) > 0:
@@ -602,7 +637,11 @@ class DOMSummaryFeatures(NodeDefinition):
             )
             cluster_class.clustered_x[
                 :, -len(self._charge_after_t) :
-            ] *= self._charge_standardization
+            ] = self._charge_std_fn(
+                cluster_class.clustered_x[
+                    :, -len(self._charge_after_t) :
+            ]
+            )
 
         # add time of first hit
         if self._time_of_first_hit:
@@ -643,7 +682,7 @@ class DOMSummaryFeatures(NodeDefinition):
             cluster_class.add_counts()
         return torch.tensor(cluster_class.clustered_x)
 
-    def set_indeces(self, feature_names: List[str]) -> None:
+    def set_indices(self, feature_names: List[str]) -> None:
         """Set the indices for the input features."""
         self._cluster_idx = [
             feature_names.index(column) for column in self._cluster_on
