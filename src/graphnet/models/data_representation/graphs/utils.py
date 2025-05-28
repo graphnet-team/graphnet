@@ -582,11 +582,6 @@ class cluster_and_pad:
             _cluster_names: The names are added at the end of the tensor
                             or inserted at the specified location
         """
-        assert (
-            self._sort_by[-1] == time_index
-        ), """Data is not sorted by time index.
-            Make sure that the last element of
-            sort_by is set to the time index"""
         # Summarize the values at different times
         time_first_pulse = np.nanmin(
             self._padded_x[:, :, time_index],
