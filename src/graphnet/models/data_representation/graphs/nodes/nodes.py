@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional, Dict, Union, Callable
+from typing import List, Tuple, Optional, Dict, Union
 from abc import abstractmethod
 
 import torch
@@ -475,9 +475,11 @@ class ClusterSummaryFeatures(NodeDefinition):
     """Represent pulse maps as clusters with summary features.
 
     If `cluster_on` is set to the xyz coordinates of optical modules
-    e.g. `cluster_on = ['dom_x', 'dom_y', 'dom_z']`, each node will be a
-    unique optical module and the pulse information (charge, time) is summarized.
-    NOTE: Intended to be used with features [dom_x, dom_y, dom_z, charge, time]
+    e.g. `cluster_on = ['dom_x', 'dom_y', 'dom_z']`, each node will be
+    a unique optical module and the pulse information (e.g. charge, time)
+    is summarized.
+    NOTE: Developed to be used with features
+        [dom_x, dom_y, dom_z, charge, time]
 
     Possible features per cluster:
     - total charge
@@ -495,7 +497,8 @@ class ClusterSummaryFeatures(NodeDefinition):
     - number of pulses per clusters
         feature name: `counts`
 
-    Taken from Theo Glauchs PhD thesis:
+    For more details on some of the features see
+    Theo Glauchs thesis (chapter 5.3):
     https://mediatum.ub.tum.de/node?id=1584755
     """
 
@@ -539,31 +542,22 @@ class ClusterSummaryFeatures(NodeDefinition):
             order_in_time: If True, clusters are sorted by time.
                     If your data is already sorted by time, you can set this
                     to False to avoid a potential overhead.
-                NOTE: Should only be set to False if you are sure that 
+                NOTE: Should only be set to False if you are sure that
                     the input data is already sorted by time. Will lead to
                     incorrect results if the data is not sorted by time.
-            add_counts: If True, number of log10(event counts per clusters) is added as
-                a feature.
+            add_counts: If True, number of log10(event counts per clusters)
+                is added as a feature.
         """
         # Set member variables
         self._cluster_on = cluster_on
         self._charge_label = charge_label
         self._time_label = time_label
-        if isinstance(charge_standardization, float):
-            charge_std_fn = lambda x: x * charge_standardization
-        elif isinstance(
-            charge_standardization, str
-        ):
-            if charge_standardization != "log":
-                raise ValueError(
-                    f"charge_standardization must be either a float or 'log', "
-                    f"but got {charge_standardization}"
-                )
-            charge_std_fn = lambda x: np.log10(x)
-        self._charge_std_fn = charge_std_fn
-        self._time_standardization = time_standardization
         self._order_in_time = order_in_time
 
+        # Check if charge_standardization is a float or 'log'
+        self._charge_standardization = charge_standardization
+        self._time_standardization = time_standardization
+        self._verify_standardization()
 
         # feature member variables
         self._total_charge = total_charge
@@ -624,8 +618,9 @@ class ClusterSummaryFeatures(NodeDefinition):
         # add total charge
         if self._total_charge:
             cluster_class.add_sum_charge(charge_index=self._charge_idx)
-            cluster_class.clustered_x[:, -1] = self._charge_std_fn(
-                cluster_class.clustered_x[:, -1]
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._charge_standardization,
             )
 
         # add charge after t
@@ -635,12 +630,11 @@ class ClusterSummaryFeatures(NodeDefinition):
                 summarization_indices=[self._charge_idx],
                 times=self._charge_after_t,
             )
-            cluster_class.clustered_x[
-                :, -len(self._charge_after_t) :
-            ] = self._charge_std_fn(
-                cluster_class.clustered_x[
-                    :, -len(self._charge_after_t) :
-            ]
+            cluster_class.clustered_x[:, -len(self._charge_after_t) :] = (
+                self._standardize_features(
+                    cluster_class.clustered_x[:, -len(self._charge_after_t) :],
+                    self._charge_standardization,
+                )
             )
 
         # add time of first hit
@@ -649,21 +643,31 @@ class ClusterSummaryFeatures(NodeDefinition):
                 time_index=self._time_idx,
             )
             cluster_class.clustered_x[:, -1] -= ref_time
-            cluster_class.clustered_x[:, -1] *= self._time_standardization
+
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._time_standardization,
+            )
 
         # add time spread
         if self._time_spread:
             cluster_class.add_spread(
                 columns=[self._time_idx],
             )
-            cluster_class.clustered_x[:, -1] *= self._time_standardization
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._time_standardization,
+            )
 
         # add time std
         if self._time_std:
             cluster_class.add_std(
                 columns=[self._time_idx],
             )
-            cluster_class.clustered_x[:, -1] *= self._time_standardization
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._time_standardization,
+            )
 
         # add time after charge percentiles
         if len(self._time_after_charge_pct) > 0:
@@ -677,7 +681,13 @@ class ClusterSummaryFeatures(NodeDefinition):
             ] -= ref_time
             cluster_class.clustered_x[
                 :, -len(self._time_after_charge_pct) :
-            ] *= self._time_standardization
+            ] = self._standardize_features(
+                cluster_class.clustered_x[
+                    :, -len(self._time_after_charge_pct) :
+                ],
+                self._time_standardization,
+            )
+
         if self._add_counts:
             cluster_class.add_counts()
         return torch.tensor(cluster_class.clustered_x)
@@ -689,3 +699,47 @@ class ClusterSummaryFeatures(NodeDefinition):
         ]
         self._charge_idx = feature_names.index(self._charge_label)
         self._time_idx = feature_names.index(self._time_label)
+
+    def _standardize_features(
+        self,
+        x: np.ndarray,
+        standardization: Union[float, str],
+    ) -> np.ndarray:
+        """Standardize the features in the input tensor."""
+        if isinstance(standardization, float):
+            return x * standardization
+        elif isinstance(standardization, str):
+            if standardization != "log":
+                raise ValueError(
+                    f"standardization must be either a float or 'log', "
+                    f"but got {standardization}"
+                )
+            return np.log10(x)
+        else:
+            raise ValueError(
+                f"standardization must be either a float or 'log', "
+                f"but got {standardization}"
+            )
+
+    def _verify_standardization(
+        self,
+    ) -> torch.Tensor:
+        """Verify the standardization of the features."""
+        if not isinstance(self._charge_standardization, float):
+            if isinstance(self._charge_standardization, str):
+                if self._charge_standardization != "log":
+                    raise ValueError(
+                        f"charge_standardization must be either a float or"
+                        f" 'log', but got {self._charge_standardization}"
+                    )
+            else:
+                raise ValueError(
+                    f"charge_standardization must be either a float or 'log', "
+                    f"but got {self._charge_standardization}"
+                )
+
+        if not isinstance(self._time_standardization, float):
+            raise ValueError(
+                f"time_standardization must be a float, "
+                f"but got {self._time_standardization}"
+            )
