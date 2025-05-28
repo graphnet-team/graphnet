@@ -548,6 +548,10 @@ class ClusterSummaryFeatures(NodeDefinition):
                     incorrect results otherwise.
             add_counts: If True, number of log10(event counts per clusters)
                 is added as a feature.
+
+        NOTE: Make sure that either the input data is not already standardized
+        or that the `charge_standardization` and `time_standardization`
+        parameters are set to 1 to avoid a double standardization.
         """
         # Set member variables
         self._cluster_on = cluster_on
