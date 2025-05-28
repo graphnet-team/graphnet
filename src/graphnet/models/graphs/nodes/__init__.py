@@ -12,9 +12,8 @@ from graphnet.models.data_representation.graphs import (
     PercentileClusters,
     NodeAsDOMTimeSeries,
     IceMixNodes,
-    DOMSummaryFeatures,
+    ClusterSummaryFeatures,
 )
-
 
 Logger(log_folder=None).warning_once(
     (

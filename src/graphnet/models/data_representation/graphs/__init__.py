@@ -20,7 +20,6 @@ from .nodes import (
     IceMixNodes,
     ClusterSummaryFeatures,
 )
-
 from .edges import (
     EdgeDefinition,
     KNNEdges,
