@@ -514,7 +514,7 @@ class ClusterSummaryFeatures(NodeDefinition):
         time_spread: bool = True,
         time_std: bool = True,
         time_after_charge_pct: List[int] = [1, 3, 5, 11, 15, 20, 50, 80],
-        charge_standardization: Union[float, str] = 1e-2,
+        charge_standardization: Union[float, str] = "log",
         time_standardization: float = 1e-3,
         order_in_time: bool = True,
         add_counts: bool = False,
@@ -535,8 +535,9 @@ class ClusterSummaryFeatures(NodeDefinition):
             time_std: If True, time std is added as a feature.
             time_after_charge_pct: List of percentiles to calculate time after
                 charge.
-            charge_standardization: Standardization factor for features
-                with a charge value.
+            charge_standardization: Either a float or 'log'. If a float,
+                the features are multiplied by this factor. If 'log', the
+                features are transformed to log10 scale.
             time_standardization: Standardization factor for features
                 with a time
             order_in_time: If True, clusters are ordered in time.
