@@ -11,4 +11,5 @@ from .nodes import (
     PercentileClusters,
     NodeAsDOMTimeSeries,
     IceMixNodes,
+    ClusterSummaryFeatures,
 )

@@ -1,6 +1,6 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional, Dict
+from typing import List, Tuple, Optional, Dict, Union
 from abc import abstractmethod
 
 import torch
@@ -469,3 +469,278 @@ class IceMixNodes(NodeDefinition):
             graph[:event_length, idx] = x[ids, self.feature_indexes[feature]]
 
         return graph
+
+
+class ClusterSummaryFeatures(NodeDefinition):
+    """Represent pulse maps as clusters with summary features.
+
+    If `cluster_on` is set to the xyz coordinates of optical modules
+    e.g. `cluster_on = ['dom_x', 'dom_y', 'dom_z']`, each node will be
+    a unique optical module and the pulse information (e.g. charge, time)
+    is summarized.
+    NOTE: Developed to be used with features
+        [dom_x, dom_y, dom_z, charge, time]
+
+    Possible features per cluster:
+    - total charge
+        feature name: `total_charge`
+    - charge accumulated after <X> time units
+        feature name: `charge_after_<X>ns`
+    - time of first hit in the optical module
+        feature name: `time_of_first_hit`
+    - time spread per optical module
+        feature name: `time_spread`
+    - time std per optical module
+        feature name: `time_std`
+    - time took to collect <X> percent of total charge per cluster
+        feature name: `time_after_charge_pct<X>`
+    - number of pulses per clusters
+        feature name: `counts`
+
+    For more details on some of the features see
+    Theo Glauchs thesis (chapter 5.3):
+    https://mediatum.ub.tum.de/node?id=1584755
+    """
+
+    def __init__(
+        self,
+        cluster_on: List[str],
+        input_feature_names: List[str],
+        charge_label: str = "charge",
+        time_label: str = "dom_time",
+        total_charge: bool = True,
+        charge_after_t: List[int] = [10, 50, 100],
+        time_of_first_hit: bool = True,
+        time_spread: bool = True,
+        time_std: bool = True,
+        time_after_charge_pct: List[int] = [1, 3, 5, 11, 15, 20, 50, 80],
+        charge_standardization: Union[float, str] = "log",
+        time_standardization: float = 1e-3,
+        order_in_time: bool = True,
+        add_counts: bool = False,
+    ) -> None:
+        """Construct `ClusterSummaryFeatures`.
+
+        Args:
+            cluster_on: Names of features to create clusters from.
+            input_feature_names: Column names for input features.
+            charge_label: Name of the charge column.
+            time_label: Name of the time column.
+            total_charge: If True, calculates total charge as feature.
+            charge_after_t: List of times at which the accumulated charge
+                is calculated as a feature.
+            time_of_first_hit: If True, time of first hit is added
+                as a feature.
+            time_spread: If True, time spread is added as a feature.
+            time_std: If True, time std is added as a feature.
+            time_after_charge_pct: List of percentiles to calculate time after
+                charge.
+            charge_standardization: Either a float or 'log'. If a float,
+                the features are multiplied by this factor. If 'log', the
+                features are transformed to log10 scale.
+            time_standardization: Standardization factor for features
+                with a time
+            order_in_time: If True, clusters are ordered in time.
+                    If your data is already ordered in time, you can set this
+                    to False to avoid a potential overhead.
+                NOTE: Should only be set to False if you are sure that
+                    the input data is already ordered in time. Will lead to
+                    incorrect results otherwise.
+            add_counts: If True, number of log10(event counts per clusters)
+                is added as a feature.
+
+        NOTE: Make sure that either the input data is not already standardized
+        or that the `charge_standardization` and `time_standardization`
+        parameters are set to 1 to avoid a double standardization.
+        """
+        # Set member variables
+        self._cluster_on = cluster_on
+        self._charge_label = charge_label
+        self._time_label = time_label
+        self._order_in_time = order_in_time
+
+        # Check if charge_standardization is a float or 'log'
+        self._charge_standardization = charge_standardization
+        self._time_standardization = time_standardization
+        self._verify_standardization()
+
+        # feature member variables
+        self._total_charge = total_charge
+        self._charge_after_t = charge_after_t
+        self._time_of_first_hit = time_of_first_hit
+        self._time_spread = time_spread
+        self._time_std = time_std
+        self._time_after_charge_pct = time_after_charge_pct
+        self._add_counts = add_counts
+
+        # Base class constructor
+        super().__init__(input_feature_names=input_feature_names)
+        if self._order_in_time is False:
+            self.info(
+                "Setting `order_by_time` to False. "
+                "Make sure that the input data is already ordered in time."
+            )
+
+    def _define_output_feature_names(
+        self,
+        input_feature_names: List[str],
+    ) -> List[str]:
+        """Set the output feature names."""
+        self.set_indices(input_feature_names)
+        new_feature_names = deepcopy(self._cluster_on)
+        if self._total_charge:
+            new_feature_names.append("total_charge")
+        for t in self._charge_after_t:
+            new_feature_names.append(f"charge_after_{t}ns")
+        if self._time_of_first_hit:
+            new_feature_names.append("time_of_first_hit")
+        if self._time_spread:
+            new_feature_names.append("time_spread")
+        if self._time_std:
+            new_feature_names.append("time_std")
+        for pct in self._time_after_charge_pct:
+            new_feature_names.append(f"time_after_charge_pct{pct}")
+        if self._add_counts:
+            new_feature_names.append("counts")
+        return new_feature_names
+
+    def _construct_nodes(self, x: torch.Tensor) -> Data:
+        """Construct nodes from raw node features ´x´."""
+        # Cast to Numpy
+        x = x.numpy()
+        # Construct clusters with percentile-summarized features
+        cluster_class = cluster_and_pad(
+            x=x,
+            cluster_columns=self._cluster_idx,
+            sort_by=[self._time_idx] if self._order_in_time else [],
+        )
+        # calculate charge weighted median time as reference
+        ref_time = cluster_class.reference_time(
+            charge_index=self._charge_idx,
+            time_index=self._time_idx,
+        )
+
+        # add total charge
+        if self._total_charge:
+            cluster_class.add_sum_charge(charge_index=self._charge_idx)
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._charge_standardization,
+            )
+
+        # add charge after t
+        if len(self._charge_after_t) > 0:
+            cluster_class.add_accumulated_value_after_t(
+                time_index=self._time_idx,
+                summarization_indices=[self._charge_idx],
+                times=self._charge_after_t,
+            )
+            cluster_class.clustered_x[:, -len(self._charge_after_t) :] = (
+                self._standardize_features(
+                    cluster_class.clustered_x[:, -len(self._charge_after_t) :],
+                    self._charge_standardization,
+                )
+            )
+
+        # add time of first hit
+        if self._time_of_first_hit:
+            cluster_class.add_time_first_pulse(
+                time_index=self._time_idx,
+            )
+            cluster_class.clustered_x[:, -1] -= ref_time
+
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._time_standardization,
+            )
+
+        # add time spread
+        if self._time_spread:
+            cluster_class.add_spread(
+                columns=[self._time_idx],
+            )
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._time_standardization,
+            )
+
+        # add time std
+        if self._time_std:
+            cluster_class.add_std(
+                columns=[self._time_idx],
+            )
+            cluster_class.clustered_x[:, -1] = self._standardize_features(
+                cluster_class.clustered_x[:, -1],
+                self._time_standardization,
+            )
+
+        # add time after charge percentiles
+        if len(self._time_after_charge_pct) > 0:
+            cluster_class.add_charge_threshold_summary(
+                summarization_indices=[self._time_idx],
+                percentiles=self._time_after_charge_pct,
+                charge_index=self._charge_idx,
+            )
+            cluster_class.clustered_x[
+                :, -len(self._time_after_charge_pct) :
+            ] -= ref_time
+            cluster_class.clustered_x[
+                :, -len(self._time_after_charge_pct) :
+            ] = self._standardize_features(
+                cluster_class.clustered_x[
+                    :, -len(self._time_after_charge_pct) :
+                ],
+                self._time_standardization,
+            )
+
+        if self._add_counts:
+            cluster_class.add_counts()
+        return torch.tensor(cluster_class.clustered_x)
+
+    def set_indices(self, feature_names: List[str]) -> None:
+        """Set the indices for the input features."""
+        self._cluster_idx = [
+            feature_names.index(column) for column in self._cluster_on
+        ]
+        self._charge_idx = feature_names.index(self._charge_label)
+        self._time_idx = feature_names.index(self._time_label)
+
+    def _standardize_features(
+        self,
+        x: np.ndarray,
+        standardization: Union[float, str],
+    ) -> np.ndarray:
+        """Standardize the features in the input array."""
+        if isinstance(standardization, float):
+            return x * standardization
+        elif standardization == "log":
+            return np.log10(x)
+        else:
+            # should never happen, but just in case
+            raise ValueError(
+                f"standardization must be either a float or 'log', "
+                f"but got {standardization}"
+            )
+
+    def _verify_standardization(
+        self,
+    ) -> torch.Tensor:
+        """Verify settings of standardization of the features."""
+        if not isinstance(self._charge_standardization, float):
+            if isinstance(self._charge_standardization, str):
+                if self._charge_standardization != "log":
+                    raise ValueError(
+                        f"charge_standardization must be either a float or"
+                        f" 'log', but got {self._charge_standardization}"
+                    )
+            else:
+                raise ValueError(
+                    f"charge_standardization must be either a float or 'log', "
+                    f"but got {self._charge_standardization}"
+                )
+
+        if not isinstance(self._time_standardization, float):
+            raise ValueError(
+                f"time_standardization must be a float, "
+                f"but got {self._time_standardization}"
+            )
