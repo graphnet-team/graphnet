@@ -24,6 +24,7 @@ icecube
 
    graphnet.data.extractors.icecube.i3extractor
    graphnet.data.extractors.icecube.i3featureextractor
+   graphnet.data.extractors.icecube.i3filtermapextractor
    graphnet.data.extractors.icecube.i3genericextractor
    graphnet.data.extractors.icecube.i3hybridrecoextractor
    graphnet.data.extractors.icecube.i3ntmuonlabelsextractor
