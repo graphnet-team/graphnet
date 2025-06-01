@@ -356,6 +356,17 @@ class cluster_and_pad:
             weights=self._charge_weights.flatten(),
         )
 
+    def _calculate_time_first_pulse(self, time_index: int) -> np.ndarray:
+        """Calculate the time of the first pulse."""
+        assert not hasattr(
+            self, "_time_first_pulse"
+        ), "Time of first pulse has already been calculated, \
+            re-calculation is not allowed"
+        self._time_first_pulse = np.nanmin(
+            self._padded_x[:, :, time_index],
+            axis=1,
+        )
+
     def add_charge_threshold_summary(
         self,
         summarization_indices: List[int],
@@ -534,8 +545,12 @@ class cluster_and_pad:
             _cluster_names: The names are added at the end of the tensor
                             or inserted at the specified location
         """
-        time_first_pulse = np.nanmin(self._padded_x[:, :, time_index], axis=1)
-        self._add_column(time_first_pulse, location)
+        if not hasattr(self, "_time_first_pulse"):
+            self._calculate_time_first_pulse(time_index)
+
+        # Add the time of the first pulse to the clustered tensor
+        self._add_column(self._time_first_pulse, location)
+
         # update the cluster names
         if self._input_names is not None:
             new_name = [self._input_names[time_index] + "_first_pulse"]
@@ -582,19 +597,20 @@ class cluster_and_pad:
             _cluster_names: The names are added at the end of the tensor
                             or inserted at the specified location
         """
-        # Summarize the values at different times
-        time_first_pulse = np.nanmin(
-            self._padded_x[:, :, time_index],
-            axis=1,
-        )[:, np.newaxis]
+        # Calculate the time of the first pulse if not already done
+        if not hasattr(self, "_time_first_pulse"):
+            self._calculate_time_first_pulse(time_index)
+
+        # Create array with threshold times
         tmp_times = (
             np.tile(
                 np.array(times),
-                (len(time_first_pulse), 1),
+                (len(self._time_first_pulse[:, np.newaxis]), 1),
             )
-            + time_first_pulse
+            + self._time_first_pulse[:, np.newaxis]
         )
-        # print(times)
+
+        # Create a mask for the times
         mask = (
             self._padded_x[:, :, time_index][:, np.newaxis, :]
             >= tmp_times[:, :, np.newaxis]
@@ -615,7 +631,10 @@ class cluster_and_pad:
         selections = selections.transpose(0, 2, 1).reshape(
             len(self.clustered_x), -1
         )
+
+        # Add the selections to the clustered tensor
         self._add_column(selections, location)
+
         # update the cluster names
         if self._input_names is not None:
             new_names = [
