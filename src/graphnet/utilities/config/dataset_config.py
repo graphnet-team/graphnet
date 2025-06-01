@@ -62,6 +62,7 @@ class DatasetConfig(BaseConfig):
 
     data_representation: Any = None
     labels: Optional[Dict[str, Any]] = None
+    use_super_selection: bool = False
 
     def __init__(self, **data: Any) -> None:
         """Construct `DataConfig`.
