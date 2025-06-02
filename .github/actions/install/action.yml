@@ -13,7 +13,7 @@ inputs:
   extras:
     description: "Extras flags for pip installation of graphnet"
     required: true
-    default: "[develop]"
+    default: "develop"
   
   torch_version:
     description: "Version of PyTorch"
