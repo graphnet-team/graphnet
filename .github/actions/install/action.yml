@@ -13,12 +13,19 @@ inputs:
   extras:
     description: "Extras flags for pip installation of graphnet"
     required: true
-    default: "[develop,torch]"
+    default: "[develop]"
+  
+  torch_version:
+    description: "Version of PyTorch"
+    required: true
+    default: "2.6.0"
+    options: ["2.6.0", "2.5.0", "2.4.0"]
+
   hardware:
     description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
     required: true
     default: "cpu"
-    options: ["cpu", "cu118", "cu121", "macos"]
+    options: ["cpu", "cu118", "cu121", "cu124", "cu126","macos"]
 
 runs:
   using: "composite"
@@ -36,7 +43,10 @@ runs:
       shell: bash
     - name: Install package
       run: |
-        echo requirements/torch_${{ inputs.hardware }}.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
-        pip install -r requirements/torch_${{ inputs.hardware }}.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
+        echo Installing Via:
+        echo pip install -e .[torch-${{ inputs.torch_version }}-${{ inputs.hardware }}, ${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        echo pip install git+https://github.com/thoglu/jammy_flows.git
+        
+        pip install -e .[${{ inputs.hardware }}, ${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
         pip install git+https://github.com/thoglu/jammy_flows.git
       shell: bash
