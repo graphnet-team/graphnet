@@ -118,7 +118,6 @@ jobs:
           pip show torch-sparse
           pip show torch-scatter
           pip show dill
-          pip show pickle
           pip show numpy
 
 
