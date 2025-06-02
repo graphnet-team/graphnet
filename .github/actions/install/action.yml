@@ -42,7 +42,7 @@ runs:
         IFS='.' read -r major minor _ <<< "$version"
         torch_flag="${major}${minor}"
         echo "torch_flag=$torch_flag" >> "$GITHUB_ENV"
-        shell: bash
+      shell: bash
     - name: Install dependencies
       run: |
         pip install --upgrade pip>=20
