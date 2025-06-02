@@ -18,5 +18,7 @@ from .i3genericextractor import I3GenericExtractor
 from .i3pisaextractor import I3PISAExtractor
 from .i3ntmuonlabelsextractor import I3NTMuonLabelExtractor
 from .i3quesoextractor import I3QUESOExtractor
+from .i3dictvalueextractor import I3DictValueExtractor
+from .i3filtermapextractor import I3FilterMapExtractor
 from .i3highesteparticleextractor import I3HighestEparticleExtractor
 from .i3calorimetry import I3Calorimetry
