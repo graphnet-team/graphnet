@@ -36,6 +36,13 @@ runs:
         PIP_FLAG_USER=`[[ ${{ inputs.user }} =~ (T|t)rue ]] && printf "%s\n" "--user " || echo " "`
         echo "PIP_FLAGS=${PIP_FLAG_USER}${PIP_FLAG_EDITABLE}" >> $GITHUB_ENV
       shell: bash
+    - name: Set torch_flag
+        run: |
+          version="${{ inputs.torch_version }}"
+          IFS='.' read -r major minor _ <<< "$version"
+          torch_flag="${major}${minor}"
+          echo "torch_flag=$torch_flag" >> "$GITHUB_ENV"
+        shell: bash
     - name: Install dependencies
       run: |
         pip install --upgrade pip>=20
@@ -44,9 +51,9 @@ runs:
     - name: Install package
       run: |
         echo Installing Via:
-        echo pip install -e .[torch-${{ inputs.torch_version }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        echo pip install -e .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
         echo pip install git+https://github.com/thoglu/jammy_flows.git
         
-        pip install -e .[${{ inputs.hardware }}, ${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        pip install -e .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
         pip install git+https://github.com/thoglu/jammy_flows.git
       shell: bash
