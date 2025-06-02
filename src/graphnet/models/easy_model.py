@@ -179,7 +179,9 @@ class EasySyntax(Model):
                 if isinstance(callback, ModelCheckpoint):
                     checkpoint_callback = callback
             self.load_state_dict(
-                torch.load(checkpoint_callback.best_model_path)["state_dict"]
+                torch.load(
+                    checkpoint_callback.best_model_path, weights_only=False
+                )["state_dict"]
             )
             self.info("Best-fit weights from EarlyStopping loaded.")
 
