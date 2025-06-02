@@ -51,7 +51,7 @@ EXTRAS_REQUIRE = {
     ],
     # --- PyTorch 2.4.0 ---
     "torch-24-cpu": [
-        "torch==2.4.0+cpu",
+        "torch==2.4.0",
         "torch-geometric",
         "pyg_lib",
         "torch_scatter",
@@ -102,7 +102,7 @@ EXTRAS_REQUIRE = {
     ],
     # --- PyTorch 2.5.0 ---
     "torch-25-cpu": [
-        "torch==2.5.0+cpu",
+        "torch==2.5.0",
         "torch-geometric",
         "pyg_lib",
         "torch_scatter",
@@ -153,7 +153,7 @@ EXTRAS_REQUIRE = {
     ],
     # --- PyTorch 2.6.0 ---
     "torch-26-cpu": [
-        "torch==2.6.0+cpu",
+        "torch==2.6.0",
         "torch-geometric",
         "pyg_lib",
         "torch_scatter",
