@@ -44,7 +44,7 @@ runs:
     - name: Install package
       run: |
         echo Installing Via:
-        echo pip install -e .[torch-${{ inputs.torch_version }}-${{ inputs.hardware }}, ${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        echo pip install -e .[torch-${{ inputs.torch_version }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
         echo pip install git+https://github.com/thoglu/jammy_flows.git
         
         pip install -e .[${{ inputs.hardware }}, ${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
