@@ -27,7 +27,7 @@ INSTALL_REQUIRES = [
     "tqdm>=4.64",
     "wandb>=0.12",
     "polars >=0.19",
-    # "torchscale==0.2.0",
+    "torchscale==0.2.0",
     "h5py>= 3.7.0",
 ]
 
