@@ -37,11 +37,11 @@ runs:
         echo "PIP_FLAGS=${PIP_FLAG_USER}${PIP_FLAG_EDITABLE}" >> $GITHUB_ENV
       shell: bash
     - name: Set torch_flag
-        run: |
-          version="${{ inputs.torch_version }}"
-          IFS='.' read -r major minor _ <<< "$version"
-          torch_flag="${major}${minor}"
-          echo "torch_flag=$torch_flag" >> "$GITHUB_ENV"
+      run: |
+        version="${{ inputs.torch_version }}"
+        IFS='.' read -r major minor _ <<< "$version"
+        torch_flag="${major}${minor}"
+        echo "torch_flag=$torch_flag" >> "$GITHUB_ENV"
         shell: bash
     - name: Install dependencies
       run: |
