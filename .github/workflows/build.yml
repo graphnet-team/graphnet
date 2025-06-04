@@ -46,7 +46,7 @@ jobs:
           pip --version
           pip3 --version
           pip show setuptools
-          
+
       - name: install git
         run: |
           apt-get --yes install sudo
@@ -66,6 +66,7 @@ jobs:
           pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
           pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
           pip install --upgrade psutil # Original version from IceTray Environment incompatible
+          pip install --upgrade setuptools
       - name: Install package
         uses: ./.github/actions/install
         with:
