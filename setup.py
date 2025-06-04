@@ -48,6 +48,7 @@ EXTRAS_REQUIRE = {
         "sphinx-material",
         "sphinx-autodoc-typehints",
         "versioneer",
+        "flake8",
     ],
     # --- PyTorch 2.4.0 ---
     "torch-24-cpu": [

@@ -28,7 +28,7 @@ inputs:
     options: ["cpu", "cu118", "cu121", "cu124", "cu126","macos"]
   
   use_vm:
-    description: "Should the installation happen in a virtual environment named vm?"
+    description: "Should the installation happen in a virtual environment named venv?"
     required: true
     default: False
     options: [True, False]
