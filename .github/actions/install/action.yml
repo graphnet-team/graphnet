@@ -46,7 +46,7 @@ runs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip>=20
-        pip install wheel setuptools
+        pip install wheel setuptools>=68.2.2
       shell: bash
     - name: Install package
       run: |
