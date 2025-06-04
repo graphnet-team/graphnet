@@ -40,6 +40,8 @@ jobs:
       image: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
       options: --user root
     steps:
+      - name: Show python version
+        run: python3 --version
       - name: install git
         run: |
           apt-get --yes install sudo
