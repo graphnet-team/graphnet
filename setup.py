@@ -6,7 +6,7 @@ import versioneer
 
 # Requirements definitions
 SETUP_REQUIRES = [
-    "setuptools>=59.5.0",
+    "setuptools>=68.2.2",
 ]
 
 INSTALL_REQUIRES = [
