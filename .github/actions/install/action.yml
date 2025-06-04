@@ -46,7 +46,12 @@ runs:
     - name: Install dependencies
       run: |
         pip install --upgrade pip>=20
-        pip install wheel setuptools>=68.2.2
+        pip install --upgrade setuptools>=68.2.2
+      shell: bash
+    - name: Print pip and setuptools versions
+      run: |
+        pip --version 
+        pip show setuptools
       shell: bash
     - name: Install package
       run: |
