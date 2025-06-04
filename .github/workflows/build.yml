@@ -41,7 +41,9 @@ jobs:
       options: --user root
     steps:
       - name: Show python version
-        run: python3 --version
+        run: | 
+          python3 --version
+          python -c "import sympy; print(sympy.__file__)"
       - name: install git
         run: |
           apt-get --yes install sudo
