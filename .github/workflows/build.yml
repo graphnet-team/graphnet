@@ -122,6 +122,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Create virtual environment
+        shell: bash
         run: |
           python3 -m venv ~/venv
           source ~/venv/bin/activate
@@ -132,6 +133,7 @@ jobs:
         run: df -h
 
       - name: Upgrade packages in virtual environment
+        shell: bash
         run: |
           source ~/venv/bin/activate
           pip install --upgrade astropy
@@ -144,8 +146,10 @@ jobs:
         uses: ./.github/actions/install
         with:
           editable: true
+          use_vm: true
 
       - name: Print packages in pip
+        shell: bash
         run: |
           source ~/venv/bin/activate
           pip show torch
@@ -156,6 +160,7 @@ jobs:
           pip show jammy_flows
       - name: Run unit tests and generate coverage report
         run: |
+          shell: bash
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
           coverage run -a --source=graphnet -m pytest tests/examples/04_training
           coverage run -a --source=graphnet -m pytest tests/utilities 
