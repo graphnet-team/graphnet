@@ -173,7 +173,7 @@ def main(
     os.makedirs(path, exist_ok=True)
 
     results.to_csv(f"{path}/results.csv")
-    
+
     model.save_state_dict(f"{path}/state_dict.pth")
     model.save_config(f"{path}/model_config.yml")
 
