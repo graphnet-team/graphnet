@@ -51,7 +51,7 @@ jobs:
           echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
           echo "PYTHONPATH=/usr/local/icetray/lib:$PYTHONPATH" >> $GITHUB_ENV
           echo "LD_LIBRARY_PATH=/usr/local/icetray/lib:/usr/local/icetray/cernroot/lib:/usr/local/icetray/lib/tools:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Print available disk space before graphnet install
         run: df -h
       - name: Upgrade packages already installed on icecube/icetray
