@@ -138,7 +138,7 @@ jobs:
 
   build-macos:
     name: Unit tests - macOS
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python 3.10
