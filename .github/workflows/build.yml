@@ -100,7 +100,7 @@ jobs:
           coverageLocations: coverage.xml:coverage.py
 
   build-icetray-v2:
-    name: Unit tests - IceTray
+    name: Unit tests - IceTray - v2
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-22.04
     container:
