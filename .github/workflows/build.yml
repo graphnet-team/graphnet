@@ -99,6 +99,80 @@ jobs:
           coverageCommand: coverage report
           coverageLocations: coverage.xml:coverage.py
 
+  build-icetray-v2:
+    name: Unit tests - IceTray
+    needs: [ check-codeclimate-credentials ]
+    runs-on: ubuntu-22.04
+    container:
+      image: icecube/icetray:icetray-prod-v1.11.1-ubuntu22.04-X64-2024-09-16
+      options: --user root
+    steps:
+      - name: Show python version
+        run: | 
+          python3 --version
+          pip --version
+
+      - name: Install git
+        run: |
+          apt-get --yes install sudo
+          sudo apt update --fix-missing --yes
+          sudo apt upgrade --yes
+          sudo apt-get install --yes git-all python3-venv
+
+      - uses: actions/checkout@v4
+
+      - name: Create virtual environment
+        run: |
+          python3 -m venv ~/venv
+          source ~/venv/bin/activate
+          pip install --upgrade pip
+          pip --version
+
+      - name: Print available disk space before graphnet install
+        run: df -h
+
+      - name: Upgrade packages in virtual environment
+        run: |
+          source ~/venv/bin/activate
+          pip install --upgrade astropy
+          pip install --upgrade PyYAML
+          pip install --upgrade psutil
+          pip install --upgrade setuptools
+          pip show setuptools
+
+      - name: Install package
+        uses: ./.github/actions/install
+        with:
+          editable: true
+
+      - name: Print packages in pip
+        run: |
+          source ~/venv/bin/activate
+          pip show torch
+          pip show torch-geometric
+          pip show torch-cluster
+          pip show torch-sparse
+          pip show torch-scatter
+          pip show jammy_flows
+      - name: Run unit tests and generate coverage report
+        run: |
+          coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
+          coverage run -a --source=graphnet -m pytest tests/examples/04_training
+          coverage run -a --source=graphnet -m pytest tests/utilities 
+          coverage xml -o coverage.xml
+    
+      - name: Work around permission issue
+        run: |
+          git config --global --add safe.directory /__w/graphnet/graphnet
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        if: needs.check-codeclimate-credentials.outputs.has_credentials == 'true'
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: coverage report
+          coverageLocations: coverage.xml:coverage.py
+          
   build-matrix:
     name: Unit tests - Python versions
     runs-on: ubuntu-22.04
