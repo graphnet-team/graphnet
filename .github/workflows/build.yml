@@ -43,7 +43,10 @@ jobs:
       - name: Show python version
         run: | 
           python3 --version
-          python -c "import sympy; print(sympy.__file__)"
+          pip --version
+          pip3 --version
+          pip show setuptools
+          
       - name: install git
         run: |
           apt-get --yes install sudo
