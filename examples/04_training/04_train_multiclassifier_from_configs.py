@@ -124,7 +124,6 @@ def main(
     os.makedirs(path, exist_ok=True)
     logger.info(f"Writing results to {path}")
     model.save_state_dict(f"{path}/state_dict.pth")
-    model.save(f"{path}/model.pth")
 
     # Get predictions
     if isinstance(config.target, str):

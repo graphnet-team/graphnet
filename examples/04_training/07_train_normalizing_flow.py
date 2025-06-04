@@ -157,11 +157,6 @@ def main(
     # Save results as .csv
     results.to_csv(f"{path}/results.csv")
 
-    # Save full model (including weights) to .pth file - not version safe
-    # Note: Models saved as .pth files in one version of graphnet
-    #       may not be compatible with a different version of graphnet.
-    model.save(f"{path}/model.pth")
-
     # Save model config and state dict - Version safe save method.
     # This method of saving models is the safest way.
     model.save_state_dict(f"{path}/state_dict.pth")
