@@ -62,22 +62,22 @@ runs:
 
     - name: Install dependencies
       run: |
-        $VM_PREFIX pip install --upgrade 'pip>=20'
-        $VM_PREFIX pip install --upgrade 'setuptools>=68.2.2'
+        ${{ env.VM_PREFIX }} pip install --upgrade 'pip>=20'
+        ${{ env.VM_PREFIX }} pip install --upgrade 'setuptools>=68.2.2'
       shell: bash
 
     - name: Print pip and setuptools versions
       run: |
-        $VM_PREFIX pip --version 
-        $VM_PREFIX pip show setuptools
+        ${{ env.VM_PREFIX }} pip --version 
+        ${{ env.VM_PREFIX }} pip show setuptools
       shell: bash
 
     - name: Install package
       run: |
         echo Installing Via:
-        echo $VM_PREFIX pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
-        echo $VM_PREFIX pip install git+https://github.com/thoglu/jammy_flows.git
+        echo ${{ env.VM_PREFIX }} pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        echo ${{ env.VM_PREFIX }} pip install git+https://github.com/thoglu/jammy_flows.git
 
-        $VM_PREFIX pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
-        $VM_PREFIX pip install git+https://github.com/thoglu/jammy_flows.git
+        ${{ env.VM_PREFIX }} pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        ${{ env.VM_PREFIX }} pip install git+https://github.com/thoglu/jammy_flows.git
       shell: bash
