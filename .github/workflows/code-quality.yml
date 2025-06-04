@@ -31,4 +31,5 @@ jobs:
         uses: ./.github/actions/install
       - name: Run ${{ matrix.hook }}
         run: |
+          pip show ${{ matrix.hook }}
           pre-commit run ${{ matrix.hook }} --all-files
