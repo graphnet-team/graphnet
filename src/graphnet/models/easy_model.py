@@ -23,8 +23,8 @@ from graphnet.models.task import StandardLearnedTask
 class EasySyntax(Model):
     """A suggested Model class that comes with simple user syntax.
 
-    This class delivers simple user syntax for training and prediction, while
-    imposing minimal constraints on structure.
+    This class delivers simple user syntax for training and prediction,
+    while imposing minimal constraints on structure.
     """
 
     def __init__(
@@ -70,8 +70,8 @@ class EasySyntax(Model):
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
 
-        Applies the forward pass and the following loss calculation, shared
-        between the training and validation step.
+        Applies the forward pass and the following loss calculation,
+        shared between the training and validation step.
         """
         raise NotImplementedError
 
@@ -441,7 +441,8 @@ class EasySyntax(Model):
     ) -> List:
         """Create default callbacks.
 
-        Used in cases where no callbacks are specified by the user in .fit
+        Used in cases where no callbacks are specified by the user in
+        .fit
         """
         callbacks = [ProgressBar()]
         if val_dataloader is not None:

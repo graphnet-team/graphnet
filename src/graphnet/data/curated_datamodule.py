@@ -1,8 +1,8 @@
 """Contains a Generic class for curated DataModules/Datasets.
 
-Inheriting subclasses are data-specific implementations that allow the user to
-import and download pre-converteddatasets for training of deep learning based
-methods in GraphNeT.
+Inheriting subclasses are data-specific implementations that allow the
+user to import and download pre-converteddatasets for training of deep
+learning based methods in GraphNeT.
 """
 
 from typing import Dict, Any, Optional, List, Tuple, Union
@@ -23,10 +23,10 @@ from graphnet.utilities.logging import Logger
 class CuratedDataset(GraphNeTDataModule):
     """Generic base class for curated datasets.
 
-    Curated Datasets in GraphNeT are pre-converted datasets that have been
-    prepared for training and evaluation of deep learning models. On these
-    Datasets, graphnet users can train and benchmark their models against SOTA
-    methods.
+    Curated Datasets in GraphNeT are pre-converted datasets that have
+    been prepared for training and evaluation of deep learning models.
+    On these Datasets, graphnet users can train and benchmark their
+    models against SOTA methods.
     """
 
     def __init__(
@@ -141,8 +141,8 @@ class CuratedDataset(GraphNeTDataModule):
     ) -> Tuple[List[str], List[str]]:
         """Check arguments for truth and features from the user.
 
-        Will check to make sure that the given args are available. If not
-        available, and AssertError is thrown.
+        Will check to make sure that the given args are available. If
+        not available, and AssertError is thrown.
         """
         if features is None:
             features = self._features

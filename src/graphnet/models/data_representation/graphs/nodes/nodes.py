@@ -69,7 +69,8 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
     def nb_outputs(self) -> int:
         """Return number of output features.
 
-        This the default, but may be overridden by specific inheriting classes.
+        This the default, but may be overridden by specific inheriting
+        classes.
         """
         return len(self._output_feature_names)
 
@@ -315,9 +316,10 @@ class NodeAsDOMTimeSeries(NodeDefinition):
 class IceMixNodes(NodeDefinition):
     """Calculate ice properties and perform random sampling.
 
-    Ice properties are calculated based on the z-coordinate of the pulse. For
-    each event, a random sampling is performed to keep the number of pulses
-    below a maximum number of pulses if n_pulses is over the limit.
+    Ice properties are calculated based on the z-coordinate of the
+    pulse. For each event, a random sampling is performed to keep the
+    number of pulses below a maximum number of pulses if n_pulses is
+    over the limit.
     """
 
     def __init__(

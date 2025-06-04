@@ -19,8 +19,9 @@ from graphnet.models.data_representation import (
 class StandardModel(EasySyntax):
     """A Standard way of combining model components in GraphNeT.
 
-    This model is compatible with the vast majority of supervised learning
-    tasks such as regression, binary and multi-label classification.
+    This model is compatible with the vast majority of supervised
+    learning tasks such as regression, binary and multi-label
+    classification.
 
     Capable of producing both event-level and pulse-level predictions.
     """
@@ -133,8 +134,8 @@ class StandardModel(EasySyntax):
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
 
-        Applies the forward pass and the following loss calculation, shared
-        between the training and validation step.
+        Applies the forward pass and the following loss calculation,
+        shared between the training and validation step.
         """
         preds = self(batch)
         loss = self.compute_loss(preds, batch)
