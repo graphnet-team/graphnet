@@ -37,7 +37,7 @@ jobs:
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-22.04
     container:
-      image: icecube/icetray:icetray-prod-v1.13.0-ubuntu22.04-X64-2025-01-09
+      image: icecube/icetray:icetray-prod-v1.11.1-ubuntu22.04-X64-2024-09-16
       options: --user root
     steps:
       - name: Show python version
