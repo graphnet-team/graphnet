@@ -125,6 +125,8 @@ jobs:
         shell: bash
         run: |
           python3 -m venv ~/venv --upgrade-deps
+          echo "VIRTUAL_ENV=$HOME/venv" >> $GITHUB_ENV
+          echo "$HOME/venv/bin" >> $GITHUB_PATH
           source ~/venv/bin/activate
           pip install --upgrade pip
           pip --version
