@@ -111,6 +111,7 @@ jobs:
         run: | 
           python3 --version
           pip --version
+          python -c "import icetray; print(icetray.__file__)"
 
       - name: Install git
         run: |
