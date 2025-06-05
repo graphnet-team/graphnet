@@ -107,6 +107,7 @@ jobs:
       image: icecube/icetray:icetray-prod-v1.11.1-ubuntu22.04-X64-2024-09-16
     steps:
       - name: Show python version
+        shell: bash
         run: | 
           python3 --version
           pip --version
