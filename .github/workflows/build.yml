@@ -111,7 +111,7 @@ jobs:
         run: | 
           python3 --version
           pip --version
-          pip list
+          pip3 list
           python -c "import icecube; print(icecube.__file__)"
 
       - name: Install git
