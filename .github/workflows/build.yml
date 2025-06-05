@@ -105,7 +105,6 @@ jobs:
     runs-on: ubuntu-22.04
     container:
       image: icecube/icetray:icetray-prod-v1.11.1-ubuntu22.04-X64-2024-09-16
-      options: --user root
     steps:
       - name: Show python version
         run: | 
