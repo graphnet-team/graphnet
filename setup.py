@@ -10,7 +10,6 @@ SETUP_REQUIRES = [
 ]
 
 INSTALL_REQUIRES = [
-    "awkward>=1.8,<2.0",
     "colorlog>=6.6",
     "configupdater",
     "dill>=0.3",
@@ -23,7 +22,6 @@ INSTALL_REQUIRES = [
     "scikit_learn>=1.0",
     "scipy>=1.7",
     "sqlalchemy>=1.4",
-    "timer>=0.2",
     "tqdm>=4.64",
     "wandb>=0.12",
     "polars >=0.19",
