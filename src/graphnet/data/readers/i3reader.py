@@ -20,8 +20,9 @@ if has_icecube_package():
 class I3Reader(GraphNeTFileReader):
     """A class for reading .i3 files from the IceCube Neutrino Observatory.
 
-    Note that this class relies on IceCube-specific software, and therefore
-    must be run in a software environment that contains IceTray.
+    Note that this class relies on IceCube-specific software, and
+    therefore must be run in a software environment that contains
+    IceTray.
     """
 
     def __init__(

@@ -124,9 +124,10 @@ class ProgressBar(TQDMProgressBar):
     ) -> None:
         """Print the results of the previous epoch on a separate line.
 
-        This allows the user to see the losses/metrics for previous epochs
-        while the current is training. The default behaviour in pytorch-
-        lightning is to overwrite the progress bar from previous epochs.
+        This allows the user to see the losses/metrics for previous
+        epochs while the current is training. The default behaviour in
+        pytorch- lightning is to overwrite the progress bar from
+        previous epochs.
         """
         if trainer.current_epoch > 0:
             self.train_progress_bar.set_postfix(

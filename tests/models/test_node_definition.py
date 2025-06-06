@@ -11,7 +11,8 @@ from graphnet.constants import EXAMPLE_DATA_DIR
 def test_percentile_cluster() -> None:
     """Test that percentiles outputted by PercentileCluster.
 
-    Here we check that it matches percentiles obtained from "traditional" ways.
+    Here we check that it matches percentiles obtained from
+    "traditional" ways.
     """
     # definitions
     percentiles = [0, 10, 50, 90, 100]

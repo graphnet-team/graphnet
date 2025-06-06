@@ -117,9 +117,9 @@ class DataConverter(ABC, Logger):
     ) -> None:
         """Multi Processing Logic.
 
-        Spawns worker pool, distributes the input files evenly across workers.
-        declare event_no as globally accessible variable across workers. starts
-        jobs.
+        Spawns worker pool, distributes the input files evenly across
+        workers. declare event_no as globally accessible variable across
+        workers. starts jobs.
 
         Will call process_file in parallel.
         """
@@ -138,8 +138,8 @@ class DataConverter(ABC, Logger):
     def _process_file(self, file_path: Union[str, I3FileSet]) -> None:
         """Process a single file.
 
-        Calls file reader to recieve extracted output, event ids is assigned to
-        the extracted data and is handed to save method.
+        Calls file reader to recieve extracted output, event ids is
+        assigned to the extracted data and is handed to save method.
 
         This function is called in parallel.
         """

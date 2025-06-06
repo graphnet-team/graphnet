@@ -231,9 +231,9 @@ class DataRepresentation(Model):
     ) -> np.ndarray:
         """Attach inactive sensors to `input_features`.
 
-        This function will query the detector geometry table and add any sensor
-        in the geometry table that is not already present in queried data per
-        event.
+        This function will query the detector geometry table and add any
+        sensor in the geometry table that is not already present in
+        queried data per event.
         """
         lookup = self._geometry_table_lookup(
             input_features, input_feature_names

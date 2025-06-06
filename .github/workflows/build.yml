@@ -37,9 +37,16 @@ jobs:
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-22.04
     container:
-      image: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
+      image: icecube/icetray:icetray-prod-v1.11.1-ubuntu22.04-X64-2024-09-16
       options: --user root
     steps:
+      - name: Show python version
+        run: | 
+          python3 --version
+          pip --version
+          pip3 --version
+          pip show setuptools
+
       - name: install git
         run: |
           apt-get --yes install sudo
@@ -48,17 +55,19 @@ jobs:
           sudo apt-get install --yes git-all
       - name: Set environment variables
         run: |
-          echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
-          echo "PYTHONPATH=/usr/local/icetray/lib:$PYTHONPATH" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=/usr/local/icetray/lib:/usr/local/icetray/cernroot/lib:/usr/local/icetray/lib/tools:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-      - uses: actions/checkout@v3
+          echo "PATH=/usr/local/icetray/bin:\$PATH" >> $GITHUB_ENV
+          echo "PYTHONPATH=/usr/local/icetray/lib:\$PYTHONPATH" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/usr/local/icetray/lib:/usr/local/icetray/cernroot/lib:/usr/local/icetray/lib/tools:\$LD_LIBRARY_PATH" >> $GITHUB_ENV
+      - uses: actions/checkout@v4
       - name: Print available disk space before graphnet install
         run: df -h
       - name: Upgrade packages already installed on icecube/icetray
         run: |
-          pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
-          pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
-          pip install --upgrade psutil # Original version from IceTray Environment incompatible
+          pip3 install --ignore-installed --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
+          pip3 install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
+          pip3 install --ignore-installed --upgrade psutil # Original version from IceTray Environment incompatible
+          pip3 install --ignore-installed --upgrade setuptools
+          pip3 show setuptools
       - name: Install package
         uses: ./.github/actions/install
         with:
@@ -90,20 +99,109 @@ jobs:
           coverageCommand: coverage report
           coverageLocations: coverage.xml:coverage.py
 
+  build-icetray-v2:
+    name: Unit tests - IceTray - v2
+    needs: [ check-codeclimate-credentials ]
+    runs-on: ubuntu-22.04
+    container:
+      image: icecube/icetray:icetray-prod-v1.11.1-ubuntu22.04-X64-2024-09-16
+    steps:
+      - name: Show python version
+        shell: bash
+        run: | 
+          python3 --version
+          pip --version
+          pip3 list
+          python -c "import icecube; print(icecube.__file__)"
+
+      - name: Install git
+        run: |
+          apt-get --yes install sudo
+          sudo apt update --fix-missing --yes
+          sudo apt upgrade --yes
+          sudo apt-get install --yes git-all python3-venv
+
+      - uses: actions/checkout@v4
+
+      - name: Create virtual environment
+        shell: bash
+        run: |
+          python3 -m venv ~/venv --upgrade-deps
+          echo "VIRTUAL_ENV=$HOME/venv" >> $GITHUB_ENV
+          echo "$HOME/venv/bin" >> $GITHUB_PATH
+          source ~/venv/bin/activate
+          pip install --upgrade pip
+          pip --version
+
+      - name: Print available disk space before graphnet install
+        run: df -h
+
+      - name: Upgrade packages in virtual environment
+        shell: bash
+        run: |
+          source ~/venv/bin/activate
+          pip install --upgrade astropy
+          pip install --upgrade PyYAML
+          pip install --upgrade psutil
+          pip install --upgrade setuptools
+          pip show setuptools
+
+      - name: Install package
+        uses: ./.github/actions/install
+        with:
+          editable: true
+          use_vm: true
+
+      - name: Print packages in pip
+        shell: bash
+        run: |
+          source ~/venv/bin/activate
+          pip show torch
+          pip show torch-geometric
+          pip show torch-cluster
+          pip show torch-sparse
+          pip show torch-scatter
+          pip show jammy_flows
+      - name: Run unit tests and generate coverage report
+        shell: bash
+        run: |
+          coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
+          coverage run -a --source=graphnet -m pytest tests/examples/04_training
+          coverage run -a --source=graphnet -m pytest tests/utilities 
+          coverage xml -o coverage.xml
+    
+      - name: Work around permission issue
+        run: |
+          git config --global --add safe.directory /__w/graphnet/graphnet
+      - name: Publish code coverage
+        uses: paambaati/codeclimate-action@v3.0.0
+        if: needs.check-codeclimate-credentials.outputs.has_credentials == 'true'
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: coverage report
+          coverageLocations: coverage.xml:coverage.py
+          
   build-matrix:
     name: Unit tests - Python versions
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11']
+        python-version: [3.9, '3.10', '3.11']
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Print available disk space before graphnet install
         run: df -h
+      - name: Show existing environment
+        run: |
+          echo "PIP_FLAGS=${PIP_FLAGS}"
+          python --version
+          pip --version
+          pip debug --verbose
       - name: Install package
         uses: ./.github/actions/install
         with:
@@ -117,6 +215,7 @@ jobs:
           pip show torch-cluster
           pip show torch-sparse
           pip show torch-scatter
+          pip show dill
           pip show numpy
 
 
@@ -131,18 +230,23 @@ jobs:
 
   build-macos:
     name: Unit tests - macOS
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.8
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: "3.10"
+      - name: Show existing environment
+        run: |
+          echo "PIP_FLAGS=${PIP_FLAGS}"
+          python --version
+          pip --version
+          pip debug --verbose
       - name: Install package
         uses: ./.github/actions/install
         with:
           editable: true
-          hardware: "cpu"
       - name: Print packages in pip
         run: |
             pip show torch
@@ -161,7 +265,11 @@ jobs:
     name: Documentation Compilation
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
       - name: Install package
         uses: ./.github/actions/install
       - name: Build documentation

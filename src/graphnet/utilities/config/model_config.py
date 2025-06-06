@@ -239,9 +239,9 @@ class ModelConfig(BaseConfig):
     def as_dict(self) -> Dict[str, Dict[str, Any]]:
         """Represent ModelConfig as a dict.
 
-        This builds on `BaseModel.dict()` but wraps the output in a single-key
-        dictionary to make it unambiguous to identify model arguments that are
-        themselves models.
+        This builds on `BaseModel.dict()` but wraps the output in a
+        single-key dictionary to make it unambiguous to identify model
+        arguments that are themselves models.
         """
         config_dict = self.dict()
         config_dict["arguments"] = traverse_and_apply(

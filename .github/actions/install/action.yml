@@ -13,30 +13,71 @@ inputs:
   extras:
     description: "Extras flags for pip installation of graphnet"
     required: true
-    default: "[develop,torch]"
+    default: "develop"
+  
+  torch_version:
+    description: "Version of PyTorch"
+    required: true
+    default: "2.6.0"
+    options: ["2.6.0", "2.5.0", "2.4.0"]
+
   hardware:
     description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
     required: true
     default: "cpu"
-    options: ["cpu", "cu118", "cu121", "macos"]
+    options: ["cpu", "cu118", "cu121", "cu124", "cu126","macos"]
+  
+  use_vm:
+    description: "Should the installation happen in a virtual environment named venv?"
+    required: true
+    default: False
+    options: [True, False]
 
 runs:
   using: "composite"
   steps:
+    - name: Set virtual environment prefix
+      run: |
+        if [[ "${{ inputs.use_vm }}" =~ (T|t)rue ]]; then
+          echo "VM_PREFIX=source ~/venv/bin/activate &&" >> $GITHUB_ENV
+        else
+          echo "VM_PREFIX=" >> $GITHUB_ENV
+        fi
+      shell: bash
+
     - name: Infer installation flags
       run: |
         PIP_FLAG_EDITABLE=`[[ ${{ inputs.editable }} =~ (T|t)rue ]] && printf "%s\n" "-e " || echo " "`
         PIP_FLAG_USER=`[[ ${{ inputs.user }} =~ (T|t)rue ]] && printf "%s\n" "--user " || echo " "`
         echo "PIP_FLAGS=${PIP_FLAG_USER}${PIP_FLAG_EDITABLE}" >> $GITHUB_ENV
       shell: bash
+
+    - name: Set torch_flag
+      run: |
+        version="${{ inputs.torch_version }}"
+        IFS='.' read -r major minor _ <<< "$version"
+        torch_flag="${major}${minor}"
+        echo "torch_flag=$torch_flag" >> "$GITHUB_ENV"
+      shell: bash
+
     - name: Install dependencies
       run: |
-        pip install --upgrade pip>=20
-        pip install wheel setuptools==59.5.0
+        ${{ env.VM_PREFIX }} pip install --upgrade 'pip>=20'
+        ${{ env.VM_PREFIX }} pip install --upgrade 'setuptools>=68.2.2'
       shell: bash
+
+    - name: Print pip and setuptools versions
+      run: |
+        ${{ env.VM_PREFIX }} pip --version 
+        ${{ env.VM_PREFIX }} pip show setuptools
+      shell: bash
+
     - name: Install package
       run: |
-        echo requirements/torch_${{ inputs.hardware }}.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
-        pip install -r requirements/torch_${{ inputs.hardware }}.txt ${{ env.PIP_FLAGS }} .${{ inputs.extras }}
-        pip install git+https://github.com/thoglu/jammy_flows.git
+        echo Installing Via:
+        echo ${{ env.VM_PREFIX }} pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        echo ${{ env.VM_PREFIX }} pip install git+https://github.com/thoglu/jammy_flows.git
+
+        ${{ env.VM_PREFIX }} pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
+        ${{ env.VM_PREFIX }} pip install git+https://github.com/thoglu/jammy_flows.git
       shell: bash

@@ -208,9 +208,6 @@ def main(
     # Save results as .csv
     results.to_csv(f"{path}/results.csv")
 
-    # Save full model (including weights) to .pth file - Not version proof
-    model.save(f"{path}/model.pth")
-
     # Save model config and state dict - Version safe save method.
     model.save_state_dict(f"{path}/state_dict.pth")
     model.save_config(f"{path}/model_config.yml")

@@ -27,8 +27,8 @@ class Deployer(ABC, Logger):
     ) -> None:
         """Process a single file.
 
-        If n_workers > 1, this function is run in parallel n_worker times. Each
-        worker will loop over an allocated set of files.
+        If n_workers > 1, this function is run in parallel n_worker
+        times. Each worker will loop over an allocated set of files.
         """
         raise NotImplementedError
 
@@ -38,8 +38,8 @@ class Deployer(ABC, Logger):
     ) -> List[Any]:
         """Produce a list of inputs for each worker.
 
-        This function must produce and return a list of arguments to each
-        worker.
+        This function must produce and return a list of arguments to
+        each worker.
         """
         raise NotImplementedError
 

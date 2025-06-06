@@ -1,8 +1,9 @@
 """Modules for defining graphs.
 
-These are self-contained graph definitions that hold all the graph-altering
-code in graphnet. These modules define what graph-based models sees as input
-and can be passed to dataloaders during training and deployment.
+These are self-contained graph definitions that hold all the graph-
+altering code in graphnet. These modules define what graph-based models
+sees as input and can be passed to dataloaders during training and
+deployment.
 """
 
 from typing import List, Optional, Dict, Union, Any, Callable
