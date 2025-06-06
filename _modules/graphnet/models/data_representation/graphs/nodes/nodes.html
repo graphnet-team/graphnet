@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-models-data-representation-graphs-nodes-nodes--page-root">Source code for graphnet.models.data_representation.graphs.nodes.nodes</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Class(es) for building/connecting graphs."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">abstractmethod</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
@@ -843,6 +843,287 @@
             <span class="n">graph</span><span class="p">[:</span><span class="n">event_length</span><span class="p">,</span> <span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">ids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">feature_indexes</span><span class="p">[</span><span class="n">feature</span><span class="p">]]</span>
 
         <span class="k">return</span> <span class="n">graph</span></div>
+
+
+
+<div class="viewcode-block" id="ClusterSummaryFeatures">
+<a class="viewcode-back" href="../../../../../../api/graphnet.models.data_representation.graphs.nodes.nodes.html#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusterSummaryFeatures</span><span class="p">(</span><span class="n">NodeDefinition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Represent pulse maps as clusters with summary features.</span>
+
+<span class="sd">    If `cluster_on` is set to the xyz coordinates of optical modules</span>
+<span class="sd">    e.g. `cluster_on = ['dom_x', 'dom_y', 'dom_z']`, each node will be</span>
+<span class="sd">    a unique optical module and the pulse information (e.g. charge, time)</span>
+<span class="sd">    is summarized.</span>
+<span class="sd">    NOTE: Developed to be used with features</span>
+<span class="sd">        [dom_x, dom_y, dom_z, charge, time]</span>
+
+<span class="sd">    Possible features per cluster:</span>
+<span class="sd">    - total charge</span>
+<span class="sd">        feature name: `total_charge`</span>
+<span class="sd">    - charge accumulated after &lt;X&gt; time units</span>
+<span class="sd">        feature name: `charge_after_&lt;X&gt;ns`</span>
+<span class="sd">    - time of first hit in the optical module</span>
+<span class="sd">        feature name: `time_of_first_hit`</span>
+<span class="sd">    - time spread per optical module</span>
+<span class="sd">        feature name: `time_spread`</span>
+<span class="sd">    - time std per optical module</span>
+<span class="sd">        feature name: `time_std`</span>
+<span class="sd">    - time took to collect &lt;X&gt; percent of total charge per cluster</span>
+<span class="sd">        feature name: `time_after_charge_pct&lt;X&gt;`</span>
+<span class="sd">    - number of pulses per clusters</span>
+<span class="sd">        feature name: `counts`</span>
+
+<span class="sd">    For more details on some of the features see</span>
+<span class="sd">    Theo Glauchs thesis (chapter 5.3):</span>
+<span class="sd">    https://mediatum.ub.tum.de/node?id=1584755</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cluster_on</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">charge_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"charge"</span><span class="p">,</span>
+        <span class="n">time_label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"dom_time"</span><span class="p">,</span>
+        <span class="n">total_charge</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">charge_after_t</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">],</span>
+        <span class="n">time_of_first_hit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">time_spread</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">time_std</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">time_after_charge_pct</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">80</span><span class="p">],</span>
+        <span class="n">charge_standardization</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"log"</span><span class="p">,</span>
+        <span class="n">time_standardization</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">order_in_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">add_counts</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct `ClusterSummaryFeatures`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cluster_on: Names of features to create clusters from.</span>
+<span class="sd">            input_feature_names: Column names for input features.</span>
+<span class="sd">            charge_label: Name of the charge column.</span>
+<span class="sd">            time_label: Name of the time column.</span>
+<span class="sd">            total_charge: If True, calculates total charge as feature.</span>
+<span class="sd">            charge_after_t: List of times at which the accumulated charge</span>
+<span class="sd">                is calculated as a feature.</span>
+<span class="sd">            time_of_first_hit: If True, time of first hit is added</span>
+<span class="sd">                as a feature.</span>
+<span class="sd">            time_spread: If True, time spread is added as a feature.</span>
+<span class="sd">            time_std: If True, time std is added as a feature.</span>
+<span class="sd">            time_after_charge_pct: List of percentiles to calculate time after</span>
+<span class="sd">                charge.</span>
+<span class="sd">            charge_standardization: Either a float or 'log'. If a float,</span>
+<span class="sd">                the features are multiplied by this factor. If 'log', the</span>
+<span class="sd">                features are transformed to log10 scale.</span>
+<span class="sd">            time_standardization: Standardization factor for features</span>
+<span class="sd">                with a time</span>
+<span class="sd">            order_in_time: If True, clusters are ordered in time.</span>
+<span class="sd">                    If your data is already ordered in time, you can set this</span>
+<span class="sd">                    to False to avoid a potential overhead.</span>
+<span class="sd">                NOTE: Should only be set to False if you are sure that</span>
+<span class="sd">                    the input data is already ordered in time. Will lead to</span>
+<span class="sd">                    incorrect results otherwise.</span>
+<span class="sd">            add_counts: If True, number of log10(event counts per clusters)</span>
+<span class="sd">                is added as a feature.</span>
+
+<span class="sd">        NOTE: Make sure that either the input data is not already standardized</span>
+<span class="sd">        or that the `charge_standardization` and `time_standardization`</span>
+<span class="sd">        parameters are set to 1 to avoid a double standardization.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Set member variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_on</span> <span class="o">=</span> <span class="n">cluster_on</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_label</span> <span class="o">=</span> <span class="n">charge_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_label</span> <span class="o">=</span> <span class="n">time_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order_in_time</span> <span class="o">=</span> <span class="n">order_in_time</span>
+
+        <span class="c1"># Check if charge_standardization is a float or 'log'</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span> <span class="o">=</span> <span class="n">charge_standardization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_standardization</span> <span class="o">=</span> <span class="n">time_standardization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verify_standardization</span><span class="p">()</span>
+
+        <span class="c1"># feature member variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total_charge</span> <span class="o">=</span> <span class="n">total_charge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_after_t</span> <span class="o">=</span> <span class="n">charge_after_t</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_of_first_hit</span> <span class="o">=</span> <span class="n">time_of_first_hit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_spread</span> <span class="o">=</span> <span class="n">time_spread</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_std</span> <span class="o">=</span> <span class="n">time_std</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_after_charge_pct</span> <span class="o">=</span> <span class="n">time_after_charge_pct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_counts</span> <span class="o">=</span> <span class="n">add_counts</span>
+
+        <span class="c1"># Base class constructor</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_feature_names</span><span class="o">=</span><span class="n">input_feature_names</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order_in_time</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">"Setting `order_by_time` to False. "</span>
+                <span class="s2">"Make sure that the input data is already ordered in time."</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_define_output_feature_names</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Set the output feature names."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_indices</span><span class="p">(</span><span class="n">input_feature_names</span><span class="p">)</span>
+        <span class="n">new_feature_names</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cluster_on</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_charge</span><span class="p">:</span>
+            <span class="n">new_feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"total_charge"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge_after_t</span><span class="p">:</span>
+            <span class="n">new_feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"charge_after_</span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2">ns"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_of_first_hit</span><span class="p">:</span>
+            <span class="n">new_feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"time_of_first_hit"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_spread</span><span class="p">:</span>
+            <span class="n">new_feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"time_spread"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_std</span><span class="p">:</span>
+            <span class="n">new_feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"time_std"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pct</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_after_charge_pct</span><span class="p">:</span>
+            <span class="n">new_feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"time_after_charge_pct</span><span class="si">{</span><span class="n">pct</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_counts</span><span class="p">:</span>
+            <span class="n">new_feature_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"counts"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_feature_names</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_construct_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct nodes from raw node features ´x´."""</span>
+        <span class="c1"># Cast to Numpy</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="c1"># Construct clusters with percentile-summarized features</span>
+        <span class="n">cluster_class</span> <span class="o">=</span> <span class="n">cluster_and_pad</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">cluster_columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cluster_idx</span><span class="p">,</span>
+            <span class="n">sort_by</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order_in_time</span> <span class="k">else</span> <span class="p">[],</span>
+        <span class="p">)</span>
+        <span class="c1"># calculate charge weighted median time as reference</span>
+        <span class="n">ref_time</span> <span class="o">=</span> <span class="n">cluster_class</span><span class="o">.</span><span class="n">reference_time</span><span class="p">(</span>
+            <span class="n">charge_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_idx</span><span class="p">,</span>
+            <span class="n">time_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># add total charge</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_charge</span><span class="p">:</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_sum_charge</span><span class="p">(</span><span class="n">charge_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_idx</span><span class="p">)</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_features</span><span class="p">(</span>
+                <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># add charge after t</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_after_t</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_accumulated_value_after_t</span><span class="p">(</span>
+                <span class="n">time_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span><span class="p">,</span>
+                <span class="n">summarization_indices</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_idx</span><span class="p">],</span>
+                <span class="n">times</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_after_t</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_after_t</span><span class="p">)</span> <span class="p">:]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_features</span><span class="p">(</span>
+                    <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_after_t</span><span class="p">)</span> <span class="p">:],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># add time of first hit</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_of_first_hit</span><span class="p">:</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_time_first_pulse</span><span class="p">(</span>
+                <span class="n">time_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="n">ref_time</span>
+
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_features</span><span class="p">(</span>
+                <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_standardization</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># add time spread</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_spread</span><span class="p">:</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_spread</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_features</span><span class="p">(</span>
+                <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_standardization</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># add time std</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_std</span><span class="p">:</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_std</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_features</span><span class="p">(</span>
+                <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_standardization</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># add time after charge percentiles</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_after_charge_pct</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_charge_threshold_summary</span><span class="p">(</span>
+                <span class="n">summarization_indices</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span><span class="p">],</span>
+                <span class="n">percentiles</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_after_charge_pct</span><span class="p">,</span>
+                <span class="n">charge_index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_idx</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[</span>
+                <span class="p">:,</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_after_charge_pct</span><span class="p">)</span> <span class="p">:</span>
+            <span class="p">]</span> <span class="o">-=</span> <span class="n">ref_time</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[</span>
+                <span class="p">:,</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_after_charge_pct</span><span class="p">)</span> <span class="p">:</span>
+            <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_standardize_features</span><span class="p">(</span>
+                <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">[</span>
+                    <span class="p">:,</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_after_charge_pct</span><span class="p">)</span> <span class="p">:</span>
+                <span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_time_standardization</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_counts</span><span class="p">:</span>
+            <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_counts</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ClusterSummaryFeatures.set_indices">
+<a class="viewcode-back" href="../../../../../../api/graphnet.models.data_representation.graphs.nodes.nodes.html#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures.set_indices">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feature_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Set the indices for the input features."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_idx</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">feature_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">column</span><span class="p">)</span> <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_on</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_idx</span> <span class="o">=</span> <span class="n">feature_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_label</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_idx</span> <span class="o">=</span> <span class="n">feature_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_label</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_standardize_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">standardization</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Standardize the features in the input array."""</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">standardization</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">standardization</span>
+        <span class="k">elif</span> <span class="n">standardization</span> <span class="o">==</span> <span class="s2">"log"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># should never happen, but just in case</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"standardization must be either a float or 'log', "</span>
+                <span class="sa">f</span><span class="s2">"but got </span><span class="si">{</span><span class="n">standardization</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_verify_standardization</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Verify settings of standardization of the features."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span> <span class="o">!=</span> <span class="s2">"log"</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">"charge_standardization must be either a float or"</span>
+                        <span class="sa">f</span><span class="s2">" 'log', but got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">"charge_standardization must be either a float or 'log', "</span>
+                    <span class="sa">f</span><span class="s2">"but got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_standardization</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_standardization</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"time_standardization must be a float, "</span>
+                <span class="sa">f</span><span class="s2">"but got </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_standardization</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span></div>
 
 </pre></div>
 

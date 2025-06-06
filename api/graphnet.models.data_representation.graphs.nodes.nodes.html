@@ -426,6 +426,12 @@
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ClusterSummaryFeatures</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures.set_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_indices()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -493,6 +499,20 @@
     
       <a href="#graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
       
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ClusterSummaryFeatures</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures.set_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_indices()</span></code></a>
+      
+    
+    </li></ul>
     
     </li></ul>
     
@@ -682,6 +702,12 @@
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeAsDOMTimeSeries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NodeAsDOMTimeSeries</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.IceMixNodes" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">IceMixNodes</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ClusterSummaryFeatures</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures.set_indices" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_indices()</span></code></a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -872,6 +898,117 @@ below a maximum number of pulses if n_pulses is over the limit.</p>
 <dd class="field-even"><p>object</p>
 </dd>
 </dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.nodes.nodes.</span></span><span class="sig-name descname"><span class="pre">ClusterSummaryFeatures</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#ClusterSummaryFeatures"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></p>
+<p>Represent pulse maps as clusters with summary features.</p>
+<p>If <cite>cluster_on</cite> is set to the xyz coordinates of optical modules
+e.g. <cite>cluster_on = [‘dom_x’, ‘dom_y’, ‘dom_z’]</cite>, each node will be
+a unique optical module and the pulse information (e.g. charge, time)
+is summarized.
+NOTE: Developed to be used with features</p>
+<blockquote>
+<div><p>[dom_x, dom_y, dom_z, charge, time]</p>
+</div></blockquote>
+<p>Possible features per cluster:
+- total charge</p>
+<blockquote>
+<div><p>feature name: <cite>total_charge</cite></p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>charge accumulated after &lt;X&gt; time units</dt><dd><p>feature name: <cite>charge_after_&lt;X&gt;ns</cite></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>time of first hit in the optical module</dt><dd><p>feature name: <cite>time_of_first_hit</cite></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>time spread per optical module</dt><dd><p>feature name: <cite>time_spread</cite></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>time std per optical module</dt><dd><p>feature name: <cite>time_std</cite></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>time took to collect &lt;X&gt; percent of total charge per cluster</dt><dd><p>feature name: <cite>time_after_charge_pct&lt;X&gt;</cite></p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>number of pulses per clusters</dt><dd><p>feature name: <cite>counts</cite></p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>For more details on some of the features see
+Theo Glauchs thesis (chapter 5.3):
+<a class="reference external" href="https://mediatum.ub.tum.de/node?id=1584755">https://mediatum.ub.tum.de/node?id=1584755</a></p>
+<p>Construct <cite>ClusterSummaryFeatures</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_on</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Names of features to create clusters from.</p></li>
+<li><p><strong>input_feature_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Column names for input features.</p></li>
+<li><p><strong>charge_label</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'charge'</span></code>) – Name of the charge column.</p></li>
+<li><p><strong>time_label</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'dom_time'</span></code>) – Name of the time column.</p></li>
+<li><p><strong>total_charge</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – If True, calculates total charge as feature.</p></li>
+<li><p><strong>charge_after_t</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">[10,</span> <span class="pre">50,</span> <span class="pre">100]</span></code>) – List of times at which the accumulated charge
+is calculated as a feature.</p></li>
+<li><p><strong>time_of_first_hit</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – If True, time of first hit is added
+as a feature.</p></li>
+<li><p><strong>time_spread</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – If True, time spread is added as a feature.</p></li>
+<li><p><strong>time_std</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – If True, time std is added as a feature.</p></li>
+<li><p><strong>time_after_charge_pct</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">3,</span> <span class="pre">5,</span> <span class="pre">11,</span> <span class="pre">15,</span> <span class="pre">20,</span> <span class="pre">50,</span> <span class="pre">80]</span></code>) – List of percentiles to calculate time after
+charge.</p></li>
+<li><p><strong>charge_standardization</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">'log'</span></code>) – Either a float or ‘log’. If a float,
+the features are multiplied by this factor. If ‘log’, the
+features are transformed to log10 scale.</p></li>
+<li><p><strong>time_standardization</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.001</span></code>) – Standardization factor for features
+with a time</p></li>
+<li><p><strong>order_in_time</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – <dl class="simple">
+<dt>If True, clusters are ordered in time.</dt><dd><p>If your data is already ordered in time, you can set this
+to False to avoid a potential overhead.</p>
+</dd>
+<dt>NOTE: Should only be set to False if you are sure that</dt><dd><p>the input data is already ordered in time. Will lead to
+incorrect results otherwise.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>add_counts</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, number of log10(event counts per clusters)
+is added as a feature.</p></li>
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+<p>NOTE: Make sure that either the input data is not already standardized
+or that the <cite>charge_standardization</cite> and <cite>time_standardization</cite>
+parameters are set to 1 to avoid a double standardization.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures.set_indices">
+<span class="sig-name descname"><span class="pre">set_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">feature_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/nodes/nodes.html#ClusterSummaryFeatures.set_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures.set_indices" title="Link to this definition">¶</a></dt>
+<dd><p>Set the indices for the input features.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p>
+</dd>
+</dl>
+</dd></dl>
 </dd></dl>
 </section>
 

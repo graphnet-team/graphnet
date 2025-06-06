@@ -430,6 +430,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.weighted_median" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">weighted_median()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
@@ -443,6 +445,14 @@
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_time_first_pulse" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_time_first_pulse()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_spread" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_spread()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_accumulated_value_after_t" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_accumulated_value_after_t()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.reference_time" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">reference_time()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -478,6 +488,13 @@
     
     
       <a href="#graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.utils.weighted_median" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">weighted_median()</span></code></a>
       
     
     </li>
@@ -525,6 +542,34 @@
     
     
       <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_time_first_pulse" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_time_first_pulse()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_spread" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_spread()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_accumulated_value_after_t" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_accumulated_value_after_t()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.reference_time" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">reference_time()</span></code></a>
       
     
     </li></ul>
@@ -690,6 +735,8 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_summarize_with_percentiles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_summarize_with_percentiles()</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.weighted_median" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">weighted_median()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">cluster_and_pad</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_charge_threshold_summary" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_charge_threshold_summary()</span></code></a>
@@ -703,6 +750,14 @@
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_std" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_std()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_mean" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_mean()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_time_first_pulse" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_time_first_pulse()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_spread" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_spread()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_accumulated_value_after_t" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_accumulated_value_after_t()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.reference_time" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">reference_time()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -831,9 +886,25 @@ are constructed.</p></li>
 </dd>
 </dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.weighted_median">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">weighted_median</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#weighted_median"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.weighted_median" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the weighted median of values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>values</strong> (<em>array</em>)</p></li>
+<li><p><strong>weights</strong> (<em>array</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">cluster_and_pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.graphs.utils.</span></span><span class="sig-name descname"><span class="pre">cluster_and_pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Cluster and pad the data for further summarization.</p>
 <p>Clusters the inptut data according to the specified columns
@@ -869,6 +940,12 @@ x = cluster_class.clustered_x
 are constructed.</p></li>
 <li><p><strong>input_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Names of the columns in the input data for automatic
 generation of names.</p></li>
+<li><p><strong>sort_by</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">[]</span></code>) – List of indices to sort <cite>self._padded_x</cite> by in
+addition to cluster on, if None the data will be
+sorted only by the cluster columns.
+NOTE: The priority of ordering is first by the
+<cite>cluster_columns</cite> columns and then by the
+<cite>sort_by</cite> columns.</p></li>
 <li><p><strong>Adds</strong> – clustered_x: Added to the class
 _counts: Added to the class
 _padded_x: Added to the class</p></li>
@@ -899,8 +976,6 @@ clustered tensor defaults to adding at the end</p></li>
 _charge_weights: Added to the class</p>
 </dd>
 <dt>Altered:</dt><dd><dl class="simple">
-<dt>_padded_x: Charge is altered to be the cumulative sum</dt><dd><p>of the charge divided by the total charge</p>
-</dd>
 <dt>clustered_x: The summarization indices are added at the end</dt><dd><p>of the tensor or inserted at the specified location.</p>
 </dd>
 <dt>_cluster_names: The names are added at the end of the tensor</dt><dd><p>or inserted at the specified location</p>
@@ -999,6 +1074,97 @@ clustered tensor defaults to adding at the end</p></li>
 <li><p><strong>columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>)</p></li>
 <li><p><strong>location</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
 <li><p><strong>weights</strong> (<em>ndarray</em><em> | </em><em>int</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_time_first_pulse">
+<span class="sig-name descname"><span class="pre">add_time_first_pulse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_time_first_pulse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_time_first_pulse" title="Link to this definition">¶</a></dt>
+<dd><p>Add the time of the first pulse.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_index</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Index of the time column in the padded tensor</p></li>
+<li><p><strong>location</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Location to insert the time of the first pulse in the
+clustered tensor defaults to adding at the end</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Altered:</dt><dd><dl class="simple">
+<dt>clustered_x: The time of the first pulse is added at the end of</dt><dd><p>the tensor or inserted at the specified location</p>
+</dd>
+<dt>_cluster_names: The names are added at the end of the tensor</dt><dd><p>or inserted at the specified location</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_spread">
+<span class="sig-name descname"><span class="pre">add_spread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_spread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_spread" title="Link to this definition">¶</a></dt>
+<dd><p>Add the spread (max-min) of the columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>columns</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>)</p></li>
+<li><p><strong>location</strong> (<em>int</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_accumulated_value_after_t">
+<span class="sig-name descname"><span class="pre">add_accumulated_value_after_t</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summarization_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">times</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.add_accumulated_value_after_t"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_accumulated_value_after_t" title="Link to this definition">¶</a></dt>
+<dd><p>Add the cumulative sum of values after certain time.</p>
+<p>NOTE: the time is counted from the first pulse of the sensor.
+Make sure that the data is also sorted by time and be aware of
+the standardization of the time column.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_index</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Index of the time column in the padded tensor</p></li>
+<li><p><strong>summarization_indices</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – List of column indices that defines
+features that will be summarized with percentiles.</p></li>
+<li><p><strong>times</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – List of times after which the accumulated value
+is calculated</p></li>
+<li><p><strong>location</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Location to insert the accumulated values in the
+clustered tensor defaults to adding at the end</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Altered:</dt><dd><dl class="simple">
+<dt>clustered_x: The accumulated values are added at the end of</dt><dd><p>the tensor or inserted at the specified location</p>
+</dd>
+<dt>_cluster_names: The names are added at the end of the tensor</dt><dd><p>or inserted at the specified location</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.data_representation.graphs.utils.cluster_and_pad.reference_time">
+<span class="sig-name descname"><span class="pre">reference_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">charge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/graphs/utils.html#cluster_and_pad.reference_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.graphs.utils.cluster_and_pad.reference_time" title="Link to this definition">¶</a></dt>
+<dd><p>Return and set the charge weighted median of hit times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>charge_index</strong> (<em>int</em>)</p></li>
+<li><p><strong>time_index</strong> (<em>int</em>)</p></li>
 </ul>
 </dd>
 </dl>

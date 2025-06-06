@@ -537,6 +537,16 @@
 
 
 
+<div class="viewcode-block" id="weighted_median">
+<a class="viewcode-back" href="../../../../../api/graphnet.models.data_representation.graphs.utils.html#graphnet.models.data_representation.graphs.utils.weighted_median">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">weighted_median</span><span class="p">(</span><span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Compute the weighted median of values."""</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">c</span><span class="p">))]]</span></div>
+
+
+
 <div class="viewcode-block" id="cluster_and_pad">
 <a class="viewcode-back" href="../../../../../api/graphnet.models.data_representation.graphs.utils.html#graphnet.models.data_representation.graphs.utils.cluster_and_pad">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">cluster_and_pad</span><span class="p">:</span>
@@ -572,6 +582,7 @@
         <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">cluster_columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">input_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sort_by</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Initialize the class with the data and cluster columns.</span>
 
@@ -581,12 +592,23 @@
 <span class="sd">                            are constructed.</span>
 <span class="sd">            input_names: Names of the columns in the input data for automatic</span>
 <span class="sd">                        generation of names.</span>
+<span class="sd">            sort_by: List of indices to sort `self._padded_x` by in</span>
+<span class="sd">                    addition to cluster on, if None the data will be</span>
+<span class="sd">                    sorted only by the cluster columns.</span>
+<span class="sd">                    NOTE: The priority of ordering is first by the</span>
+<span class="sd">                    `cluster_columns` columns and then by the</span>
+<span class="sd">                    `sort_by` columns.</span>
 <span class="sd">            Adds:</span>
 <span class="sd">                clustered_x: Added to the class</span>
 <span class="sd">                _counts: Added to the class</span>
 <span class="sd">                _padded_x: Added to the class</span>
 <span class="sd">        """</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">lex_sort</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">cluster_columns</span><span class="o">=</span><span class="n">cluster_columns</span><span class="p">)</span>
+        <span class="c1"># for assertions later</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sort_by</span> <span class="o">=</span> <span class="n">sort_by</span>
+
+        <span class="n">sort_cols</span> <span class="o">=</span> <span class="n">sort_by</span> <span class="o">+</span> <span class="n">cluster_columns</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">lex_sort</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">cluster_columns</span><span class="o">=</span><span class="n">sort_cols</span><span class="p">)</span>
 
         <span class="n">unique_sensors</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
             <span class="n">x</span><span class="p">[:,</span> <span class="n">cluster_columns</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span>
@@ -668,7 +690,9 @@
             <span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_sum"</span>
         <span class="p">),</span> <span class="s2">"Charge sum has already been calculated, </span><span class="se">\</span>
 <span class="s2">            re-calculation is not allowed"</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nansum</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_charge_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charge_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Calculate the weights of the charge."""</span>
@@ -683,6 +707,32 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_charge_weights</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span>
             <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_reference_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculate the charge weighted median time of the whole event."""</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">"_reference_time"</span>
+        <span class="p">),</span> <span class="s2">"Reference time has already been calculated, </span><span class="se">\</span>
+<span class="s2">            re-calculation is not allowed"</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_weights"</span>
+        <span class="p">),</span> <span class="s2">"Charge weights has not been calculated, </span><span class="se">\</span>
+<span class="s2">            please run calculate_charge_weights"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_reference_time</span> <span class="o">=</span> <span class="n">weighted_median</span><span class="p">(</span>
+            <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">time_index</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+            <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_charge_weights</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_time_first_pulse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculate the time of the first pulse."""</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="s2">"_time_first_pulse"</span>
+        <span class="p">),</span> <span class="s2">"Time of first pulse has already been calculated, </span><span class="se">\</span>
+<span class="s2">            re-calculation is not allowed"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_first_pulse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">time_index</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="cluster_and_pad.add_charge_threshold_summary">
@@ -707,30 +757,25 @@
 <span class="sd">            _charge_sum: Added to the class</span>
 <span class="sd">            _charge_weights: Added to the class</span>
 <span class="sd">        Altered:</span>
-<span class="sd">            _padded_x: Charge is altered to be the cumulative sum</span>
-<span class="sd">                       of the charge divided by the total charge</span>
 <span class="sd">            clustered_x: The summarization indices are added at the end</span>
 <span class="sd">                         of the tensor or inserted at the specified location.</span>
 <span class="sd">            _cluster_names: The names are added at the end of the tensor</span>
 <span class="sd">                            or inserted at the specified location</span>
 <span class="sd">        """</span>
-        <span class="c1"># convert the charge to the cumulative sum of the charge divided</span>
-        <span class="c1"># by the total charge</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_sum</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_weights</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
+        <span class="c1"># calculate cumsum of charge</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_sum"</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_sum</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span>
+        <span class="n">charge_cumsum</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_charge_sum</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
         <span class="p">)</span>
 
         <span class="c1"># Summarize the charge at different percentiles</span>
         <span class="n">selections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">charge_index</span><span class="p">][:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-            <span class="o">&gt;=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">percentiles</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">),</span>
+            <span class="n">charge_cumsum</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">percentiles</span><span class="p">)</span> <span class="o">/</span> <span class="mi">100</span><span class="p">),</span>
             <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="p">)</span>
-
         <span class="n">selections</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span>
             <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span>
         <span class="p">]</span>
@@ -867,6 +912,145 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_mean"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_time_first_pulse">
+<a class="viewcode-back" href="../../../../../api/graphnet.models.data_representation.graphs.utils.html#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_time_first_pulse">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_time_first_pulse</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add the time of the first pulse.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            time_index: Index of the time column in the padded tensor</span>
+<span class="sd">            location: Location to insert the time of the first pulse in the</span>
+<span class="sd">                    clustered tensor defaults to adding at the end</span>
+<span class="sd">        Altered:</span>
+<span class="sd">            clustered_x: The time of the first pulse is added at the end of</span>
+<span class="sd">                         the tensor or inserted at the specified location</span>
+<span class="sd">            _cluster_names: The names are added at the end of the tensor</span>
+<span class="sd">                            or inserted at the specified location</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_time_first_pulse"</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_time_first_pulse</span><span class="p">(</span><span class="n">time_index</span><span class="p">)</span>
+
+        <span class="c1"># Add the time of the first pulse to the clustered tensor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_first_pulse</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+        <span class="c1"># update the cluster names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_name</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">time_index</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_first_pulse"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_name</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_spread">
+<a class="viewcode-back" href="../../../../../api/graphnet.models.data_representation.graphs.utils.html#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_spread">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_spread</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add the spread (max-min) of the columns."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">columns</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">columns</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="n">location</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># update the cluster names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_names</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_spread"</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.add_accumulated_value_after_t">
+<a class="viewcode-back" href="../../../../../api/graphnet.models.data_representation.graphs.utils.html#graphnet.models.data_representation.graphs.utils.cluster_and_pad.add_accumulated_value_after_t">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_accumulated_value_after_t</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">summarization_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">times</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">location</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Add the cumulative sum of values after certain time.</span>
+
+<span class="sd">        NOTE: the time is counted from the first pulse of the sensor.</span>
+<span class="sd">        Make sure that the data is also sorted by time and be aware of</span>
+<span class="sd">        the standardization of the time column.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            time_index: Index of the time column in the padded tensor</span>
+<span class="sd">            summarization_indices: List of column indices that defines</span>
+<span class="sd">                features that will be summarized with percentiles.</span>
+<span class="sd">            times: List of times after which the accumulated value</span>
+<span class="sd">                is calculated</span>
+<span class="sd">            location: Location to insert the accumulated values in the</span>
+<span class="sd">                      clustered tensor defaults to adding at the end</span>
+<span class="sd">        Altered:</span>
+<span class="sd">            clustered_x: The accumulated values are added at the end of</span>
+<span class="sd">                         the tensor or inserted at the specified location</span>
+<span class="sd">            _cluster_names: The names are added at the end of the tensor</span>
+<span class="sd">                            or inserted at the specified location</span>
+<span class="sd">        """</span>
+        <span class="c1"># Calculate the time of the first pulse if not already done</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_time_first_pulse"</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_time_first_pulse</span><span class="p">(</span><span class="n">time_index</span><span class="p">)</span>
+
+        <span class="c1"># Create array with threshold times</span>
+        <span class="n">tmp_times</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">times</span><span class="p">),</span>
+                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_first_pulse</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]),</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_first_pulse</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Create a mask for the times</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">time_index</span><span class="p">][:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="o">&gt;=</span> <span class="n">tmp_times</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">selections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span>
+            <span class="n">mask</span><span class="p">,</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">selections</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_counts</span><span class="p">))</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span>
+            <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span>
+        <span class="p">]</span>
+        <span class="n">selections</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_padded_x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">summarization_indices</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">summarization_indices</span><span class="p">))[</span><span class="n">selections</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">selections</span> <span class="o">=</span> <span class="n">selections</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clustered_x</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Add the selections to the clustered tensor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_column</span><span class="p">(</span><span class="n">selections</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span>
+
+        <span class="c1"># update the cluster names</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_names</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_input_names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="s2">"_accumulated_after_"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">summarization_indices</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">times</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_column_names</span><span class="p">(</span><span class="n">new_names</span><span class="p">,</span> <span class="n">location</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_and_pad.reference_time">
+<a class="viewcode-back" href="../../../../../api/graphnet.models.data_representation.graphs.utils.html#graphnet.models.data_representation.graphs.utils.cluster_and_pad.reference_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reference_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">charge_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Return and set the charge weighted median of hit times."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_reference_time"</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">charge_index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">"Charge index must be provided"</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_weights"</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_charge_sum"</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_sum</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_charge_weights</span><span class="p">(</span><span class="n">charge_index</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_reference_time</span><span class="p">(</span><span class="n">time_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reference_time</span></div>
 </div>
 
 
