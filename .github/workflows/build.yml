@@ -171,13 +171,14 @@ jobs:
       #    editable: true
       #    use_vm: true
       - name: Manual Install
+        shell: bash
         run: |
             source ~/venv/bin/activate
             pip install --upgrade pip setuptools
 
             pip install -e ".[torch-26-cpu,develop]" -f https://data.pyg.org/whl/torch-2.6.0+cpu.html
             pip install git+https://github.com/thoglu/jammy_flows.git
-            
+
       - name: Print packages in pip
         shell: bash
         run: |
