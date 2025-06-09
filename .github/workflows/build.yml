@@ -134,7 +134,7 @@ jobs:
           coverageLocations: coverage.xml:coverage.py
           
   build-matrix:
-    name: Unit tests - Python versions
+    name: Unit tests Ubuntu 22.04 - Python
     runs-on: ubuntu-22.04
     strategy:
       matrix:
