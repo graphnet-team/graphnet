@@ -161,7 +161,9 @@ jobs:
           pip install --upgrade PyYAML
           pip install --upgrade psutil
           pip install --upgrade setuptools
+          pip install --upgrade versioneer
           pip show setuptools
+          pip show versioneer
 
       - name: Install package
         uses: ./.github/actions/install
