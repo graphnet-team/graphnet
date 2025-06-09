@@ -120,7 +120,7 @@ jobs:
           coverage run -a --source=graphnet -m pytest tests/examples/04_training
           coverage run -a --source=graphnet -m pytest tests/utilities 
           coverage xml -o coverage.xml
-    
+          coverage report -m
       - name: Work around permission issue
         run: |
           git config --global --add safe.directory /__w/graphnet/graphnet
@@ -133,12 +133,15 @@ jobs:
           coverageCommand: coverage report
           coverageLocations: coverage.xml:coverage.py
           
-  build-matrix:
-    name: Unit tests Ubuntu 22.04 - Python
+
+  build-matrix-examples:
+    name: Examples - Ubuntu 22.04
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.9, '3.10', '3.11']
+        python-version: ['3.11']
+        torch_version: ['2.6.0', '2.5.0', '2.4.0']
+        hardware: ["cpu"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -157,6 +160,8 @@ jobs:
         uses: ./.github/actions/install
         with:
           editable: true
+          torch_version: ${{ matrix.torch_version }}
+          hardware: ${{ matrix.hardware }}
       - name: Print available disk space after graphnet install
         run: df -h
       - name: Print packages in pip
@@ -171,15 +176,13 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/ --ignore=tests/utilities --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/01_icetray/
-          coverage run -a --source=graphnet -m pytest tests/utilities
-          coverage report -m
+          pytest tests/examples --ignore=tests/examples/01_icetray/
       - name: Print available disk space after unit tests
         run: df -h
 
-  build-macos:
+  build-macos-examples:
     # Every macOS test 'costs' 10 minutes of runner time. Minimize!
-    name: macOS 15 - Python
+    name: Examples - macOS 15
     runs-on: macos-15
     strategy:
       fail-fast: false
@@ -217,8 +220,7 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/examples --ignore=tests/examples/01_icetray/
-          coverage report -m
+          pytest tests/examples --ignore=tests/examples/01_icetray/
 
   docs:
     name: Documentation Compilation
