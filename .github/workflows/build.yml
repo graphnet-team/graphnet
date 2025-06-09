@@ -104,11 +104,28 @@ jobs:
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-22.04
     container:
+      # GitHub Actions overwrite the docker container entrypoint
+      # inspect <image> --format '{{.Config.Entrypoint}}'
       image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
-      options: --user root
-    env:
-        PYTHONPATH: /opt/icetray/lib:/opt/icetray/cernroot/lib
     steps:
+      - name: Mimmick Docker Entrypoint
+        # The entrypoint of the container sets python paths
+        # Because the entrypoint is skipped by GitHub, we set it here
+        run: |
+          export I3_SRC=/opt/icetray/share/icetray
+          export I3_BUILD=/opt/icetray/share/icetray
+          export I3_TESTDATA=/root/icetray/build/test-data
+          export I3_PRODDATA=/root/icetray/build/prod-data
+          export ROOTSYS=/opt/icetray/cernroot
+
+          export LD_LIBRARY_PATH=/opt/icetray/lib:/opt/icetray/cernroot/lib:/opt/icetray/lib/tools:$LD_LIBRARY_PATH
+          export DYLD_LIBRARY_PATH=/opt/icetray/lib:/opt/icetray/cernroot/lib:/opt/icetray/lib/tools:$DYLD_LIBRARY_PATH
+          export PYTHONPATH=/opt/icetray/lib:/opt/icetray/cernroot/lib:$PYTHONPATH
+          export PATH=/opt/icetray/bin:$PATH
+          export HDF5_USE_FILE_LOCKING=FALSE
+
+          # Now run your Python command(s)
+          python3 -c "import icecube; print('Icecube imported successfully')"
       - name: Show python version
         run: | 
           python3 --version
