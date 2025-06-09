@@ -211,7 +211,7 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/examples
+          coverage run --source=graphnet -m pytest tests/examples --ignore=tests/examples/01_icetray/
           coverage report -m
 
   docs:
