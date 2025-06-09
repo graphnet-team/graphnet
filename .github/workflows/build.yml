@@ -112,7 +112,7 @@ jobs:
           python3 --version
           pip --version
           pip3 list
-          python -c "import icecube; print(icecube.__file__)"
+          python3 -c "import icecube; print(icecube.__path__)"
           pip show setuptools
 
       - name: Install git
