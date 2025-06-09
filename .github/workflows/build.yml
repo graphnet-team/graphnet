@@ -33,13 +33,18 @@ jobs:
          fi
 
   build-icetray:
-    name: Unit tests - IceTray (v1.13.0) - Python 3.10
+    name: Unit tests - IceTray (v1.13.0 - 3.10)  
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        torch_version: ['2.6.0']
+        hardware: ["cpu"]
     container:
       # GitHub Actions overwrite the docker container entrypoint
       # inspect <image> --format '{{.Config.Entrypoint}}'
       image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
+    
     steps:
       - name: Mimmick Docker Entrypoint
         # The entrypoint of the container sets python paths
@@ -102,6 +107,8 @@ jobs:
         with:
           editable: true
           use_vm: true
+          torch_version: ${{ matrix.torch_version }}
+          hardware: ${{ matrix.hardware }}
       - name: Print packages in pip
         shell: bash
         run: |
