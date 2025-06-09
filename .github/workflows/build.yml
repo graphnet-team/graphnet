@@ -178,12 +178,12 @@ jobs:
         run: df -h
 
   build-macos:
-    runs-on: ${{ matrix.os }}
+    name: Unit Tests macOS 15 - Python
+    runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-14, macos-15]
-        python-version: ['3.11']
+        python-version: ['3.9', '3.10', '3.11']
 
     steps:
       - uses: actions/checkout@v4
