@@ -14,7 +14,7 @@ inputs:
     description: "Extras flags for pip installation of graphnet"
     required: true
     default: "develop"
-  
+
   torch_version:
     description: "Version of PyTorch"
     required: true
@@ -25,59 +25,49 @@ inputs:
     description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
     required: true
     default: "cpu"
-    options: ["cpu", "cu118", "cu121", "cu124", "cu126","macos"]
-  
+    options: ["cpu", "cu118", "cu121", "cu124", "cu126", "macos"]
+
   use_vm:
     description: "Should the installation happen in a virtual environment named venv?"
     required: true
-    default: False
-    options: [True, False]
+    default: false
+    options: [true, false]
 
 runs:
   using: "composite"
   steps:
-    - name: Set virtual environment prefix
+    - name: Prepare pip flags
+      id: flags
       run: |
-        if [[ "${{ inputs.use_vm }}" =~ (T|t)rue ]]; then
-          echo "VM_PREFIX=source ~/venv/bin/activate &&" >> $GITHUB_ENV
-        else
-          echo "VM_PREFIX=" >> $GITHUB_ENV
-        fi
-      shell: bash
+        [[ "${{ inputs.editable }}" == "true" ]] && echo "editable_flag=-e" >> $GITHUB_OUTPUT || echo "editable_flag=" >> $GITHUB_OUTPUT
+        [[ "${{ inputs.user }}" == "true" ]] && echo "user_flag=--user" >> $GITHUB_OUTPUT || echo "user_flag=" >> $GITHUB_OUTPUT
 
-    - name: Infer installation flags
-      run: |
-        PIP_FLAG_EDITABLE=`[[ ${{ inputs.editable }} =~ (T|t)rue ]] && printf "%s\n" "-e " || echo " "`
-        PIP_FLAG_USER=`[[ ${{ inputs.user }} =~ (T|t)rue ]] && printf "%s\n" "--user " || echo " "`
-        echo "PIP_FLAGS=${PIP_FLAG_USER}${PIP_FLAG_EDITABLE}" >> $GITHUB_ENV
-      shell: bash
-
-    - name: Set torch_flag
-      run: |
         version="${{ inputs.torch_version }}"
         IFS='.' read -r major minor _ <<< "$version"
-        torch_flag="${major}${minor}"
-        echo "torch_flag=$torch_flag" >> "$GITHUB_ENV"
+        echo "torch_flag=${major}${minor}" >> $GITHUB_OUTPUT
       shell: bash
 
-    - name: Install dependencies
-      run: |
-        ${{ env.VM_PREFIX }} pip install --upgrade 'pip>=20'
-        ${{ env.VM_PREFIX }} pip install --upgrade 'setuptools>=68.2.2'
+    - name: Install dependencies (pip & setuptools)
       shell: bash
+      run: |
+        if [[ "${{ inputs.use_vm }}" == "true" ]]; then source ~/venv/bin/activate; fi
+        pip install --upgrade 'pip>=20'
+        pip install --upgrade 'setuptools>=68.2.2'
 
     - name: Print pip and setuptools versions
-      run: |
-        ${{ env.VM_PREFIX }} pip --version 
-        ${{ env.VM_PREFIX }} pip show setuptools
       shell: bash
-
-    - name: Install package
       run: |
-        echo Installing Via:
-        echo ${{ env.VM_PREFIX }} pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
-        echo ${{ env.VM_PREFIX }} pip install git+https://github.com/thoglu/jammy_flows.git
+        if [[ "${{ inputs.use_vm }}" == "true" ]]; then source ~/venv/bin/activate; fi
+        pip --version
+        pip show setuptools
 
-        ${{ env.VM_PREFIX }} pip install ${{ env.PIP_FLAGS }} .[torch-${{ env.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html 
-        ${{ env.VM_PREFIX }} pip install git+https://github.com/thoglu/jammy_flows.git
+    - name: Install GraphNeT
       shell: bash
+      run: |
+        if [[ "${{ inputs.use_vm }}" == "true" ]]; then source ~/venv/bin/activate; fi
+
+        echo "Installing graphnet with flags: ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }}"
+        pip install ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] \
+          -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html
+
+        pip install git+https://github.com/thoglu/jammy_flows.git
