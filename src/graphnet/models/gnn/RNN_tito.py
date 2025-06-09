@@ -14,10 +14,10 @@ from torch_geometric.data import Data
 class RNN_TITO(GNN):
     """The RNN_TITO model class.
 
-    Combines the Node_RNN and DynEdgeTITO models, intended for data with large
-    amount of DOM activations per event. This model works only with non-
-    standard dataset specific to the Node_RNN model see Node_RNN for more
-    details.
+    Combines the Node_RNN and DynEdgeTITO models, intended for data with
+    large amount of DOM activations per event. This model works only
+    with non- standard dataset specific to the Node_RNN model see
+    Node_RNN for more details.
     """
 
     @save_model_config

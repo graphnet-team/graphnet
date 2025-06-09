@@ -1,2 +1,0 @@
---find-links https://download.pytorch.org/whl/cpu
---find-links https://data.pyg.org/whl/torch-2.2.0+cpu.html

@@ -70,7 +70,8 @@ def test_log_cosh(dtype: torch.dtype = torch.float32) -> None:
 def test_von_mises_fisher_exact_m3(dtype: torch.dtype = torch.float64) -> None:
     """Test implementaion of exact von-Mises Fisher loss with m=3.
 
-    See https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution
+    See
+    https://en.wikipedia.org/wiki/Von_Mises%E2%80%93Fisher_distribution
     for exact, simplified reference.
     """
     # Define test parameters

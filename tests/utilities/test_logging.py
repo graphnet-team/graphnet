@@ -22,9 +22,9 @@ def get_number_of_lines_in_logfile(file_handler: logging.FileHandler) -> int:
 def clear_graphnet_loggers() -> None:
     """Delete any graphnet loggers.
 
-    This is a bit hacky but useful as a way to run each unit test in a "clean"
-    environment and not each downstream unit tests be affected by the previous
-    ones.
+    This is a bit hacky but useful as a way to run each unit test in a
+    "clean" environment and not each downstream unit tests be affected
+    by the previous ones.
     """
     for name in list(logging.Logger.manager.loggerDict.keys()):
         if "graphnet" in name:

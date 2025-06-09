@@ -30,7 +30,6 @@ class PiecewiseLinearLR(_LRScheduler):
         milestones: List[int],
         factors: List[float],
         last_epoch: int = -1,
-        verbose: bool = False,
     ):
         """Construct `PiecewiseLinearLR`.
 
@@ -47,7 +46,6 @@ class PiecewiseLinearLR(_LRScheduler):
             factors: List of multiplicative factors. Must be same length as
                 `milestones`.
             last_epoch: The index of the last epoch.
-            verbose: If ``True``, prints a message to stdout for each update.
         """
         # Check(s)
         if milestones != sorted(milestones):
@@ -60,7 +58,7 @@ class PiecewiseLinearLR(_LRScheduler):
 
         self.milestones = milestones
         self.factors = factors
-        super().__init__(optimizer, last_epoch, verbose)
+        super().__init__(optimizer, last_epoch)
 
     def _get_factor(self) -> np.ndarray:
         # Linearly interpolate multiplicative factor between milestones.
@@ -124,9 +122,10 @@ class ProgressBar(TQDMProgressBar):
     ) -> None:
         """Print the results of the previous epoch on a separate line.
 
-        This allows the user to see the losses/metrics for previous epochs
-        while the current is training. The default behaviour in pytorch-
-        lightning is to overwrite the progress bar from previous epochs.
+        This allows the user to see the losses/metrics for previous
+        epochs while the current is training. The default behaviour in
+        pytorch- lightning is to overwrite the progress bar from
+        previous epochs.
         """
         if trainer.current_epoch > 0:
             self.train_progress_bar.set_postfix(

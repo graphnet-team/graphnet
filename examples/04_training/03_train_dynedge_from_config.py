@@ -98,7 +98,6 @@ def main(
     os.makedirs(path, exist_ok=True)
     logger.info(f"Writing results to {path}")
     model.save_state_dict(f"{path}/state_dict.pth")
-    model.save(f"{path}/model.pth")
 
     # Get predictions
     if isinstance(config.target, str):
@@ -132,7 +131,7 @@ Train GNN model.
         ("max-epochs", 1),
         "early-stopping-patience",
         ("batch-size", 16),
-        "num-workers",
+        ("num-workers", 2),
     )
 
     parser.add_argument(

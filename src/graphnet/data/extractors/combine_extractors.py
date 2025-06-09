@@ -13,8 +13,8 @@ if has_icecube_package() or TYPE_CHECKING:
 class CombinedExtractor(I3Extractor):
     """Class for combining multiple extractors.
 
-    This class is used to combine multiple extractors into a single extractor
-    with a new name.
+    This class is used to combine multiple extractors into a single
+    extractor with a new name.
     """
 
     def __init__(self, extractors: List[I3Extractor], extractor_name: str):

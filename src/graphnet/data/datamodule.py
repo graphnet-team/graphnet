@@ -127,10 +127,11 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """Handle assignment of `multiprocessing_context` arg to loaders.
 
         Datasets relying on threaded libraries often require the
-        multiprocessing context to be set to "spawn" if "num_workers" > 0. This
-        method will check the arguments for this entry and throw an error if
-        the field is already assigned to a wrong value. If the value is not
-        specified, it is added automatically with a log entry.
+        multiprocessing context to be set to "spawn" if "num_workers" >
+        0. This method will check the arguments for this entry and throw
+        an error if the field is already assigned to a wrong value. If
+        the value is not specified, it is added automatically with a log
+        entry.
         """
         arg = "multiprocessing_context"
         if dataloader_args["num_workers"] != 0:
@@ -316,8 +317,8 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """Sanity checks on the dataset reference (self._dataset).
 
         Checks whether the dataset is an instance of SQLiteDataset,
-        ParquetDataset, or Dataset. Raises a TypeError if an invalid dataset
-        type is detected, or if an EnsembleDataset is used.
+        ParquetDataset, or Dataset. Raises a TypeError if an invalid
+        dataset type is detected, or if an EnsembleDataset is used.
         """
         allowed_types = (SQLiteDataset, ParquetDataset, Dataset)
         if self._dataset not in allowed_types:
