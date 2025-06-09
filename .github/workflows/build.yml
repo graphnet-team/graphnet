@@ -104,7 +104,7 @@ jobs:
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-22.04
     container:
-      image: icecube/icetray:icetray-prod-v1.11.1-ubuntu22.04-X64-2024-09-16
+      image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
     steps:
       - name: Show python version
         shell: bash
@@ -113,13 +113,14 @@ jobs:
           pip --version
           pip3 list
           python -c "import icecube; print(icecube.__file__)"
+          pip show setuptools
 
       - name: Install git
         run: |
           apt-get --yes install sudo
           sudo apt update --fix-missing --yes
           sudo apt upgrade --yes
-          sudo apt-get install --yes git-all python3-venv
+          sudo apt-get install --yes git
 
       - uses: actions/checkout@v4
 
@@ -127,11 +128,10 @@ jobs:
         shell: bash
         run: |
           python3 -m venv ~/venv --upgrade-deps
-          echo "VIRTUAL_ENV=$HOME/venv" >> $GITHUB_ENV
-          echo "$HOME/venv/bin" >> $GITHUB_PATH
           source ~/venv/bin/activate
-          pip install --upgrade pip
           pip --version
+          python --version
+          pip show setuptools
 
       - name: Print available disk space before graphnet install
         run: df -h
@@ -165,6 +165,7 @@ jobs:
       - name: Run unit tests and generate coverage report
         shell: bash
         run: |
+          source ~/venv/bin/activate
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
           coverage run -a --source=graphnet -m pytest tests/examples/04_training
           coverage run -a --source=graphnet -m pytest tests/utilities 
