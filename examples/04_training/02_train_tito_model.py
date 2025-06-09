@@ -232,7 +232,7 @@ Train GNN model without the use of config files.
         ("max-epochs", 1),
         ("early-stopping-patience", 2),
         ("batch-size", 16),
-        "num-workers",
+        ("num-workers", 2),
     )
 
     parser.add_argument(

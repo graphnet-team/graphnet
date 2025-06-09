@@ -178,12 +178,13 @@ jobs:
         run: df -h
 
   build-macos:
+    # Every macOS test 'costs' 10 minutes of runner time. Minimize!
     name: Unit Tests macOS 15 - Python
     runs-on: macos-15
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ['3.11']
 
     steps:
       - uses: actions/checkout@v4

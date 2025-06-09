@@ -204,7 +204,7 @@ Train conditional NormalizingFlow without the use of config files.
         ("max-epochs", 1),
         "early-stopping-patience",
         ("batch-size", 50),
-        "num-workers",
+        ("num-workers", 2),
     )
 
     parser.add_argument(
