@@ -122,9 +122,8 @@ jobs:
           echo "PYTHONPATH=/opt/icetray/lib:/opt/icetray/cernroot/lib:$PYTHONPATH" >> $GITHUB_ENV
           echo "PATH=/opt/icetray/bin:$PATH" >> $GITHUB_ENV
           echo "HDF5_USE_FILE_LOCKING=FALSE" >> $GITHUB_ENV
-
-          # Now run your Python command(s)
-          python3 -c "import icecube; print('Icecube imported successfully')"
+      - name: Verify IceCube is importable
+        run: python3 -c "import icecube; print('Import Successful')"
       - name: Show python version
         run: | 
           python3 --version
