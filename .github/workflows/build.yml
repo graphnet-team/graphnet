@@ -106,6 +106,8 @@ jobs:
     container:
       image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
       options: --user root
+    env:
+        PYTHONPATH: /opt/icetray/lib:/opt/icetray/cernroot/lib
     steps:
       - name: Show python version
         run: | 
