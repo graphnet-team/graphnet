@@ -108,7 +108,6 @@ jobs:
       options: --user root
     steps:
       - name: Show python version
-        shell: bash
         run: | 
           python3 --version
           pip --version
