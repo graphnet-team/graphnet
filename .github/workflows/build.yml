@@ -186,7 +186,7 @@ jobs:
       matrix:
         python-version: ['3.11']
         torch_version: ['2.6.0']
-        hardware: ["macos"]
+        hardware: ["cpu"]
 
     steps:
       - uses: actions/checkout@v4
