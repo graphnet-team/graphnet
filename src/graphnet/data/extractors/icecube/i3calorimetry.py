@@ -26,11 +26,20 @@ class I3Calorimetry(I3Extractor):
         hull: GCD_hull,
         mctree: str = "I3MCTree",
         mmctracklist: str = "MMCTrackList",
-        extractor_name: str = "event_energies",
+        extractor_name: str = "I3Calorimetry",
         daughters: bool = False,
         **kwargs: Any,
     ) -> None:
-        """Create a ConvexHull object from the GCD file."""
+        """Create a ConvexHull object from the GCD file.
+
+        hull: GCD_hull object containing the convex hull
+        of the detector volume.
+        mctree: Name of the I3MCTree in the frame.
+        mmctracklist: Name of the MMCTrackList in the frame.
+        extractor_name: Name of the extractor.
+        daughters: If True, only consider tracks that are daughters
+        of primaries.
+        """
         # Member variable(s)
         self.hull = hull
         self.mctree = mctree
