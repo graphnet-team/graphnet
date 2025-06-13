@@ -24,7 +24,7 @@ from graphnet.data.extractors.icecube.utilities.gcd_hull import GCD_hull
 
 from graphnet.data.extractors.combine_extractors import CombinedExtractor
 
-
+from graphnet.data.dataconverter import DataConverter
 from graphnet.data.pre_configured import (
     I3ToSQLiteConverter,
     I3ToParquetConverter,
@@ -151,7 +151,7 @@ def main(
     ]
 
     # Create the converter object
-    converter = CONVERTER_CLASS[converter_class]
+    converter: DataConverter = CONVERTER_CLASS[converter_class]
 
     if converter_class == "sqlite":
         converter = converter(
