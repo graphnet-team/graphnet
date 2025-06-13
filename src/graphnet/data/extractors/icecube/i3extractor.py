@@ -119,7 +119,11 @@ class I3Extractor(Extractor):
         """Check that primary energy exists for the particle(s).
 
         If the primary energy is not available, the method will see if the
-        particle has a single daughter, and if so, return that
+        particle has a single daughter, and if so, return that.
+
+        Args:
+            frame: I3Frame object.
+            primaries: Primary particle or a list of primary particles.
         """
         assert hasattr(
             self, "mctree"
@@ -164,7 +168,7 @@ class I3Extractor(Extractor):
     ) -> "dataclasses.ListI3Particle":
         """Get the primary particles in the event.
 
-        For Corsika events the primary particles are the all the primaries,
+        For Corsika events the primary particles are all the primaries,
         for Nugen we are only interested in the in-ice neutrino.
         Input:
         frame: I3Frame object
