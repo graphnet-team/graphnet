@@ -168,6 +168,8 @@ class I3Extractor(Extractor):
         for Nugen we are only interested in the in-ice neutrino.
         Input:
         frame: I3Frame object
+        daughters: If True, then ensure that for nugen the primaries are
+            only the in-ice neutrinos, otherwise all primaries are returned.
         """
         assert hasattr(
             self, "mctree"
