@@ -367,7 +367,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         frame: "icetray.I3Frame",
         min_e: float = 0,
     ) -> Tuple["dataclasses.I3Particle", float, float, int, float, float]:
-        """Get the highest energy cascade in the event.
+        """Get the highest energy starting particle in the event.
 
         Args:
         frame: I3Frame object
