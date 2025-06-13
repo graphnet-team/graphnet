@@ -60,7 +60,7 @@ def main(
     )[0]
 
     # Create hulls, these need to be global for the multiprocessing.
-    IceCube_hull_extended = GCD_hull(gcd_rescue, padding=padding)
+    iceCube_hull_extended = GCD_hull(gcd_rescue, padding=padding)
 
     # Create Extractors
     # truth features
@@ -70,8 +70,8 @@ def main(
         keys=["Homogenized_QTot"], extractor_name="Homogenized_QTot"
     )
     # calorimetry features
-    Calorimetry = I3Calorimetry(
-        hull=IceCube_hull_extended,
+    calorimetry = I3Calorimetry(
+        hull=iceCube_hull_extended,
         mctree="I3MCTree",
         mmctracklist="MMCTrackList",
         extractor_name=f"calorimetry_pad_{str(padding)}",
@@ -85,26 +85,26 @@ def main(
         extractors=[
             truth,
             homogenized_qtot,
-            Calorimetry,
+            calorimetry,
         ],
         extractor_name="truth",
     )
 
     # Detector readout features
-    SRTInIcePulses = I3FeatureExtractorIceCube86("SRTInIcePulses")
+    pulsemap = I3FeatureExtractorIceCube86("SRTInIcePulses")
 
     # Particle extractor
     highest_e_particle = I3HighestEparticleExtractor(
         extractor_name="HEP",
-        hull=IceCube_hull_extended,
+        hull=iceCube_hull_extended,
         daughters=True,
         is_corsika=False,
     )
 
     # Comparisons to other reconstruction methods
 
-    SplineMPE = I3ParticleExtractor(extractor_name="OnlineL2_SplineMPE")
-    LineFit = I3ParticleExtractor(extractor_name="LineFit")
+    spline_mpe = I3ParticleExtractor(extractor_name="OnlineL2_SplineMPE")
+    linefit = I3ParticleExtractor(extractor_name="LineFit")
 
     # misc features
     weight_dict = I3DictValueExtractor(
@@ -117,9 +117,9 @@ def main(
     # put all extractors in a list
     extractors = [
         combined_extractor,
-        SRTInIcePulses,
-        SplineMPE,
-        LineFit,
+        pulsemap,
+        spline_mpe,
+        linefit,
         weight_dict,
         filter_mask,
         highest_e_particle,
@@ -142,12 +142,12 @@ def main(
         max_table_size=max_table_size,
     )
     # run the converter
-
-    print(f"converting {inputs} to {outdir}")
+    logger = Logger()
+    logger.info(f"converting {inputs} to {outdir}")
     converter(inputs)
     # merge files removing the db files after merging to save space.
     if merge is True:
-        print(f"Merging files in {outdir}")
+        logger.info(f"Merging files in {outdir}")
         converter.merge_files(remove_original=remove)
 
 
