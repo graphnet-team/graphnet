@@ -179,7 +179,7 @@ def main(
         logger.info(f"Merging files in {outdir}")
         converter.merge_files(remove_original=remove)
     elif merge is True and converter_class == "parquet":
-        converter.merge_files()
+        converter.merge_files(remove_original=remove)
 
 
 if __name__ == "__main__":
