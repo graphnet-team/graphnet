@@ -24,7 +24,6 @@ from graphnet.data.extractors.icecube.utilities.gcd_hull import GCD_hull
 
 from graphnet.data.extractors.combine_extractors import CombinedExtractor
 
-from graphnet.data.dataconverter import DataConverter
 from graphnet.data.pre_configured import (
     I3ToSQLiteConverter,
     I3ToParquetConverter,
@@ -44,12 +43,6 @@ ERROR_MESSAGE_MISSING_ICETRAY = (
     "\n * examples/05_pisa/"
     "\nExiting."
 )
-
-
-CONVERTER_CLASS = {
-    "sqlite": I3ToSQLiteConverter,
-    "parquet": I3ToParquetConverter,
-}
 
 
 def main(
@@ -151,10 +144,9 @@ def main(
     ]
 
     # Create the converter object
-    converter: DataConverter = CONVERTER_CLASS[converter_class]
 
     if converter_class == "sqlite":
-        converter = converter(
+        converter = I3ToSQLiteConverter(
             extractors=extractors,
             outdir=outdir,
             num_workers=workers,
@@ -163,7 +155,7 @@ def main(
             max_table_size=max_table_size,
         )
     elif converter_class == "parquet":
-        converter = converter(
+        converter = I3ToParquetConverter(
             extractors=extractors,
             outdir=outdir,
             num_workers=workers,
@@ -179,7 +171,7 @@ def main(
         logger.info(f"Merging files in {outdir}")
         converter.merge_files(remove_original=remove)
     elif merge is True and converter_class == "parquet":
-        converter.merge_files(remove_original=remove)
+        converter.merge_files()
 
 
 if __name__ == "__main__":
