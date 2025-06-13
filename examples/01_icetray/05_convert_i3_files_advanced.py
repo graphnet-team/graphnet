@@ -178,6 +178,8 @@ def main(
     if merge is True and converter_class == "sqlite":
         logger.info(f"Merging files in {outdir}")
         converter.merge_files(remove_original=remove)
+    elif merge is True and converter_class == "parquet":
+        converter.merge_files()
 
 
 if __name__ == "__main__":
