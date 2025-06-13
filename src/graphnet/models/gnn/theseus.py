@@ -1,6 +1,7 @@
 #important: need to install flash attention; follow guide on https://github.com/Dao-AILab/flash-attention
 #for me I needed to first conda install nvcc
 from typing import Set, Union, List, Type, Optional, Dict, Any
+import os
 
 import torch
 from torch.optim.adam import Adam
@@ -383,68 +384,49 @@ def generate_representation_simple(x: torch.Tensor,
     summation = scatter(src=x, index=bv, dim = 0, reduce='sum')
     averaging = scatter(src=x, index=bv, dim = 0, reduce='mean')
 
-    #rep = torch.cat((maximize,minimize,summation,averaging), dim=1)
     rep = maximize + minimize + summation + averaging
 
     return rep
-
-class Projector(Model):
-    """ Projection Head for SimSiam """
-    def __init__(self, in_dim, hidden_dim=2048, out_dim=2048):
+    
+class default_mask_predictor(Model):
+    """ Prediction Head for pred_mask_frame """
+    def __init__(self, in_dim, out_dim, hidden_dim1=2000, hidden_dim2=1000):
         super().__init__()
         act = torch.nn.SELU(inplace=True)
 
         self.layer1 = torch.nn.Sequential(
-            torch.nn.Linear(in_dim, hidden_dim),
-            torch.nn.BatchNorm1d(hidden_dim),
-            act
+            torch.nn.Linear(in_dim, hidden_dim1),
+            torch.nn.BatchNorm1d(hidden_dim1),
+            act,
+            torch.nn.Linear(hidden_dim1, hidden_dim1),
+            torch.nn.BatchNorm1d(hidden_dim1),
+            act,
+            torch.nn.Linear(hidden_dim1, hidden_dim2),
+            torch.nn.BatchNorm1d(hidden_dim2)
         )
         self.layer2 = torch.nn.Sequential(
-            torch.nn.Linear(hidden_dim, hidden_dim),
-            torch.nn.BatchNorm1d(hidden_dim),
-            act
-        )
-        self.layer3 = torch.nn.Sequential(
-            torch.nn.Linear(hidden_dim, out_dim),
-            torch.nn.BatchNorm1d(out_dim)
+            torch.nn.Linear(hidden_dim2, hidden_dim1),
+            torch.nn.BatchNorm1d(hidden_dim1),
+            act,
+            torch.nn.Linear(hidden_dim1, out_dim)
         )
 
     def forward(self, x: torch.Tensor):
         x = self.layer1(x)
         x = self.layer2(x)
-        x = self.layer3(x)
         return x 
-     
-class Predictor(Model):
-    """ Predictor for SimSiam """
-    def __init__(self, in_dim=2048, hidden_dim=512, out_dim=2048):
-        super().__init__()
-        act = torch.nn.SELU(inplace=True)
-        
-        self.layer1 = torch.nn.Sequential(
-            torch.nn.Linear(in_dim, hidden_dim),
-            torch.nn.BatchNorm1d(hidden_dim),
-            act
-        )
-        self.layer2 = torch.nn.Linear(hidden_dim, out_dim)
-
-    def forward(self, x: torch.Tensor):
-        x = self.layer1(x)
-        x = self.layer2(x)
-        return x
 
 def negative_cosine_similarity(p, z):
     """ Negative Cosine Similarity """
-    z = z.detach()
     p = torch.nn.functional.normalize(p, dim=1)
     z = torch.nn.functional.normalize(z, dim=1)
 
     return -(p*z).sum(dim=1).view(-1, 1)#.mean() #mean is put into the shared_step
 
 class mask_pred_augment(Model):
-    def __init__(self, number_masked = 20):
+    def __init__(self, nb_masked):
         super().__init__()
-        self.m = number_masked
+        self.m = nb_masked
 
     def forward(
         self,
@@ -467,23 +449,21 @@ class mask_pred_augment(Model):
 
 class mask_pred_frame(EasySyntax):
     def __init__(self,
-                 enc_net,
-                 lat_feat,
-                 num_masked=20,
-                 in_feat=5,
-                 projection_dim=1000, 
-                 hidden_dim_proj=2000, 
-                 hidden_dim_pred=2000,
-                 return_losses: bool=True,
+                 encoder: Model,
+                 encoder_out_dim: int = None,
+                 nb_input_feat: int = 5,
+                 nb_masked: int = 20,
+                 hidden_dim1: int = 1000, 
+                 hidden_dim2: int = 2000,
+                 mask_pred_net: Model = None,
                  optimizer_class: Type[torch.optim.Optimizer] = Adam,
-                 backbone = None,
                  optimizer_kwargs: Optional[Dict] = None,
                  scheduler_class: Optional[type] = None,
                  scheduler_kwargs: Optional[Dict] = None,
                  scheduler_config: Optional[Dict] = None,) -> None:
         
         #just because I need to specify a task
-        task = IdentityTask(nb_outputs = 1, target_labels=['skip'], hidden_size = 2, loss_function=MSELoss())
+        task = IdentityTask(nb_outputs=1, target_labels=['skip'], hidden_size=2, loss_function=MSELoss())
 
         super().__init__(
             tasks=task,
@@ -493,61 +473,50 @@ class mask_pred_frame(EasySyntax):
             scheduler_kwargs=scheduler_kwargs,
             scheduler_config=scheduler_config,
         )
-        #might not need this
-        self.backbone = backbone
 
-        #to switch between returning the loss vs returning a latent state
-        self.ret_l = return_losses
-
-        self.encoder = enc_net
+        self.encoder = encoder
 
         #target is shaped as all the masked nodes stacked into one row, with one row for each event
-        target_dim = in_feat*num_masked
+        target_dim = nb_input_feat*nb_masked
 
-        #remnant of the contrastive setup; could put this into one module
-        self.projector = Projector(lat_feat, hidden_dim=hidden_dim_proj, out_dim=projection_dim)
-        self.predictor = Predictor(in_dim=projection_dim, hidden_dim=hidden_dim_pred, out_dim=target_dim)
+        if mask_pred_net is None:
+            if encoder_out_dim is None:
+                encoder_out_dim = encoder.nb_outputs
+            self.pred = default_mask_predictor(in_dim=encoder_out_dim, 
+                                               out_dim=target_dim, 
+                                               hidden_dim1=hidden_dim1, 
+                                               hidden_dim2=hidden_dim2)
+        else:
+            assert mask_pred_net.nb_outputs == target_dim, 'make sure that your mask_pred_net has number of output feats equal to nb_input_feat*nb_masked'
+            self.pred = mask_pred_net
+            
+        
 
-        self.augment = mask_pred_augment(number_masked=num_masked)
+        self.augment = mask_pred_augment(nb_masked=nb_masked)
         
 
     def forward(self, data: Union[Data, List[Data]]):
         if not isinstance(data, Data):
             data = data[0]
 
-        if self.ret_l:
-            aug, target = self.augment(data)
+        aug, target = self.augment(data)
 
-            if torch.any(aug.x.isnan()):
-                print('nan in augments')
+        data_hat = self.encoder(aug)
 
-            data_hat = self.encoder(aug)
-
-            if torch.any(data_hat.x.isnan()):
-                print('nan in encoding')
-
-            #generate two different latents
+        #if encoder returns data object instead of (abstract) prediction per events generate rep via scatter operations
+        if isinstance(data_hat, Data):
             rep = generate_representation_simple(data_hat.x, bv=data_hat.batch)
-
-            #calculate contrastive loss between two different latents
-            z = self.projector(rep)
-            p = self.predictor(z)
-            loss = negative_cosine_similarity(p, target)
-
-            if torch.any(p.isnan()):
-                print('nan in predictor/projector')
-
-            if torch.any(loss.isnan()):
-                print('nan in loss')
-
-            #loss is returned as list to comply with the graphnet predict functionality
-            return [loss]
         else:
-            data_hat, _ = self.encoder(data)
-            lat = generate_representation_simple(data_hat.x, bv=data_hat.batch)
-            lat = torch.split(lat,1,dim=1)
+            rep = data_hat
 
-            return [*lat,]
+        #calculate negative cosine similarity between target and processed representation
+        # z = self.projector(rep)
+        # p = self.predictor(z)
+        p = self.pred(rep)
+        loss = negative_cosine_similarity(p, target)
+
+        #loss is returned as a list to comply with the graphnet predict functionality
+        return [loss]
 
 
     def validate_tasks(self) -> None:
@@ -561,22 +530,22 @@ class mask_pred_frame(EasySyntax):
             assert len(loss) == 1
             loss = loss[0]
         return torch.mean(loss, dim=0)
-
-    def quick_latent(self, data: Union[Data, List[Data]]):
-        if not isinstance(data, Data):
-            data = data[0]
-        
-        data_hat, _ = self.encoder(data)
-        lat = generate_representation_simple(data_hat.x, bv=data_hat.batch)
-        return lat
     
     def give_encoder_model(self):
         #function to return the encoder model
         #as a way to transport the pretrained encoder
-        #into another learning context
+        #into another learning context or saving the parameters manually
         return self.encoder
     
-#endregion
+    def save_pretrained_model(self, save_path):
+        model = self.encoder
 
-##Block with proposed encoder##
-#region
+        run_name = 'pretrained_model'
+
+        save_path = os.path.join(save_path, run_name)
+        #os.makedirs(save_path, exist_ok=True)
+
+        #model.save_state_dict(f"{save_path}/state_dict.pth")
+        #model.save_config(f"{save_path}/model_config.yml")
+    
+#endregion
