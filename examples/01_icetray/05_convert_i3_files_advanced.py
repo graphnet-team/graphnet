@@ -25,8 +25,10 @@ from graphnet.data.extractors.icecube.utilities.gcd_hull import GCD_hull
 from graphnet.data.extractors.combine_extractors import CombinedExtractor
 
 
-from graphnet.data.dataconverter import DataConverter
-from graphnet.data.pre_configured import I3ToSQLiteConverter
+from graphnet.data.pre_configured import (
+    I3ToSQLiteConverter,
+    I3ToParquetConverter,
+)
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
@@ -44,12 +46,19 @@ ERROR_MESSAGE_MISSING_ICETRAY = (
 )
 
 
+CONVERTER_CLASS = {
+    "sqlite": I3ToSQLiteConverter,
+    "parquet": I3ToParquetConverter,
+}
+
+
 def main(
     merge: bool,
     remove: bool,
     workers: int = 1,
     padding: int = 250,
     max_table_size: int = int(25e7),
+    converter_class: str = "sqlite",
 ) -> None:
     """Convert IceCube-Upgrade I3 files to intermediate `backend` format."""
     # Check(s)
@@ -76,6 +85,7 @@ def main(
         mmctracklist="MMCTrackList",
         extractor_name=f"calorimetry_pad_{str(padding)}",
         daughters=False,
+        is_corsika=False,
     )
 
     # Combine all the "truth" like features into one extractor,
@@ -129,24 +139,35 @@ def main(
     filters = [
         NullSplitI3Filter(),
         TableFilter(table_name="SRTInIcePulses"),
-        ChargeFilter(table_name="Homogenized_QTot", min_charge=1000),
+        ChargeFilter(table_name="Homogenized_QTot", min_charge=10),
     ]
 
     # Create the converter object
-    converter: DataConverter = I3ToSQLiteConverter(
-        extractors=extractors,
-        outdir=outdir,
-        num_workers=workers,
-        gcd_rescue=gcd_rescue,
-        i3_filters=filters,
-        max_table_size=max_table_size,
-    )
+    converter = CONVERTER_CLASS[converter_class]
+
+    if converter_class == "sqlite":
+        converter = converter(
+            extractors=extractors,
+            outdir=outdir,
+            num_workers=workers,
+            gcd_rescue=gcd_rescue,
+            i3_filters=filters,
+            max_table_size=max_table_size,
+        )
+    elif converter_class == "parquet":
+        converter = converter(
+            extractors=extractors,
+            outdir=outdir,
+            num_workers=workers,
+            gcd_rescue=gcd_rescue,
+            i3_filters=filters,
+        )
     # run the converter
     logger = Logger()
     logger.info(f"converting {inputs} to {outdir}")
     converter(inputs)
     # merge files removing the db files after merging to save space.
-    if merge is True:
+    if merge is True and converter_class == "sqlite":
         logger.info(f"Merging files in {outdir}")
         converter.merge_files(remove_original=remove)
 
@@ -168,6 +189,13 @@ Convert I3 files to an intermediate format.
         parser.add_argument("--workers", type=int, default=1)
         parser.add_argument("--max_table_size", type=int, default=int(25e7))
         parser.add_argument("--padding", type=int, default=250)
+        parser.add_argument(
+            "--converter_class",
+            type=str,
+            default="sqlite",
+            choices=["sqlite", "parquet"],
+        )
+
         args, unknown = parser.parse_known_args()
         # Run example script
         main(
@@ -176,4 +204,5 @@ Convert I3 files to an intermediate format.
             workers=args.workers,
             max_table_size=args.max_table_size,
             padding=args.padding,
+            converter_class=args.converter_class,
         )
