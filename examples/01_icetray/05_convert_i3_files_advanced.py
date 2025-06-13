@@ -2,6 +2,7 @@
 
 from glob import glob
 
+from typing import Union
 from graphnet.constants import EXAMPLE_OUTPUT_DIR, TEST_DATA_DIR
 from graphnet.data.extractors.icecube import (
     I3TruthExtractor,
@@ -144,6 +145,7 @@ def main(
     ]
 
     # Create the converter object
+    converter: Union[I3ToSQLiteConverter, I3ToParquetConverter]
 
     if converter_class == "sqlite":
         converter = I3ToSQLiteConverter(
