@@ -19,7 +19,11 @@ if has_icecube_package() or TYPE_CHECKING:
 
 
 class I3Calorimetry(I3Extractor):
-    """Energy on appearance of all visible particles in the volume."""
+    """Event level energy labeling for IceCube data.
+
+    This class extracts cumulative energy information from all visible
+    particles entering the detector volume, during the event.
+    """
 
     def __init__(
         self,
