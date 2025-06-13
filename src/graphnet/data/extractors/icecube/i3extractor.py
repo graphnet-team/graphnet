@@ -118,8 +118,8 @@ class I3Extractor(Extractor):
     ) -> Union["dataclasses.ListI3Particle", "dataclasses.I3Particle"]:
         """Check that primary energy exists for the particle(s).
 
-        If the primary energy is not available, the method will see if the
-        particle has a single daughter, and if so, return that.
+        If the primary energy is not available, the daughters of the
+        primary particle(s) are returned instead.
 
         Args:
             frame: I3Frame object.
