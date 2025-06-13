@@ -68,6 +68,14 @@ def main(
         f"{TEST_DATA_DIR}/i3/oscNext_muongun_level3_v02/*GeoCalib*"
     )[0]
 
+    logger = Logger()
+    if converter_class == "parquet" and (
+        (max_table_size is not None) or (remove is True)
+    ):
+        logger.warning(
+            "max_table_size and remove are not used for parquet converter, "
+            "they will be ignored."
+        )
     # Create hulls, these need to be global for the multiprocessing.
     iceCube_hull_extended = GCD_hull(gcd_rescue, padding=padding)
 
@@ -163,7 +171,7 @@ def main(
             i3_filters=filters,
         )
     # run the converter
-    logger = Logger()
+
     logger.info(f"converting {inputs} to {outdir}")
     converter(inputs)
     # merge files removing the db files after merging to save space.
