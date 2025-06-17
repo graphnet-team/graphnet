@@ -1,14 +1,12 @@
 """Example of reading events from Dataset class."""
 
-from timer import timer
-
-import awkward
 import sqlite3
 import time
-import torch.multiprocessing
-import torch.utils.data
+import torch
 from torch_geometric.data.batch import Batch
 from tqdm import tqdm
+import pandas as pd
+import os
 
 from graphnet.constants import TEST_PARQUET_DATA, TEST_SQLITE_DATA
 from graphnet.data.constants import FEATURES, TRUTH
@@ -47,8 +45,10 @@ def main(backend: str) -> None:
     num_workers = 30
     wait_time = 0.00  # sec.
 
-    # Define graph representation
-    graph_definition = KNNGraph(detector=IceCubeDeepCore())
+    # Define data representation
+    data_representation = KNNGraph(
+        detector=IceCubeDeepCore(), input_feature_names=features
+    )
 
     for table in [pulsemap, truth_table]:
         # Get column names from backend
@@ -57,9 +57,11 @@ def main(backend: str) -> None:
                 cursor = conn.execute(f"SELECT * FROM {table} LIMIT 1")
                 names = list(map(lambda x: x[0], cursor.description))
         else:
-            ak = awkward.from_parquet(path, lazy=True)
-            names = ak[table].fields
-            del ak
+            df = pd.DataFrame(os.path.join(path, f"{table}*.parquet"))
+            names = df.columns.tolist()
+            # ak = awkward.from_parquet(path, lazy=True)
+            # names = ak[table].fields
+            # del ak
 
         # Print
         logger.info(f"Available columns in {table}")
@@ -73,7 +75,7 @@ def main(backend: str) -> None:
         features=features,
         truth=truth,
         truth_table=truth_table,
-        graph_definition=graph_definition,
+        data_representation=data_representation,
     )
     assert isinstance(dataset, Dataset)
 
@@ -91,13 +93,11 @@ def main(backend: str) -> None:
         shuffle=True,
         num_workers=num_workers,
         collate_fn=Batch.from_data_list,
-        # persistent_workers=True,
         prefetch_factor=2,
     )
 
-    with timer("torch dataloader"):
-        for batch in tqdm(dataloader, unit=" batches", colour="green"):
-            time.sleep(wait_time)
+    for batch in tqdm(dataloader, unit=" batches", colour="green"):
+        time.sleep(wait_time)
 
     logger.info(str(batch))
     logger.info(batch.size())
