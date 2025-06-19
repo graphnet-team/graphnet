@@ -5,7 +5,7 @@ import pandas as pd
 import torch
 from torch_geometric.data import Data
 from copy import deepcopy
-from graphnet.models.data_representation.images import IC86DNNMapping
+from graphnet.models.data_representation.images import IC86PixelMapping
 from graphnet.constants import (
     TEST_IC86MAIN_IMAGE,
     IC86_CNN_MAPPING,
@@ -56,7 +56,7 @@ def test_pixel_mappings() -> None:
     # Construct node definition
     # This defines each DOM as a cluster, and will summarize pulses seen by
     # DOMs using percentiles.
-    pixel_mapping = IC86DNNMapping(
+    pixel_mapping = IC86PixelMapping(
         dtype=dtype,
         pixel_feature_names=pixel_feature_names,
         string_label=string_label,
@@ -156,7 +156,7 @@ def test_segments_mapping() -> None:
         ["main array", "upper deepcore", "lower deepcore"],
     ):
         tmp = deepcopy(grid)
-        pixel_mapping = IC86DNNMapping(
+        pixel_mapping = IC86PixelMapping(
             dtype=dtype,
             pixel_feature_names=pixel_feature_names,
             string_label=string_label,

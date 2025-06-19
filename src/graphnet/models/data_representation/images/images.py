@@ -7,10 +7,10 @@ from graphnet.models.data_representation.graphs import NodeDefinition
 from graphnet.models.detector import Detector, IceCube86
 
 from .image_definition import ImageDefinition
-from .mappings import IC86DNNMapping
+from .mappings import IC86PixelMapping
 
 
-class IC86DNNImage(ImageDefinition):
+class IC86Image(ImageDefinition):
     """Class creating a image for IC86 DNN data."""
 
     def __init__(
@@ -54,7 +54,7 @@ class IC86DNNImage(ImageDefinition):
         ), f"DOM number label '{dom_number_label}' not in input feature names"
 
         # Base class constructor
-        pixel_mapping = IC86DNNMapping(
+        pixel_mapping = IC86PixelMapping(
             string_label=string_label,
             dom_number_label=dom_number_label,
             pixel_feature_names=node_definition._output_feature_names,
