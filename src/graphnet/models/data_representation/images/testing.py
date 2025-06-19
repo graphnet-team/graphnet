@@ -14,15 +14,9 @@ class TestImageIC86Mapping(ImageDefinition):
 
     def __init__(
         self,
+        input_feature_names: List[str],
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
-        input_feature_names: List[str] = [
-            "dom_x",
-            "dom_y",
-            "dom_z",
-            "string",
-            "dom_number",
-        ],
         dtype: Optional[torch.dtype] = torch.float,
         **kwargs: Any,
     ) -> None:
@@ -37,7 +31,6 @@ class TestImageIC86Mapping(ImageDefinition):
         """
         node_definition = TestPixel()
         node_definition.set_output_feature_names(input_feature_names)
-        dom_labels = ["dom_x", "dom_y", "dom_z"]
 
         # Base class constructor
         pixel_mapping = IC86DNNMapping(
@@ -50,7 +43,7 @@ class TestImageIC86Mapping(ImageDefinition):
         )
         super().__init__(
             detector=IceCube86(
-                replace_with_identity=dom_labels + ["string", "dom_number"]
+                replace_with_identity=input_feature_names,
             ),
             node_definition=node_definition,
             pixel_mapping=pixel_mapping,  # PixelMapping,
@@ -72,9 +65,6 @@ class TestPixel(NodeDefinition):
     def _define_output_feature_names(
         self, input_feature_names: List[str]
     ) -> List[str]:
-        assert set(input_feature_names) == set(
-            ["dom_x", "dom_y", "dom_z", "string", "dom_number"]
-        )
         return input_feature_names
 
     def _construct_nodes(self, x: torch.Tensor) -> Data:
