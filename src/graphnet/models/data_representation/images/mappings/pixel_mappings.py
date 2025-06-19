@@ -37,7 +37,7 @@ class PixelMapping(Model):
         raise NotImplementedError
 
 
-class IC86DNNMapping(PixelMapping):
+class IC86PixelMapping(PixelMapping):
     """Mapping for the IceCube86.
 
     This mapping is based on the CNN mapping used

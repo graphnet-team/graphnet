@@ -20,5 +20,5 @@ from .graphs import (
 )
 from .images import (
     ImageDefinition,
-    IC86DNNImage,
+    IC86Image,
 )
