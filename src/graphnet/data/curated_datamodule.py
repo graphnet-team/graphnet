@@ -1,7 +1,7 @@
 """Contains a Generic class for curated DataModules/Datasets.
 
 Inheriting subclasses are data-specific implementations that allow the
-user to import and download pre-converteddatasets for training of deep
+user to import and download pre-converted datasets for training of deep
 learning based methods in GraphNeT.
 """
 
