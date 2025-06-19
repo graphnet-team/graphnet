@@ -188,7 +188,7 @@ jobs:
         run: df -h
 
   build-macos-examples:
-    # Every macOS test 'costs' 10 minutes of runner time. Minimize!
+    # Runtime on macOS is multiplied with a factor 10 by github. Minimize!
     name: Examples - macOS 15
     runs-on: macos-15
     strategy:
