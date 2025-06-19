@@ -6,6 +6,5 @@ regular sized image.
 """
 
 from .image_definition import ImageDefinition
-from .images import IC86DNNImage
-from .mappings import IC86DNNMapping
-from .testing import TestImageIC86Mapping, TestPixel
+from .images import IC86Image
+from .mappings import IC86PixelMapping
