@@ -5,6 +5,7 @@ from typing import List
 from torch_geometric.data import Data
 import torch
 import pandas as pd
+import numpy as np
 
 from graphnet.models import Model
 from graphnet.constants import IC86_CNN_MAPPING
@@ -15,9 +16,11 @@ class PixelMapping(Model):
 
     def __init__(
         self,
+        pixel_feature_names: List[str],
     ) -> None:
         """Construct `PixelMapping`."""
         super().__init__(name=__name__, class_name=self.__class__.__name__)
+        self._set_image_feature_names(pixel_feature_names)
 
     @abstractmethod
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
@@ -37,8 +40,9 @@ class PixelMapping(Model):
 class IC86DNNMapping(PixelMapping):
     """Mapping for the IceCube86.
 
-    This mapping is based on the CNN mapping used in the IceCube86 analysis.
-    See: https://arxiv.org/abs/2101.11589
+    This mapping is based on the CNN mapping used
+    in the multiple IceCube86 analysis.
+    For further details see: https://arxiv.org/abs/2101.11589
     """
 
     def __init__(
@@ -47,6 +51,7 @@ class IC86DNNMapping(PixelMapping):
         pixel_feature_names: List[str],
         string_label: str = "string",
         dom_number_label: str = "dom_number",
+        include_main_array: bool = True,
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
     ):
@@ -54,14 +59,27 @@ class IC86DNNMapping(PixelMapping):
 
         Args:
             dtype: data type used for node features. e.g. ´torch.float´
-            string_label: Names of the DOM string feature.
-            dom_number_label: Names of the DOM number feature.
+            string_label: Name of the feature corresponding
+                to the DOM string number. Values Integers betweem 1 - 86
+            dom_number_label: Name of the feature corresponding
+                to the DOM number (1 - 60). Values Integers between 1 - 60
+                where 1 is the dom with the highest z coordinate.
             pixel_feature_names: Names of each column in expected input data
                 that will be built into a image.
+            include_main_array: If True, the main array will be included.
             include_lower_dc: If True, the lower DeepCore will be included.
             include_upper_dc: If True, the upper DeepCore will be included.
+
+        Raises:
+            ValueError: If no array type is included.
+
+        NOTE: Expects input data to be DOMs with aggregated features.
         """
-        super().__init__()
+        if not np.any(
+            [include_main_array, include_lower_dc, include_upper_dc]
+        ):
+            raise ValueError("Include at least one array type.")
+
         self._dtype = dtype
         self._string_label = string_label
         self._dom_number_label = dom_number_label
@@ -73,9 +91,11 @@ class IC86DNNMapping(PixelMapping):
             len(pixel_feature_names) - 2
         )  # 2 for string and dom_number
 
+        self._include_main_array = include_main_array
         self._include_lower_dc = include_lower_dc
         self._include_upper_dc = include_upper_dc
 
+        # read mapping from parquet file
         df = pd.read_parquet(IC86_CNN_MAPPING)
         df.sort_values(
             by=["string", "dom_number"],
@@ -83,10 +103,15 @@ class IC86DNNMapping(PixelMapping):
             inplace=True,
         )
 
-        self._tensor_mapping = torch.tensor(
-            df.values,
-            dtype=dtype,
+        # Set the index to string and dom_number for faster lookup
+        df.set_index(
+            ["string", "dom_number"],
+            inplace=True,
+            drop=False,
         )
+
+        self._mapping = df
+        super().__init__(pixel_feature_names=pixel_feature_names)
 
     def _set_indeces(
         self,
@@ -94,6 +119,7 @@ class IC86DNNMapping(PixelMapping):
         dom_number_label: str,
         string_label: str,
     ) -> None:
+        """Set the indices for the features."""
         self._cnn_features_idx = []
         for feature in feature_names:
             if feature == dom_number_label:
@@ -103,16 +129,14 @@ class IC86DNNMapping(PixelMapping):
             else:
                 self._cnn_features_idx.append(feature_names.index(feature))
 
-    def forward(
-        self, data: Data, data_feature_names: List[str]
-    ) -> List[torch.Tensor]:
+    def forward(self, data: Data, data_feature_names: List[str]) -> Data:
         """Map pixel data to images."""
         # Initialize output arrays
-
-        main_arr = torch.zeros(
-            (self._nb_cnn_features, 10, 10, 60),
-            dtype=self._dtype,
-        )
+        if self._include_main_array:
+            main_arr = torch.zeros(
+                (self._nb_cnn_features, 10, 10, 60),
+                dtype=self._dtype,
+            )
         if self._include_upper_dc:
             upper_dc_arr = torch.zeros(
                 (self._nb_cnn_features, 8, 10),
@@ -124,70 +148,71 @@ class IC86DNNMapping(PixelMapping):
                 dtype=self._dtype,
             )
 
+        # data.x is expected to be a tensor with shape (N, F)
+        # where N is the number of nodes and F is the number of features.
         x = data.x
 
         # Direct coordinate and feature extraction
-        string_dom_number = x[:, [self._string_idx, self._dom_number_idx]]
+        string_dom_number = x[
+            :, [self._string_idx, self._dom_number_idx]
+        ].int()
         batch_row_features = x[:, self._cnn_features_idx]
 
-        # Compute coordinate matches directly
-        coord_matches = torch.all(
-            torch.eq(
-                string_dom_number.unsqueeze(1),
-                self._tensor_mapping[:, [6, 7]].unsqueeze(0),
-            ),
-            dim=-1,
+        # look up the mapping for string and dom_number
+        match_indices = self._mapping.loc[
+            zip(*string_dom_number.t().tolist())
+        ][
+            ["string", "dom_number", "mat_ax0", "mat_ax1", "mat_ax2"]
+        ].values.astype(
+            int
         )
 
-        # Find matching indices
-        match_indices = coord_matches.nonzero(as_tuple=False)
-
-        assert match_indices.numel() != 0
-
-        # Process matches efficiently
-        for match_row, geom_idx in match_indices:
-            # Retrieve geometric information directly from tensor
-            string_val = self._tensor_mapping[geom_idx, 6].item()
-            dom_number = self._tensor_mapping[geom_idx, 7].item()
-
+        # Copy CNN features to the appropriate arrays
+        for i, row in enumerate(match_indices):
             # Select appropriate array and indexing
-            if string_val < 79:  # Main Array
-                main_arr[
-                    :,
-                    int(self._tensor_mapping[geom_idx, 3]),
-                    int(self._tensor_mapping[geom_idx, 4]),
-                    int(self._tensor_mapping[geom_idx, 5]),
-                ] = batch_row_features[match_row]
+            if row[0] < 79:  # Main Array
+                if self._include_main_array:
+                    main_arr[
+                        :,
+                        row[2],  # mat_ax0
+                        row[3],  # mat_ax1
+                        row[4],  # mat_ax2
+                    ] = batch_row_features[i]
 
-            elif dom_number < 11:  # Upper DeepCore
+            elif row[1] < 11:  # Upper DeepCore
                 if self._include_upper_dc:
                     upper_dc_arr[
                         :,
-                        int(self._tensor_mapping[geom_idx, 3]),
-                        int(self._tensor_mapping[geom_idx, 4]),
-                    ] = batch_row_features[match_row]
+                        row[2],  # mat_ax0
+                        row[3],  # mat_ax1
+                    ] = batch_row_features[i]
 
             else:  # Lower DeepCore
                 if self._include_lower_dc:
                     lower_dc_arr[
                         :,
-                        int(self._tensor_mapping[geom_idx, 3]),
-                        int(self._tensor_mapping[geom_idx, 4]),
-                    ] = batch_row_features[match_row]
+                        row[2],  # mat_ax0
+                        row[3],  # mat_ax1
+                    ] = batch_row_features[i]
 
-        # unqueeze to add batch dimension
-        ret = [main_arr.unsqueeze(0)]
+        # unqueeze to add dimension for batching
+        # with collate_fn Batch.from_data_list
+        ret: List[torch.Tensor] = []
+        if self._include_main_array:
+            ret.append(main_arr.unsqueeze(0))
         if self._include_upper_dc:
             ret.append(upper_dc_arr.unsqueeze(0))
         if self._include_lower_dc:
             ret.append(lower_dc_arr.unsqueeze(0))
 
+        # Set list of images as data.x
         data.x = ret
-
         return data
 
     def _set_image_feature_names(self, input_feature_names: List[str]) -> None:
         """Set the final output feature names."""
+        # string and dom_number are only used for mapping
+        # and will not be included in the output features.
         self.image_feature_names = [
             infeature
             for infeature in input_feature_names
