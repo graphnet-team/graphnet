@@ -21,10 +21,10 @@ class LCSC(CNN):
         out_put_dim: int = 2,
         input_norm: bool = True,
         num_conv_layers: int = 8,
-        conv_filters_list: List[int] = [50, 50, 50, 50, 50, 50, 50, 10],
-        kernel_size_list: Union[int, List[Union[int, List[int]]]] = 3,
-        padding_list: str = "Same",
-        pooling_type_list: List[Union[None, str]] = [
+        conv_filters: List[int] = [50, 50, 50, 50, 50, 50, 50, 10],
+        kernel_size: Union[int, List[Union[int, List[int]]]] = 3,
+        padding: Union[str, int, List[Union[str, int]]] = "Same",
+        pooling_type: List[Union[None, str]] = [
             None,
             "Avg",
             None,
@@ -34,7 +34,7 @@ class LCSC(CNN):
             None,
             "Avg",
         ],
-        pooling_kernel_size_list: List[Union[None, int, List[int]]] = [
+        pooling_kernel_size: List[Union[None, int, List[int]]] = [
             None,
             [1, 1, 2],
             None,
@@ -44,7 +44,7 @@ class LCSC(CNN):
             None,
             [2, 2, 2],
         ],
-        pooling_stride_list: List[Union[None, int, List[int]]] = [
+        pooling_stride: Union[int, List[Union[None, int, List[int]]]] = [
             None,
             [1, 1, 2],
             None,
@@ -68,10 +68,10 @@ class LCSC(CNN):
                 Defaults to True.
             num_conv_layers (int): Number of convolutional layers.
                 Defaults to 8.
-            conv_filters_list (List[int]): List of number ofconvolutional
+            conv_filters (List[int]): List of number ofconvolutional
                 filters to use in hidden layers.
                 Defaults to [50, 50, 50, 50, 50, 50, 50, 50, 10].
-            kernel_size_list (int, List[int], or List[List[int]]):
+            kernel_size (int, List[int], or List[List[int]]):
                 Size of the convolutional kernels.
                 Options are:
                     int: single integer for all dimensions
@@ -84,12 +84,20 @@ class LCSC(CNN):
                         for the corresponding layer as kernel size.
                 If an integer is provided, it will be used for all layers.
                 Defaults to 3.
-            padding_list (str or int): Padding for the convolutional layers.
-                Either 'Same' or an integer which will be used for all layers.
+            padding (str, int, or List[int]]): Padding for the
+                convolutional layers.
+                Options are:
+                    'Same' for same convolutional padding,
+                    int: single integer for all dimensions and all layers,
+                        e.g. 1 would equal [1, 1, 1].
+                    list: list of integers specifying the padding for each
+                        dimension, for each layer equally,
+                        e.g. [1, 2, 3].
                 Defaults to 'Same'.
-            pooling_type_list (List[str]): List of pooling types for layers.
+            pooling_type (List[None,str]): List of pooling types
+                for layers.
                 Options are
-                    'None'  : No pooling is used,
+                    None  : No pooling is used,
                     'Avg'   : Average pooling is used,
                     'Max'   : Max pooling is used
                     Defaults to [
@@ -98,10 +106,10 @@ class LCSC(CNN):
                         None, 'Avg',
                         None, 'Avg'
                     ].
-            pooling_kernel_size_list (List[Union[int,List[int]]]):
+            pooling_kernel_size (List[Union[int,List[int]]]):
                 List of pooling kernel sizes for each layer.
                 If an integer is provided, it will be used for all layers.
-                Options of list elements are:
+                In case of a list the options for its elements are:
                     list: list of integers for each dimension, e.g. [1, 1, 2].
                     int: single integer for all dimensions,
                         e.g. 2 would equal [2, 2, 2].
@@ -112,9 +120,14 @@ class LCSC(CNN):
                     None, [2, 2, 2],
                     None, [2, 2, 2]
                 ].
-            pooling_stride_list (List[List[int]]): List of pooling strides
-                for each layer.
+            pooling_stride (int or List[Union[None,int]]):
+                List of pooling strides for each layer.
                 If an integer is provided, it will be used for all layers.
+                In case of a list the options for its elements are:
+                    list: list of integers for each dimension, e.g. [1, 1, 2].
+                    int: single integer for all dimensions,
+                        e.g. 2 would equal [2, 2, 2].
+                    If None, no pooling is applied.
                 Defaults to [
                     None, [1, 1, 2],
                     None, [2, 2, 2],
@@ -135,102 +148,105 @@ class LCSC(CNN):
         super().__init__(nb_inputs=num_input_features, nb_outputs=out_put_dim)
 
         # Check input parameters
-        if isinstance(conv_filters_list, int):
-            conv_filters_list = [
-                conv_filters_list for _ in range(num_conv_layers)
-            ]
+        if isinstance(conv_filters, int):
+            conv_filters = [conv_filters for _ in range(num_conv_layers)]
         else:
-            if not isinstance(conv_filters_list, list):
+            if not isinstance(conv_filters, list):
                 raise TypeError(
                     (
-                        f"`conv_filters_list` must be a "
-                        f"list or an integer, not {type(conv_filters_list)}!"
+                        f"`conv_filters` must be a "
+                        f"list or an integer, not {type(conv_filters)}!"
                     )
                 )
-            if len(conv_filters_list) != num_conv_layers:
+            if len(conv_filters) != num_conv_layers:
                 raise ValueError(
-                    f"`conv_filters_list` must have {num_conv_layers} "
-                    f"elements, not {len(conv_filters_list)}!"
+                    f"`conv_filters` must have {num_conv_layers} "
+                    f"elements, not {len(conv_filters)}!"
                 )
 
-        if isinstance(kernel_size_list, int):
-            kernel_size_list = [  # type: ignore[assignment]
-                [kernel_size_list, kernel_size_list, kernel_size_list]
+        if isinstance(kernel_size, int):
+            kernel_size = [  # type: ignore[assignment]
+                [kernel_size, kernel_size, kernel_size]
                 for _ in range(num_conv_layers)
             ]
         else:
-            if not isinstance(kernel_size_list, list):
+            if not isinstance(kernel_size, list):
                 raise TypeError(
                     (
-                        "`kernel_size_list` must be a list or an "
-                        f"integer, not {type(kernel_size_list)}!"
+                        "`kernel_size` must be a list or an "
+                        f"integer, not {type(kernel_size)}!"
                     )
                 )
-            if len(kernel_size_list) != num_conv_layers:
+            if len(kernel_size) != num_conv_layers:
                 raise ValueError(
                     (
-                        f"`kernel_size_list` must have {num_conv_layers} "
-                        f"elements, not {len(kernel_size_list)}!"
+                        f"`kernel_size` must have {num_conv_layers} "
+                        f"elements, not {len(kernel_size)}!"
                     )
                 )
 
-        if isinstance(padding_list, int):
-            padding_list = [padding_list for _ in range(num_conv_layers)]
-        elif padding_list.lower() == "same":
-            self._padding_list = ["same" for i in range(num_conv_layers)]
+        if isinstance(padding, int):
+            padding = [padding for _ in range(num_conv_layers)]
+        elif isinstance(padding, str):
+            if padding.lower() == "same":
+                padding = ["same" for i in range(num_conv_layers)]
+            else:
+                raise ValueError(
+                    (
+                        "`padding` must be 'Same' or an integer, "
+                        f"not {padding}!"
+                    )
+                )
         else:
-            if not isinstance(padding_list, list):
+            if not isinstance(padding, list):
                 raise TypeError(
                     (
-                        f"`padding_list` must be a list or "
-                        f"an integer, not {type(padding_list)}!"
+                        f"`padding` must be a list or "
+                        f"an integer, not {type(padding)}!"
                     )
                 )
-            if len(padding_list) != num_conv_layers:
+            if len(padding) != num_conv_layers:
                 raise ValueError(
-                    f"`padding_list` must have {num_conv_layers} "
-                    f"elements, not {len(padding_list)}!"
+                    f"`padding` must have {num_conv_layers} "
+                    f"elements, not {len(padding)}!"
                 )
-            self._padding_list = padding_list
 
-        if isinstance(pooling_kernel_size_list, int):
-            pooling_kernel_size_list = [
-                pooling_kernel_size_list for i in range(num_conv_layers)
+        if isinstance(pooling_kernel_size, int):
+            pooling_kernel_size = [
+                pooling_kernel_size for i in range(num_conv_layers)
             ]
         else:
-            if not isinstance(pooling_kernel_size_list, list):
+            if not isinstance(pooling_kernel_size, list):
                 raise TypeError(
                     (
-                        "`pooling_kernel_size_list` must be a list or "
-                        f"an integer, not {type(pooling_kernel_size_list)}!"
+                        "`pooling_kernel_size` must be a list or "
+                        f"an integer, not {type(pooling_kernel_size)}!"
                     )
                 )
-            if len(pooling_kernel_size_list) != num_conv_layers:
+            if len(pooling_kernel_size) != num_conv_layers:
                 raise ValueError(
                     (
-                        f"`pooling_kernel_size_list` must have "
+                        f"`pooling_kernel_size` must have "
                         f"{num_conv_layers} elements, not "
-                        f"{len(pooling_kernel_size_list)}!"
+                        f"{len(pooling_kernel_size)}!"
                     )
                 )
 
-        if isinstance(pooling_stride_list, int):
-            pooling_stride_list = [
-                pooling_stride_list for i in range(num_conv_layers)
-            ]
+        if isinstance(pooling_stride, int):
+            pooling_stride = [pooling_stride for i in range(num_conv_layers)]
         else:
-            if not isinstance(pooling_stride_list, list):
+            if not isinstance(pooling_stride, list):
                 raise TypeError(
                     (
-                        "`pooling_stride_list` must be a list or an integer, "
-                        f"not {type(pooling_stride_list)}!"
+                        "`pooling_stride` must be a list or an integer, "
+                        f"not {type(pooling_stride)}!"
                     )
                 )
-            if len(pooling_stride_list) != num_conv_layers:
+            if len(pooling_stride) != num_conv_layers:
                 raise ValueError(
                     (
-                        f"`pooling_stride_list` must have {num_conv_layers} "
-                        f"elements, not {len(pooling_stride_list)}!"
+                        f"`pooling_stride` must have {num_conv_layers} "
+                        f"elements, not {len(pooling_stride)}!"
                     )
                 )
 
@@ -289,24 +305,24 @@ class LCSC(CNN):
             self.conv.append(
                 torch.nn.Conv3d(
                     dimensions[0],
-                    conv_filters_list[i],
-                    kernel_size=kernel_size_list[i],
-                    padding=self._padding_list[i],
+                    conv_filters[i],
+                    kernel_size=kernel_size[i],
+                    padding=padding[i],
                 )
             )
             dimensions = self._calc_output_dimension(
                 dimensions,
-                conv_filters_list[i],
-                kernel_size_list[i],
-                self._padding_list[i],
+                conv_filters[i],
+                kernel_size[i],
+                padding[i],
             )
-            if pooling_type_list[i] is None or pooling_type_list[i] == "None":
+            if pooling_type[i] is None or pooling_type[i] == "None":
                 self.pool.append(None)
-            elif pooling_type_list[i] == "Avg":
+            elif pooling_type[i] == "Avg":
                 self.pool.append(
                     torch.nn.AvgPool3d(
-                        kernel_size=pooling_kernel_size_list[i],
-                        stride=pooling_stride_list[i],
+                        kernel_size=pooling_kernel_size[i],
+                        stride=pooling_stride[i],
                     )
                 )
                 dimensions = self._calc_output_dimension(
@@ -314,14 +330,14 @@ class LCSC(CNN):
                     out_channels=dimensions[
                         0
                     ],  # same out channels as input channels for pooling
-                    kernel_size=pooling_kernel_size_list[i],
-                    stride=pooling_stride_list[i],
+                    kernel_size=pooling_kernel_size[i],
+                    stride=pooling_stride[i],
                 )
-            elif pooling_type_list[i] == "Max":
+            elif pooling_type[i] == "Max":
                 self.pool.append(
                     torch.nn.MaxPool3d(
-                        kernel_size=pooling_kernel_size_list[i],
-                        stride=pooling_stride_list[i],
+                        kernel_size=pooling_kernel_size[i],
+                        stride=pooling_stride[i],
                     )
                 )
                 dimensions = self._calc_output_dimension(
@@ -329,8 +345,8 @@ class LCSC(CNN):
                     out_channels=dimensions[
                         0
                     ],  # same out channels as input channels for pooling
-                    kernel_size=pooling_kernel_size_list[i],
-                    stride=pooling_stride_list[i],
+                    kernel_size=pooling_kernel_size[i],
+                    stride=pooling_stride[i],
                 )
             else:
                 raise ValueError(
