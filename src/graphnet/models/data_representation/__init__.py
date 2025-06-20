@@ -17,6 +17,7 @@ from .graphs import (
     PercentileClusters,
     NodeAsDOMTimeSeries,
     IceMixNodes,
+    ClusterSummaryFeatures,
 )
 from .images import (
     ImageDefinition,
