@@ -4,5 +4,5 @@ icemix
 
 .. automodule:: graphnet.models.gnn.icemix
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

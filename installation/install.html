@@ -393,7 +393,7 @@
             
   <section id="installation">
 <h1 id="installation-install--page-root">Installation<a class="headerlink" href="#installation-install--page-root" title="Link to this heading">¶</a></h1>
-<p><a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT is available for Python 3.8 to Python 3.11.</p>
+<p><a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT is available for Python 3.9 to Python 3.11.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We recommend installing <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT in a separate environment, e.g. using a Python virtual environment or Anaconda (see details on installation <a class="reference external" href="https://www.anaconda.com/products/individual">here</a>).</p>
@@ -455,7 +455,6 @@
     margin: 0;
     white-space: pre-wrap;
   }
-
 </style>
 <div class="quick-start">
 <div class="title-column">
@@ -474,7 +473,9 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   var torchList = [
-    ['torch-2.2.0', 'PyTorch 2.2.*'],
+    ['torch-2.7.0', 'PyTorch 2.7.*'],
+    ['torch-2.6.0', 'PyTorch 2.6.*'],
+    ['torch-2.5.0', 'PyTorch 2.5.*'],
     ['no_torch', 'w/o PyTorch'],
   ];
 
@@ -486,56 +487,102 @@
   var cudaList = [
     ['cu118', '11.8'],
     ['cu121', '12.1'],
+    ['cu124', '12.4'],
+    ['cu126', '12.6'],
+    ['cu128', '12.8'],
     ['cpu', 'CPU'],
   ];
 
-  torchList.forEach(x => $("#torch").append(`<div id="${x[0]}">${x[1]}</div>`));
-  osList.forEach(x => $("#os").append(`<div id="${x[0]}">${x[1]}</div>`));
-  cudaList.forEach(x => $("#cuda").append(`<div id="${x[0]}">${x[1]}</div>`));
+  var torchWheelMap = {
+    "torch-2.7.0": "2.7.0",
+    "torch-2.6.0": "2.6.0",
+    "torch-2.5.0": "2.5.0"
+  };
+
+  var torchExtrasMap = {
+    "torch-2.7.0": "torch-27",
+    "torch-2.6.0": "torch-26",
+    "torch-2.5.0": "torch-25"
+  };
+
+  for (var i = 0; i < torchList.length; i++) {
+    $("#torch").append('<div id="' + torchList[i][0] + '">' + torchList[i][1] + '</div>');
+  }
+
+  for (var i = 0; i < osList.length; i++) {
+    $("#os").append('<div id="' + osList[i][0] + '">' + osList[i][1] + '</div>');
+  }
+
+  for (var i = 0; i < cudaList.length; i++) {
+    $("#cuda").append('<div id="' + cudaList[i][0] + '">' + cudaList[i][1] + '</div>');
+  }
+
+  function formatCudaLabel(cuda) {
+    if (cuda === "cpu") return "CPU";
+    return cuda.slice(2, 4) + "." + cuda.slice(4);
+  }
 
   function updateCommand() {
     var torch = $("#command").attr("torch");
     var os = $("#command").attr("os");
-    var package = $("#command").attr("package");
     var cuda = $("#command").attr("cuda");
-    
-    if (os == "macos" && cuda != "cpu") {
+
+    if (!torch || !os || !cuda) return;
+
+    if (os === "macos" && cuda !== "cpu") {
       $("#command pre").text('# macOS binaries do not support CUDA');
+      return;
     }
-    if (cuda != "cpu" && torch == "no_torch") {
+
+    if (cuda !== "cpu" && torch === "no_torch") {
       $("#command pre").text('# GPU acceleration is not available without PyTorch.');
+      return;
     }
 
-    if (os == "linux" && cuda != "cpu" && torch != "no_torch"){
-      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[torch,develop]\n\n#Optionally, install jammy_flows for normalizing flow support:\npip install git+https://github.com/thoglu/jammy_flows.git`);
-    }
-    else if (os == "linux" && cuda == "cpu" && torch != "no_torch"){
-      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[torch,develop]\n\n#Optionally, install jammy_flows for normalizing flow support:\npip install git+https://github.com/thoglu/jammy_flows.git`);
-    }
-    else if (os == "linux" && cuda == "cpu" && torch == "no_torch"){
-      $("#command pre").text(`# Installations without PyTorch are intended for file conversion only\ngit clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_${$("#command").attr("cuda")}.txt -e .[develop]\n\n#Optionally, install jammy_flows for normalizing flow support:\npip install git+https://github.com/thoglu/jammy_flows.git`);
+    if (
+      (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
+      (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
+      (torch === "torch-2.5.0" && (cuda === "cu126" || cuda === "cu128"))
+    ) {
+      $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
+      return;
     }
 
-    if (os == "macos" && cuda == "cpu" && torch != "no_torch"){
-      $("#command pre").text(`git clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_macos.txt -e .[torch,develop]\n\n#Optionally, install jammy_flows for normalizing flow support:\npip install git+https://github.com/thoglu/jammy_flows.git`);
-    }
-    if (os == "macos" && cuda == "cpu" && torch == "no_torch"){
-      $("#command pre").text(`# Installations without PyTorch are intended for file conversion only\ngit clone https://github.com/graphnet-team/graphnet.git\ncd graphnet\n\npip install -r requirements/torch_macos.txt -e .[develop]\n\n#Optionally, install jammy_flows for normalizing flow support:\npip install git+https://github.com/thoglu/jammy_flows.git`);
+    if (torch === "no_torch") {
+      $("#command pre").text("pip install -e .[develop]");
+    } else {
+      var torchVersion = torchWheelMap[torch];
+      var extrasPrefix = torchExtrasMap[torch];
+
+      var extras = (cuda === "cpu")
+        ? extrasPrefix + "-cpu"
+        : extrasPrefix + "-cu" + cuda.slice(2);
+
+      var installLine = "pip install -e .[" + extras + "]";
+      var wheelUrl = "https://data.pyg.org/whl/torch-" + torchVersion + "+" + (cuda === "cpu" ? "cpu" : cuda) + ".html";
+      installLine += " -f " + wheelUrl;
+
+      $("#command pre").text([
+        "git clone https://github.com/graphnet-team/graphnet.git",
+        "cd graphnet",
+        installLine,
+        "# Optionally, install jammy_flows for normalizing flow support:",
+        "pip install git+https://github.com/thoglu/jammy_flows.git"
+      ].join("\n"));
     }
   }
 
-  $(".quick-start .content-column .row div").click(function() {
+  $(".quick-start .content-column .row div").click(function () {
     $(this).parent().children().removeClass("selected");
     $(this).addClass("selected");
     $("#command").attr($(this).parent().attr("id"), $(this).attr("id"));
     updateCommand();
   });
 
+  // Default selection
   $("#torch").children().get(0).click();
   $("#linux").click();
-  $("#pip").click();
   $("#cpu").click();
-
 </script>
 <p>When installation is completed, you should be able to run <a class="reference external" href="https://github.com/graphnet-team/graphnet/tree/main/examples">the examples</a>.</p>
 </section>
@@ -611,7 +658,7 @@ pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w">
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

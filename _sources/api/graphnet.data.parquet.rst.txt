@@ -5,8 +5,8 @@ parquet
 
 .. automodule:: graphnet.data.parquet
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Submodules |end-h2|

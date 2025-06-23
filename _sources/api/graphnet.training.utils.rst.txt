@@ -4,5 +4,5 @@ utils
 
 .. automodule:: graphnet.training.utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

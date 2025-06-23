@@ -4,5 +4,5 @@ samplers
 
 .. automodule:: graphnet.data.dataset.samplers
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

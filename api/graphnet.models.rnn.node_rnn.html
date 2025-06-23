@@ -583,16 +583,16 @@
 <p>(cannot be used as a standalone model)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.rnn.node_rnn.Node_RNN">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.rnn.node_rnn.</span></span><span class="sig-name descname"><span class="pre">Node_RNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/rnn/node_rnn.html#Node_RNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.rnn.node_rnn.Node_RNN" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.rnn.node_rnn.</span></span><span class="sig-name descname"><span class="pre">Node_RNN</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/rnn/node_rnn.html#Node_RNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.rnn.node_rnn.Node_RNN" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">GNN</span></code></a></p>
 <p>Implementation of the Node RNN model architecture.</p>
-<p>The model takes as input the typical DOM data format and transforms it into
-a time series of DOM activations pr. DOM. before applying a RNN layer and
-outputting the an RNN output for each DOM. This model is in its current
-state not intended to be used as a standalone model. Furthermore, it needs
-to be used with a time-series dataset object, where the last column in x is
-a special column that is used to seperate the activation into time series
-per dom per batch.</p>
+<p>The model takes as input the typical DOM data format and transforms
+it into a time series of DOM activations pr. DOM. before applying a
+RNN layer and outputting the an RNN output for each DOM. This model
+is in its current state not intended to be used as a standalone
+model. Furthermore, it needs to be used with a time-series dataset
+object, where the last column in x is a special column that is used
+to seperate the activation into time series per dom per batch.</p>
 <p>Construct <cite>Node_RNN</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -697,7 +697,7 @@ Defaults to no embedding.</p></li>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

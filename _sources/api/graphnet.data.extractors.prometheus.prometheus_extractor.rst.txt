@@ -4,5 +4,5 @@ prometheus\_extractor
 
 .. automodule:: graphnet.data.extractors.prometheus.prometheus_extractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -4,5 +4,5 @@ parquet\_to\_sqlite
 
 .. automodule:: graphnet.data.utilities.parquet_to_sqlite
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

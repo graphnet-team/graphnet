@@ -4,5 +4,5 @@ easy\_model
 
 .. automodule:: graphnet.models.easy_model
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -383,7 +383,6 @@
         <span class="n">milestones</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
         <span class="n">factors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
         <span class="n">last_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `PiecewiseLinearLR`.</span>
 
@@ -400,7 +399,6 @@
 <span class="sd">            factors: List of multiplicative factors. Must be same length as</span>
 <span class="sd">                `milestones`.</span>
 <span class="sd">            last_epoch: The index of the last epoch.</span>
-<span class="sd">            verbose: If ``True``, prints a message to stdout for each update.</span>
 <span class="sd">        """</span>
         <span class="c1"># Check(s)</span>
         <span class="k">if</span> <span class="n">milestones</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">milestones</span><span class="p">):</span>
@@ -413,7 +411,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">milestones</span> <span class="o">=</span> <span class="n">milestones</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">factors</span> <span class="o">=</span> <span class="n">factors</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">last_epoch</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">last_epoch</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="c1"># Linearly interpolate multiplicative factor between milestones.</span>
@@ -500,9 +498,10 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Print the results of the previous epoch on a separate line.</span>
 
-<span class="sd">        This allows the user to see the losses/metrics for previous epochs</span>
-<span class="sd">        while the current is training. The default behaviour in pytorch-</span>
-<span class="sd">        lightning is to overwrite the progress bar from previous epochs.</span>
+<span class="sd">        This allows the user to see the losses/metrics for previous</span>
+<span class="sd">        epochs while the current is training. The default behaviour in</span>
+<span class="sd">        pytorch- lightning is to overwrite the progress bar from</span>
+<span class="sd">        previous epochs.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">trainer</span><span class="o">.</span><span class="n">current_epoch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">train_progress_bar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">(</span>
@@ -667,7 +666,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

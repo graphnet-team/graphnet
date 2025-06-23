@@ -4,5 +4,5 @@ deprecated\_methods
 
 .. automodule:: graphnet.data.parquet.deprecated_methods
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

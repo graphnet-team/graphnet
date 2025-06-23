@@ -4,5 +4,5 @@ i3truthextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3truthextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -5,8 +5,8 @@ deployment
 
 .. automodule:: graphnet.deployment
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Subpackages |end-h2|

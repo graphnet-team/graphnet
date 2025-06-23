@@ -403,10 +403,11 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Will start an IceTray read/write chain with graphnet modules.</span>
 
-<span class="sd">        If n_workers &gt; 1, this function is run in parallel n_worker times. Each</span>
-<span class="sd">        worker will loop over an allocated set of i3 files. The new i3 files</span>
-<span class="sd">        will appear as copies of the original i3 files but with reconstructions</span>
-<span class="sd">        added. Original i3 files are left untouched.</span>
+<span class="sd">        If n_workers &gt; 1, this function is run in parallel n_worker</span>
+<span class="sd">        times. Each worker will loop over an allocated set of i3 files.</span>
+<span class="sd">        The new i3 files will appear as copies of the original i3 files</span>
+<span class="sd">        but with reconstructions added. Original i3 files are left</span>
+<span class="sd">        untouched.</span>
 <span class="sd">        """</span>
         <span class="k">for</span> <span class="n">i3_file</span> <span class="ow">in</span> <span class="n">settings</span><span class="o">.</span><span class="n">i3_files</span><span class="p">:</span>
             <span class="n">tray</span> <span class="o">=</span> <span class="n">I3Tray</span><span class="p">()</span>
@@ -493,7 +494,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

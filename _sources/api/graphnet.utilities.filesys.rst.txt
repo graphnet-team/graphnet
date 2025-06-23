@@ -4,5 +4,5 @@ filesys
 
 .. automodule:: graphnet.utilities.filesys
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

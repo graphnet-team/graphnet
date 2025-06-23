@@ -810,17 +810,17 @@
 <p>Base physics task-specific <cite>Model</cite> class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.task.Task">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">Task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#Task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.Task" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">Task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#Task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.Task" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 <p>Base class for Tasks in GraphNeT.</p>
 <p>Construct <cite>Task</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>target_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name(s) of the quantity/-ies being predicted, used
+<li><p><strong>target_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name(s) of the quantity/-ies being predicted, used
 to extract the  target tensor(s) from the <cite>Data</cite> object in
 <cite>.compute_loss(…)</cite>.</p></li>
-<li><p><strong>prediction_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The name(s) of each column that is predicted by
+<li><p><strong>prediction_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – The name(s) of each column that is predicted by
 the model during inference. If not given, the name will auto
 matically be set to <cite>target_label + _pred</cite>.</p></li>
 <li><p><strong>transform_prediction_and_target</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional function to transform
@@ -856,17 +856,17 @@ loss weights.</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.Task.nb_inputs">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.Task.nb_inputs" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.Task.nb_inputs" title="Link to this definition">¶</a></dt>
 <dd><p>Return number of inputs assumed by task.</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.Task.default_target_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.Task.default_target_labels" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.Task.default_target_labels" title="Link to this definition">¶</a></dt>
 <dd><p>Return default target labels.</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.Task.default_prediction_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.Task.default_prediction_labels" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.Task.default_prediction_labels" title="Link to this definition">¶</a></dt>
 <dd><p>Return default prediction labels.</p>
 </dd></dl>
 <dl class="py method">
@@ -892,7 +892,7 @@ loss weights.</p></li>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.task.LearnedTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">LearnedTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#LearnedTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.LearnedTask" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">LearnedTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#LearnedTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.LearnedTask" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
 <p>Task class with a learned mapping.</p>
 <p>Applies a learned mapping between the last latent layer of <cite>Model</cite> and
@@ -916,7 +916,7 @@ Available through <cite>Model.nb_outputs</cite></p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.task.task.LearnedTask.compute_loss">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#LearnedTask.compute_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.LearnedTask.compute_loss" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">compute_loss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#LearnedTask.compute_loss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.LearnedTask.compute_loss" title="Link to this definition">¶</a></dt>
 <dd><p>Compute loss of <cite>pred</cite> wrt.</p>
 <p>target labels in <cite>data</cite>.</p>
 <dl class="field-list simple">
@@ -933,15 +933,15 @@ Available through <cite>Model.nb_outputs</cite></p></li>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.LearnedTask.nb_inputs">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.LearnedTask.nb_inputs" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.LearnedTask.nb_inputs" title="Link to this definition">¶</a></dt>
 <dd><p>Return number of inputs assumed by task.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.task.task.LearnedTask.forward">
 <span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#LearnedTask.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.LearnedTask.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Forward call for <cite>LearnedTask</cite>.</p>
-<p>The learned embedding transforms last latent layer of Model to meet
-target dimensions.</p>
+<p>The learned embedding transforms last latent layer of Model to
+meet target dimensions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code>]</span></p>
@@ -954,7 +954,7 @@ target dimensions.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.task.StandardLearnedTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">StandardLearnedTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardLearnedTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardLearnedTask" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">StandardLearnedTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardLearnedTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardLearnedTask" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.task.task.LearnedTask" title="graphnet.models.task.task.LearnedTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">LearnedTask</span></code></a></p>
 <p>Standard class for classification and reconstruction in GraphNeT.</p>
 <p>This class comes with a definition of <cite>compute_loss</cite> that is compatible
@@ -976,7 +976,7 @@ Available through <cite>Model.nb_outputs</cite></p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.StandardLearnedTask.nb_inputs">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.StandardLearnedTask.nb_inputs" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.StandardLearnedTask.nb_inputs" title="Link to this definition">¶</a></dt>
 <dd><p>Return number of inputs assumed by task.</p>
 </dd></dl>
 <dl class="py method">
@@ -1000,7 +1000,7 @@ function for evaluation. Suits most supervised learning <a href="#id1"><span cla
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">IdentityTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#IdentityTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.IdentityTask" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">IdentityTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#IdentityTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.IdentityTask" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.task.task.StandardLearnedTask" title="graphnet.models.task.task.StandardLearnedTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code></a></p>
 <p>Identity, or trivial, task.</p>
 <p>Construct IdentityTask.</p>
@@ -1019,23 +1019,23 @@ the direct inputs from <cite>Model</cite>.</p>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.default_target_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.default_target_labels" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.default_target_labels" title="Link to this definition">¶</a></dt>
 <dd><p>Return default target labels.</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.default_prediction_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.default_prediction_labels" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.default_prediction_labels" title="Link to this definition">¶</a></dt>
 <dd><p>Return default prediction labels.</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.IdentityTask.nb_inputs">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.nb_inputs" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#graphnet.models.task.task.IdentityTask.nb_inputs" title="Link to this definition">¶</a></dt>
 <dd><p>Return number of inputs assumed by task.</p>
 </dd></dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.task.StandardFlowTask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">StandardFlowTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardFlowTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.task.</span></span><span class="sig-name descname"><span class="pre">StandardFlowTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/task.html#StandardFlowTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.models.task.task.Task" title="graphnet.models.task.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a></p>
 <p>A <cite>Task</cite> for <a href="#id3"><span class="problematic" id="id4">`</span></a>NormalizingFlow`s in GraphNeT.</p>
 <p>This Task requires the support package`jammy_flows` for constructing and
@@ -1063,7 +1063,7 @@ for details.</p></li>
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.task.task.StandardFlowTask.default_prediction_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask.default_prediction_labels" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.task.task.StandardFlowTask.default_prediction_labels" title="Link to this definition">¶</a></dt>
 <dd><p>Return default prediction labels.</p>
 </dd></dl>
 <dl class="py method">
@@ -1142,7 +1142,7 @@ for details.</p></li>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

@@ -4,5 +4,5 @@ i3dictvalueextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3dictvalueextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

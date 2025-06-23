@@ -371,13 +371,13 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Node_RNN</span><span class="p">(</span><span class="n">GNN</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Implementation of the Node RNN model architecture.</span>
 
-<span class="sd">    The model takes as input the typical DOM data format and transforms it into</span>
-<span class="sd">    a time series of DOM activations pr. DOM. before applying a RNN layer and</span>
-<span class="sd">    outputting the an RNN output for each DOM. This model is in its current</span>
-<span class="sd">    state not intended to be used as a standalone model. Furthermore, it needs</span>
-<span class="sd">    to be used with a time-series dataset object, where the last column in x is</span>
-<span class="sd">    a special column that is used to seperate the activation into time series</span>
-<span class="sd">    per dom per batch.</span>
+<span class="sd">    The model takes as input the typical DOM data format and transforms</span>
+<span class="sd">    it into a time series of DOM activations pr. DOM. before applying a</span>
+<span class="sd">    RNN layer and outputting the an RNN output for each DOM. This model</span>
+<span class="sd">    is in its current state not intended to be used as a standalone</span>
+<span class="sd">    model. Furthermore, it needs to be used with a time-series dataset</span>
+<span class="sd">    object, where the last column in x is a special column that is used</span>
+<span class="sd">    to seperate the activation into time series per dom per batch.</span>
 <span class="sd">    """</span>
 
     <span class="nd">@save_model_config</span>
@@ -527,7 +527,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

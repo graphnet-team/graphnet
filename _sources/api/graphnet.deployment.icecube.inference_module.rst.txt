@@ -4,5 +4,5 @@ inference\_module
 
 .. automodule:: graphnet.deployment.icecube.inference_module
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

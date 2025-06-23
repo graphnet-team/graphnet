@@ -4,5 +4,5 @@ logging
 
 .. automodule:: graphnet.utilities.logging
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

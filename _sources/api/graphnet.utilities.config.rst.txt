@@ -5,8 +5,8 @@ config
 
 .. automodule:: graphnet.utilities.config
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Submodules |end-h2|

@@ -4,5 +4,5 @@ i3splinempeextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3splinempeextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -4,5 +4,5 @@ sqlite\_writer
 
 .. automodule:: graphnet.data.writers.sqlite_writer
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

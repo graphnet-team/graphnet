@@ -5,8 +5,8 @@ i3modules
 
 .. automodule:: graphnet.deployment.i3modules
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Submodules |end-h2|

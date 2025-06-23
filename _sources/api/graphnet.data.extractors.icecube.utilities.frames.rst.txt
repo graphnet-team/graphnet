@@ -4,5 +4,5 @@ frames
 
 .. automodule:: graphnet.data.extractors.icecube.utilities.frames
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

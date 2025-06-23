@@ -4,5 +4,5 @@ sqlite\_utilities
 
 .. automodule:: graphnet.data.utilities.sqlite_utilities
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

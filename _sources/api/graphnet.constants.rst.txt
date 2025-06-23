@@ -4,5 +4,5 @@ constants
 
 .. automodule:: graphnet.constants
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

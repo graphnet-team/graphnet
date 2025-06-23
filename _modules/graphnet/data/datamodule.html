@@ -480,10 +480,11 @@
 <span class="w">        </span><span class="sd">"""Handle assignment of `multiprocessing_context` arg to loaders.</span>
 
 <span class="sd">        Datasets relying on threaded libraries often require the</span>
-<span class="sd">        multiprocessing context to be set to "spawn" if "num_workers" &gt; 0. This</span>
-<span class="sd">        method will check the arguments for this entry and throw an error if</span>
-<span class="sd">        the field is already assigned to a wrong value. If the value is not</span>
-<span class="sd">        specified, it is added automatically with a log entry.</span>
+<span class="sd">        multiprocessing context to be set to "spawn" if "num_workers" &gt;</span>
+<span class="sd">        0. This method will check the arguments for this entry and throw</span>
+<span class="sd">        an error if the field is already assigned to a wrong value. If</span>
+<span class="sd">        the value is not specified, it is added automatically with a log</span>
+<span class="sd">        entry.</span>
 <span class="sd">        """</span>
         <span class="n">arg</span> <span class="o">=</span> <span class="s2">"multiprocessing_context"</span>
         <span class="k">if</span> <span class="n">dataloader_args</span><span class="p">[</span><span class="s2">"num_workers"</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
@@ -678,8 +679,8 @@
 <span class="w">        </span><span class="sd">"""Sanity checks on the dataset reference (self._dataset).</span>
 
 <span class="sd">        Checks whether the dataset is an instance of SQLiteDataset,</span>
-<span class="sd">        ParquetDataset, or Dataset. Raises a TypeError if an invalid dataset</span>
-<span class="sd">        type is detected, or if an EnsembleDataset is used.</span>
+<span class="sd">        ParquetDataset, or Dataset. Raises a TypeError if an invalid</span>
+<span class="sd">        dataset type is detected, or if an EnsembleDataset is used.</span>
 <span class="sd">        """</span>
         <span class="n">allowed_types</span> <span class="o">=</span> <span class="p">(</span><span class="n">SQLiteDataset</span><span class="p">,</span> <span class="n">ParquetDataset</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">allowed_types</span><span class="p">:</span>
@@ -962,7 +963,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

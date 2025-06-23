@@ -512,8 +512,8 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Validate and set transforms.</span>
 
-<span class="sd">        Assert that a valid combination of transformation arguments are passed</span>
-<span class="sd">        and update the corresponding functions.</span>
+<span class="sd">        Assert that a valid combination of transformation arguments are</span>
+<span class="sd">        passed and update the corresponding functions.</span>
 <span class="sd">        """</span>
         <span class="c1"># Checks</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span>
@@ -644,8 +644,8 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Data</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Forward call for `LearnedTask`.</span>
 
-<span class="sd">        The learned embedding transforms last latent layer of Model to meet</span>
-<span class="sd">        target dimensions.</span>
+<span class="sd">        The learned embedding transforms last latent layer of Model to</span>
+<span class="sd">        meet target dimensions.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_regularisation_loss</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -883,7 +883,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

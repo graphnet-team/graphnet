@@ -372,8 +372,9 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">StandardModel</span><span class="p">(</span><span class="n">EasySyntax</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""A Standard way of combining model components in GraphNeT.</span>
 
-<span class="sd">    This model is compatible with the vast majority of supervised learning</span>
-<span class="sd">    tasks such as regression, binary and multi-label classification.</span>
+<span class="sd">    This model is compatible with the vast majority of supervised</span>
+<span class="sd">    learning tasks such as regression, binary and multi-label</span>
+<span class="sd">    classification.</span>
 
 <span class="sd">    Capable of producing both event-level and pulse-level predictions.</span>
 <span class="sd">    """</span>
@@ -494,8 +495,8 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">shared_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Data</span><span class="p">],</span> <span class="n">batch_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Perform shared step.</span>
 
-<span class="sd">        Applies the forward pass and the following loss calculation, shared</span>
-<span class="sd">        between the training and validation step.</span>
+<span class="sd">        Applies the forward pass and the following loss calculation,</span>
+<span class="sd">        shared between the training and validation step.</span>
 <span class="sd">        """</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
@@ -546,7 +547,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

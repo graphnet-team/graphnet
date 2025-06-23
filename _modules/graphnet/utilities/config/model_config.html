@@ -594,9 +594,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">as_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Represent ModelConfig as a dict.</span>
 
-<span class="sd">        This builds on `BaseModel.dict()` but wraps the output in a single-key</span>
-<span class="sd">        dictionary to make it unambiguous to identify model arguments that are</span>
-<span class="sd">        themselves models.</span>
+<span class="sd">        This builds on `BaseModel.dict()` but wraps the output in a</span>
+<span class="sd">        single-key dictionary to make it unambiguous to identify model</span>
+<span class="sd">        arguments that are themselves models.</span>
 <span class="sd">        """</span>
         <span class="n">config_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
         <span class="n">config_dict</span><span class="p">[</span><span class="s2">"arguments"</span><span class="p">]</span> <span class="o">=</span> <span class="n">traverse_and_apply</span><span class="p">(</span>
@@ -741,7 +741,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

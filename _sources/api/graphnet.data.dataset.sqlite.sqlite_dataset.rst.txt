@@ -4,5 +4,5 @@ sqlite\_dataset
 
 .. automodule:: graphnet.data.dataset.sqlite.sqlite_dataset
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

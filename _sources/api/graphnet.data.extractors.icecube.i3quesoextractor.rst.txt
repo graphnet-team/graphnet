@@ -4,5 +4,5 @@ i3quesoextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3quesoextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

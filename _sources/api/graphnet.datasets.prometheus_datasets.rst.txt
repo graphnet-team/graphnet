@@ -4,5 +4,5 @@ prometheus\_datasets
 
 .. automodule:: graphnet.datasets.prometheus_datasets
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

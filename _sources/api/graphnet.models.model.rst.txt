@@ -4,5 +4,5 @@ model
 
 .. automodule:: graphnet.models.model
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

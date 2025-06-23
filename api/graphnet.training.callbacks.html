@@ -644,7 +644,7 @@
 <p>Callback class(es) for using during model training.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.PiecewiseLinearLR">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">PiecewiseLinearLR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">milestones</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_epoch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#PiecewiseLinearLR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.PiecewiseLinearLR" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">PiecewiseLinearLR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">milestones</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_epoch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#PiecewiseLinearLR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.PiecewiseLinearLR" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_LRScheduler</span></code></p>
 <p>Interpolate learning rate linearly between milestones.</p>
 <p>Construct <cite>PiecewiseLinearLR</cite>.</p>
@@ -662,7 +662,6 @@ milestone.</p>
 <li><p><strong>factors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – List of multiplicative factors. Must be same length as
 <cite>milestones</cite>.</p></li>
 <li><p><strong>last_epoch</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">-1</span></code>) – The index of the last epoch.</p></li>
-<li><p><strong>verbose</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, prints a message to stdout for each update.</p></li>
 </ul>
 </dd>
 </dl>
@@ -679,7 +678,7 @@ milestone.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">ProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#ProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">ProgressBar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">refresh_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leave</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#ProgressBar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TQDMProgressBar</span></code></p>
 <p>Custom progress bar for graphnet.</p>
 <p>Customises the default progress in pytorch-lightning.</p>
@@ -752,9 +751,10 @@ milestone.</p>
 <dt class="sig sig-object py" id="graphnet.training.callbacks.ProgressBar.on_train_epoch_start">
 <span class="sig-name descname"><span class="pre">on_train_epoch_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trainer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#ProgressBar.on_train_epoch_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.ProgressBar.on_train_epoch_start" title="Link to this definition">¶</a></dt>
 <dd><p>Print the results of the previous epoch on a separate line.</p>
-<p>This allows the user to see the losses/metrics for previous epochs
-while the current is training. The default behaviour in pytorch-
-lightning is to overwrite the progress bar from previous epochs.</p>
+<p>This allows the user to see the losses/metrics for previous
+epochs while the current is training. The default behaviour in
+pytorch- lightning is to overwrite the progress bar from
+previous epochs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -787,7 +787,7 @@ lightning is to overwrite the progress bar from previous epochs.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.callbacks.GraphnetEarlyStopping">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">GraphnetEarlyStopping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#GraphnetEarlyStopping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.GraphnetEarlyStopping" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.callbacks.</span></span><span class="sig-name descname"><span class="pre">GraphnetEarlyStopping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">save_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/callbacks.html#GraphnetEarlyStopping"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.callbacks.GraphnetEarlyStopping" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">EarlyStopping</span></code></p>
 <p>Early stopping callback for graphnet.</p>
 <p>Construct <cite>GraphnetEarlyStopping</cite> Callback.</p>
@@ -918,7 +918,7 @@ lightning is to overwrite the progress bar from previous epochs.</p>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

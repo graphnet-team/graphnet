@@ -4,5 +4,5 @@ edges
 
 .. automodule:: graphnet.models.data_representation.graphs.edges.edges
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -5,8 +5,8 @@ task
 
 .. automodule:: graphnet.models.task
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Submodules |end-h2|

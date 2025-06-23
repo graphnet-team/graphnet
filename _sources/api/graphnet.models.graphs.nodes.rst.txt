@@ -5,8 +5,8 @@ nodes
 
 .. automodule:: graphnet.models.graphs.nodes
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 

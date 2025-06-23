@@ -5,8 +5,8 @@ graphs
 
 .. automodule:: graphnet.models.data_representation.graphs
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Subpackages |end-h2|

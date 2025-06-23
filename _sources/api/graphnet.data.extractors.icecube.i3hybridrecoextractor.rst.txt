@@ -4,5 +4,5 @@ i3hybridrecoextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3hybridrecoextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

@@ -4,5 +4,5 @@ utils
 
 .. automodule:: graphnet.models.data_representation.graphs.utils
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

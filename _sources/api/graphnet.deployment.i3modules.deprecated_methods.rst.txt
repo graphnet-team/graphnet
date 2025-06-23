@@ -4,5 +4,5 @@ deprecated\_methods
 
 .. automodule:: graphnet.deployment.i3modules.deprecated_methods
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

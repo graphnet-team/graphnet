@@ -4,5 +4,5 @@ RNN\_tito
 
 .. automodule:: graphnet.models.gnn.RNN_tito
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

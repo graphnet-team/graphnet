@@ -706,11 +706,11 @@
 <p>Suggested Model subclass that enables simple user syntax.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.easy_model.EasySyntax">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.easy_model.</span></span><span class="sig-name descname"><span class="pre">EasySyntax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/easy_model.html#EasySyntax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.easy_model.</span></span><span class="sig-name descname"><span class="pre">EasySyntax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/easy_model.html#EasySyntax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
 <p>A suggested Model class that comes with simple user syntax.</p>
-<p>This class delivers simple user syntax for training and prediction, while
-imposing minimal constraints on structure.</p>
+<p>This class delivers simple user syntax for training and prediction,
+while imposing minimal constraints on structure.</p>
 <p>Construct <cite>StandardModel</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -757,8 +757,8 @@ imposing minimal constraints on structure.</p>
 <dt class="sig sig-object py" id="graphnet.models.easy_model.EasySyntax.shared_step">
 <span class="sig-name descname"><span class="pre">shared_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_idx</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/easy_model.html#EasySyntax.shared_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.shared_step" title="Link to this definition">¶</a></dt>
 <dd><p>Perform shared step.</p>
-<p>Applies the forward pass and the following loss calculation, shared
-between the training and validation step.</p>
+<p>Applies the forward pass and the following loss calculation,
+shared between the training and validation step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
@@ -783,7 +783,7 @@ between the training and validation step.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.easy_model.EasySyntax.fit">
-<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_dataloader</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping_patience</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callbacks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ckpt_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_every_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient_clip_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_strategy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">trainer_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/easy_model.html#EasySyntax.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.fit" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_dataloader</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_epochs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_stopping_patience</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callbacks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ckpt_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_every_n_steps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gradient_clip_val</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_strategy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">trainer_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/easy_model.html#EasySyntax.fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.fit" title="Link to this definition">¶</a></dt>
 <dd><p>Fit <cite>StandardModel</cite> using <cite>pytorch_lightning.Trainer</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -809,12 +809,12 @@ between the training and validation step.</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.easy_model.EasySyntax.target_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.target_labels" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.target_labels" title="Link to this definition">¶</a></dt>
 <dd><p>Return target label.</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.models.easy_model.EasySyntax.prediction_labels">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.prediction_labels" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prediction_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.prediction_labels" title="Link to this definition">¶</a></dt>
 <dd><p>Return prediction labels.</p>
 </dd></dl>
 <dl class="py method">
@@ -902,7 +902,7 @@ between the training and validation step.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.easy_model.EasySyntax.predict_as_dataframe">
-<span class="sig-name descname"><span class="pre">predict_as_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_strategy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">trainer_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/easy_model.html#EasySyntax.predict_as_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.predict_as_dataframe" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">predict_as_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataloader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prediction_columns</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_attributes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gpus</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distribution_strategy</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">trainer_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/easy_model.html#EasySyntax.predict_as_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.easy_model.EasySyntax.predict_as_dataframe" title="Link to this definition">¶</a></dt>
 <dd><p>Return predictions for <cite>dataloader</cite> as a DataFrame.</p>
 <p>Include <cite>additional_attributes</cite> as additional columns in the output
 DataFrame.</p>
@@ -972,7 +972,7 @@ DataFrame.</p>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

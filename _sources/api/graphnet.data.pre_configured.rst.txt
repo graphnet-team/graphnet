@@ -5,8 +5,8 @@ pre\_configured
 
 .. automodule:: graphnet.data.pre_configured
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Submodules |end-h2|

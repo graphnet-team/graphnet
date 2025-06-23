@@ -351,9 +351,9 @@
   <h1 id="modules-graphnet-data-curated-datamodule--page-root">Source code for graphnet.data.curated_datamodule</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Contains a Generic class for curated DataModules/Datasets.</span>
 
-<span class="sd">Inheriting subclasses are data-specific implementations that allow the user to</span>
-<span class="sd">import and download pre-converteddatasets for training of deep learning based</span>
-<span class="sd">methods in GraphNeT.</span>
+<span class="sd">Inheriting subclasses are data-specific implementations that allow the</span>
+<span class="sd">user to import and download pre-converted datasets for training of deep</span>
+<span class="sd">learning based methods in GraphNeT.</span>
 <span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
@@ -376,10 +376,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">CuratedDataset</span><span class="p">(</span><span class="n">GraphNeTDataModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Generic base class for curated datasets.</span>
 
-<span class="sd">    Curated Datasets in GraphNeT are pre-converted datasets that have been</span>
-<span class="sd">    prepared for training and evaluation of deep learning models. On these</span>
-<span class="sd">    Datasets, graphnet users can train and benchmark their models against SOTA</span>
-<span class="sd">    methods.</span>
+<span class="sd">    Curated Datasets in GraphNeT are pre-converted datasets that have</span>
+<span class="sd">    been prepared for training and evaluation of deep learning models.</span>
+<span class="sd">    On these Datasets, graphnet users can train and benchmark their</span>
+<span class="sd">    models against SOTA methods.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -497,8 +497,8 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Check arguments for truth and features from the user.</span>
 
-<span class="sd">        Will check to make sure that the given args are available. If not</span>
-<span class="sd">        available, and AssertError is thrown.</span>
+<span class="sd">        Will check to make sure that the given args are available. If</span>
+<span class="sd">        not available, and AssertError is thrown.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="n">features</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_features</span>
@@ -796,7 +796,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

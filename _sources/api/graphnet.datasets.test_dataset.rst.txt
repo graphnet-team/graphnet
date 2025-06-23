@@ -4,5 +4,5 @@ test\_dataset
 
 .. automodule:: graphnet.datasets.test_dataset
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

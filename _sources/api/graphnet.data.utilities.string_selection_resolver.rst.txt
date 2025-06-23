@@ -4,5 +4,5 @@ string\_selection\_resolver
 
 .. automodule:: graphnet.data.utilities.string_selection_resolver
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

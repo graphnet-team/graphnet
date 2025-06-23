@@ -5,8 +5,8 @@ minkowski
 
 .. automodule:: graphnet.models.graphs.edges.minkowski
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 

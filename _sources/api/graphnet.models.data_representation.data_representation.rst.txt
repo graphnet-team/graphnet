@@ -4,5 +4,5 @@ data\_representation
 
 .. automodule:: graphnet.models.data_representation.data_representation
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

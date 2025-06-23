@@ -4,5 +4,5 @@ normalizing\_flow
 
 .. automodule:: graphnet.models.normalizing_flow
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

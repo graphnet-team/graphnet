@@ -4,5 +4,5 @@ types
 
 .. automodule:: graphnet.data.extractors.icecube.utilities.types
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

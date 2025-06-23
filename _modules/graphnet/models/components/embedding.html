@@ -423,9 +423,9 @@
 <span class="w">    </span><span class="sd">"""Sinusoidal positional embeddings module.</span>
 
 <span class="sd">    This module is from the kaggle competition 2nd place solution (see</span>
-<span class="sd">    arXiv:2310.15674): It performs what is called Fourier encoding or it's used</span>
-<span class="sd">    in the Attention is all you need arXiv:1706.03762. It can be seen as a soft</span>
-<span class="sd">    digitization of the input data</span>
+<span class="sd">    arXiv:2310.15674): It performs what is called Fourier encoding or</span>
+<span class="sd">    it's used in the Attention is all you need arXiv:1706.03762. It can</span>
+<span class="sd">    be seen as a soft digitization of the input data</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -468,11 +468,11 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">FourierEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">"""Fourier encoder module.</span>
 
-<span class="sd">    This module incorporates sinusoidal positional embeddings and auxiliary</span>
-<span class="sd">    embeddings to process input sequences and produce meaningful</span>
-<span class="sd">    representations. The module assumes that the input data is in the format of</span>
-<span class="sd">    (x, y, z, time, charge, auxiliary), being the first four features</span>
-<span class="sd">    mandatory.</span>
+<span class="sd">    This module incorporates sinusoidal positional embeddings and</span>
+<span class="sd">    auxiliary embeddings to process input sequences and produce</span>
+<span class="sd">    meaningful representations. The module assumes that the input data</span>
+<span class="sd">    is in the format of (x, y, z, time, charge, auxiliary), being the</span>
+<span class="sd">    first four features mandatory.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -825,7 +825,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

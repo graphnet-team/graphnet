@@ -5,8 +5,8 @@ sqlite
 
 .. automodule:: graphnet.data.sqlite
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Submodules |end-h2|

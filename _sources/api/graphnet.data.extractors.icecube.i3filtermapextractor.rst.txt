@@ -4,5 +4,5 @@ i3filtermapextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3filtermapextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

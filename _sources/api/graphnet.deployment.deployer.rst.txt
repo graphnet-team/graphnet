@@ -4,5 +4,5 @@ deployer
 
 .. automodule:: graphnet.deployment.deployer
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

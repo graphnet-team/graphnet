@@ -4,5 +4,5 @@ parquet\_extractor
 
 .. automodule:: graphnet.data.extractors.internal.parquet_extractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

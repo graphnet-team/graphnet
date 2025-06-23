@@ -5,8 +5,8 @@ liquido
 
 .. automodule:: graphnet.data.extractors.liquido
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 
 |start-h2| Submodules |end-h2|

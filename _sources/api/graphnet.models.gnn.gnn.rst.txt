@@ -4,5 +4,5 @@ gnn
 
 .. automodule:: graphnet.models.gnn.gnn
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

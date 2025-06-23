@@ -4,5 +4,5 @@ i3pisaextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3pisaextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

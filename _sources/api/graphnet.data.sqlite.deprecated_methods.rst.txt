@@ -4,5 +4,5 @@ deprecated\_methods
 
 .. automodule:: graphnet.data.sqlite.deprecated_methods
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

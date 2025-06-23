@@ -4,5 +4,5 @@ prometheus\_reader
 
 .. automodule:: graphnet.data.readers.prometheus_reader
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

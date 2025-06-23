@@ -4,5 +4,5 @@ i3ntmuonlabelsextractor
 
 .. automodule:: graphnet.data.extractors.icecube.i3ntmuonlabelsextractor
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
