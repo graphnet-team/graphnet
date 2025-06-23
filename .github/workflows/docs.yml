@@ -16,9 +16,17 @@ jobs:
     name: Build and publish Documentation
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
       - name: Install package
         uses: ./.github/actions/install
+        with:
+          editable: true
+          use_vm: false
+          torch_version: "2.6.0"
+          hardware: "cpu"
       - name: Build documentation
         run: |
           cd docs
