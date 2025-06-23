@@ -19,7 +19,7 @@ inputs:
     description: "Version of PyTorch"
     required: true
     default: "2.6.0"
-    options: ["2.6.0", "2.5.0", "2.4.0"]
+    options: ["2.7.0", "2.6.0", "2.5.0", "2.4.0"]
 
   hardware:
     description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
