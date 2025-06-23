@@ -1,6 +1,6 @@
 """Pre-configured combinations of writers and readers."""
 
-from typing import List, Union
+from typing import List, Union, Optional
 
 from graphnet.data import DataConverter
 from graphnet.data.readers import I3Reader, ParquetReader
@@ -68,6 +68,7 @@ class I3ToSQLiteConverter(DataConverter):
         index_column: str = "event_no",
         num_workers: int = 1,
         i3_filters: Union[I3Filter, List[I3Filter]] = None,  # type: ignore
+        max_table_size: Optional[int] = None,
     ):
         """Convert I3 files to SQLite.
 
@@ -92,10 +93,11 @@ class I3ToSQLiteConverter(DataConverter):
                          Defaults to 1 (no multiprocessing).
             i3_filters: Instances of `I3Filter` to filter PFrames. Defaults to
                         `NullSplitI3Filter`.
+            max_table_size: Maximum size of the SQLite tables. Default None.
         """
         super().__init__(
             file_reader=I3Reader(gcd_rescue=gcd_rescue, i3_filters=i3_filters),
-            save_method=SQLiteWriter(),
+            save_method=SQLiteWriter(max_table_size=max_table_size),
             extractors=extractors,
             num_workers=num_workers,
             index_column=index_column,
@@ -106,7 +108,8 @@ class I3ToSQLiteConverter(DataConverter):
 class ParquetToSQLiteConverter(DataConverter):
     """Preconfigured DataConverter for converting Parquet to SQLite files.
 
-    This class converts Parquet files written by ParquetWriter to SQLite.
+    This class converts Parquet files written by ParquetWriter to
+    SQLite.
     """
 
     def __init__(

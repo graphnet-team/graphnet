@@ -58,9 +58,9 @@ class SinusoidalPosEmb(LightningModule):
     """Sinusoidal positional embeddings module.
 
     This module is from the kaggle competition 2nd place solution (see
-    arXiv:2310.15674): It performs what is called Fourier encoding or it's used
-    in the Attention is all you need arXiv:1706.03762. It can be seen as a soft
-    digitization of the input data
+    arXiv:2310.15674): It performs what is called Fourier encoding or
+    it's used in the Attention is all you need arXiv:1706.03762. It can
+    be seen as a soft digitization of the input data
     """
 
     def __init__(
@@ -97,11 +97,11 @@ class SinusoidalPosEmb(LightningModule):
 class FourierEncoder(LightningModule):
     """Fourier encoder module.
 
-    This module incorporates sinusoidal positional embeddings and auxiliary
-    embeddings to process input sequences and produce meaningful
-    representations. The module assumes that the input data is in the format of
-    (x, y, z, time, charge, auxiliary), being the first four features
-    mandatory.
+    This module incorporates sinusoidal positional embeddings and
+    auxiliary embeddings to process input sequences and produce
+    meaningful representations. The module assumes that the input data
+    is in the format of (x, y, z, time, charge, auxiliary), being the
+    first four features mandatory.
     """
 
     def __init__(

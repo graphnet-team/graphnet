@@ -205,8 +205,8 @@ class CrossEntropyLoss(LossFunction):
 class BinaryCrossEntropyLoss(LossFunction):
     """Compute binary cross entropy loss.
 
-    Predictions are vector probabilities (i.e., values between 0 and 1), and
-    targets should be 0 and 1.
+    Predictions are vector probabilities (i.e., values between 0 and 1),
+    and targets should be 0 and 1.
     """
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:

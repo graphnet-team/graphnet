@@ -3,7 +3,7 @@
 Installation
 ============
 
-|graphnet|\ GraphNeT is available for Python 3.8 to Python 3.11.
+|graphnet|\ GraphNeT is available for Python 3.9 to Python 3.11.
 
 .. note::
    We recommend installing |graphnet|\ GraphNeT in a separate environment, e.g. using a Python virtual environment or Anaconda (see details on installation `here <https://www.anaconda.com/products/individual>`_).
