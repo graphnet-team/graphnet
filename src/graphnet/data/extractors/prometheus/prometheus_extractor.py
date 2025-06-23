@@ -10,8 +10,8 @@ from graphnet.data.extractors import Extractor
 class PrometheusExtractor(Extractor):
     """Class for extracting information from PROMETHEUS parquet files.
 
-    Contains functionality required to extract data from PROMETHEUS parquet
-    files.
+    Contains functionality required to extract data from PROMETHEUS
+    parquet files.
     """
 
     def __init__(self, extractor_name: str, columns: List[str]):

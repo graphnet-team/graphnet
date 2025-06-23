@@ -6,7 +6,7 @@ import versioneer
 
 # Requirements definitions
 SETUP_REQUIRES = [
-    "setuptools>=59.5.0",
+    "setuptools>=68.2.2",
 ]
 
 INSTALL_REQUIRES = [
@@ -46,13 +46,129 @@ EXTRAS_REQUIRE = {
         "sphinx-material",
         "sphinx-autodoc-typehints",
         "versioneer",
+        "flake8",
     ],
-    "torch": [
-        "torch>=2.1,<2.3",
-        "torch-cluster>=1.6",
-        "torch-scatter>=2.0",
-        "torch-sparse>=0.6",
-        "torch-geometric>=2.3",
+    # --- PyTorch 2.5.0 ---
+    "torch-25-cpu": [
+        "torch==2.5.0",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-25-cu118": [
+        "torch==2.5.0+cu118",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-25-cu121": [
+        "torch==2.5.0+cu121",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-25-cu124": [
+        "torch==2.5.0+cu124",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    # --- PyTorch 2.6.0 ---
+    "torch-26-cpu": [
+        "torch==2.6.0",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-26-cu118": [
+        "torch==2.6.0+cu118",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-26-cu124": [
+        "torch==2.6.0+cu124",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-26-cu126": [
+        "torch==2.6.0+cu126",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    # --- PyTorch 2.7.0 ---
+    "torch-27-cpu": [
+        "torch==2.7.0",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-27-cu118": [
+        "torch==2.7.0+cu118",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-27-cu126": [
+        "torch==2.7.0+cu126",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
+        "pytorch-lightning>=2.0",
+    ],
+    "torch-27-cu128": [
+        "torch==2.7.0+cu128",
+        "torch-geometric",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "torch_cluster",
+        "torch_spline_conv",
         "pytorch-lightning>=2.0",
     ],
 }
@@ -82,7 +198,7 @@ setup(
     name="graphnet",
     version=versioneer.get_version(),
     description=(
-        "A common library for using graph neural networks (GNNs) in neutrino "
+        "A common library for using deep learning in neutrino "
         "telescope experiments."
     ),
     license="Apache 2.0",
