@@ -376,74 +376,84 @@ class Theseus_DeepIce(GNN):
 ##Block with mask_pred pretraining##
 #region
 
-def generate_representation_simple(x: torch.Tensor,
-                                   bv: torch.Tensor):
-    
-    maximize = scatter(src=x, index=bv, dim = 0, reduce='max')
-    minimize = scatter(src=x, index=bv, dim = 0, reduce='min')
-    summation = scatter(src=x, index=bv, dim = 0, reduce='sum')
-    averaging = scatter(src=x, index=bv, dim = 0, reduce='mean')
+def batched_mse_loss(reco, orig, bv):
+    reco = to_dense_batch(reco, bv)[0]
+    orig = to_dense_batch(orig, bv)[0]
 
-    rep = maximize + minimize + summation + averaging
+    loss = torch.mean((reco - orig) ** 2, dim=[1,2]).view(-1,1)
+    return loss
 
-    return rep
-    
-class default_mask_predictor(Model):
-    """ Prediction Head for pred_mask_frame """
-    def __init__(self, in_dim, out_dim, hidden_dim1=2000, hidden_dim2=1000):
+class standard_maskpred_net(Model):
+    def __init__(self,
+                 in_dim: int,
+                 hidden_dim: int = 1000,
+                 out_dim: int = 5,
+                 nb_linear: int = 5,
+                 nb_mp: int = 1,
+                 ):
         super().__init__()
-        act = torch.nn.SELU(inplace=True)
 
-        self.layer1 = torch.nn.Sequential(
-            torch.nn.Linear(in_dim, hidden_dim1),
-            torch.nn.BatchNorm1d(hidden_dim1),
-            act,
-            torch.nn.Linear(hidden_dim1, hidden_dim1),
-            torch.nn.BatchNorm1d(hidden_dim1),
-            act,
-            torch.nn.Linear(hidden_dim1, hidden_dim2),
-            torch.nn.BatchNorm1d(hidden_dim2)
-        )
-        self.layer2 = torch.nn.Sequential(
-            torch.nn.Linear(hidden_dim2, hidden_dim1),
-            torch.nn.BatchNorm1d(hidden_dim1),
-            act,
-            torch.nn.Linear(hidden_dim1, out_dim)
-        )
+        self.activation = torch.nn.SELU()
+        
+        self.lin_net = torch.nn.ModuleList()
+        for i in range(nb_linear):
+            if i == 0:
+                self.lin_net.append(torch.nn.Linear(in_dim,hidden_dim))
+            else:
+                self.lin_net.append(torch.nn.Linear(hidden_dim,hidden_dim))
 
-    def forward(self, x: torch.Tensor):
-        x = self.layer1(x)
-        x = self.layer2(x)
-        return x 
+        self.conv_net = torch.nn.ModuleList()
+        self.norms = torch.nn.ModuleList()
+        for i in range(nb_mp):
+            self.conv_net.append(GCNConv(in_channels=hidden_dim, out_channels=hidden_dim, add_self_loops=False))
+            self.norms.append(torch.nn.BatchNorm1d(hidden_dim))
 
-def negative_cosine_similarity(p, z):
-    """ Negative Cosine Similarity """
-    p = torch.nn.functional.normalize(p, dim=1)
-    z = torch.nn.functional.normalize(z, dim=1)
+        self.final_proj = torch.nn.Linear(hidden_dim, out_dim)
+        
 
-    return -(p*z).sum(dim=1).view(-1, 1)#.mean() #mean is put into the shared_step
+    def forward(self, data:Union[Data, Tensor]):
+        if isinstance(data, Data):
+            x_hat = data.x
+        else:
+            x_hat = data
+        x_hat = self.lin_net[0](x_hat)
+        x_hat = self.activation(x_hat)
+        for i in range(1,len(self.lin_net)):
+            x_hat = x_hat + self.lin_net[i](x_hat)
+            x_hat = self.activation(x_hat)
+        for i in range(len(self.conv_net)):
+            x_hat = x_hat + self.conv_net[i](x_hat, data.edge_index)
+            x_hat = self.activation(x_hat)
+            x_hat = self.norms[i](x_hat)
+
+        x_hat = self.final_proj(x_hat)
+        
+        return x_hat
 
 class mask_pred_augment(Model):
-    def __init__(self, nb_masked):
+    def __init__(self, 
+                 masked_ratio: float = 0.25,
+                 masked_feat: List[int] = [0,1,2,3,4],
+                 hlc_pos: int = None,):
         super().__init__()
-        self.m = nb_masked
+        self.ratio = masked_ratio
+        self.hlc_pos = hlc_pos
+        self.masked_feat = masked_feat
 
-    def forward(
-        self,
-        data: Data
-    ) -> Data:
+    def forward(self, data: Data):
         auged = data.clone()
 
-        min_len = torch.bincount(auged.batch).min().item()
+        rand_score = torch.rand_like(data.batch.to(dtype=torch.bfloat16))
+        if self.hlc_pos is not None:
+            rand_score = rand_score + auged.x[:,self.hlc_pos].view(1,-1)
 
-        auged_batched, batch_mask = to_dense_batch(auged.x, auged.batch)
+        ind = topk(x=rand_score, ratio=self.ratio, batch=data.batch)
 
-        ind = torch.randperm(min_len).view(-1,1)
-        mask = torch.ones_like(auged_batched[0,:,0])
-        mask[ind[:self.m]] = 0.
+        mask = torch.ones_like(data.batch.to(dtype=torch.bfloat16))
+        mask[ind] = 0
 
-        target = mask_select(src=auged_batched, dim=1, mask=~mask.bool()).reshape(auged_batched.shape[0],-1)
-        auged.x = (auged_batched*(mask.reshape(-1,1).expand(-1,auged_batched.shape[2])))[batch_mask]
+        target = mask_select(src=auged.x, dim=0, mask=~mask.bool())[:,self.masked_feat]
+        auged.x[:,self.masked_feat] = auged.x[:,self.masked_feat]*mask.view(-1,1)
 
         return auged, target
 
@@ -451,11 +461,13 @@ class mask_pred_frame(EasySyntax):
     def __init__(self,
                  encoder: Model,
                  encoder_out_dim: int = None,
-                 nb_input_feat: int = 5,
-                 nb_masked: int = 20,
-                 hidden_dim1: int = 1000, 
-                 hidden_dim2: int = 2000,
+                 masked_ratio: float = 0.25,
+                 masked_feat: List[int] = [0,1,2,3,4],
+                 hlc_pos: int = None,
                  mask_pred_net: Model = None,
+                 default_hidden_dim: int = 1000, 
+                 default_nb_linear: int = 5,
+                 default_nb_mp: int = 1,
                  optimizer_class: Type[torch.optim.Optimizer] = Adam,
                  optimizer_kwargs: Optional[Dict] = None,
                  scheduler_class: Optional[type] = None,
@@ -474,27 +486,37 @@ class mask_pred_frame(EasySyntax):
             scheduler_config=scheduler_config,
         )
 
+        self.ratio = masked_ratio
+
+        self.augment = mask_pred_augment(masked_ratio=masked_ratio,
+                                         masked_feat=masked_feat,
+                                         hlc_pos=hlc_pos)
+
         self.encoder = encoder
 
-        #target is shaped as all the masked nodes stacked into one row, with one row for each event
-        target_dim = nb_input_feat*nb_masked
+        if encoder_out_dim is None:
+            assert encoder.nb_outputs > 0, 'make sure to either specify \"encoder_out_dim\" or have a \".nb_outputs\" in your encoder'
+            lat_dim = encoder.nb_outputs
+        else:
+            lat_dim = encoder_out_dim
 
         if mask_pred_net is None:
-            if encoder_out_dim is None:
-                encoder_out_dim = encoder.nb_outputs
-            self.pred = default_mask_predictor(in_dim=encoder_out_dim, 
-                                               out_dim=target_dim, 
-                                               hidden_dim1=hidden_dim1, 
-                                               hidden_dim2=hidden_dim2)
+            print('no custom net for mask prediction specified; using a standard net')
+            self.rep = standard_maskpred_net(in_dim=lat_dim,
+                                             hidden_dim=default_hidden_dim,
+                                             out_dim=len(masked_feat),
+                                             nb_linear=default_nb_linear,
+                                             nb_mp=default_nb_mp)
         else:
-            assert mask_pred_net.nb_outputs == target_dim, 'make sure that your mask_pred_net has number of output feats equal to nb_input_feat*nb_masked'
-            self.pred = mask_pred_net
+            assert mask_pred_net.nb_outputs == len(masked_feat), f'make sure that your \"mask_pred_net\" has number of output feats equal to nb of masked feats ({len(masked_feat)})'
+            self.rep = mask_pred_net
+
+        self.scorer = standard_maskpred_net(in_dim=len(masked_feat),
+                                            hidden_dim=default_hidden_dim,
+                                            out_dim=1,
+                                            nb_linear=default_nb_linear,
+                                            nb_mp=0)
             
-        
-
-        self.augment = mask_pred_augment(nb_masked=nb_masked)
-        
-
     def forward(self, data: Union[Data, List[Data]]):
         if not isinstance(data, Data):
             data = data[0]
@@ -503,21 +525,17 @@ class mask_pred_frame(EasySyntax):
 
         data_hat = self.encoder(aug)
 
-        #if encoder returns data object instead of (abstract) prediction per events generate rep via scatter operations
-        if isinstance(data_hat, Data):
-            rep = generate_representation_simple(data_hat.x, bv=data_hat.batch)
-        else:
-            rep = data_hat
+        rep = self.rep(data_hat)
+        score = self.scorer(rep)
 
-        #calculate negative cosine similarity between target and processed representation
-        # z = self.projector(rep)
-        # p = self.predictor(z)
-        p = self.pred(rep)
-        loss = negative_cosine_similarity(p, target)
+        ind = topk(x=score, ratio=self.ratio, batch=data.batch)
+
+        nodes = rep[ind]*torch.sigmoid(score[ind])
+
+        loss = batched_mse_loss(reco=nodes, orig=target, bv=data.batch[ind])
 
         #loss is returned as a list to comply with the graphnet predict functionality
         return [loss]
-
 
     def validate_tasks(self) -> None:
         accepted_tasks = IdentityTask
@@ -543,6 +561,7 @@ class mask_pred_frame(EasySyntax):
         run_name = 'pretrained_model'
 
         save_path = os.path.join(save_path, run_name)
+        print('would save to', save_path)
         #os.makedirs(save_path, exist_ok=True)
 
         #model.save_state_dict(f"{save_path}/state_dict.pth")
