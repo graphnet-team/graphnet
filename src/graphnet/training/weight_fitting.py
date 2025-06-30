@@ -16,8 +16,8 @@ from graphnet.utilities.logging import Logger
 class WeightFitter(ABC, Logger):
     """Produces per-event weights.
 
-    Weights are returned by the public method `fit_weights()`, and the weights
-    can be saved as a table in the database.
+    Weights are returned by the public method `fit_weights()`, and the
+    weights can be saved as a table in the database.
     """
 
     def __init__(
@@ -180,8 +180,8 @@ class Uniform(WeightFitter):
 class BjoernLow(WeightFitter):
     """Produces per-event weights.
 
-    Events below x_low are weighted to be uniform, whereas events above x_low
-    are weighted to follow a 1/(1+a*(x_low -x)) curve.
+    Events below x_low are weighted to be uniform, whereas events above
+    x_low are weighted to follow a 1/(1+a*(x_low -x)) curve.
     """
 
     def _fit_weights(  # type: ignore[override]

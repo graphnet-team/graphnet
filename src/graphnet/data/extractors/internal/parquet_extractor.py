@@ -9,9 +9,9 @@ from graphnet.data.extractors import Extractor
 class ParquetExtractor(Extractor):
     """Class for extracting information from internal GraphNeT parquet files.
 
-    Contains functionality required to extract data from internal parquet
-    files, i.e files saved using the ParquetWriter. This allows for conversion
-    between internal data formats.
+    Contains functionality required to extract data from internal
+    parquet files, i.e files saved using the ParquetWriter. This allows
+    for conversion between internal data formats.
     """
 
     def __init__(self, extractor_name: str):

@@ -22,9 +22,16 @@ jobs:
       matrix:
         hook: ["black", "flake8", "docformatter", "pydocstyle", "mypy"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
       - name: Install package
         uses: ./.github/actions/install
+        with:
+          
       - name: Run ${{ matrix.hook }}
         run: |
+          pip show ${{ matrix.hook }}
           pre-commit run ${{ matrix.hook }} --all-files

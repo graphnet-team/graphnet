@@ -142,8 +142,8 @@ class NormalizingFlow(EasySyntax):
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
         """Perform shared step.
 
-        Applies the forward pass and the following loss calculation, shared
-        between the training and validation step.
+        Applies the forward pass and the following loss calculation,
+        shared between the training and validation step.
         """
         loss = self(batch)
         if isinstance(loss, list):

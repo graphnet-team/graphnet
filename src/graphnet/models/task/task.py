@@ -153,8 +153,8 @@ class Task(Model):
     ) -> None:
         """Validate and set transforms.
 
-        Assert that a valid combination of transformation arguments are passed
-        and update the corresponding functions.
+        Assert that a valid combination of transformation arguments are
+        passed and update the corresponding functions.
         """
         # Checks
         assert not (
@@ -277,8 +277,8 @@ class LearnedTask(Task):
     ) -> Union[Tensor, Data]:
         """Forward call for `LearnedTask`.
 
-        The learned embedding transforms last latent layer of Model to meet
-        target dimensions.
+        The learned embedding transforms last latent layer of Model to
+        meet target dimensions.
         """
         self._regularisation_loss = 0  # Reset
         x = self._affine(x)

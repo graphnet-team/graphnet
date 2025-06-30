@@ -47,6 +47,7 @@ class DeploymentModule(Logger):
 
         # Set model to inference mode.
         self.model.inference()
+        self.model.train(mode=False)
 
         # Move model to device
         self.model.to(device)
