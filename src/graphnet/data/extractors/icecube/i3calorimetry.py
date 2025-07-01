@@ -41,8 +41,8 @@ class I3Calorimetry(I3Extractor):
         mctree: Name of the I3MCTree in the frame.
         mmctracklist: Name of the MMCTrackList in the frame.
         extractor_name: Name of the extractor.
-        daughters: If True, only consider tracks that are daughters
-        of primaries.
+        daughters: If True, only consider particles that are
+            daughters of the primary.
         """
         # Member variable(s)
         self.hull = hull
