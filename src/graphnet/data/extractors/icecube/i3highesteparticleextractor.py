@@ -204,7 +204,11 @@ class I3HighestEparticleExtractor(I3Extractor):
     def get_pos_dir_length(
         self, particles: "dataclasses.ListI3Particle"
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Get the position, direction and length of the particles."""
+        """Get the position, direction and length of the particles.
+
+        Args:
+        particles: List of I3Particles
+        """
         pos, direc, lengths = np.asarray(
             [
                 [np.array(p.pos), np.array(p.dir * 1), p.length]
