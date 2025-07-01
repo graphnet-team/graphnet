@@ -240,11 +240,15 @@ class I3HighestEparticleExtractor(I3Extractor):
 
         intersections = self.hull.surface.intersection(bundle.pos, bundle.dir)
 
-        assert not np.isnan(intersections.first), "No intersection found"
+        if np.isnan(intersections.first):
+            # check if the particle does not intersect the hull,
+            # if so return an empty particle
+            # This check might be redundant.
+            return dataclasses.I3Particle(), np.array([]), True
 
         length_mask = lengths > intersections.first
 
-        return bundle, length_mask
+        return bundle, length_mask, False
 
     def highest_energy_track(
         self, frame: "icetray.I3Frame", min_e: float = 0
@@ -664,7 +668,21 @@ class I3HighestEparticleExtractor(I3Extractor):
             MMCTrackList
         ), "MuonGun and MCTracklist have different lengths"
 
-        bundle, length_mask = self.get_bundle_HEP(track_particles)
+        no_intersect = True
+        bundle, length_mask, no_intersect = self.get_bundle_HEP(
+            track_particles
+        )
+
+        if no_intersect:
+            # If the particle does not intersect the hull,
+            # return an empty particle
+            return (
+                particle,
+                EonEntrance,
+                distance,
+                visible_length,
+                GN_containment_types.no_intersect.value,
+            )
 
         energies = energies[length_mask]
         MuonGun_tracks = MuonGun_tracks[length_mask]
