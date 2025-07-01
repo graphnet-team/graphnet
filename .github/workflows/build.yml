@@ -33,40 +33,88 @@ jobs:
          fi
 
   build-icetray:
-    name: Unit tests - IceTray
+    name: Unit tests - IceTray (v1.13.0 - 3.10)  
     needs: [ check-codeclimate-credentials ]
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        torch_version: ['2.7.0']
+        hardware: ["cpu"]
     container:
-      image: icecube/icetray:icetray-prod-v1.8.1-ubuntu20.04-X64
-      options: --user root
+      # GitHub Actions overwrite the docker container entrypoint
+      # inspect <image> --format '{{.Config.Entrypoint}}'
+      image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
+    
     steps:
-      - name: install git
+      - name: Mimmick Docker Entrypoint
+        # The entrypoint of the container sets python paths
+        # Because the entrypoint is skipped by GitHub, we set it here
+        run: |
+          echo "I3_SRC=/opt/icetray/share/icetray" >> $GITHUB_ENV
+          echo "I3_BUILD=/opt/icetray/share/icetray" >> $GITHUB_ENV
+          echo "I3_TESTDATA=/root/icetray/build/test-data" >> $GITHUB_ENV
+          echo "I3_PRODDATA=/root/icetray/build/prod-data" >> $GITHUB_ENV
+          echo "ROOTSYS=/opt/icetray/cernroot" >> $GITHUB_ENV
+          echo "LD_LIBRARY_PATH=/opt/icetray/lib:/opt/icetray/cernroot/lib:/opt/icetray/lib/tools:$LD_LIBRARY_PATH" >> $GITHUB_ENV
+          echo "DYLD_LIBRARY_PATH=/opt/icetray/lib:/opt/icetray/cernroot/lib:/opt/icetray/lib/tools:$DYLD_LIBRARY_PATH" >> $GITHUB_ENV
+          echo "PYTHONPATH=/opt/icetray/lib:/opt/icetray/cernroot/lib:$PYTHONPATH" >> $GITHUB_ENV
+          echo "PATH=/opt/icetray/bin:$PATH" >> $GITHUB_ENV
+          echo "HDF5_USE_FILE_LOCKING=FALSE" >> $GITHUB_ENV
+      - name: Verify IceCube is importable
+        run: python3 -c "import icecube; print('Import Successful')"
+      - name: Show python version
+        run: | 
+          python3 --version
+          pip --version
+          pip3 list
+          python3 -c "import icecube; print(icecube.__path__)"
+          pip show setuptools
+
+      - name: Install git
         run: |
           apt-get --yes install sudo
           sudo apt update --fix-missing --yes
           sudo apt upgrade --yes
-          sudo apt-get install --yes git-all
+          sudo apt-get install --yes git
           apt-get update
           apt-get install -y libboost-numpy1.71.0
-      - name: Set environment variables
+          
+      - uses: actions/checkout@v4
+
+      - name: Create virtual environment
+        shell: bash
         run: |
-          echo "PATH=/usr/local/icetray/bin:$PATH" >> $GITHUB_ENV
-          echo "PYTHONPATH=/usr/local/icetray/lib:$PYTHONPATH" >> $GITHUB_ENV
-          echo "LD_LIBRARY_PATH=/usr/local/icetray/lib:/usr/local/icetray/cernroot/lib:/usr/local/icetray/lib/tools:$LD_LIBRARY_PATH" >> $GITHUB_ENV
-      - uses: actions/checkout@v3
+          python3 -m venv ~/venv --upgrade-deps
+          source ~/venv/bin/activate
+          pip --version
+          python --version
+          pip show setuptools
+
       - name: Print available disk space before graphnet install
         run: df -h
-      - name: Upgrade packages already installed on icecube/icetray
+
+      - name: Upgrade packages in virtual environment
+        shell: bash
         run: |
-          pip install --upgrade astropy  # Installed version incompatible with numpy 1.23.0 [https://github.com/astropy/astropy/issues/12534]
-          pip install --ignore-installed PyYAML  # Distutils installed [https://github.com/pypa/pip/issues/5247]
-          pip install --upgrade psutil # Original version from IceTray Environment incompatible
+          source ~/venv/bin/activate
+          pip install --upgrade astropy
+          pip install --upgrade PyYAML
+          pip install --upgrade psutil
+          pip install --upgrade setuptools
+          pip install --upgrade versioneer
+          pip show setuptools
+          pip show versioneer
       - name: Install package
         uses: ./.github/actions/install
         with:
           editable: true
+          use_vm: true
+          torch_version: ${{ matrix.torch_version }}
+          hardware: ${{ matrix.hardware }}
       - name: Print packages in pip
+        shell: bash
         run: |
+          source ~/venv/bin/activate
           pip show torch
           pip show torch-geometric
           pip show torch-cluster
@@ -74,42 +122,54 @@ jobs:
           pip show torch-scatter
           pip show jammy_flows
       - name: Run unit tests and generate coverage report
+        shell: bash
         run: |
+          source ~/venv/bin/activate
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
           coverage run -a --source=graphnet -m pytest tests/examples/04_training
           coverage run -a --source=graphnet -m pytest tests/utilities 
           coverage xml -o coverage.xml
-    
+          coverage report -m
       - name: Work around permission issue
         run: |
           git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
-        uses: paambaati/codeclimate-action@v3.0.0
+        uses: paambaati/codeclimate-action@v9.0.0
         if: needs.check-codeclimate-credentials.outputs.has_credentials == 'true'
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: coverage report
+        with: 
           coverageLocations: coverage.xml:coverage.py
+          
 
-  build-matrix:
-    name: Unit tests - Python versions
+  build-matrix-examples:
+    name: Examples - Ubuntu 22.04
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', '3.11']
+        python-version: ['3.11']
+        torch_version: ['2.7.0', '2.6.0', '2.5.0']
+        hardware: ["cpu"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Print available disk space before graphnet install
         run: df -h
+      - name: Show existing environment
+        run: |
+          echo "PIP_FLAGS=${PIP_FLAGS}"
+          python --version
+          pip --version
+          pip debug --verbose
       - name: Install package
         uses: ./.github/actions/install
         with:
           editable: true
+          torch_version: ${{ matrix.torch_version }}
+          hardware: ${{ matrix.hardware }}
       - name: Print available disk space after graphnet install
         run: df -h
       - name: Print packages in pip
@@ -119,30 +179,45 @@ jobs:
           pip show torch-cluster
           pip show torch-sparse
           pip show torch-scatter
+          pip show dill
           pip show numpy
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/ --ignore=tests/utilities --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/01_icetray/
-          coverage run -a --source=graphnet -m pytest tests/utilities
-          coverage report -m
+          pytest tests/examples --ignore=tests/examples/01_icetray/
       - name: Print available disk space after unit tests
         run: df -h
 
-  build-macos:
-    name: Unit tests - macOS
-    runs-on: macos-13
+  build-macos-examples:
+    # Runtime on macOS is multiplied with a factor 10 by github. Minimize!
+    name: Examples - macOS 15
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11']
+        torch_version: ['2.7.0']
+        hardware: ["cpu"]
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python 3.8
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.8
-      - name: Install package
+          python-version: ${{ matrix.python-version }}
+
+      - name: Show Python version
+        run: |
+          python --version
+          which python
+          pip --version
+
+      - name: Install dependencies
         uses: ./.github/actions/install
         with:
-          editable: true
-          hardware: "cpu"
+          torch_version: ${{ matrix.torch_version }}
+          hardware: ${{ matrix.hardware }}
       - name: Print packages in pip
         run: |
             pip show torch
@@ -153,15 +228,17 @@ jobs:
       - name: Run unit tests and generate coverage report
         run: |
           set -o pipefail  # To propagate exit code from pytest
-          coverage run --source=graphnet -m pytest tests/  --ignore=tests/data/ --ignore=tests/deployment/ --ignore=tests/examples/ --ignore=tests/utilities
-          coverage run -a --source=graphnet -m pytest tests/utilities
-          coverage report -m
+          pytest tests/examples --ignore=tests/examples/01_icetray/
 
   docs:
     name: Documentation Compilation
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
       - name: Install package
         uses: ./.github/actions/install
       - name: Build documentation

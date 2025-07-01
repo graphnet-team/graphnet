@@ -18,13 +18,13 @@ from graphnet.models.components.embedding import SinusoidalPosEmb
 class Node_RNN(GNN):
     """Implementation of the Node RNN model architecture.
 
-    The model takes as input the typical DOM data format and transforms it into
-    a time series of DOM activations pr. DOM. before applying a RNN layer and
-    outputting the an RNN output for each DOM. This model is in its current
-    state not intended to be used as a standalone model. Furthermore, it needs
-    to be used with a time-series dataset object, where the last column in x is
-    a special column that is used to seperate the activation into time series
-    per dom per batch.
+    The model takes as input the typical DOM data format and transforms
+    it into a time series of DOM activations pr. DOM. before applying a
+    RNN layer and outputting the an RNN output for each DOM. This model
+    is in its current state not intended to be used as a standalone
+    model. Furthermore, it needs to be used with a time-series dataset
+    object, where the last column in x is a special column that is used
+    to seperate the activation into time series per dom per batch.
     """
 
     @save_model_config

@@ -108,7 +108,8 @@ class I3ToSQLiteConverter(DataConverter):
 class ParquetToSQLiteConverter(DataConverter):
     """Preconfigured DataConverter for converting Parquet to SQLite files.
 
-    This class converts Parquet files written by ParquetWriter to SQLite.
+    This class converts Parquet files written by ParquetWriter to
+    SQLite.
     """
 
     def __init__(
