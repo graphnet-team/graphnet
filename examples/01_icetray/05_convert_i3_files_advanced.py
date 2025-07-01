@@ -56,8 +56,9 @@ def main(
 ) -> None:
     """Convert IceCube-Upgrade I3 files to intermediate `backend` format."""
     # Check(s)
-    inputs = [f"{TEST_DATA_DIR}/i3/oscNext_muongun_level3_v02"]
+    inputs = [f"{TEST_DATA_DIR}/i3/nugen_ftp-v3_level2"]
     outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86_advanced"
+    # arbitrary gcd file.
     gcd_rescue = glob(
         f"{TEST_DATA_DIR}/i3/oscNext_muongun_level3_v02/*GeoCalib*"
     )[0]
@@ -171,7 +172,7 @@ def main(
     # merge files removing the db files after merging to save space.
     if merge is True and converter_class == "sqlite":
         logger.info(f"Merging files in {outdir}")
-        converter.merge_files(remove_original=remove)
+        converter.merge_files(remove_originals=remove)
     elif merge is True and converter_class == "parquet":
         converter.merge_files()
 
