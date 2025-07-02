@@ -76,8 +76,6 @@ jobs:
           sudo apt update --fix-missing --yes
           sudo apt upgrade --yes
           sudo apt-get install --yes git
-          apt-get update
-          apt-get install -y libboost-numpy1.71.0
           
       - uses: actions/checkout@v4
 
