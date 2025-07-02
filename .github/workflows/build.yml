@@ -76,7 +76,6 @@ jobs:
           sudo apt update --fix-missing --yes
           sudo apt upgrade --yes
           sudo apt-get install --yes git
-          
       - uses: actions/checkout@v4
 
       - name: Create virtual environment
