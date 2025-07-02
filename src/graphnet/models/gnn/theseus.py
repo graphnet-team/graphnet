@@ -383,6 +383,18 @@ def batched_mse_loss(reco, orig, bv):
     loss = torch.mean((reco - orig) ** 2, dim=[1,2]).view(-1,1)
     return loss
 
+def dense_mse_loss(reco, orig, bv):
+    squared_errs = (reco - orig)**2
+    loss = scatter(src=squared_errs, index=bv, reduce='mean')
+
+def neg_cosine_loss(reco, orig, bv):
+    reco_norm = torch.nn.functional.normalize(reco, dim=1)
+    orig_norm = torch.nn.functional.normalize(orig, dim=1)
+    cos = -(reco_norm*orig_norm).sum(dim=1)
+    losses = scatter(src=cos, index=bv, reduce='mean')
+
+    return losses.view(-1,1)
+
 class standard_maskpred_net(Model):
     def __init__(self,
                  in_dim: int,
@@ -468,6 +480,7 @@ class mask_pred_frame(EasySyntax):
                  default_hidden_dim: int = 1000, 
                  default_nb_linear: int = 5,
                  default_nb_mp: int = 1,
+                 final_loss: str = 'cosine',
                  optimizer_class: Type[torch.optim.Optimizer] = Adam,
                  optimizer_kwargs: Optional[Dict] = None,
                  scheduler_class: Optional[type] = None,
@@ -516,6 +529,11 @@ class mask_pred_frame(EasySyntax):
                                             out_dim=1,
                                             nb_linear=default_nb_linear,
                                             nb_mp=0)
+        
+        if final_loss == 'cosine':
+            self.loss_func = neg_cosine_loss
+        elif final_loss == 'mse':
+            self.loss_func = dense_mse_loss
             
     def forward(self, data: Union[Data, List[Data]]):
         if not isinstance(data, Data):
@@ -532,7 +550,7 @@ class mask_pred_frame(EasySyntax):
 
         nodes = rep[ind]*torch.sigmoid(score[ind])
 
-        loss = batched_mse_loss(reco=nodes, orig=target, bv=data.batch[ind])
+        loss = self.loss_func(reco=nodes, orig=target, bv=data.batch[ind])
 
         #loss is returned as a list to comply with the graphnet predict functionality
         return [loss]
