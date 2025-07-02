@@ -123,54 +123,82 @@
   }
 
   function updateCommand() {
-    var torch = $("#command").attr("torch");
-    var os = $("#command").attr("os");
-    var cuda = $("#command").attr("cuda");
+  var torch = $("#command").attr("torch");
+  var os = $("#command").attr("os");
+  var cuda = $("#command").attr("cuda");
 
-    if (!torch || !os || !cuda) return;
+  if (!torch || !os || !cuda) return;
 
-    if (os === "macos" && cuda !== "cpu") {
-      $("#command pre").text('# macOS binaries do not support CUDA');
-      return;
-    }
-
-    if (cuda !== "cpu" && torch === "no_torch") {
-      $("#command pre").text('# GPU acceleration is not available without PyTorch.');
-      return;
-    }
-
-    if (
-      (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
-      (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
-      (torch === "torch-2.5.0" && (cuda === "cu126" || cuda === "cu128"))
-    ) {
-      $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
-      return;
-    }
-
-    if (torch === "no_torch") {
-      $("#command pre").text("pip install -e .[develop]");
-    } else {
-      var torchVersion = torchWheelMap[torch];
-      var extrasPrefix = torchExtrasMap[torch];
-
-      var extras = (cuda === "cpu")
-        ? extrasPrefix + "-cpu"
-        : extrasPrefix + "-cu" + cuda.slice(2);
-
-      var installLine = "pip install -e .[" + extras + "]";
-      var wheelUrl = "https://data.pyg.org/whl/torch-" + torchVersion + "+" + (cuda === "cpu" ? "cpu" : cuda) + ".html";
-      installLine += " -f " + wheelUrl;
-
-      $("#command pre").text([
-        "git clone https://github.com/graphnet-team/graphnet.git",
-        "cd graphnet",
-        installLine,
-        "# Optionally, install jammy_flows for normalizing flow support:",
-        "pip install git+https://github.com/thoglu/jammy_flows.git"
-      ].join("\n"));
-    }
+  if (os === "macos" && cuda !== "cpu") {
+    $("#command pre").text('# macOS binaries do not support CUDA');
+    return;
   }
+
+  if (cuda !== "cpu" && torch === "no_torch") {
+    $("#command pre").text('# GPU acceleration is not available without PyTorch.');
+    return;
+  }
+
+  if (
+    (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
+    (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
+    (torch === "torch-2.5.0" && (cuda === "cu126" || cuda === "cu128"))
+  ) {
+    $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
+    return;
+  }
+
+  if (torch === "no_torch") {
+    $("#command pre").text("pip3 install -e .[develop]");
+  } else {
+    var torchVersion = torchWheelMap[torch];
+    var extrasPrefix = torchExtrasMap[torch];
+
+    var installLine = "pip3 install -e .[" + extrasPrefix + "]";
+    var wheelUrl = "https://data.pyg.org/whl/torch-" + torchVersion + "+" + (cuda === "cpu" ? "cpu" : cuda) + ".html";
+    installLine += " -f " + wheelUrl;
+
+    // --- Added PyTorch wheels install command here ---
+    var pytorchInstallCommands = {
+      "torch-2.5.0": {
+        "cu118": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 -f https://download.pytorch.org/whl/cu118",
+        "cu121": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 -f https://download.pytorch.org/whl/cu121",
+        "cu124": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 -f https://download.pytorch.org/whl/cu124",
+        "cpu": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 -f https://download.pytorch.org/whl/cpu"
+      },
+      "torch-2.6.0": {
+        "cu118": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 -f https://download.pytorch.org/whl/cu118",
+        "cu124": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 -f https://download.pytorch.org/whl/cu124",
+        "cu126": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 -f https://download.pytorch.org/whl/cu126",
+        "cpu": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 -f https://download.pytorch.org/whl/cpu"
+      },
+      "torch-2.7.0": {
+        "cu118": "pip3 install torch==2.7.0 torchvision torchaudio -f https://download.pytorch.org/whl/cu118",
+        "cpu": "pip3 install torch==2.7.0 torchvision torchaudio -f https://download.pytorch.org/whl/cpu"
+      }
+    };
+
+    // Pick PyTorch install command or fallback to cpu
+    var pytorchCmd = pytorchInstallCommands[torch][cuda];
+    if (!pytorchCmd) {
+      pytorchCmd = pytorchInstallCommands[torch]["cpu"] || "pip3 install torch torchvision torchaudio";
+    }
+
+    $("#command pre").text([
+      "# Install PyTorch ",
+      pytorchCmd,
+      " ",
+      "# Clone and Install GraphNeT",
+      "git clone https://github.com/graphnet-team/graphnet.git",
+      "cd graphnet",
+      installLine,
+      " ",
+      "# Optionally, install jammy_flows for normalizing flow support:",
+      "pip3 install git+https://github.com/thoglu/jammy_flows.git"
+    ].join("\n"));
+  }
+}
+
 
   $(".quick-start .content-column .row div").click(function () {
     $(this).parent().children().removeClass("selected");
