@@ -376,22 +376,17 @@ class Theseus_DeepIce(GNN):
 ##Block with mask_pred pretraining##
 #region
 
-def batched_mse_loss(reco, orig, bv):
-    reco = to_dense_batch(reco, bv)[0]
-    orig = to_dense_batch(orig, bv)[0]
-
-    loss = torch.mean((reco - orig) ** 2, dim=[1,2]).view(-1,1)
-    return loss
-
 def dense_mse_loss(reco, orig, bv):
     squared_errs = (reco - orig)**2
-    loss = scatter(src=squared_errs, index=bv, reduce='mean')
+    losses = torch.mean(scatter(src=squared_errs, index=bv, reduce='mean', dim=0), dim=0)
+
+    return losses.view(-1,1)
 
 def neg_cosine_loss(reco, orig, bv):
     reco_norm = torch.nn.functional.normalize(reco, dim=1)
     orig_norm = torch.nn.functional.normalize(orig, dim=1)
     cos = -(reco_norm*orig_norm).sum(dim=1)
-    losses = scatter(src=cos, index=bv, reduce='mean')
+    losses = scatter(src=cos, index=bv, reduce='mean', dim=0)
 
     return losses.view(-1,1)
 
@@ -530,6 +525,7 @@ class mask_pred_frame(EasySyntax):
                                             nb_linear=default_nb_linear,
                                             nb_mp=0)
         
+        assert final_loss in ['cosine', 'mse'], f'can only choose from {['cosine', 'mse']} for loss function'
         if final_loss == 'cosine':
             self.loss_func = neg_cosine_loss
         elif final_loss == 'mse':
