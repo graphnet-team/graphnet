@@ -61,7 +61,7 @@ EXTRAS_REQUIRE = {
     ],
     # --- PyTorch 2.6.0 ---
     "torch-26": [
-        "torch==2.6.0",
+        "torch==2.6",
         "torch-geometric",
         "pyg_lib",
         "torch_scatter",

@@ -75,7 +75,7 @@
   var torchList = [
     ['torch-2.7.0', 'PyTorch 2.7.*'],
     ['torch-2.6.0', 'PyTorch 2.6.*'],
-    ['torch-2.5.0', 'PyTorch 2.5.*'],
+    ['torch-2.5.1', 'PyTorch 2.5.*'],
     ['no_torch', 'w/o PyTorch'],
   ];
 
@@ -142,7 +142,7 @@
   if (
     (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
     (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
-    (torch === "torch-2.5.0" && (cuda === "cu126" || cuda === "cu128"))
+    (torch === "torch-2.5.1" && (cuda === "cu126" || cuda === "cu128"))
   ) {
     $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
     return;

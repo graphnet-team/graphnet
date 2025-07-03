@@ -7,7 +7,18 @@ Installation
 
 .. note::
    We recommend installing |graphnet|\ GraphNeT in a separate environment, e.g. using a Python virtual environment or Anaconda (see details on installation `here <https://www.anaconda.com/products/individual>`_).
+   With conda installed, you can create a fresh environment like so
 
+   .. code-block:: bash
+
+      # Create the environment with minimal packages
+      conda create --name graphnet_env --no-default-packages python=3.10
+      conda activate graphnet_env
+
+      # Update central packaging libraries
+      pip install --upgrade setuptools packaging
+
+      # Now you're ready to proceed with the installation
 Quick Start
 -----------
 
