@@ -48,9 +48,9 @@ EXTRAS_REQUIRE = {
         "versioneer",
         "flake8",
     ],
-    # --- PyTorch 2.5.0 ---
+    # --- PyTorch 2.5.1 ---
     "torch-25": [
-        "torch==2.5",
+        "torch==2.5.1",
         "torch-geometric",
         "pyg_lib",
         "torch_scatter",
@@ -61,7 +61,7 @@ EXTRAS_REQUIRE = {
     ],
     # --- PyTorch 2.6.0 ---
     "torch-26": [
-        "torch==2.6",
+        "torch==2.6.0",
         "torch-geometric",
         "pyg_lib",
         "torch_scatter",
@@ -71,8 +71,8 @@ EXTRAS_REQUIRE = {
         "pytorch-lightning>=2.0",
     ],
     # --- PyTorch 2.7.0 ---
-    "torch-27": [
-        "torch==2.7",
+    "torch": [
+        "torch==2.7.0",
         "torch-geometric",
         "pyg_lib",
         "torch_scatter",
