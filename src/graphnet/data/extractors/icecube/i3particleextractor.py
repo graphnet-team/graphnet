@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 class I3ParticleExtractor(I3Extractor):
     """Class for extracting I3Particle properties.
 
-    Can be used to extract predictions from other algorithms for comparisons
-    with GraphNeT.
+    Can be used to extract predictions from other algorithms for
+    comparisons with GraphNeT.
     """
 
     def __init__(self, extractor_name: str, exclude: list = [None]):

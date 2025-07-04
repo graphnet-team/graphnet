@@ -79,9 +79,9 @@ class I3GenericExtractor(I3Extractor):
     def _get_keys(self, frame: "icetray.I3Frame") -> List[str]:
         """Get the list of keys to be queried from `frame`.
 
-        If a list of keys was provided by the user, return this. Otherwise,
-        return all keys, possibly except ones that the user have explicitly
-        excluded.
+        If a list of keys was provided by the user, return this.
+        Otherwise, return all keys, possibly except ones that the user
+        have explicitly excluded.
         """
         if self._keys is None:
             keys = list(frame.keys())
@@ -202,9 +202,9 @@ class I3GenericExtractor(I3Extractor):
     ) -> Optional[Dict[str, Any]]:
         """Extract per-pulse attribute `key` from `frame`.
 
-        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a dictionary-
-        like mapping from an OM key to some attribute, e.g., an integer or a
-        vector properties.
+        A per-pulse attribute (e.g., dataclasses.I3MapKeyUInt) is a
+        dictionary- like mapping from an OM key to some attribute, e.g.,
+        an integer or a vector properties.
         """
         result = self._extract_pulse_series_map(frame, key)
 
