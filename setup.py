@@ -71,7 +71,7 @@ EXTRAS_REQUIRE = {
         "pytorch-lightning>=2.0",
     ],
     # --- PyTorch 2.7.0 ---
-    "torch": [
+    "torch-27": [
         "torch==2.7.0",
         "torch-geometric",
         "pyg_lib",
