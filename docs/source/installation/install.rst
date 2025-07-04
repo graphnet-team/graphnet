@@ -19,7 +19,7 @@ Installation
       pip install --upgrade setuptools packaging
    
       # Verify that only wheel, packaging and setuptools are installed
-      pip list #If this shows >3 packages the environment is not clean
+      pip list 
 
       # Now you're ready to proceed with the installation
 Quick Start
