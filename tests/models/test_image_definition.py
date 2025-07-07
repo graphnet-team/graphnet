@@ -89,6 +89,3 @@ def test_image_definition() -> None:
         assert torch.equal(
             image.x[i], expected_image
         ), f"Image at index {i} does not match expected image"
-
-
-test_image_definition()
