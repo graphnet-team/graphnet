@@ -362,6 +362,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.data.extractors.icecube.i3calorimetry.html" class="md-nav__link">i3calorimetry</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.data.extractors.icecube.i3dictvalueextractor.html" class="md-nav__link">i3dictvalueextractor</a>
       
     
@@ -383,6 +390,10 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3Extractor</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.set_gcd" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_gcd()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">check_primary_energy()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_primaries()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -400,6 +411,20 @@
     
     
       <a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.set_gcd" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_gcd()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">check_primary_energy()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_primaries()</span></code></a>
       
     
     </li></ul>
@@ -425,6 +450,13 @@
     
     
       <a href="graphnet.data.extractors.icecube.i3genericextractor.html" class="md-nav__link">i3genericextractor</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.extractors.icecube.i3highesteparticleextractor.html" class="md-nav__link">i3highesteparticleextractor</a>
       
     
     </li>
@@ -686,6 +718,10 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3Extractor</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.set_gcd" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">set_gcd()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">check_primary_energy()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_primaries()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -705,7 +741,7 @@
 <p>Base I3Extractor class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3extractor.I3Extractor">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3extractor.</span></span><span class="sig-name descname"><span class="pre">I3Extractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">extractor_name,</span> <span class="pre">exclude=[None],</span> <span class="pre">is_corsika</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.extractors.extractor.html#graphnet.data.extractors.extractor.Extractor" title="graphnet.data.extractors.extractor.Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extractor</span></code></a></p>
 <p>Base class for extracting information from physics I3-frames.</p>
 <p>Contains functionality required to extract data from i3 files, used by
@@ -719,7 +755,9 @@ method.</p>
 <li><p><strong>extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the <cite>I3Extractor</cite> instance. Used to keep
 track of the provenance of different data, and to name tables
 to which this data is saved.</p></li>
-<li><p><strong>exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">[None]</span></code>) – List of features to exclude from the extractor.</p></li>
+<li><p><strong>exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">[None]</span></code>) – List of keys to exclude from the extracted data.</p></li>
+<li><p><strong>is_corsika</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Boolean indicating if the event files being processed
+are Corsika simulations. Defaults to False.</p></li>
 </ul>
 </dd>
 </dl>
@@ -743,6 +781,48 @@ present, <cite>RuntimeErrors</cite> will be raised.</p></li>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy">
+<span class="sig-name descname"><span class="pre">check_primary_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primaries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor.check_primary_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy" title="Link to this definition">¶</a></dt>
+<dd><p>Check that primary energy exists for the particle(s).</p>
+<p>If the primary energy is not available, the daughters of the
+primary particle(s) are returned instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Frame</span></code></span>) – I3Frame object.</p></li>
+<li><p><strong>primaries</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ListI3Particle</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">I3Particle</span></code>]</span>) – Primary particle or a list of primary particles.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ListI3Particle</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">I3Particle</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries">
+<span class="sig-name descname"><span class="pre">get_primaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daughters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor.get_primaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" title="Link to this definition">¶</a></dt>
+<dd><p>Get the primary particles in the event.</p>
+<p>For Corsika events the primary particles are all the primaries,
+for Nugen we are only interested in the in-ice neutrino.
+Input:
+frame: I3Frame object
+daughters: If True, then ensure that for nugen the primaries are</p>
+<blockquote>
+<div><p>only the in-ice neutrinos, otherwise all primaries are returned.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListI3Particle</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
+<li><p><strong>daughters</strong> (<em>bool</em>)</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

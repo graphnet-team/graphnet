@@ -1,0 +1,8 @@
+
+containments
+============
+
+.. automodule:: graphnet.data.extractors.icecube.utilities.containments
+   :members:
+   :show-inheritance:
+   :undoc-members:

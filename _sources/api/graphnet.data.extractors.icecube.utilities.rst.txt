@@ -16,8 +16,11 @@ utilities
    :maxdepth: 2
 
    graphnet.data.extractors.icecube.utilities.collections
+   graphnet.data.extractors.icecube.utilities.containments
    graphnet.data.extractors.icecube.utilities.frames
+   graphnet.data.extractors.icecube.utilities.gcd_hull
    graphnet.data.extractors.icecube.utilities.i3_filters
+   graphnet.data.extractors.icecube.utilities.i3_in_ice_neutrino
    graphnet.data.extractors.icecube.utilities.types
 
 

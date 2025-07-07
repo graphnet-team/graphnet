@@ -1,0 +1,8 @@
+
+i3calorimetry
+=============
+
+.. automodule:: graphnet.data.extractors.icecube.i3calorimetry
+   :members:
+   :show-inheritance:
+   :undoc-members:

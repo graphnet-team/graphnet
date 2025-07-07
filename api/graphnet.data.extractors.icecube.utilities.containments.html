@@ -61,7 +61,7 @@
 </script>
   
   
-    <title>frames &#8212; graphnet  documentation</title>
+    <title>containments &#8212; graphnet  documentation</title>
 
 <style>
   dt:target {
@@ -128,8 +128,8 @@
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="gcd_hull" href="graphnet.data.extractors.icecube.utilities.gcd_hull.html" />
-    <link rel="prev" title="containments" href="graphnet.data.extractors.icecube.utilities.containments.html" />
+    <link rel="next" title="frames" href="graphnet.data.extractors.icecube.utilities.frames.html" />
+    <link rel="prev" title="collections" href="graphnet.data.extractors.icecube.utilities.collections.html" />
   
    
 
@@ -148,7 +148,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.data.extractors.icecube.utilities.frames" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.data.extractors.icecube.utilities.containments" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -166,7 +166,7 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           <span class="md-header-nav__topic">GraphNeT</span>
-          <span class="md-header-nav__topic"> frames </span>
+          <span class="md-header-nav__topic"> containments </span>
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -368,29 +368,42 @@
     <li class="md-nav__item">
     
     
-      <a href="graphnet.data.extractors.icecube.utilities.containments.html" class="md-nav__link">containments</a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> frames </label>
+    <label class="md-nav__link md-nav__link--active" for="__toc"> containments </label>
     
-      <a href="#" class="md-nav__link md-nav__link--active">frames</a>
+      <a href="#" class="md-nav__link md-nav__link--active">containments</a>
       
         
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-data-extractors-icecube-utilities-frames--page-root" class="md-nav__link">frames</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-data-extractors-icecube-utilities-containments--page-root" class="md-nav__link">containments</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_is_montecarlo()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GN_containment_types</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.no_intersect" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">no_intersect</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_noise" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_is_noise()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">throughgoing</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.frames.get_om_keys_and_pulseseries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_om_keys_and_pulseseries()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.contained" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">contained</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.tau_to_mu" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">tau_to_mu</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.starting" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">starting</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stopping</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.decayed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">decayed</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">throughgoing_bundle</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stopping_bundle</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.partly_contained" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">partly_contained</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.track_containment" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">track_containment()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -400,24 +413,94 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_is_montecarlo()</span></code></a>
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GN_containment_types</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.no_intersect" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">no_intersect</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_noise" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_is_noise()</span></code></a>
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">throughgoing</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.data.extractors.icecube.utilities.frames.get_om_keys_and_pulseseries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_om_keys_and_pulseseries()</span></code></a>
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.contained" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">contained</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.tau_to_mu" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">tau_to_mu</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.starting" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">starting</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stopping</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.decayed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">decayed</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">throughgoing_bundle</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stopping_bundle</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.partly_contained" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">partly_contained</span></code></a>
       
     
     </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.utilities.containments.track_containment" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">track_containment()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.extractors.icecube.utilities.frames.html" class="md-nav__link">frames</a>
+      
     
     </li>
     <li class="md-nav__item">
@@ -752,13 +835,33 @@
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-data-extractors-icecube-utilities-frames--page-root" class="md-nav__link">frames</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-data-extractors-icecube-utilities-containments--page-root" class="md-nav__link">containments</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_is_montecarlo()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">GN_containment_types</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.no_intersect" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">no_intersect</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_noise" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_is_noise()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">throughgoing</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.frames.get_om_keys_and_pulseseries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_om_keys_and_pulseseries()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.contained" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">contained</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.tau_to_mu" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">tau_to_mu</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.starting" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">starting</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stopping</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.decayed" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">decayed</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">throughgoing_bundle</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">stopping_bundle</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.partly_contained" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">partly_contained</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.utilities.containments.track_containment" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">track_containment()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -771,60 +874,74 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.data.extractors.icecube.utilities.frames">
-<span id="frames"></span><h1 id="api-graphnet-data-extractors-icecube-utilities-frames--page-root">frames<a class="headerlink" href="#api-graphnet-data-extractors-icecube-utilities-frames--page-root" title="Link to this heading">¶</a></h1>
-<p>Utility methods for working with I3Frames.</p>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/frames.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo" title="Link to this definition">¶</a></dt>
-<dd><p>Check whether <cite>frame</cite> is from Monte Carlo simulation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
-<li><p><strong>mctree</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
-</ul>
-</dd>
-</dl>
+  <section id="module-graphnet.data.extractors.icecube.utilities.containments">
+<span id="containments"></span><h1 id="api-graphnet-data-extractors-icecube-utilities-containments--page-root">containments<a class="headerlink" href="#api-graphnet-data-extractors-icecube-utilities-containments--page-root" title="Link to this heading">¶</a></h1>
+<p>Utility function cataloging the types of containment of an icecube event.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.containments.</span></span><span class="sig-name descname"><span class="pre">GN_containment_types</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/containments.html#GN_containment_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></p>
+<p>Containment types for an IceCube event.</p>
+<p>See
+<a class="reference external" href="https://github.com/icecube/icetray/blob/d68d0e0be86bf2cfeba8cab1190f631f4454e4c4/sim-services/python/label_events/enums.py#L50">https://github.com/icecube/icetray/blob/d68d0e0be86bf2cfeba8cab1190f631f4454e4c4/sim-services/python/label_events/enums.py#L50</a>
+For the original IceCube enum.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.no_intersect">
+<span class="sig-name descname"><span class="pre">no_intersect</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.no_intersect" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing">
+<span class="sig-name descname"><span class="pre">throughgoing</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.contained">
+<span class="sig-name descname"><span class="pre">contained</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.contained" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.tau_to_mu">
+<span class="sig-name descname"><span class="pre">tau_to_mu</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.tau_to_mu" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.starting">
+<span class="sig-name descname"><span class="pre">starting</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.starting" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping">
+<span class="sig-name descname"><span class="pre">stopping</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.decayed">
+<span class="sig-name descname"><span class="pre">decayed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">7</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.decayed" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing_bundle">
+<span class="sig-name descname"><span class="pre">throughgoing_bundle</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">8</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.throughgoing_bundle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping_bundle">
+<span class="sig-name descname"><span class="pre">stopping_bundle</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">9</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.stopping_bundle" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.partly_contained">
+<span class="sig-name descname"><span class="pre">partly_contained</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.partly_contained" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
 </dd></dl>
 <dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.frames.frame_is_noise">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/frames.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_noise" title="Link to this definition">¶</a></dt>
-<dd><p>Check whether <cite>frame</cite> is from noise.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
-<li><p><strong>mctree</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py function">
-<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.frames.get_om_keys_and_pulseseries">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">get_om_keys_and_pulseseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulseseries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calibration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/frames.html#get_om_keys_and_pulseseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.frames.get_om_keys_and_pulseseries" title="Link to this definition">¶</a></dt>
-<dd><p>Get the indicies for the gcd_dict and the pulse series.</p>
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.containments.track_containment">
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.containments.</span></span><span class="sig-name descname"><span class="pre">track_containment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">first</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">second</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/containments.html#track_containment"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.containments.track_containment" title="Link to this definition">¶</a></dt>
+<dd><p>Determine the containment of a track.</p>
+<p>Inpsired by MCLabelerModule from IceCube.
+<a class="reference external" href="https://github.com/icecube/icetray/blob/main/sim-services/python/label_events/mc_labeler.py">https://github.com/icecube/icetray/blob/main/sim-services/python/label_events/mc_labeler.py</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>frame</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Frame</span></code></span>) – Physics (P) I3-frame from which to extract OM keys and pulse
-series</p></li>
-<li><p><strong>pulseseries</strong> (<em>str</em>)</p></li>
-<li><p><strong>calibration</strong> (<em>icecube.dataclasses.I3Calibration</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>first</strong> (<em>float</em>) – First interaction with surface.</p></li>
+<li><p><strong>second</strong> (<em>float</em>) – Second interaction with surface.</p></li>
+<li><p><strong>length</strong> (<em>float</em>) – Length of the particle track.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple containing the OM keys/indicesfor the GCD dictionary, and the
-pulse series data.</p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -840,7 +957,7 @@ pulse series data.</p>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.data.extractors.icecube.utilities.containments.html" title="containments"
+            <a href="graphnet.data.extractors.icecube.utilities.collections.html" title="collections"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -849,17 +966,17 @@ pulse series data.</p>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> containments </span>
+                      class="md-footer-nav__direction"> "Previous" </span> collections </span>
               </div>
             </a>
           
           
-            <a href="graphnet.data.extractors.icecube.utilities.gcd_hull.html" title="gcd_hull"
+            <a href="graphnet.data.extractors.icecube.utilities.frames.html" title="frames"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> gcd_hull </span>
+                class="md-footer-nav__direction"> "Next" </span> frames </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

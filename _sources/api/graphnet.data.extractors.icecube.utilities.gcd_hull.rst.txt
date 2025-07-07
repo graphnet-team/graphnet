@@ -1,0 +1,8 @@
+
+gcd\_hull
+=========
+
+.. automodule:: graphnet.data.extractors.icecube.utilities.gcd_hull
+   :members:
+   :show-inheritance:
+   :undoc-members:

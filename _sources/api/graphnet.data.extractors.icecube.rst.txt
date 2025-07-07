@@ -22,11 +22,13 @@ icecube
 .. toctree::
    :maxdepth: 2
 
+   graphnet.data.extractors.icecube.i3calorimetry
    graphnet.data.extractors.icecube.i3dictvalueextractor
    graphnet.data.extractors.icecube.i3extractor
    graphnet.data.extractors.icecube.i3featureextractor
    graphnet.data.extractors.icecube.i3filtermapextractor
    graphnet.data.extractors.icecube.i3genericextractor
+   graphnet.data.extractors.icecube.i3highesteparticleextractor
    graphnet.data.extractors.icecube.i3hybridrecoextractor
    graphnet.data.extractors.icecube.i3ntmuonlabelsextractor
    graphnet.data.extractors.icecube.i3particleextractor

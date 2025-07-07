@@ -1,0 +1,8 @@
+
+i3\_in\_ice\_neutrino
+=====================
+
+.. automodule:: graphnet.data.extractors.icecube.utilities.i3_in_ice_neutrino
+   :members:
+   :show-inheritance:
+   :undoc-members:

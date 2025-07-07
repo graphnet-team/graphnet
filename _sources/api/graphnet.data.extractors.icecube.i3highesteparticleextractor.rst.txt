@@ -1,0 +1,8 @@
+
+i3highesteparticleextractor
+===========================
+
+.. automodule:: graphnet.data.extractors.icecube.i3highesteparticleextractor
+   :members:
+   :show-inheritance:
+   :undoc-members:
