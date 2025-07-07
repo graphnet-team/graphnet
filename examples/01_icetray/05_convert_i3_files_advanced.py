@@ -54,7 +54,11 @@ def main(
     max_table_size: int = int(25e7),
     converter_class: str = "sqlite",
 ) -> None:
-    """Convert IceCube-Upgrade I3 files to intermediate `backend` format."""
+    """Convert IceCube I3 files tosqlite/parquet.
+
+    Advanced example script to convert IceCube I3 files to
+    sqlite/parquet.
+    """
     # Check(s)
     inputs = [f"{TEST_DATA_DIR}/i3/nugen_ftp-v3_level2"]
     outdir = f"{EXAMPLE_OUTPUT_DIR}/convert_i3_files/ic86_advanced"
