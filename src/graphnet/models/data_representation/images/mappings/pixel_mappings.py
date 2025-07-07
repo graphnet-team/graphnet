@@ -26,8 +26,9 @@ class PixelMapping(Model):
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
         """Map pixel data to images.
 
-        Make sure to add a batch dimension to the output. E.g picture with
-        dimensions CxHxW = 10x64x64 should be returned as 1x10x64x64.
+        Make sure to add a batch dimension to the output. E.g picture
+        with dimensions CxHxW = 10x64x64 should be returned as
+        1x10x64x64.
         """
         raise NotImplementedError
 

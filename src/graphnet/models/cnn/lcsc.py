@@ -12,7 +12,8 @@ from typing import List, Union
 class LCSC(CNN):
     """Lightning CNN Signal Classifier (LCSC).
 
-    All credits go to Alexander Harnisch (https://github.com/AlexHarn)
+    All credits go to Alexander Harnisch (
+    https://github.com/AlexHarn)
     """
 
     def __init__(

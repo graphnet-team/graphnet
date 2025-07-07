@@ -1,8 +1,9 @@
 """Modules for defining images.
 
-These are self-contained image definitions that hold all the image-altering
-code in graphnet. These modules define what image-based models sees as input
-and can be passed to dataloaders during training and deployment.
+These are self-contained image definitions that hold all the image-
+altering code in graphnet. These modules define what image-based models
+sees as input and can be passed to dataloaders during training and
+deployment.
 """
 
 from typing import List, Optional, Dict, Union, Any, Callable
