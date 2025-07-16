@@ -19,7 +19,7 @@ inputs:
     description: "Version of PyTorch"
     required: true
     default: "2.6.0"
-    options: ["2.7.0", "2.6.0", "2.5.0", "2.4.0"]
+    options: ["2.7.0", "2.6.0", "2.5.1", "2.4.0"]
 
   hardware:
     description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
@@ -65,9 +65,8 @@ runs:
       shell: bash
       run: |
         if [[ "${{ inputs.use_vm }}" == "true" ]]; then source ~/venv/bin/activate; fi
-
         echo "Installing graphnet with flags: ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }}"
-        pip install ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }}-${{ inputs.hardware }},${{ inputs.extras }}] \
-          -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html
-
+        echo "pip install ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html"
+        pip install ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html
+ 
         pip install git+https://github.com/thoglu/jammy_flows.git
