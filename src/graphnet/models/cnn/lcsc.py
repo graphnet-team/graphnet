@@ -6,7 +6,7 @@ All credits go to Alexander Harnisch (https://github.com/AlexHarn)
 from .cnn import CNN
 import torch
 from torch_geometric.data import Data
-from typing import List, Union
+from typing import List, Union, Tuple
 
 
 class LCSC(CNN):
@@ -14,6 +14,9 @@ class LCSC(CNN):
 
     All credits go to Alexander Harnisch (
     https://github.com/AlexHarn)
+
+    Intended to be used with the IceCube 86 image containing
+    only the Main Array image.
     """
 
     def __init__(
@@ -58,6 +61,7 @@ class LCSC(CNN):
         num_fc_neurons: int = 50,
         norm_list: bool = True,
         norm_type: str = "Batch",
+        image_size: Tuple[int, int, int] = (10, 10, 60),
     ) -> None:
         """Initialize the Lightning CNN signal classifier (LCSC).
 
@@ -145,6 +149,10 @@ class LCSC(CNN):
             norm_type (str): Type of normalization to use.
                 Options are 'Batch' or 'Instance'.
                 Defaults to 'Batch'.
+            image_size (Tuple[int, int, int]): Size of the input image
+                in the format (height, width, depth).
+                NOTE: Only needs to be changed if the input image is not
+                    the standard IceCube 86 image size.
         """
         super().__init__(nb_inputs=num_input_features, nb_outputs=out_put_dim)
 
@@ -298,9 +306,7 @@ class LCSC(CNN):
         self.normal = torch.nn.ModuleList()
         dimensions: List[int] = [
             num_input_features,
-            10,
-            10,
-            60,
+            *image_size,
         ]  # (nb_features per pixel, height, width, depth)
         for i in range(num_conv_layers):
             self.conv.append(

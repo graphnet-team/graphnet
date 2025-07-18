@@ -6,5 +6,5 @@ mapped into the regular sized image.
 """
 
 from .image_definition import ImageDefinition
-from .images import IC86Image
-from .mappings import IC86PixelMapping
+from .images import IC86Image, ExamplePrometheusImage
+from .mappings import IC86PixelMapping, ExamplePrometheusMapping
