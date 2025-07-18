@@ -90,14 +90,12 @@ class ExamplePrometheusImage(ImageDefinition):
         detector: Optional[Detector] = None,
         **kwargs: Any,
     ) -> None:
-        """Construct `IC86DNNImage`.
+        """Construct `ExamplePrometheusImage`.
 
         Args:
             node_definition: Definition of nodes.
             input_feature_names: Names of each column in expected input data
                 that will be built into a image.
-            include_lower_dc: If True, the lower DeepCore will be included.
-            include_upper_dc: If True, the upper DeepCore will be included.
             string_label: The label for the string number in the data.
             dom_number_label: The label for the DOM number in the data.
             dtype: data type used for node features. e.g. ´torch.float´
