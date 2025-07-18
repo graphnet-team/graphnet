@@ -56,4 +56,7 @@ IMAGE_MAPPING_TABLE_DIR = os.path.join(DATA_DIR, "image_mapping_tables")
 IC86_CNN_MAPPING = os.path.join(
     IMAGE_MAPPING_TABLE_DIR, "IC86_CNN_mapping.parquet"
 )
+PROMETHEUS_CNN_MAPPING = os.path.join(
+    IMAGE_MAPPING_TABLE_DIR, "prometheus_CNN_mapping.parquet"
+)
 NUBENCH_GEOMETRY_TABLE_DIR = os.path.join(GEOMETRY_TABLE_DIR, "nubench")

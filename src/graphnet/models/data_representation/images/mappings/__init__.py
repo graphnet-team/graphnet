@@ -8,4 +8,5 @@ mapped into the regular sized image.
 from .pixel_mappings import (
     PixelMapping,
     IC86PixelMapping,
+    ExamplePrometheusMapping,
 )

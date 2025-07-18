@@ -10,9 +10,7 @@ from torch.optim.adam import Adam
 from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import TRUTH
 from graphnet.models import StandardModel
-from graphnet.models.detector.icecube import IceCube86
 from graphnet.models.cnn import LCSC
-from graphnet.models.data_representation import IC86Image
 from graphnet.models.data_representation import PercentileClusters
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import PiecewiseLinearLR
@@ -22,6 +20,7 @@ from graphnet.utilities.logging import Logger
 from graphnet.data.dataset import SQLiteDataset
 from graphnet.data.dataset import ParquetDataset
 from torch_geometric.data import Batch
+from graphnet.models.data_representation.images import ExamplePrometheusImage
 
 # Constants
 features = ["sensor_id", "sensor_string_id", "t"]
@@ -76,7 +75,7 @@ def main(
         ),
     }
 
-    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_model_without_configs")
+    archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_cnn_model")
     run_name = "dynedge_{}_example".format(config["target"])
     if wandb:
         # Log configuration to W&B
@@ -115,30 +114,26 @@ def main(
         input_feature_names=features,
     )
 
-    # The final image definition used here is the IC86Image,
-    # which is a detector specific pixel mapping for the IceCube
-    # detector. It maps optical modules (sensors) into the image
-    # using the string and DOM number (number of the optical module).
+    # The final image definition used here is the ExamplePrometheusImage,
+    # which is a detector specific pixel mapping for the IceCube.
+    # It maps optical modules (sensors) into the image
+    # using the sensor_string_id and sensor_id
+    # (number of the optical module).
     # The detector standardizes the input features, so that the
     # features are in a ML friendly range.
     # For the mapping of the optical modules to the image it is
-    # essential to not change the value of the string and DOM number
-    # Therefore we need to make sure that these features are not
-    # standardized, which is done by the `replace_with_identity`
-    # argument of the detector.
-    image_definition = IC86Image(
-        detector=IceCube86(
-            replace_with_identity=features,
-        ),
+    # essential to not change the value of the sensor_id and
+    # sensor_string_id. Therefore we need to make sure that
+    # these features are not standardized, which is done by the
+    # `replace_with_identity` argument of the detector.
+    image_definition = ExamplePrometheusImage(
         node_definition=pixel_definition,
         input_feature_names=features,
-        include_lower_dc=False,
-        include_upper_dc=False,
         string_label="sensor_string_id",
         dom_number_label="sensor_id",
     )
 
-    # Use GraphNetDataModule to load in data and create dataloaders
+    # Use SQLiteDataset to load in data
     # The input here depends on the dataset being used,
     # in this case the Prometheus dataset.
     dataset = SQLiteDataset(
@@ -150,6 +145,7 @@ def main(
         data_representation=image_definition,
     )
 
+    # Create the training and validation dataloaders.
     training_dataloader = torch.utils.data.DataLoader(
         dataset=dataset,
         batch_size=config["batch_size"],
@@ -170,6 +166,36 @@ def main(
     # the LCSC architecture from Alexander Harnisch is used.
     backbone = LCSC(
         num_input_features=image_definition.nb_outputs,
+        out_put_dim=2,
+        input_norm=True,
+        num_conv_layers=5,
+        conv_filters=[5, 10, 20, 40, 60],
+        kernel_size=3,
+        image_size=(8, 9, 22),  # dimensions of the example image
+        pooling_type=[
+            "Avg",
+            None,
+            "Avg",
+            None,
+            "Avg",
+        ],
+        pooling_kernel_size=[
+            [1, 1, 2],
+            None,
+            [2, 2, 2],
+            None,
+            [2, 2, 2],
+        ],
+        pooling_stride=[
+            [1, 1, 2],
+            None,
+            [2, 2, 2],
+            None,
+            [2, 2, 2],
+        ],
+        num_fc_neurons=50,
+        norm_list=True,
+        norm_type="Batch",
     )
     # Define the task.
     # Here an energy reconstruction, with a LogCoshLoss function.
@@ -232,12 +258,12 @@ def main(
     os.makedirs(path, exist_ok=True)
 
     # Save results as .csv
-    results.to_csv(f"{path}/results.csv")
+    results.to_csv(f"{path}/cnn_results.csv")
 
     # Save model config and state dict - Version safe save method.
     # This method of saving models is the safest way.
-    model.save_state_dict(f"{path}/state_dict.pth")
-    model.save_config(f"{path}/model_config.yml")
+    model.save_state_dict(f"{path}/cnn_state_dict.pth")
+    model.save_config(f"{path}/cnn_model_config.yml")
 
 
 if __name__ == "__main__":
