@@ -2,6 +2,9 @@
 
 Copy of `upgoing_muon_energy` model from
 https://github.com/IceCubeOpenSource/i3deepice/tree/master
+
+Class and variable names are kept for
+compatibility with the original code.
 """
 
 from typing import Tuple, Union
