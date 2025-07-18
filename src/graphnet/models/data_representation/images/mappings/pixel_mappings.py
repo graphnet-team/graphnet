@@ -26,7 +26,17 @@ class PixelMapping(Model):
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
         """Map pixel data to images.
 
-        Make sure to add a batch dimension to the output. E.g picture
+        Args:
+            data: The input data containing pixel features.
+            data_feature_names: Names of each column in expected input data
+                that will be built into a image.
+
+        Returns:
+            Data: The output data with images as features.
+        NOTE: The output data.x should be a list of tensors,
+            where each tensor corresponds to an image.
+
+        Make sure to add a batch dimension to the tensors. E.g a picture
         with dimensions CxHxW = 10x64x64 should be returned as
         1x10x64x64.
         """

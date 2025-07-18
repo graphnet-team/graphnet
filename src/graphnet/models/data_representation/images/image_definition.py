@@ -19,7 +19,7 @@ from .mappings import PixelMapping
 
 
 class ImageDefinition(DataRepresentation):
-    """An Abstract class to create Imagedefinitions from."""
+    """An Abstract class to create ImageDefinitions from."""
 
     def __init__(
         self,
@@ -36,14 +36,13 @@ class ImageDefinition(DataRepresentation):
     ):
         """Construct `ImageDefinition`.
 
-        ´Detector´-specific code. E.g. scaling/standardization and geometry
-        tables.
+        ´node_definition´ defines the processing of raw data into
+            what will later be saved in the individual pixels
 
-        ´node_definition´ defines the processing of raw data.
+        ´pixel_mapping´ defines the mapping of the processed
+            data to the images.
 
-        ´pixel_mapping´ defines the mapping of the processed data to images.
-
-        NOTE: some pixel_mappings require specific node_definitions.
+        NOTE: pixel_mappings may require specific node_definitions.
 
         Args:
             detector: The corresponding ´Detector´ representing the data.

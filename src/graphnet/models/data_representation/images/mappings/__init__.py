@@ -1,8 +1,7 @@
-"""Modules for mapping images.
+"""Modules for mapping images for different detectors.
 
-´ImageDefinition´ defines the nodes and the mapping,  and contains
-general image-manipulation.´PixelMapping´ defines how raw data is
-mapped into the regular sized image.
+´PixelMapping´ defines how raw data is mapped into the regular sized
+image.
 """
 
 from .pixel_mappings import (
