@@ -73,22 +73,24 @@ class LCSC(CNN):
                 Defaults to True.
             num_conv_layers (int): Number of convolutional layers.
                 Defaults to 8.
-            conv_filters (List[int]): List of number ofconvolutional
+            conv_filters (List[int]): List of number of convolutional
                 filters to use in hidden layers.
                 Defaults to [50, 50, 50, 50, 50, 50, 50, 50, 10].
+                NOTE needs to have the length of `num_conv_layers`.
             kernel_size (int, List[int], or List[List[int]]):
                 Size of the convolutional kernels.
                 Options are:
                     int: single integer for all dimensions
                         and all layers,
-                        e.g. 3 would equal [3, 3, 3].
+                        e.g. 3 would equal [3, 3, 3] for each layer.
                     list: list of integers specifying the kernel size,
                         for each layer for all dimensions equally,
-                        e.g. [3, 5, 6].
+                        e.g. [3, 5, 6] would equal [[3,3,3], [5,5,5], [6,6,6]].
+                        NOTE: needs to have the length of `num_conv_layers`.
                     If a list of lists is provided, each list will be used
                         for the corresponding layer as kernel size.
-                If an integer is provided, it will be used for all layers.
-                Defaults to 3.
+                NOTE: If a list if passed it needs to have the length
+                     of `num_conv_layers`.
             padding (str, int, or List[int]]): Padding for the
                 convolutional layers.
                 Options are:
@@ -98,6 +100,8 @@ class LCSC(CNN):
                     list: list of integers specifying the padding for each
                         dimension, for each layer equally,
                         e.g. [1, 2, 3].
+                        NOTE: If a list is passed it needs to have the length
+                            of `num_conv_layers`.
                 Defaults to 'Same'.
             pooling_type (List[None,str]): List of pooling types
                 for layers.
@@ -111,6 +115,8 @@ class LCSC(CNN):
                         None, 'Avg',
                         None, 'Avg'
                     ].
+                    NOTE: the length of the list must be equal to
+                        `num_conv_layers`.
             pooling_kernel_size (List[Union[int,List[int]]]):
                 List of pooling kernel sizes for each layer.
                 If an integer is provided, it will be used for all layers.
@@ -119,6 +125,8 @@ class LCSC(CNN):
                     int: single integer for all dimensions,
                         e.g. 2 would equal [2, 2, 2].
                     If None, no pooling is applied.
+                NOTE: If a list is passed it needs to have the length
+                    of `num_conv_layers`.
                 Defaults to [
                     None, [1, 1, 2],
                     None, [2, 2, 2],
@@ -133,6 +141,8 @@ class LCSC(CNN):
                     int: single integer for all dimensions,
                         e.g. 2 would equal [2, 2, 2].
                     If None, no pooling is applied.
+                NOTE: If a list is passed it needs to have the length
+                    of `num_conv_layers`.
                 Defaults to [
                     None, [1, 1, 2],
                     None, [2, 2, 2],
@@ -146,6 +156,8 @@ class LCSC(CNN):
                 for each convolutional layer.
                 If a boolean is provided, it will be used for all layers.
                 Defaults to True.
+                NOTE: If a list is passed it needs to have the length
+                    of `num_conv_layers`.
             norm_type (str): Type of normalization to use.
                 Options are 'Batch' or 'Instance'.
                 Defaults to 'Batch'.
