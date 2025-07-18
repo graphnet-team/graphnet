@@ -1,6 +1,6 @@
 """CNN used for muon energy reconstruction in IceCube.
 
-Mimics `upgoing_muon_energy` model from
+Copy of `upgoing_muon_energy` model from
 https://github.com/IceCubeOpenSource/i3deepice/tree/master
 """
 
