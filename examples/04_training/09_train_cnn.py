@@ -1,4 +1,4 @@
-"""Example of training Model."""
+"""Example of training a CNN Model."""
 
 import os
 from typing import Any, Dict, List, Optional
@@ -19,6 +19,7 @@ from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.logging import Logger
 from graphnet.data.dataset import SQLiteDataset
 from graphnet.data.dataset import ParquetDataset
+from graphnet.models.detector import ORCA150
 from torch_geometric.data import Batch
 from graphnet.models.data_representation.images import ExamplePrometheusImage
 
@@ -76,10 +77,13 @@ def main(
     }
 
     archive = os.path.join(EXAMPLE_OUTPUT_DIR, "train_cnn_model")
-    run_name = "dynedge_{}_example".format(config["target"])
+    run_name = "lcsc_{}_example".format(config["target"])
     if wandb:
         # Log configuration to W&B
         wandb_logger.experiment.config.update(config)
+
+    # First we need to define how the image is constructed.
+    # This is done using an ImageDefinition.
 
     # An ImageDefinition combines two components:
 
@@ -90,22 +94,23 @@ def main(
     # Normally, this could mean that light pulses that arrive at
     # the same optical module must be aggregated to a
     # fixed-dimensional vector.
-    # A pixel definition is exactly the same as the
+    # A pixel definition works exactly the same as the
     # a node definition in the graph scenerio.
 
     # 2. A pixel mapping, which defines where each pixel is located
     # in the final image. This is highly detector specific, as it
     # depends on the geometry of the detector.
 
-    # An ImageDefinition can be used to create multiple images,
-    # in the example of IceCube, you can e.g. create three images,
-    # one for the so called main array, one for the upper deep core
-    # and one for the lower deep core. Essentially, these are just
-    # different areas in the detector.
+    # An ImageDefinition can be used to create multiple images of
+    # a single event. In the example of IceCube, you can e.g
+    # create three images, one for the so called main array,
+    # one for the upper deep core and one for the lower deep
+    # core. Essentially, these are just different areas in
+    # the detector.
 
     # Here we use the PercentileClusters pixel definition, which
     # aggregates the light pulses that arrive at the same optical
-    # module (or sensor) with percentiles.
+    # module with percentiles.
     print(features)
     pixel_definition = PercentileClusters(
         cluster_on=["sensor_id", "sensor_string_id"],
@@ -115,18 +120,24 @@ def main(
     )
 
     # The final image definition used here is the ExamplePrometheusImage,
-    # which is a detector specific pixel mapping for the IceCube.
-    # It maps optical modules (sensors) into the image
+    # which is a detector specific pixel mapping.
+    # It maps optical modules into the image
     # using the sensor_string_id and sensor_id
     # (number of the optical module).
-    # The detector standardizes the input features, so that the
-    # features are in a ML friendly range.
+    # The detector class standardizes the input features,
+    # so that the features are in a ML friendly range.
     # For the mapping of the optical modules to the image it is
     # essential to not change the value of the sensor_id and
     # sensor_string_id. Therefore we need to make sure that
     # these features are not standardized, which is done by the
     # `replace_with_identity` argument of the detector.
     image_definition = ExamplePrometheusImage(
+        detector=ORCA150(
+            replace_with_identity=[
+                "sensor_id",
+                "sensor_string_id",
+            ],
+        ),
         node_definition=pixel_definition,
         input_feature_names=features,
         string_label="sensor_string_id",
