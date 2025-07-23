@@ -1,6 +1,6 @@
 """Code to extract the truth event information from the KM3NeT ROOT file."""
 
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
 import numpy as np
 import pandas as pd
 from graphnet.utilities.imports import has_km3net_package
