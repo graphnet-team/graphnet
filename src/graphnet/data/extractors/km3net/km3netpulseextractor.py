@@ -3,6 +3,7 @@
 from typing import Any, Dict
 import numpy as np
 import pandas as pd
+import awkward as ak
 
 from .km3netextractor import KM3NeTExtractor
 from graphnet.data.extractors.km3net.utilities.km3net_utilities import (
@@ -58,9 +59,10 @@ class KM3NeTPulseExtractor(KM3NeTExtractor):
             "tot",
             "trig",
         ]
-        pandas_df = hits.arrays(keys_to_extract, library="pd")
-        df = pandas_df.reset_index()
-
+        hits_array = hits.arrays(keys_to_extract, library="ak")
+        hits_array["entry"] = ak.local_index(hits_array, axis=0)
+        df = ak.to_dataframe(hits_array).reset_index(drop=True)
+        
         # Add unique event ID
         unique_extended = [
             int(unique_id[index]) for index in df["entry"].values
@@ -74,6 +76,7 @@ class KM3NeTPulseExtractor(KM3NeTExtractor):
         # Final processing
         df = df.drop(["entry", "subentry"], axis=1)
         df = creating_time_zero(df)
+        df = df.reset_index(drop=True)
 
         return df
 
