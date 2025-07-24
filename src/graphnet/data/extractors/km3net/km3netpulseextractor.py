@@ -84,22 +84,27 @@ class KM3NeTPulseExtractor(KM3NeTExtractor):
             primaries = file.mc_trks[:, 0]
             nus_flavor = [12, 14, 16]
 
-            if abs(np.array(primaries.pdgid)[0]) not in nus_flavor:  # Muon
+            if (abs(np.array(primaries.pdgid)[0]) not in nus_flavor) and (abs(np.array(primaries.pdgid)[0]) > 0.1):  # Muon
                 return create_unique_id_run_by_run(
                     file_type="muon",
                     run_id=np.array(file.run_id),
                     evt_id=np.array(file.id),
                     hnl_model="none",
                 )
-            elif (5914 in file.mc_trks.pdgid[0]) or (sum(file.mc_trks.pdgid[:,0]==0)):  # HNL
-                model_hnl = file.header.model.interaction
+            elif (5914 in file.mc_trks.pdgid[0]) or (file.mc_trks.pdgid[0][0] == 0):  # HNL
+                try:
+                    model_hnl = file.header.model.interaction
+                except Exception:
+                    model_hnl = "none"
                 return create_unique_id_run_by_run(
                         file_type="hnl",
                         run_id=np.array(file.run_id),
                         evt_id=np.array(file.id),
                         hnl_model=model_hnl,
                     )
-            elif abs(np.array(primaries.pdgid)[0]) in nus_flavor:  # Neutrino
+            elif (abs(np.array(primaries.pdgid)[0]) in nus_flavor) and (
+                5914 not in file.mc_trks.pdgid[0]
+            ):  # Neutrino
                 return create_unique_id_run_by_run(
                         file_type="neutrino",
                         run_id=np.array(file.run_id),
