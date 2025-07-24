@@ -359,7 +359,7 @@ class KM3NeTTruthExtractor(KM3NeTExtractor):
             ##############################################################
             # MUON-FILE####################################################
             ##############################################################
-            if abs(np.array(primaries.pdgid)[0]) not in nus_flavor:
+            if (abs(np.array(primaries.pdgid)[0]) not in nus_flavor) and (abs(np.array(primaries.pdgid)[0]) > 0.1):
                 primaries_jshower = ki.tools.best_jshower(file.trks)
                 primaries_jmuon = ki.tools.best_jmuon(file.trks)
                 dict_truth = self._construct_truth_dictionary(
@@ -374,7 +374,7 @@ class KM3NeTTruthExtractor(KM3NeTExtractor):
             ###############################################################
             # HNL-FILE######################################################
             ###############################################################
-            elif 5914 in file.mc_trks.pdgid[0]:
+            elif (5914 in file.mc_trks.pdgid[0]) or (file.mc_trks.pdgid[0][0] == 0):
                 primaries_jshower = ki.tools.best_jshower(file.trks)
                 primaries_jmuon = ki.tools.best_jmuon(file.trks)
                 dict_truth = self._construct_truth_dictionary(
