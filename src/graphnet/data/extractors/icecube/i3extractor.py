@@ -164,7 +164,10 @@ class I3Extractor(Extractor):
         return primary
 
     def get_primaries(
-        self, frame: "icetray.I3Frame", daughters: bool = False
+        self,
+        frame: "icetray.I3Frame",
+        daughters: bool = False,
+        highest_energy_primary: bool = True,
     ) -> "dataclasses.ListI3Particle":
         """Get the primary particles in the event.
 
@@ -174,6 +177,10 @@ class I3Extractor(Extractor):
         frame: I3Frame object
         daughters: If True, then ensure that for nugen the primaries are
             only the in-ice neutrinos, otherwise all primaries are returned.
+        highest_energy_primary: If True, return the primary with the highest
+            energy. If False, return all primaries.
+            NOTE: only used for non corsika events and only makes a difference
+            if daughters is False.
         """
         assert hasattr(
             self, "mctree"
@@ -211,10 +218,12 @@ class I3Extractor(Extractor):
                 self.warning_once("No in-ice neutrino found for NuGen event")
                 return dataclasses.ListI3Particle()
 
-            energies = np.array([p.energy for p in primaries])
+            if highest_energy_primary:
+                energies = np.array([p.energy for p in primaries])
 
-            primaries = np.array(primaries)[np.argmax(energies)]
-            primaries = dataclasses.ListI3Particle([primaries])
+                primaries = [np.array(primaries)[np.argmax(energies)]]
+
+            primaries = dataclasses.ListI3Particle(primaries)
         if self._is_corsika:
             primaries = frame[self.mctree].get_primaries()
         return primaries
