@@ -1,7 +1,7 @@
 """Base I3Extractor class(es)."""
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union, List
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors import Extractor
@@ -201,18 +201,58 @@ class I3Extractor(Extractor):
                     )
                 ]
 
-            if len(primaries) == 0:
-                primaries = [
-                    p
-                    for p in frame[self.mctree]
-                    if (
-                        p.is_neutrino
-                        & (
-                            p.location_type
-                            == dataclasses.I3Particle.LocationType.InIce.real
+                # Some times the primary neutrino is not in-ice,
+                # but it has exactly one daughter that is an
+                # in-ice neutrino, so we check for that.
+                if len(primaries) == 0:
+
+                    # Check if the neutrino primary has daughters
+                    primary_nus = [
+                        p
+                        for p in frame[self.mctree].get_primaries()
+                        if p.is_neutrino
+                    ]
+
+                    daughters_parts: List["dataclasses.I3Particle"] = []
+                    for p in primary_nus:
+                        daughters_parts.extend(
+                            dataclasses.I3MCTree.get_daughters(
+                                frame[self.mctree], p.id
+                            )
                         )
+
+                    primaries = [
+                        d
+                        for d in daughters_parts
+                        if (
+                            d.is_neutrino
+                            & (
+                                d.location_type
+                                == dataclasses.I3Particle.LocationType.InIce.real  # noqa: E501
+                            )
+                        )
+                    ]
+
+                if len(primaries) == 0:
+                    self.warning_once(
+                        "No in-ice primary neutrino found, "
+                        "no daughters of neutrino primaries either. "
+                        "Returning all neutrino primaries. "
+                        "NOTE: This is most likely not the intended behaviour."
                     )
-                ]
+                    primaries = primary_nus
+
+                    primaries = [
+                        p
+                        for p in frame[self.mctree]
+                        if (
+                            p.is_neutrino
+                            & (
+                                p.location_type
+                                == dataclasses.I3Particle.LocationType.InIce.real  # noqa: E501
+                            )
+                        )
+                    ]
 
             if len(primaries) == 0:
                 self.warning_once("No in-ice neutrino found for NuGen event")
