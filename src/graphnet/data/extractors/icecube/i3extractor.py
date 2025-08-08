@@ -1,7 +1,7 @@
 """Base I3Extractor class(es)."""
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union, List
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.data.extractors import Extractor
@@ -172,7 +172,9 @@ class I3Extractor(Extractor):
         """Get the primary particles in the event.
 
         For Corsika events the primary particles are all the primaries,
-        for Nugen we are only interested in the in-ice neutrino.
+        for Nugen and daughters set to True we are only interested
+        in the in-ice neutrino.
+
         Input:
         frame: I3Frame object
         daughters: If True, then ensure that for nugen the primaries are
@@ -201,44 +203,46 @@ class I3Extractor(Extractor):
                     )
                 ]
 
-                # Some times the primary neutrino is not in-ice,
-                # but it has exactly one daughter that is an
-                # in-ice neutrino, so we check for that.
+                # Sometimes the primary neutrino interacts outside
+                # of the ice. Therefore only further down in the subtree
+                # of the original primary neutrino can you find in-ice
+                # particles
                 if len(primaries) == 0:
 
-                    # Check if the neutrino primary has daughters
+                    # get the original primary neutrino(s)
                     primary_nus = [
                         p
                         for p in frame[self.mctree].get_primaries()
                         if p.is_neutrino
                     ]
 
-                    daughters_parts: List["dataclasses.I3Particle"] = []
-                    for p in primary_nus:
-                        daughters_parts.extend(
-                            dataclasses.I3MCTree.get_daughters(
-                                frame[self.mctree], p.id
-                            )
-                        )
+                    # recursively search for in-ice neutrino daughters
+                    primaries = self.find_in_ice_daughters(
+                        frame,
+                        primary_nus,
+                        self.mctree,
+                    )
 
-                    primaries = [
-                        d
-                        for d in daughters_parts
-                        if (
-                            d.is_neutrino
-                            & (
-                                d.location_type
-                                == dataclasses.I3Particle.LocationType.InIce.real  # noqa: E501
-                            )
+                    # This can happen when a neutrino primary
+                    # is not in-ice and in its immediate daughters
+                    # are also not in-ice neutrinos.
+                    # NOTE: you can go down the tree to search
+                    # for the first in-ice neutrino, but
+                    # this is not implemented here.
+                    if len(primaries) == 0:
+                        self.warning_once(
+                            "No in-ice neutrino found for NuGen event, "
+                            "returning no primaries."
                         )
-                    ]
+                        return []
 
                 if len(primaries) == 0:
                     self.warning_once(
-                        "No in-ice primary neutrino found, "
-                        "no daughters of neutrino primaries either. "
-                        "Returning all neutrino primaries. "
-                        "NOTE: This is most likely not the intended behaviour."
+                        "No in-ice primary neutrino found,\n"
+                        "no daughters of neutrino primaries either. \n"
+                        "Returning all neutrino primaries. \n"
+                        "NOTE: This is likely not the intended behaviour.\n"
+                        f"Event Header: {frame['I3EventHeader']}"
                     )
                     primaries = primary_nus
 
@@ -267,3 +271,29 @@ class I3Extractor(Extractor):
         if self._is_corsika:
             primaries = frame[self.mctree].get_primaries()
         return primaries
+
+    def find_in_ice_daughters(
+        self,
+        frame: "icetray.I3Frame",
+        particles: "dataclasses.ListI3Particle",
+        mctree: str,
+    ) -> "dataclasses.ListI3Particle":
+        """Find in-ice particles in the frame."""
+        if particles == []:
+            return []
+        ret = []
+        for p in particles:
+            if (
+                p.location_type
+                == dataclasses.I3Particle.LocationType.InIce.real
+            ):
+                ret.append(p)
+            else:
+                ret.extend(
+                    self.find_in_ice_daughters(
+                        frame,
+                        frame[mctree].get_daughters(p.id),
+                        mctree=mctree,
+                    )
+                )
+        return ret
