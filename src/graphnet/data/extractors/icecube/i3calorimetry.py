@@ -82,28 +82,39 @@ class I3Calorimetry(I3Extractor):
                 self.highest_energy_primary,
             )
 
-            MMCTrackList = frame[self.mmctracklist]
-            # Filter tracks that are not daughters of the desired
-            if self.daughters:
-                MMCTrackList = [
-                    track
-                    for track in MMCTrackList
-                    if frame[self.mctree].get_primary(track.GetI3Particle())
-                    in primaries
-                ]
+            if not len(primaries) == 0:
 
-            # Create a lookup dict for the tracks
-            track_lookup = {}
-            for track in MuonGun.Track.harvest(
-                frame[self.mctree], MMCTrackList
-            ):
-                track_lookup[track.id] = track
+                MMCTrackList = frame[self.mmctracklist]
+                # Filter tracks that are not daughters of the desired
+                if self.daughters:
+                    temp_MMCTrackList = []
+                    for track in MMCTrackList:
+                        for p in primaries:
+                            if frame[self.mctree].is_in_subtree(
+                                p.id, track.GetI3Particle().id
+                            ):
+                                temp_MMCTrackList.append(track)
+                                break
+                    MMCTrackList = temp_MMCTrackList
 
-            e_dep_cascade, e_dep_track, e_ent_track = self.get_energies(
-                frame, primaries, track_lookup
-            )
+                # Create a lookup dict for the tracks
+                track_lookup = {}
+                for track in MuonGun.Track.harvest(
+                    frame[self.mctree], MMCTrackList
+                ):
+                    track_lookup[track.id] = track
 
-            primary_energy = sum([p.energy for p in primaries])
+                e_dep_cascade, e_dep_track, e_ent_track = self.get_energies(
+                    frame, primaries, track_lookup
+                )
+
+                primary_energy = sum([p.energy for p in primaries])
+            else:
+                e_ent_track = np.nan
+                e_dep_track = np.nan
+                e_dep_cascade = np.nan
+                primary_energy = np.nan
+
             e_total = e_ent_track + e_dep_cascade
 
             # In case all particles are considered and
@@ -117,55 +128,52 @@ class I3Calorimetry(I3Extractor):
                 )
             ):
                 self.warning(
-                    "No energy deposited in the hull, \
-                    Think about in creasing the padding. \
-                    \nCurrent padding: {}\
-                    \nTotal energy: {}\
-                    \nTrack energy: {}\
-                    \nCascade energy: {} \
-                    \nEvent header: {}\
-                    ".format(
-                        self.hull.padding,
-                        e_total,
-                        e_ent_track,
-                        e_dep_cascade,
-                        frame["I3EventHeader"],
-                    )
+                    "No energy deposited in the hull,"
+                    "Think about in creasing the padding."
+                    f"\nCurrent padding: {self.hull.padding}"
+                    f"\nTotal energy: {e_total}"
+                    f"\nTrack energy: {e_ent_track}"
+                    f"\nCascade energy: {e_dep_cascade}"
+                    f"\nEvent header: {frame['I3EventHeader']}"
                 )
 
-            # total energy should always be less than the primary energy
-            assert e_total <= (
-                primary_energy * (1 + 1e-6)
-            ), "Total energy on entrance is greater than primary energy\
-                \nTotal energy: {}\
-                \nPrimary energy: {}\
-                \nTrack energy: {}\
-                \nCascade energy: {}\
-                {}".format(
-                e_total,
-                primary_energy,
-                e_ent_track,
-                e_dep_cascade,
-                frame["I3EventHeader"],
-            )
+            # Check only in the case that there were primaries
+            if not len(primaries) == 0:
+
+                # total energy should always be less than the primary energy
+                assert e_total <= (
+                    primary_energy * (1 + 1e-6)
+                ), "Total energy on entrance is greater than primary energy\
+                    \nTotal energy: {}\
+                    \nPrimary energy: {}\
+                    \nTrack energy: {}\
+                    \nCascade energy: {}\
+                    {}".format(
+                    e_total,
+                    primary_energy,
+                    e_ent_track,
+                    e_dep_cascade,
+                    frame["I3EventHeader"],
+                )
+
+                assert (
+                    primary_energy > 0
+                ), "Primary energy is 0, this should not happen.\
+                    \nTotal energy: {}\
+                    \nTrack energy: {}\
+                    \nCascade energy: {}\
+                    {}".format(
+                    e_total,
+                    e_ent_track,
+                    e_dep_cascade,
+                    frame["I3EventHeader"],
+                )
+            fraction_primary = e_total / primary_energy
 
             cascade_fraction = None
             if e_total > 0:
                 cascade_fraction = e_dep_cascade / e_total
 
-            assert (
-                primary_energy > 0
-            ), "Primary energy is 0, this should not happen.\
-                \nTotal energy: {}\
-                \nTrack energy: {}\
-                \nCascade energy: {}\
-                {}".format(
-                e_total,
-                e_ent_track,
-                e_dep_cascade,
-                frame["I3EventHeader"],
-            )
-            fraction_primary = e_total / primary_energy
             output.update(
                 {
                     "e_entrance_track_" + self._extractor_name: e_ent_track,
