@@ -335,8 +335,12 @@ class I3HighestEparticleExtractor(I3Extractor):
                         EonEntrance = MGtrack.get_energy(
                             max(intersections.first, 0)
                         )
-                        visible_length = intersections.second - max(
-                            intersections.first, 0
+
+                        # a skimming track can be outside the hull
+                        # therefore it can have 0 visible length
+                        visible_length = max(
+                            0,
+                            intersections.second - max(intersections.first, 0),
                         )
                         e_mask = energies > EonEntrance
                         energies = energies[e_mask]
