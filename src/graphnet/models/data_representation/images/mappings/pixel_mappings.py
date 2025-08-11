@@ -47,6 +47,18 @@ class PixelMapping(Model):
         """Set the final image feature names."""
         raise NotImplementedError
 
+    @property
+    @abstractmethod
+    def shape(
+        self,
+    ) -> List[List[int]]:
+        """Return the shape of the output images as a list of tuples.
+
+        In the dimensions (F,D,H,W) where F is the number of features
+        per pixel. And D,H,W are the dimension of the image
+        """
+        pass
+
 
 class IC86PixelMapping(PixelMapping):
     """Mapping for the IceCube86.
@@ -230,6 +242,20 @@ class IC86PixelMapping(PixelMapping):
             if infeature not in [self._string_label, self._dom_number_label]
         ]
 
+    @property
+    def shape(
+        self,
+    ) -> List[List[int]]:
+        """Return the shape of the output images as a list of tuples."""
+        ret = []
+        if self._include_main_array:
+            ret.append([self._nb_cnn_features, 10, 10, 60])
+        if self._include_upper_dc:
+            ret.append([self._nb_cnn_features, 1, 8, 10])
+        if self._include_lower_dc:
+            ret.append([self._nb_cnn_features, 1, 8, 50])
+        return ret
+
 
 class ExamplePrometheusMapping(PixelMapping):
     """Mapping for the Prometheus detector.
@@ -363,3 +389,10 @@ class ExamplePrometheusMapping(PixelMapping):
             for infeature in input_feature_names
             if infeature not in [self._string_label, self._sensor_number_label]
         ]
+
+    @property
+    def shape(
+        self,
+    ) -> List[List[int]]:
+        """Return the shape of the output images as a list of tuples."""
+        return [[self._nb_cnn_features, 8, 9, 22]]
