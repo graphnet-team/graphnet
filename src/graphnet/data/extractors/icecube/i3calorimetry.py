@@ -138,7 +138,7 @@ class I3Calorimetry(I3Extractor):
                 )
 
             # Check only in the case that there were primaries
-            if not len(primaries) == 0:
+            if not len(primaries) == 0 and (not np.isnan(e_total)):
 
                 # total energy should always be less than the primary energy
                 assert e_total <= (
@@ -220,8 +220,25 @@ class I3Calorimetry(I3Extractor):
                     track.pos, track.dir
                 )
                 # Get the corresponding energies
-                e0 = track.get_energy(intersections.first)
-                e1 = track.get_energy(intersections.second)
+                try:
+                    e0 = track.get_energy(intersections.first)
+                    e1 = track.get_energy(intersections.second)
+
+                # Catch MuonGun errors
+                except RuntimeError as e:
+                    if (
+                        "sum of losses is smaller than "
+                        "energy at last checkpoint" in str(e)
+                    ):
+                        hdr = frame["I3EventHeader"]
+                        e.add_note(f"Error in MuonGun track in event {hdr}")
+                        print(f"Skipping bad event {hdr}: {e}")
+                        e0 = np.nan
+                        e1 = np.nan
+                        e_dep_cascade = np.nan
+                        continue  # skip this frame
+                    else:
+                        raise  # re-raise unexpected errors
 
                 e_dep_track += e0 - e1
                 e_ent_track += e0
