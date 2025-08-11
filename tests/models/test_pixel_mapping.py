@@ -68,11 +68,24 @@ def test_pixel_mappings() -> None:
     # Apply node definition to torch tensor with raw pulses
     picture = pixel_mapping(dummy_data, pixel_feature_names)
     new_features = pixel_mapping.image_feature_names
+    n_features = len(new_features)
 
     # Check the output
     basic_checks_picture(picture, dtype)
 
     # More checks
+    assert (
+        len(pixel_mapping.shape) == 3
+    ), f"Expected shape to be 3 got {len(pixel_mapping.shape)}"
+    assert pixel_mapping.shape == [
+        (n_features, 10, 10, 60),
+        (n_features, 1, 8, 10),
+        (n_features, 1, 8, 50),
+    ], (
+        f"Expected shape to be [({n_features},10,10,60), "
+        f"({n_features},1,8,10), ({n_features},1,8,50)] got "
+        f"{pixel_mapping.shape}"
+    )
     assert isinstance(
         new_features, list
     ), f"Output should be a list of feature names got {type(new_features)}"
