@@ -171,14 +171,20 @@ class I3Extractor(Extractor):
     ) -> "dataclasses.ListI3Particle":
         """Get the primary particles in the event.
 
-        For Corsika events the primary particles are all the primaries,
-        for Nugen and daughters set to True we are only interested
-        in the in-ice neutrino.
+        For Corsika events the primary particles are all the primaries.
+        For NuGen there are different options:
+        - daughters set to True: the function returns the first in-ice neutrino
+            that is a daughter of the primary neutrino or the
+            primary neutrino itself
+        - daughters set to False and highest_energy_primary set to True:
+            in this case the highest_energy_primary is returned
+        - daughters set to False and highest_energy_primary set to False:
+            In this case all primaries are returned. Analogous to the
+            Corsika case.
 
         Input:
         frame: I3Frame object
-        daughters: If True, then ensure that for nugen the primaries are
-            only the in-ice neutrinos, otherwise all primaries are returned.
+        daughters: If True only daughters of the primary neutrino are returned
         highest_energy_primary: If True, return the primary with the highest
             energy. If False, return all primaries.
             NOTE: only used for non corsika events and only makes a difference
@@ -223,51 +229,25 @@ class I3Extractor(Extractor):
                         self.mctree,
                     )
 
-                    # This can happen when a neutrino primary
-                    # is not in-ice and in its immediate daughters
-                    # are also not in-ice neutrinos.
-                    # NOTE: you can go down the tree to search
-                    # for the first in-ice neutrino, but
-                    # this is not implemented here.
+                    # This is not expected to happen
                     if len(primaries) == 0:
                         self.warning_once(
                             "No in-ice neutrino found for NuGen event, "
                             "returning no primaries."
                         )
-                        return []
-
-                if len(primaries) == 0:
-                    self.warning_once(
-                        "No in-ice primary neutrino found,\n"
-                        "no daughters of neutrino primaries either. \n"
-                        "Returning all neutrino primaries. \n"
-                        "NOTE: This is likely not the intended behaviour.\n"
-                        f"Event Header: {frame['I3EventHeader']}"
-                    )
-                    primaries = primary_nus
-
-                    primaries = [
-                        p
-                        for p in frame[self.mctree]
-                        if (
-                            p.is_neutrino
-                            & (
-                                p.location_type
-                                == dataclasses.I3Particle.LocationType.InIce.real  # noqa: E501
-                            )
-                        )
-                    ]
+                        return dataclasses.ListI3Particle([])
 
             if len(primaries) == 0:
                 self.warning_once("No in-ice neutrino found for NuGen event")
-                return dataclasses.ListI3Particle()
+                return dataclasses.ListI3Particle([])
 
             if highest_energy_primary:
+                # Select only the highest energy primary
                 energies = np.array([p.energy for p in primaries])
-
                 primaries = [np.array(primaries)[np.argmax(energies)]]
 
             primaries = dataclasses.ListI3Particle(primaries)
+
         if self._is_corsika:
             primaries = frame[self.mctree].get_primaries()
         return primaries

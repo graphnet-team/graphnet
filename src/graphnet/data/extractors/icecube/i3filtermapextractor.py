@@ -11,8 +11,8 @@ if TYPE_CHECKING:
 class I3FilterMapExtractor(I3Extractor):
     """Class for extracting I3FilterMap properties.
 
-    This class extracts the boolean condition of the I3FilterMask from the
-    I3FilterMap in the frame.
+    This class extracts the boolean condition of the I3FilterMask from
+    the I3FilterMap in the frame.
     """
 
     def __init__(
