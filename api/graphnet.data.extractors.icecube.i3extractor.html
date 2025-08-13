@@ -394,6 +394,8 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">check_primary_energy()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_primaries()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.find_in_ice_daughters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">find_in_ice_daughters()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -425,6 +427,13 @@
     
     
       <a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_primaries()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.find_in_ice_daughters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">find_in_ice_daughters()</span></code></a>
       
     
     </li></ul>
@@ -722,6 +731,8 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">check_primary_energy()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_primaries()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.find_in_ice_daughters" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">find_in_ice_daughters()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -804,15 +815,36 @@ primary particle(s) are returned instead.</p>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries">
-<span class="sig-name descname"><span class="pre">get_primaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daughters</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor.get_primaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_primaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daughters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest_energy_primary</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor.get_primaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries" title="Link to this definition">¶</a></dt>
 <dd><p>Get the primary particles in the event.</p>
-<p>For Corsika events the primary particles are all the primaries,
-for Nugen we are only interested in the in-ice neutrino.
-Input:
-frame: I3Frame object
-daughters: If True, then ensure that for nugen the primaries are</p>
+<p>For Corsika events the primary particles are all the primaries.
+For NuGen there are different options:
+- daughters set to True: the function returns the first in-ice neutrino</p>
 <blockquote>
-<div><p>only the in-ice neutrinos, otherwise all primaries are returned.</p>
+<div><p>that is a daughter of the primary neutrino or the
+primary neutrino itself</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>daughters set to False and highest_energy_primary set to True:</dt><dd><p>in this case the highest_energy_primary is returned</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>daughters set to False and highest_energy_primary set to False:</dt><dd><p>In this case all primaries are returned. Analogous to the
+Corsika case.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>Input:
+frame: I3Frame object
+daughters: If True only daughters of the primary neutrino are returned
+highest_energy_primary: If True, return the primary with the highest</p>
+<blockquote>
+<div><p>energy. If False, return all primaries.
+NOTE: only used for non corsika events and only makes a difference
+if daughters is False.</p>
 </div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -822,6 +854,24 @@ daughters: If True, then ensure that for nugen the primaries are</p>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
 <li><p><strong>daughters</strong> (<em>bool</em>)</p></li>
+<li><p><strong>highest_energy_primary</strong> (<em>bool</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3extractor.I3Extractor.find_in_ice_daughters">
+<span class="sig-name descname"><span class="pre">find_in_ice_daughters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3extractor.html#I3Extractor.find_in_ice_daughters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3extractor.I3Extractor.find_in_ice_daughters" title="Link to this definition">¶</a></dt>
+<dd><p>Find in-ice particles in the frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListI3Particle</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
+<li><p><strong>particles</strong> (<em>icecube.dataclasses.ListI3Particle</em>)</p></li>
+<li><p><strong>mctree</strong> (<em>str</em>)</p></li>
 </ul>
 </dd>
 </dl>

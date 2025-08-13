@@ -525,16 +525,31 @@
 <div class="viewcode-block" id="I3Extractor.get_primaries">
 <a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3extractor.html#graphnet.data.extractors.icecube.i3extractor.I3Extractor.get_primaries">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_primaries</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span> <span class="n">daughters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span>
+        <span class="n">daughters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">highest_energy_primary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"dataclasses.ListI3Particle"</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Get the primary particles in the event.</span>
 
-<span class="sd">        For Corsika events the primary particles are all the primaries,</span>
-<span class="sd">        for Nugen we are only interested in the in-ice neutrino.</span>
+<span class="sd">        For Corsika events the primary particles are all the primaries.</span>
+<span class="sd">        For NuGen there are different options:</span>
+<span class="sd">        - daughters set to True: the function returns the first in-ice neutrino</span>
+<span class="sd">            that is a daughter of the primary neutrino or the</span>
+<span class="sd">            primary neutrino itself</span>
+<span class="sd">        - daughters set to False and highest_energy_primary set to True:</span>
+<span class="sd">            in this case the highest_energy_primary is returned</span>
+<span class="sd">        - daughters set to False and highest_energy_primary set to False:</span>
+<span class="sd">            In this case all primaries are returned. Analogous to the</span>
+<span class="sd">            Corsika case.</span>
+
 <span class="sd">        Input:</span>
 <span class="sd">        frame: I3Frame object</span>
-<span class="sd">        daughters: If True, then ensure that for nugen the primaries are</span>
-<span class="sd">            only the in-ice neutrinos, otherwise all primaries are returned.</span>
+<span class="sd">        daughters: If True only daughters of the primary neutrino are returned</span>
+<span class="sd">        highest_energy_primary: If True, return the primary with the highest</span>
+<span class="sd">            energy. If False, return all primaries.</span>
+<span class="sd">            NOTE: only used for non corsika events and only makes a difference</span>
+<span class="sd">            if daughters is False.</span>
 <span class="sd">        """</span>
         <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="s2">"mctree"</span>
@@ -555,30 +570,74 @@
                     <span class="p">)</span>
                 <span class="p">]</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">primaries</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">p</span>
-                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="n">p</span><span class="o">.</span><span class="n">is_neutrino</span>
-                        <span class="o">&amp;</span> <span class="p">(</span>
-                            <span class="n">p</span><span class="o">.</span><span class="n">location_type</span>
-                            <span class="o">==</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">LocationType</span><span class="o">.</span><span class="n">InIce</span><span class="o">.</span><span class="n">real</span>
-                        <span class="p">)</span>
+                <span class="c1"># Sometimes the primary neutrino interacts outside</span>
+                <span class="c1"># of the ice. Therefore only further down in the subtree</span>
+                <span class="c1"># of the original primary neutrino can you find in-ice</span>
+                <span class="c1"># particles</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+
+                    <span class="c1"># get the original primary neutrino(s)</span>
+                    <span class="n">primary_nus</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">p</span>
+                        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">get_primaries</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_neutrino</span>
+                    <span class="p">]</span>
+
+                    <span class="c1"># recursively search for in-ice neutrino daughters</span>
+                    <span class="n">primaries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_in_ice_daughters</span><span class="p">(</span>
+                        <span class="n">frame</span><span class="p">,</span>
+                        <span class="n">primary_nus</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="p">]</span>
 
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span><span class="s2">"No in-ice neutrino found for NuGen event"</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">ListI3Particle</span><span class="p">()</span>
+                <span class="c1"># This is not expected to happen</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+                        <span class="s2">"No in-ice daughter of primary "</span> <span class="s2">"neutrino found"</span>
+                    <span class="p">)</span>
+                    <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">ListI3Particle</span><span class="p">([])</span>
 
-            <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">])</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"No primary found"</span>
 
-            <span class="n">primaries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">primaries</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">energies</span><span class="p">)]</span>
-            <span class="n">primaries</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">ListI3Particle</span><span class="p">([</span><span class="n">primaries</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">highest_energy_primary</span><span class="p">:</span>
+                <span class="c1"># Select only the highest energy primary</span>
+                <span class="n">energies</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">])</span>
+                <span class="n">primaries</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">primaries</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">energies</span><span class="p">)]]</span>
+
+            <span class="n">primaries</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">ListI3Particle</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_corsika</span><span class="p">:</span>
             <span class="n">primaries</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">get_primaries</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">primaries</span></div>
+
+
+<div class="viewcode-block" id="I3Extractor.find_in_ice_daughters">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3extractor.html#graphnet.data.extractors.icecube.i3extractor.I3Extractor.find_in_ice_daughters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_in_ice_daughters</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span>
+        <span class="n">particles</span><span class="p">:</span> <span class="s2">"dataclasses.ListI3Particle"</span><span class="p">,</span>
+        <span class="n">mctree</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"dataclasses.ListI3Particle"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Find in-ice particles in the frame."""</span>
+        <span class="k">if</span> <span class="n">particles</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">particles</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">location_type</span>
+                <span class="o">==</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">LocationType</span><span class="o">.</span><span class="n">InIce</span><span class="o">.</span><span class="n">real</span>
+            <span class="p">):</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">find_in_ice_daughters</span><span class="p">(</span>
+                        <span class="n">frame</span><span class="p">,</span>
+                        <span class="n">frame</span><span class="p">[</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">),</span>
+                        <span class="n">mctree</span><span class="o">=</span><span class="n">mctree</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span></div>
 </div>
 
 </pre></div>
