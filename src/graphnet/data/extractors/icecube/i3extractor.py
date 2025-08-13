@@ -164,16 +164,31 @@ class I3Extractor(Extractor):
         return primary
 
     def get_primaries(
-        self, frame: "icetray.I3Frame", daughters: bool = False
+        self,
+        frame: "icetray.I3Frame",
+        daughters: bool = False,
+        highest_energy_primary: bool = True,
     ) -> "dataclasses.ListI3Particle":
         """Get the primary particles in the event.
 
-        For Corsika events the primary particles are all the primaries,
-        for Nugen we are only interested in the in-ice neutrino.
+        For Corsika events the primary particles are all the primaries.
+        For NuGen there are different options:
+        - daughters set to True: the function returns the first in-ice neutrino
+            that is a daughter of the primary neutrino or the
+            primary neutrino itself
+        - daughters set to False and highest_energy_primary set to True:
+            in this case the highest_energy_primary is returned
+        - daughters set to False and highest_energy_primary set to False:
+            In this case all primaries are returned. Analogous to the
+            Corsika case.
+
         Input:
         frame: I3Frame object
-        daughters: If True, then ensure that for nugen the primaries are
-            only the in-ice neutrinos, otherwise all primaries are returned.
+        daughters: If True only daughters of the primary neutrino are returned
+        highest_energy_primary: If True, return the primary with the highest
+            energy. If False, return all primaries.
+            NOTE: only used for non corsika events and only makes a difference
+            if daughters is False.
         """
         assert hasattr(
             self, "mctree"
@@ -194,27 +209,68 @@ class I3Extractor(Extractor):
                     )
                 ]
 
-            if len(primaries) == 0:
-                primaries = [
-                    p
-                    for p in frame[self.mctree]
-                    if (
-                        p.is_neutrino
-                        & (
-                            p.location_type
-                            == dataclasses.I3Particle.LocationType.InIce.real
-                        )
+                # Sometimes the primary neutrino interacts outside
+                # of the ice. Therefore only further down in the subtree
+                # of the original primary neutrino can you find in-ice
+                # particles
+                if len(primaries) == 0:
+
+                    # get the original primary neutrino(s)
+                    primary_nus = [
+                        p
+                        for p in frame[self.mctree].get_primaries()
+                        if p.is_neutrino
+                    ]
+
+                    # recursively search for in-ice neutrino daughters
+                    primaries = self.find_in_ice_daughters(
+                        frame,
+                        primary_nus,
+                        self.mctree,
                     )
-                ]
 
-            if len(primaries) == 0:
-                self.warning_once("No in-ice neutrino found for NuGen event")
-                return dataclasses.ListI3Particle()
+                # This is not expected to happen
+                if len(primaries) == 0:
+                    self.warning_once(
+                        "No in-ice daughter of primary " "neutrino found"
+                    )
+                    return dataclasses.ListI3Particle([])
 
-            energies = np.array([p.energy for p in primaries])
+            assert len(primaries) >= 0, "No primary found"
 
-            primaries = np.array(primaries)[np.argmax(energies)]
-            primaries = dataclasses.ListI3Particle([primaries])
+            if highest_energy_primary:
+                # Select only the highest energy primary
+                energies = np.array([p.energy for p in primaries])
+                primaries = [np.array(primaries)[np.argmax(energies)]]
+
+            primaries = dataclasses.ListI3Particle(primaries)
+
         if self._is_corsika:
             primaries = frame[self.mctree].get_primaries()
         return primaries
+
+    def find_in_ice_daughters(
+        self,
+        frame: "icetray.I3Frame",
+        particles: "dataclasses.ListI3Particle",
+        mctree: str,
+    ) -> "dataclasses.ListI3Particle":
+        """Find in-ice particles in the frame."""
+        if particles == []:
+            return []
+        ret = []
+        for p in particles:
+            if (
+                p.location_type
+                == dataclasses.I3Particle.LocationType.InIce.real
+            ):
+                ret.append(p)
+            else:
+                ret.extend(
+                    self.find_in_ice_daughters(
+                        frame,
+                        frame[mctree].get_daughters(p.id),
+                        mctree=mctree,
+                    )
+                )
+        return ret
