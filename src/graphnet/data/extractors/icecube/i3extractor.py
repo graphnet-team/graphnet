@@ -229,17 +229,14 @@ class I3Extractor(Extractor):
                         self.mctree,
                     )
 
-                    # This is not expected to happen
-                    if len(primaries) == 0:
-                        self.warning_once(
-                            "No in-ice neutrino found for NuGen event, "
-                            "returning no primaries."
-                        )
-                        return dataclasses.ListI3Particle([])
+                # This is not expected to happen
+                if len(primaries) == 0:
+                    self.warning_once(
+                        "No in-ice daughter of primary " "neutrino found"
+                    )
+                    return dataclasses.ListI3Particle([])
 
-            if len(primaries) == 0:
-                self.warning_once("No in-ice neutrino found for NuGen event")
-                return dataclasses.ListI3Particle([])
+            assert len(primaries) >= 0, "No primary found"
 
             if highest_energy_primary:
                 # Select only the highest energy primary
