@@ -232,7 +232,7 @@ class I3Calorimetry(I3Extractor):
                     ):
                         hdr = frame["I3EventHeader"]
                         e.add_note(f"Error in MuonGun track in event {hdr}")
-                        print(f"Skipping bad event {hdr}: {e}")
+                        self.warning(f"Skipping bad event {hdr}: {e}")
                         e0 = np.nan
                         e1 = np.nan
                         e_dep_cascade = np.nan
@@ -314,35 +314,6 @@ class I3Calorimetry(I3Extractor):
     def frame_contains_info(self, frame: "icetray.I3Frame") -> bool:
         """Check if the frame contains the necessary information."""
         return self.mctree in frame and self.mmctracklist in frame
-
-    def in_hull_filter(
-        self,
-        frame: "icetray.I3Frame",
-        particles: List["dataclasses.I3Particle"],
-    ) -> bool:
-        """Filter particle list to only particles that are in the hull."""
-        pos, direc, length = np.asarray(
-            [
-                [
-                    np.array(p.pos),
-                    np.array([p.dir.x, p.dir.y, p.dir.z]),
-                    p.length,
-                ]
-                for p in particles
-            ],
-            dtype=object,
-        ).T
-
-        length = length.astype(float)
-
-        # replace length nan with 0
-        length[np.isnan(length)] = 0
-        pos = pos + direc * length
-        pos = np.stack(pos)
-
-        in_volume = self.hull.point_in_hull(pos)
-        is_track = np.array([p.is_track for p in particles], dtype=bool)
-        return np.array(particles)[is_track | in_volume]
 
     def is_in_hull(self, particle: "dataclasses.I3Particle") -> bool:
         """Check if a particle is in the hull."""
