@@ -53,14 +53,17 @@ class StringSelectionResolver(Logger):
         index_column: str,
         seed: Optional[int] = None,
         use_cache: bool = True,
+        use_super_selection: bool = False,
     ):
         """Construct `StringSelectionResolver`."""
         self._dataset = dataset
         self._index_column = index_column
         self._seed = seed
         self._use_cache = use_cache
-
+        self._use_super_selection = use_super_selection
         # Base class constructor
+        if self._use_super_selection:
+            self._use_cache = False
         super().__init__(name=__name__, class_name=self.__class__.__name__)
 
     # Public method(s)
@@ -214,19 +217,32 @@ class StringSelectionResolver(Logger):
             df_values = self._load_values_cache(values_cache_path)
 
         else:
-            df_values = pd.DataFrame(
-                data=self._dataset.query_table(
-                    self._dataset.truth_table,
-                    list(variables),
-                ),
-                columns=list(variables),
-            )
+            if self._use_super_selection:
+                df_values = pd.DataFrame(
+                    data=self._dataset.query_table(
+                        self._dataset.truth_table,
+                        list(variables),
+                        selection=selection,
+                    ).tolist(),
+                    columns=list(variables),
+                )
+
+            else:
+                df_values = pd.DataFrame(
+                    data=self._dataset.query_table(
+                        self._dataset.truth_table,
+                        list(variables),
+                    ).tolist(),
+                    columns=list(variables),
+                )
 
         # (Opt.) Cache indices.
         if self._use_cache and not os.path.exists(values_cache_path):
             self._save_values_cache(df_values, values_cache_path)
-
-        df_selection = df_values.query(selection)
+        if not self._use_super_selection:
+            df_selection = df_values.query(selection)
+        else:
+            df_selection = df_values
         return df_selection
 
     def _get_random_state(self, selection: str) -> Optional[int]:
