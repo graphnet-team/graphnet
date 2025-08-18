@@ -47,7 +47,7 @@ To achieve this, we recommend installing |graphnet|\ GraphNeT into a CVMFS with 
    eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh`
    /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/RHEL_7_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
    # Update central utils
-   pip install --upgrade pip>=20
+   pip install --upgrade 'pip>=20'
    pip install wheel setuptools==59.5.0
    # Install graphnet into the CVMFS as a user
    pip install --user -r requirements/torch_cpu.txt -e .[torch,develop]
