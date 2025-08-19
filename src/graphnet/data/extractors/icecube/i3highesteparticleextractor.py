@@ -183,13 +183,15 @@ class I3HighestEparticleExtractor(I3Extractor):
 
         MMCTrackList = frame[self.mmctracklist]
         if self.daughters:
-            MMCTrackList = [
-                track
-                for track in MMCTrackList
-                if frame[self.mctree].get_primary(track.GetI3Particle())
-                in primaries
-            ]
-            MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList)
+            temp_MMCTrackList = []
+            for track in MMCTrackList:
+                for p in primaries:
+                    if frame[self.mctree].is_in_subtree(
+                        p.id, track.GetI3Particle().id
+                    ):
+                        temp_MMCTrackList.append(track)
+                        break
+            MMCTrackList = simclasses.I3MMCTrackList(temp_MMCTrackList)
 
         MuonGun_tracks = np.array(
             MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
@@ -392,26 +394,19 @@ class I3HighestEparticleExtractor(I3Extractor):
             primaries = [
                 self.check_primary_energy(frame, p) for p in primaries
             ]
-            particles = dataclasses.ListI3Particle()
 
-            particles = frame[self.mctree]
+            daughters = self.get_descendants(frame, primaries)
 
-            e_p = np.array(
-                [
-                    np.array([p.energy, p])
-                    for p in particles
-                    if (
-                        (
-                            (p.energy > min_e)
-                            & (
-                                frame[self.mctree].get_primary(p.id)
-                                in primaries
-                            )
-                        )
-                        & (not p.is_track)
-                    )
-                ]
-            ).T
+            e_p = []
+            for part in daughters:
+                if (part.energy <= min_e) | (part.is_track):
+                    continue
+                for prim in primaries:
+                    if frame[self.mctree].is_in_subtree(prim.id, part.id):
+                        e_p.append(np.array([part.energy, part]))
+                        break
+
+            e_p = np.array(e_p).T
 
         else:
 
@@ -770,3 +765,22 @@ class I3HighestEparticleExtractor(I3Extractor):
             else:
                 visible_particles.append(daughter)
         return visible_particles
+
+    def get_descendants(
+        self, frame: "icetray.I3Frame", particle: "dataclasses.I3Particle"
+    ) -> "dataclasses.ListI3Particle":
+        """Get the descendants of a particle and the particle as a list.
+
+        Args:
+            frame: I3Frame object
+            particle: I3Particle object
+        """
+        daughters = frame[self.mctree].get_daughters(particle)
+        if len(daughters) == 0:
+            return [particle]
+        else:
+            ret = []
+            ret.append(particle)
+            for p in daughters:
+                ret.extend(self.get_descendants(frame, p))
+            return ret
