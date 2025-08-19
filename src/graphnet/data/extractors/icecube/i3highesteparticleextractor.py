@@ -429,9 +429,9 @@ class I3HighestEparticleExtractor(I3Extractor):
                 visible_length,
                 -1,
             )
-        else:
-            energies = e_p[0]
-            particles = e_p[1]
+
+        energies = e_p[0]
+        particles = e_p[1]
 
         pos, direc, lengths = self.get_pos_dir_length(particles)
         pos = pos + direc * lengths
