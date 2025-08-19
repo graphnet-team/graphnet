@@ -1,6 +1,6 @@
 """Extract the highest energy particle in the event."""
 
-from typing import Dict, Any, TYPE_CHECKING, Tuple
+from typing import Dict, Any, TYPE_CHECKING, Tuple, Union, List
 
 
 from .i3extractor import I3Extractor
@@ -231,7 +231,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         particles: List of I3Particles
         """
         if len(particles) == 0:
-            return dataclasses.I3Particle()
+            return dataclasses.I3Particle(), np.array([]), True
 
         energies, lengths = np.array(
             [[p.energy, p.length] for p in particles]
@@ -395,16 +395,12 @@ class I3HighestEparticleExtractor(I3Extractor):
                 self.check_primary_energy(frame, p) for p in primaries
             ]
 
-            daughters = self.get_descendants(frame, primaries)
+            particles = self.get_descendants(frame, primaries)
 
             e_p = []
-            for part in daughters:
-                if (part.energy <= min_e) | (part.is_track):
-                    continue
-                for prim in primaries:
-                    if frame[self.mctree].is_in_subtree(prim.id, part.id):
-                        e_p.append(np.array([part.energy, part]))
-                        break
+            for part in particles:
+                if (part.energy > min_e) & (~part.is_track):
+                    e_p.append(np.array([part.energy, part]))
 
             e_p = np.array(e_p).T
 
@@ -767,7 +763,11 @@ class I3HighestEparticleExtractor(I3Extractor):
         return visible_particles
 
     def get_descendants(
-        self, frame: "icetray.I3Frame", particle: "dataclasses.I3Particle"
+        self,
+        frame: "icetray.I3Frame",
+        particle: Union[
+            "dataclasses.I3Particle", List["dataclasses.I3Particle"]
+        ],
     ) -> "dataclasses.ListI3Particle":
         """Get the descendants of a particle and the particle as a list.
 
@@ -775,12 +775,18 @@ class I3HighestEparticleExtractor(I3Extractor):
             frame: I3Frame object
             particle: I3Particle object
         """
-        daughters = frame[self.mctree].get_daughters(particle)
-        if len(daughters) == 0:
-            return [particle]
-        else:
+        if isinstance(particle, list):
             ret = []
-            ret.append(particle)
-            for p in daughters:
+            for p in particle:
                 ret.extend(self.get_descendants(frame, p))
             return ret
+        else:
+            daughters = frame[self.mctree].get_daughters(particle)
+            if len(daughters) == 0:
+                return [particle]
+            else:
+                ret = []
+                ret.append(particle)
+                for p in daughters:
+                    ret.extend(self.get_descendants(frame, p))
+                return ret
