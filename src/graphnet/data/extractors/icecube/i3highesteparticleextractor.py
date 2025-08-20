@@ -224,7 +224,9 @@ class I3HighestEparticleExtractor(I3Extractor):
         lengths[np.isnan(lengths)] = 0
         return pos, direc, lengths
 
-    def get_bundle_HEP(self, particles: np.array) -> "dataclasses.I3Particle":
+    def get_bundle_HEP(
+        self, particles: np.array
+    ) -> Tuple["dataclasses.I3Particle", np.ndarray, bool]:
         """Get the energy averaged particle of a list of particles.
 
         Args:
