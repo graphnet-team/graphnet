@@ -490,10 +490,17 @@ class I3HighestEparticleExtractor(I3Extractor):
                 intersections = self.hull.surface.intersection(
                     track.pos, track.dir
                 )
-                visible_length = max(
-                    visible_length,
-                    intersections.second - max(intersections.first, 0),
+
+                visible_length = intersections.second - max(
+                    intersections.first, 0
                 )
+
+                # It can happen that both intersections are negative
+                # in this case the particle never reaches the detector
+                # and therefore should not be considered for the HEP
+                if visible_length < 0:
+                    continue
+
                 # Check if we have a single topologically "real" track
                 if not real_track:
                     if not dataclasses.I3MCTree.parent(
