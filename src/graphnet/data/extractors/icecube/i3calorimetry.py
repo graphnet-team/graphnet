@@ -32,6 +32,7 @@ class I3Calorimetry(I3Extractor):
         extractor_name: str = "I3Calorimetry",
         daughters: bool = False,
         highest_energy_primary: bool = False,
+        cascade_deposited_only: bool = True,
         **kwargs: Any,
     ) -> None:
         """Create a ConvexHull object from the GCD file.
@@ -47,6 +48,9 @@ class I3Calorimetry(I3Extractor):
             primary with the highest energy.
             NOTE: Only makes a difference if daughters is False
                 and the event is not a Corsika event.
+        cascade_deposited_only: If True, consider only energies from
+            cascades that are marked as visible. If False the total
+            energy of a cascade is counted.
 
         Variable explanation:
         - e_entrance_track: Total energy of tracks entering the hull.
@@ -68,6 +72,7 @@ class I3Calorimetry(I3Extractor):
         self.mmctracklist = mmctracklist
         self.daughters = daughters
         self.highest_energy_primary = highest_energy_primary
+        self.cascade_deposited_only = cascade_deposited_only
         # Base class constructor
         super().__init__(extractor_name=extractor_name, **kwargs)
 
@@ -104,7 +109,7 @@ class I3Calorimetry(I3Extractor):
                 ):
                     track_lookup[track.id] = track
 
-                e_dep_cascade, e_dep_track, e_ent_track = self.get_energies(
+                e_cascade, e_dep_track, e_ent_track = self.get_energies(
                     frame, primaries, track_lookup
                 )
 
@@ -112,10 +117,10 @@ class I3Calorimetry(I3Extractor):
             else:
                 e_ent_track = np.nan
                 e_dep_track = np.nan
-                e_dep_cascade = np.nan
+                e_cascade = np.nan
                 primary_energy = np.nan
 
-            e_total = e_ent_track + e_dep_cascade
+            e_total = e_ent_track + e_cascade
 
             # In case all particles are considered and
             # there is no energy deposited in the hull,
@@ -133,7 +138,7 @@ class I3Calorimetry(I3Extractor):
                     f"\nCurrent padding: {self.hull.padding}"
                     f"\nTotal energy: {e_total}"
                     f"\nTrack energy: {e_ent_track}"
-                    f"\nCascade energy: {e_dep_cascade}"
+                    f"\nCascade energy: {e_cascade}"
                     f"\nEvent header: {frame['I3EventHeader']}"
                 )
 
@@ -152,7 +157,7 @@ class I3Calorimetry(I3Extractor):
                     e_total,
                     primary_energy,
                     e_ent_track,
-                    e_dep_cascade,
+                    e_cascade,
                     frame["I3EventHeader"],
                 )
 
@@ -165,20 +170,20 @@ class I3Calorimetry(I3Extractor):
                     {}".format(
                     e_total,
                     e_ent_track,
-                    e_dep_cascade,
+                    e_cascade,
                     frame["I3EventHeader"],
                 )
             fraction_primary = e_total / primary_energy
 
             cascade_fraction = None
             if e_total > 0:
-                cascade_fraction = e_dep_cascade / e_total
+                cascade_fraction = e_cascade / e_total
 
             output.update(
                 {
                     "e_entrance_track_" + self._extractor_name: e_ent_track,
                     "e_deposited_track_" + self._extractor_name: e_dep_track,
-                    "e_cascade_" + self._extractor_name: e_dep_cascade,
+                    "e_cascade_" + self._extractor_name: e_cascade,
                     "e_visible_" + self._extractor_name: e_total,
                     "fraction_primary_"
                     + self._extractor_name: fraction_primary,
@@ -197,12 +202,12 @@ class I3Calorimetry(I3Extractor):
         track_lookup: Dict["icetray.I3ParticleID", "icetray.I3Particle"],
     ) -> Tuple[float, float, float]:
         """Get the total energy of cascade particles on entrance."""
-        e_dep_cascade = 0
+        e_cascade = 0
         e_dep_track = 0
         e_ent_track = 0
 
         if len(particles) == 0:
-            return e_dep_cascade, e_dep_track, e_ent_track
+            return e_cascade, e_dep_track, e_ent_track
 
         for particle in particles:
             length = particle.length
@@ -235,7 +240,7 @@ class I3Calorimetry(I3Extractor):
                         self.warning(f"Skipping bad event {hdr}: {e}")
                         e0 = np.nan
                         e1 = np.nan
-                        e_dep_cascade = np.nan
+                        e_cascade = np.nan
                         continue  # skip this frame
                     else:
                         raise  # re-raise unexpected errors
@@ -251,12 +256,12 @@ class I3Calorimetry(I3Extractor):
                 if len(daughters) == 0:
                     continue
                 (
-                    e_dep_cascade,
+                    e_cascade,
                     e_dep_track,
                     e_ent_track,
                 ) = tuple(
                     np.add(
-                        (e_dep_cascade, e_dep_track, e_ent_track),
+                        (e_cascade, e_dep_track, e_ent_track),
                         self.get_energies(
                             frame,
                             daughters,
@@ -266,39 +271,47 @@ class I3Calorimetry(I3Extractor):
                 )
             # If the particle is a cascade in the hull, we add its energy.
             elif particle.is_cascade:
-                # Check wether the cascade is made up of smaller segments
-                # in this case the shape is dark and we want to count
-                # the energy of its daughters.
-                if particle.shape != dataclasses.I3Particle.ParticleShape.Dark:
-                    e_dep_cascade += particle.energy
-                else:
-                    (
-                        e_dep_cascade,
-                        e_dep_track,
-                        e_ent_track,
-                    ) = tuple(
-                        np.add(
-                            (e_dep_cascade, e_dep_track, e_ent_track),
-                            self.get_energies(
-                                frame,
-                                dataclasses.I3MCTree.get_daughters(
-                                    frame[self.mctree], particle
+                if self.cascade_deposited_only:
+                    # Check wether the cascade is made up of smaller segments
+                    # in this case the shape is dark and we want to count
+                    # the energy of its daughters.
+                    if (
+                        particle.shape
+                        != dataclasses.I3Particle.ParticleShape.Dark
+                    ):
+                        e_cascade += particle.energy
+                    else:
+                        (
+                            e_cascade,
+                            e_dep_track,
+                            e_ent_track,
+                        ) = tuple(
+                            np.add(
+                                (e_cascade, e_dep_track, e_ent_track),
+                                self.get_energies(
+                                    frame,
+                                    dataclasses.I3MCTree.get_daughters(
+                                        frame[self.mctree], particle
+                                    ),
+                                    track_lookup,
                                 ),
-                                track_lookup,
-                            ),
+                            )
                         )
-                    )
+                else:
+                    # In this case we consider the total cascade
+                    # energy and therefore do not look at the daughters
+                    e_cascade += particle.energy
             # The particle is in the hull and not a track in the MMCTrackList,
             # or a cascade, so we look at its daughters.
             # Could be a NuMu interacting within the hull.
             else:
                 (
-                    e_dep_cascade,
+                    e_cascade,
                     e_dep_track,
                     e_ent_track,
                 ) = tuple(
                     np.add(
-                        (e_dep_cascade, e_dep_track, e_ent_track),
+                        (e_cascade, e_dep_track, e_ent_track),
                         self.get_energies(
                             frame,
                             dataclasses.I3MCTree.get_daughters(
@@ -309,7 +322,7 @@ class I3Calorimetry(I3Extractor):
                     )
                 )
 
-        return e_dep_cascade, e_dep_track, e_ent_track
+        return e_cascade, e_dep_track, e_ent_track
 
     def frame_contains_info(self, frame: "icetray.I3Frame") -> bool:
         """Check if the frame contains the necessary information."""
