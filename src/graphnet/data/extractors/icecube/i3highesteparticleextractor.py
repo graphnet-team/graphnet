@@ -340,10 +340,16 @@ class I3HighestEparticleExtractor(I3Extractor):
 
                         # a skimming track can be outside the hull
                         # therefore it can have 0 visible length
-                        visible_length = max(
-                            0,
-                            intersections.second - max(intersections.first, 0),
+                        visible_length = intersections.second - max(
+                            intersections.first, 0
                         )
+
+                        # It can happen that both intersections are negative
+                        # in this case the particle never reaches the detector
+                        # and therefore should not be considered for the HEP
+                        if visible_length < 0:
+                            continue
+
                         e_mask = energies > EonEntrance
                         energies = energies[e_mask]
                         MMCTrackList = MMCTrackList[e_mask]
@@ -727,6 +733,10 @@ class I3HighestEparticleExtractor(I3Extractor):
                     containment = (
                         GN_containment_types.throughgoing_bundle.value
                     )
+
+        assert (
+            visible_length >= 0
+        ), f"Visible length is negative for particle {frame['I3EventHeader']}"
 
         closest_pos = np.sum(closest_pos, axis=0) / EonEntrance
 
