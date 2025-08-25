@@ -133,8 +133,8 @@ class I3Calorimetry(I3Extractor):
                 )
             ):
                 self.warning(
-                    "No energy deposited in the hull,"
-                    "Think about in creasing the padding."
+                    "No energy deposited in the hull, "
+                    "Think about increasing the padding."
                     f"\nCurrent padding: {self.hull.padding}"
                     f"\nTotal energy: {e_total}"
                     f"\nTrack energy: {e_ent_track}"
