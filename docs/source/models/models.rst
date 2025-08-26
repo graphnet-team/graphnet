@@ -513,3 +513,10 @@ Below is a minimal example for training a GNN in GraphNeT for energy reconstruct
 Because :code:`ModelConfig` summarises a :code:`Model` completely, including its :code:`Task`\ (s), 
 the only modifications required to change the example to reconstruct (or classify) a different attribute than energy, is to pass a :code:`ModelConfig` that defines a model with the corresponding :code:`Task`.
 Similarly, if you wanted to train on a different :code:`Dataset`, you would just have to pass a :code:`DatasetConfig` that defines *that* :code:`Dataset` instead.
+
+Mathematical Background
+-----------------------
+
+For detailed mathematical derivations and implementation details of specific loss functions:
+
+* :doc:`von_mises_fisher_mathematical_background` - Mathematical background for the von Mises-Fisher loss function implementation, including Taylor series analysis and numerical stability considerations.
