@@ -323,7 +323,28 @@ class I3HighestEparticleExtractor(I3Extractor):
                 if not np.isnan(intersections.first) & (
                     intersections.first < length
                 ):
-                    if MGtrack.get_energy(intersections.first) > EonEntrance:
+                    try:
+                        tmp_EonEntrance = MGtrack.get_energy(
+                            max(intersections.first, 0)
+                        )
+                    # Catch MuonGun errors
+                    except RuntimeError as e:
+                        if (
+                            "sum of losses is smaller than "
+                            "energy at last checkpoint" in str(e)
+                        ):
+                            hdr = frame["I3EventHeader"]
+                            e.add_note(
+                                f"Error in MuonGun track in event {hdr}"
+                            )
+                            self.warning(
+                                f"Detected corrupt track in {hdr}: {e}"
+                            )
+                            continue
+                        else:
+                            raise  # re-raise unexpected errors
+
+                    if tmp_EonEntrance > EonEntrance:
                         particle = track_particle
 
                         closest_pos = np.array(
@@ -334,12 +355,8 @@ class I3HighestEparticleExtractor(I3Extractor):
                             ]
                         )
 
-                        EonEntrance = MGtrack.get_energy(
-                            max(intersections.first, 0)
-                        )
+                        EonEntrance = tmp_EonEntrance
 
-                        # a skimming track can be outside the hull
-                        # therefore it can have 0 visible length
                         visible_length = intersections.second - max(
                             intersections.first, 0
                         )
@@ -712,7 +729,27 @@ class I3HighestEparticleExtractor(I3Extractor):
             if intersections.second < 0:
                 continue
 
-            track_energy = MGtrack.get_energy(intersections.first)
+            try:
+                track_energy = MGtrack.get_energy(intersections.first)
+            # Catch MuonGun errors
+            except RuntimeError as e:
+                if (
+                    "sum of losses is smaller than "
+                    "energy at last checkpoint" in str(e)
+                ):
+                    hdr = frame["I3EventHeader"]
+                    e.add_note(f"Error in MuonGun track in event {hdr}")
+                    self.warning(f"Detected corrupt track in {hdr}: {e}")
+                    return (
+                        dataclasses.I3Particle(),
+                        0.0,
+                        -1.0,
+                        -1,
+                        GN_containment_types.no_intersect.value,
+                    )
+                else:
+                    raise  # re-raise unexpected errors
+
             EonEntrance += track_energy
 
             closest_pos.append(
