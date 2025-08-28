@@ -707,6 +707,11 @@ class I3HighestEparticleExtractor(I3Extractor):
                 MGtrack.pos, MGtrack.dir
             )
 
+            # Particles that passed the sphere check but
+            # do not actually intersect the hull
+            if intersections.second < 0:
+                continue
+
             track_energy = MGtrack.get_energy(intersections.first)
             EonEntrance += track_energy
 
@@ -733,6 +738,19 @@ class I3HighestEparticleExtractor(I3Extractor):
                     containment = (
                         GN_containment_types.throughgoing_bundle.value
                     )
+
+        # If no intersection.second is every positive
+        # the visible_length can still be negative here
+        # this means that all particles that passed the
+        # sphere check do not actually make it to the real hull
+        if visible_length < 0:
+            return (
+                dataclasses.I3Particle(),
+                0.0,
+                -1.0,
+                -1,
+                GN_containment_types.no_intersect.value,
+            )
 
         assert (
             visible_length >= 0
