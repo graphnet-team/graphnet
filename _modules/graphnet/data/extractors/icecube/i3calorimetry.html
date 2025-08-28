@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-data-extractors-icecube-i3calorimetry--page-root">Source code for graphnet.data.extractors.icecube.i3calorimetry</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Extract all the visible particles entering the volume."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utilities.gcd_hull</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCD_hull</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.i3extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Extractor</span>
@@ -365,7 +365,6 @@
         <span class="n">icetray</span><span class="p">,</span>
         <span class="n">dataclasses</span><span class="p">,</span>
         <span class="n">MuonGun</span><span class="p">,</span>
-        <span class="n">simclasses</span><span class="p">,</span>
     <span class="p">)</span>  <span class="c1"># pyright: reportMissingImports=false</span>
 
 
@@ -385,6 +384,8 @@
         <span class="n">mmctracklist</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"MMCTrackList"</span><span class="p">,</span>
         <span class="n">extractor_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"I3Calorimetry"</span><span class="p">,</span>
         <span class="n">daughters</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">highest_energy_primary</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">cascade_deposited_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Create a ConvexHull object from the GCD file.</span>
@@ -394,14 +395,37 @@
 <span class="sd">        mctree: Name of the I3MCTree in the frame.</span>
 <span class="sd">        mmctracklist: Name of the MMCTrackList in the frame.</span>
 <span class="sd">        extractor_name: Name of the extractor.</span>
-<span class="sd">        daughters: If True, only consider particles that are</span>
-<span class="sd">            daughters of the primary.</span>
+<span class="sd">        daughters: If True, only calculate energies for particles</span>
+<span class="sd">            that are daughters of the primary.</span>
+<span class="sd">        highest_energy_primary: If True, takes into account only the</span>
+<span class="sd">            primary with the highest energy.</span>
+<span class="sd">            NOTE: Only makes a difference if daughters is False</span>
+<span class="sd">                and the event is not a Corsika event.</span>
+<span class="sd">        cascade_deposited_only: If True, consider only energies from</span>
+<span class="sd">            cascades that are marked as visible. If False the total</span>
+<span class="sd">            energy of a cascade is counted.</span>
+
+<span class="sd">        Variable explanation:</span>
+<span class="sd">        - e_entrance_track: Total energy of tracks entering the hull.</span>
+<span class="sd">        - e_deposited_track: Total energy deposited by tracks in the hull.</span>
+<span class="sd">        - e_cascade: Total energy of cascade particles in the hull.</span>
+<span class="sd">        - e_visible: Total energy of particles entering the hull.</span>
+<span class="sd">            NOTE: if daughters is True, this is the total visible energy</span>
+<span class="sd">            of daughter particles of the primary particles. If this is 0</span>
+<span class="sd">            that means that all the light in the detector comes from</span>
+<span class="sd">            particles that are daughters of coincident primaries.</span>
+<span class="sd">        - fraction_primary: Fraction of `e_visible` compared to</span>
+<span class="sd">            the primary energy.</span>
+<span class="sd">        - fraction_cascade: Fraction of the total energy that is</span>
+<span class="sd">            deposited by cascade particles compared to the total energy.</span>
 <span class="sd">        """</span>
         <span class="c1"># Member variable(s)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">hull</span> <span class="o">=</span> <span class="n">hull</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mctree</span> <span class="o">=</span> <span class="n">mctree</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mmctracklist</span> <span class="o">=</span> <span class="n">mmctracklist</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span> <span class="o">=</span> <span class="n">daughters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">highest_energy_primary</span> <span class="o">=</span> <span class="n">highest_energy_primary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cascade_deposited_only</span> <span class="o">=</span> <span class="n">cascade_deposited_only</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor_name</span><span class="o">=</span><span class="n">extractor_name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -410,23 +434,71 @@
         <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame_contains_info</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
 
-            <span class="n">e_entrance_track</span><span class="p">,</span> <span class="n">e_deposited_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_track_energy</span><span class="p">(</span>
-                <span class="n">frame</span>
+            <span class="n">primaries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_primaries</span><span class="p">(</span>
+                <span class="n">frame</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">highest_energy_primary</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">e_deposited_cascade</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_cascade_energy</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 
-            <span class="n">primary_energy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">energy</span>
-                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_primary_energy</span><span class="p">(</span>
-                        <span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_primaries</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">)</span>
-                    <span class="p">)</span>
-                <span class="p">]</span>
-            <span class="p">)</span>
-            <span class="n">e_total</span> <span class="o">=</span> <span class="n">e_entrance_track</span> <span class="o">+</span> <span class="n">e_deposited_cascade</span>
+                <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mmctracklist</span><span class="p">]</span>
+                <span class="c1"># Filter tracks that are not daughters of the desired</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">:</span>
+                    <span class="n">temp_MMCTrackList</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">MMCTrackList</span><span class="p">:</span>
+                        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">is_in_subtree</span><span class="p">(</span>
+                                <span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">GetI3Particle</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                            <span class="p">):</span>
+                                <span class="n">temp_MMCTrackList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+                                <span class="k">break</span>
+                    <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">temp_MMCTrackList</span>
 
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">:</span>
+                <span class="c1"># Create a lookup dict for the tracks</span>
+                <span class="n">track_lookup</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">MuonGun</span><span class="o">.</span><span class="n">Track</span><span class="o">.</span><span class="n">harvest</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">MMCTrackList</span>
+                <span class="p">):</span>
+                    <span class="n">track_lookup</span><span class="p">[</span><span class="n">track</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">track</span>
+
+                <span class="n">e_cascade</span><span class="p">,</span> <span class="n">e_dep_track</span><span class="p">,</span> <span class="n">e_ent_track</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">,</span> <span class="n">primaries</span><span class="p">,</span> <span class="n">track_lookup</span>
+                <span class="p">)</span>
+
+                <span class="n">primary_energy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">e_ent_track</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">e_dep_track</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">e_cascade</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">primary_energy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+            <span class="n">e_total</span> <span class="o">=</span> <span class="n">e_ent_track</span> <span class="o">+</span> <span class="n">e_cascade</span>
+
+            <span class="c1"># In case all particles are considered and</span>
+            <span class="c1"># there is no energy deposited in the hull,</span>
+            <span class="c1"># we warn the user.</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">,</span>
+                    <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">highest_energy_primary</span><span class="p">,</span>
+                    <span class="n">e_total</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">"No energy deposited in the hull, "</span>
+                    <span class="s2">"Think about increasing the padding."</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Current padding: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">padding</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Total energy: </span><span class="si">{</span><span class="n">e_total</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Track energy: </span><span class="si">{</span><span class="n">e_ent_track</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Cascade energy: </span><span class="si">{</span><span class="n">e_cascade</span><span class="si">}</span><span class="s2">"</span>
+                    <span class="sa">f</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Event header: </span><span class="si">{</span><span class="n">frame</span><span class="p">[</span><span class="s1">'I3EventHeader'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Check only in the case that there were primaries</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">primaries</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">e_total</span><span class="p">)):</span>
+
+                <span class="c1"># total energy should always be less than the primary energy</span>
                 <span class="k">assert</span> <span class="n">e_total</span> <span class="o">&lt;=</span> <span class="p">(</span>
                     <span class="n">primary_energy</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
                 <span class="p">),</span> <span class="s2">"Total energy on entrance is greater than primary energy</span><span class="se">\</span>
@@ -437,26 +509,34 @@
 <span class="s2">                    </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">e_total</span><span class="p">,</span>
                     <span class="n">primary_energy</span><span class="p">,</span>
-                    <span class="n">e_entrance_track</span><span class="p">,</span>
-                    <span class="n">e_deposited_cascade</span><span class="p">,</span>
+                    <span class="n">e_ent_track</span><span class="p">,</span>
+                    <span class="n">e_cascade</span><span class="p">,</span>
                     <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">],</span>
                 <span class="p">)</span>
 
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="n">primary_energy</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="p">),</span> <span class="s2">"Primary energy is 0, this should not happen.</span><span class="se">\</span>
+<span class="s2">                    </span><span class="se">\n</span><span class="s2">Total energy: </span><span class="si">{}</span><span class="se">\</span>
+<span class="s2">                    </span><span class="se">\n</span><span class="s2">Track energy: </span><span class="si">{}</span><span class="se">\</span>
+<span class="s2">                    </span><span class="se">\n</span><span class="s2">Cascade energy: </span><span class="si">{}</span><span class="se">\</span>
+<span class="s2">                    </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">e_total</span><span class="p">,</span>
+                    <span class="n">e_ent_track</span><span class="p">,</span>
+                    <span class="n">e_cascade</span><span class="p">,</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">],</span>
+                <span class="p">)</span>
+            <span class="n">fraction_primary</span> <span class="o">=</span> <span class="n">e_total</span> <span class="o">/</span> <span class="n">primary_energy</span>
+
             <span class="n">cascade_fraction</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">e_total</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">cascade_fraction</span> <span class="o">=</span> <span class="n">e_deposited_cascade</span> <span class="o">/</span> <span class="n">e_total</span>
+                <span class="n">cascade_fraction</span> <span class="o">=</span> <span class="n">e_cascade</span> <span class="o">/</span> <span class="n">e_total</span>
 
-            <span class="k">if</span> <span class="n">primary_energy</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">fraction_primary</span> <span class="o">=</span> <span class="n">e_total</span> <span class="o">/</span> <span class="n">primary_energy</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">fraction_primary</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">output</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
-                    <span class="s2">"e_entrance_track_"</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">e_entrance_track</span><span class="p">,</span>
-                    <span class="s2">"e_deposited_track_"</span>
-                    <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">e_deposited_track</span><span class="p">,</span>
-                    <span class="s2">"e_cascade_"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">e_deposited_cascade</span><span class="p">,</span>
+                    <span class="s2">"e_entrance_track_"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">e_ent_track</span><span class="p">,</span>
+                    <span class="s2">"e_deposited_track_"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">e_dep_track</span><span class="p">,</span>
+                    <span class="s2">"e_cascade_"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">e_cascade</span><span class="p">,</span>
                     <span class="s2">"e_visible_"</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">e_total</span><span class="p">,</span>
                     <span class="s2">"fraction_primary_"</span>
                     <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor_name</span><span class="p">:</span> <span class="n">fraction_primary</span><span class="p">,</span>
@@ -468,6 +548,138 @@
         <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">output</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exclude</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">output</span>
 
+<div class="viewcode-block" id="I3Calorimetry.get_energies">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3calorimetry.html#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.get_energies">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_energies</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span>
+        <span class="n">particles</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="s2">"dataclasses.I3Particle"</span><span class="p">],</span>
+        <span class="n">track_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="s2">"icetray.I3ParticleID"</span><span class="p">,</span> <span class="s2">"icetray.I3Particle"</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Get the total energy of cascade particles on entrance."""</span>
+        <span class="n">e_cascade</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">e_dep_track</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">e_ent_track</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">e_cascade</span><span class="p">,</span> <span class="n">e_dep_track</span><span class="p">,</span> <span class="n">e_ent_track</span>
+
+        <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">particles</span><span class="p">:</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">length</span>
+            <span class="k">if</span> <span class="n">length</span> <span class="o">!=</span> <span class="n">length</span><span class="p">:</span>
+                <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1"># If the particle is a track in the MMCTrackList take the</span>
+            <span class="c1"># energy at the entrance and exit of the hull.</span>
+            <span class="c1"># NOTE: We do not consider daughters of tracks,</span>
+            <span class="c1"># because they are already included in the track energy.</span>
+            <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">is_track</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">track_lookup</span><span class="p">):</span>
+                <span class="n">track</span> <span class="o">=</span> <span class="n">track_lookup</span><span class="p">[</span><span class="n">particle</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+
+                <span class="c1"># Find distance to entrance and exit from sampling volume</span>
+                <span class="n">intersections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                    <span class="n">track</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">dir</span>
+                <span class="p">)</span>
+                <span class="c1"># Get the corresponding energies</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">e0</span> <span class="o">=</span> <span class="n">track</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">)</span>
+                    <span class="n">e1</span> <span class="o">=</span> <span class="n">track</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+
+                <span class="c1"># Catch MuonGun errors</span>
+                <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="s2">"sum of losses is smaller than "</span>
+                        <span class="s2">"energy at last checkpoint"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                    <span class="p">):</span>
+                        <span class="n">hdr</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">]</span>
+                        <span class="n">e</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error in MuonGun track in event </span><span class="si">{</span><span class="n">hdr</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Skipping bad event </span><span class="si">{</span><span class="n">hdr</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                        <span class="n">e0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">e1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="n">e_cascade</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                        <span class="k">continue</span>  <span class="c1"># skip this frame</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">raise</span>  <span class="c1"># re-raise unexpected errors</span>
+
+                <span class="n">e_dep_track</span> <span class="o">+=</span> <span class="n">e0</span> <span class="o">-</span> <span class="n">e1</span>
+                <span class="n">e_ent_track</span> <span class="o">+=</span> <span class="n">e0</span>
+            <span class="c1"># if the particle is not in the hull, but has daughters,</span>
+            <span class="c1"># we add the energies of the daughters.</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_in_hull</span><span class="p">(</span><span class="n">particle</span><span class="p">):</span>
+                <span class="n">daughters</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span>
+                    <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">particle</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">daughters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="p">(</span>
+                    <span class="n">e_cascade</span><span class="p">,</span>
+                    <span class="n">e_dep_track</span><span class="p">,</span>
+                    <span class="n">e_ent_track</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">e_cascade</span><span class="p">,</span> <span class="n">e_dep_track</span><span class="p">,</span> <span class="n">e_ent_track</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span>
+                            <span class="n">frame</span><span class="p">,</span>
+                            <span class="n">daughters</span><span class="p">,</span>
+                            <span class="n">track_lookup</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="c1"># If the particle is a cascade in the hull, we add its energy.</span>
+            <span class="k">elif</span> <span class="n">particle</span><span class="o">.</span><span class="n">is_cascade</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascade_deposited_only</span><span class="p">:</span>
+                    <span class="c1"># Check wether the cascade is made up of smaller segments</span>
+                    <span class="c1"># in this case the shape is dark and we want to count</span>
+                    <span class="c1"># the energy of its daughters.</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">particle</span><span class="o">.</span><span class="n">shape</span>
+                        <span class="o">!=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="o">.</span><span class="n">ParticleShape</span><span class="o">.</span><span class="n">Dark</span>
+                    <span class="p">):</span>
+                        <span class="n">e_cascade</span> <span class="o">+=</span> <span class="n">particle</span><span class="o">.</span><span class="n">energy</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="p">(</span>
+                            <span class="n">e_cascade</span><span class="p">,</span>
+                            <span class="n">e_dep_track</span><span class="p">,</span>
+                            <span class="n">e_ent_track</span><span class="p">,</span>
+                        <span class="p">)</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                                <span class="p">(</span><span class="n">e_cascade</span><span class="p">,</span> <span class="n">e_dep_track</span><span class="p">,</span> <span class="n">e_ent_track</span><span class="p">),</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span>
+                                    <span class="n">frame</span><span class="p">,</span>
+                                    <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span>
+                                        <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">particle</span>
+                                    <span class="p">),</span>
+                                    <span class="n">track_lookup</span><span class="p">,</span>
+                                <span class="p">),</span>
+                            <span class="p">)</span>
+                        <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># In this case we consider the total cascade</span>
+                    <span class="c1"># energy and therefore do not look at the daughters</span>
+                    <span class="n">e_cascade</span> <span class="o">+=</span> <span class="n">particle</span><span class="o">.</span><span class="n">energy</span>
+            <span class="c1"># The particle is in the hull and not a track in the MMCTrackList,</span>
+            <span class="c1"># or a cascade, so we look at its daughters.</span>
+            <span class="c1"># Could be a NuMu interacting within the hull.</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="p">(</span>
+                    <span class="n">e_cascade</span><span class="p">,</span>
+                    <span class="n">e_dep_track</span><span class="p">,</span>
+                    <span class="n">e_ent_track</span><span class="p">,</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">(</span>
+                        <span class="p">(</span><span class="n">e_cascade</span><span class="p">,</span> <span class="n">e_dep_track</span><span class="p">,</span> <span class="n">e_ent_track</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span>
+                            <span class="n">frame</span><span class="p">,</span>
+                            <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span>
+                                <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">particle</span>
+                            <span class="p">),</span>
+                            <span class="n">track_lookup</span><span class="p">,</span>
+                        <span class="p">),</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">e_cascade</span><span class="p">,</span> <span class="n">e_dep_track</span><span class="p">,</span> <span class="n">e_ent_track</span></div>
+
+
 <div class="viewcode-block" id="I3Calorimetry.frame_contains_info">
 <a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3calorimetry.html#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.frame_contains_info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">frame_contains_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -475,140 +687,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mctree</span> <span class="ow">in</span> <span class="n">frame</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mmctracklist</span> <span class="ow">in</span> <span class="n">frame</span></div>
 
 
-<div class="viewcode-block" id="I3Calorimetry.total_track_energy">
-<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3calorimetry.html#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_track_energy">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">total_track_energy</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">"""Get the total energy of track particles on entrance."""</span>
-        <span class="n">e_entrance</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">e_deposited</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">primaries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_primaries</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">)</span>
-        <span class="n">primaries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_primary_energy</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">primaries</span><span class="p">)</span>
-
-        <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mmctracklist</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">:</span>
-            <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">track</span>
-                <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">MMCTrackList</span>
-                <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">get_primary</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">GetI3Particle</span><span class="p">())</span>
-                <span class="ow">in</span> <span class="n">primaries</span>
-            <span class="p">]</span>
-            <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">simclasses</span><span class="o">.</span><span class="n">I3MMCTrackList</span><span class="p">(</span><span class="n">MMCTrackList</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">MuonGun</span><span class="o">.</span><span class="n">Track</span><span class="o">.</span><span class="n">harvest</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">MMCTrackList</span><span class="p">):</span>
-            <span class="k">assert</span> <span class="n">track</span><span class="o">.</span><span class="n">is_track</span><span class="p">,</span> <span class="s2">"Track is not a track"</span>
-
-            <span class="c1"># Find distance to entrance and exit from sampling volume</span>
-            <span class="n">intersections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
-                <span class="n">track</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">dir</span>
-            <span class="p">)</span>
-            <span class="c1"># Get the corresponding energies</span>
-
-            <span class="n">e0</span> <span class="o">=</span> <span class="n">track</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">)</span>
-            <span class="n">e1</span> <span class="o">=</span> <span class="n">track</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
-
-            <span class="c1"># Accumulate</span>
-            <span class="n">e_deposited</span> <span class="o">+=</span> <span class="n">e0</span> <span class="o">-</span> <span class="n">e1</span>
-            <span class="n">e_entrance</span> <span class="o">+=</span> <span class="n">e0</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="n">e_entrance</span> <span class="o">&lt;=</span> <span class="nb">sum</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">]</span>
-                <span class="p">),</span> <span class="s2">"Energy on entrance is greater than primary energy"</span>
-                <span class="k">assert</span> <span class="n">e_deposited</span> <span class="o">&lt;=</span> <span class="nb">sum</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">]</span>
-                <span class="p">),</span> <span class="s2">"Energy deposited is greater than primary energy"</span>
-        <span class="k">return</span> <span class="n">e_entrance</span><span class="p">,</span> <span class="n">e_deposited</span></div>
-
-
-<div class="viewcode-block" id="I3Calorimetry.total_cascade_energy">
-<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3calorimetry.html#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_cascade_energy">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">total_cascade_energy</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Get the total energy of cascade particles on entrance."""</span>
-        <span class="n">e_deposited</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="n">particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_primaries</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">)</span>
-
-        <span class="n">particles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">particles</span> <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_track</span><span class="p">)])</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">e_deposited</span>
-
-        <span class="n">pos</span><span class="p">,</span> <span class="n">direc</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="p">[</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">pos</span><span class="p">),</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">z</span><span class="p">]),</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
-                <span class="p">]</span>
-                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">particles</span>
-            <span class="p">],</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="n">length</span> <span class="o">=</span> <span class="n">length</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-
-        <span class="c1"># replace length nan with 0</span>
-        <span class="n">length</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+<div class="viewcode-block" id="I3Calorimetry.is_in_hull">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3calorimetry.html#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.is_in_hull">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_in_hull</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">particle</span><span class="p">:</span> <span class="s2">"dataclasses.I3Particle"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Check if a particle is in the hull."""</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">particle</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">direc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">particle</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">particle</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">particle</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">z</span><span class="p">])</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">particle</span><span class="o">.</span><span class="n">length</span> <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">direc</span> <span class="o">*</span> <span class="n">length</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
 
-        <span class="n">in_volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">point_in_hull</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-        <span class="n">particles</span> <span class="o">=</span> <span class="n">particles</span><span class="p">[</span><span class="n">in_volume</span><span class="p">]</span>
-
-        <span class="k">for</span> <span class="n">particle</span> <span class="ow">in</span> <span class="n">particles</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">particle</span><span class="o">.</span><span class="n">is_cascade</span><span class="p">:</span>
-                <span class="n">e_deposited</span> <span class="o">+=</span> <span class="n">particle</span><span class="o">.</span><span class="n">energy</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">daughters</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span>
-                    <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">particle</span>
-                <span class="p">)</span>
-
-                <span class="n">pos</span><span class="p">,</span> <span class="n">direc</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
-                    <span class="p">[</span>
-                        <span class="p">[</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">pos</span><span class="p">),</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">dir</span><span class="o">.</span><span class="n">z</span><span class="p">]),</span>
-                            <span class="n">p</span><span class="o">.</span><span class="n">length</span><span class="p">,</span>
-                        <span class="p">]</span>
-                        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">daughters</span>
-                    <span class="p">],</span>
-                    <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">,</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">T</span>
-
-                <span class="n">length</span> <span class="o">=</span> <span class="n">length</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-
-                <span class="c1"># replace length nan with 0</span>
-                <span class="n">length</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">length</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">direc</span> <span class="o">*</span> <span class="n">length</span>
-                <span class="n">pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-
-                <span class="n">in_volume</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">point_in_hull</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
-                <span class="n">daughters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">daughters</span><span class="p">)[</span><span class="n">in_volume</span><span class="p">]</span>
-
-            <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">daughters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">daughter</span> <span class="o">=</span> <span class="n">daughters</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">daughters</span> <span class="o">=</span> <span class="n">daughters</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-                <span class="n">length</span> <span class="o">=</span> <span class="n">daughter</span><span class="o">.</span><span class="n">length</span>
-                <span class="k">if</span> <span class="n">daughter</span><span class="o">.</span><span class="n">is_track</span><span class="p">:</span>
-                    <span class="k">continue</span>
-                <span class="k">if</span> <span class="n">length</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span>
-                    <span class="n">length</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="k">if</span> <span class="n">daughter</span><span class="o">.</span><span class="n">is_cascade</span> <span class="ow">and</span> <span class="n">daughter</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="s2">"Dark"</span><span class="p">:</span>
-                    <span class="n">e_deposited</span> <span class="o">+=</span> <span class="n">daughter</span><span class="o">.</span><span class="n">energy</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">daughters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
-                        <span class="p">[</span>
-                            <span class="n">daughters</span><span class="p">,</span>
-                            <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span>
-                                <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">daughter</span>
-                            <span class="p">),</span>
-                        <span class="p">]</span>
-                    <span class="p">)</span>
-        <span class="k">return</span> <span class="n">e_deposited</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">point_in_hull</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

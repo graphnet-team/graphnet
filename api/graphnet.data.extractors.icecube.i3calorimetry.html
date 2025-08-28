@@ -375,11 +375,11 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3Calorimetry</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.get_energies" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_energies()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.frame_contains_info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_contains_info()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_track_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">total_track_energy()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_cascade_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">total_cascade_energy()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.is_in_hull" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_in_hull()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -396,6 +396,13 @@
     <li class="md-nav__item">
     
     
+      <a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.get_energies" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_energies()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.frame_contains_info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_contains_info()</span></code></a>
       
     
@@ -403,14 +410,7 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_track_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">total_track_energy()</span></code></a>
-      
-    
-    </li>
-    <li class="md-nav__item">
-    
-    
-      <a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_cascade_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">total_cascade_energy()</span></code></a>
+      <a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.is_in_hull" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_in_hull()</span></code></a>
       
     
     </li></ul>
@@ -717,11 +717,11 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3Calorimetry</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.get_energies" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_energies()</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.frame_contains_info" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">frame_contains_info()</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_track_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">total_track_energy()</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_cascade_energy" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">total_cascade_energy()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.is_in_hull" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">is_in_hull()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -741,7 +741,7 @@
 <p>Extract all the visible particles entering the volume.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3calorimetry.</span></span><span class="sig-name descname"><span class="pre">I3Calorimetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hull</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmctracklist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daughters</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3calorimetry.html#I3Calorimetry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.i3calorimetry.</span></span><span class="sig-name descname"><span class="pre">I3Calorimetry</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hull</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mmctracklist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daughters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highest_energy_primary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cascade_deposited_only</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3calorimetry.html#I3Calorimetry"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.extractors.icecube.i3extractor.html#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="graphnet.data.extractors.icecube.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a></p>
 <p>Event level energy labeling for IceCube data.</p>
 <p>This class extracts cumulative energy information from all visible
@@ -752,10 +752,44 @@ of the detector volume.
 mctree: Name of the I3MCTree in the frame.
 mmctracklist: Name of the MMCTrackList in the frame.
 extractor_name: Name of the extractor.
-daughters: If True, only consider particles that are</p>
+daughters: If True, only calculate energies for particles</p>
 <blockquote>
-<div><p>daughters of the primary.</p>
+<div><p>that are daughters of the primary.</p>
 </div></blockquote>
+<dl>
+<dt>highest_energy_primary: If True, takes into account only the</dt><dd><p>primary with the highest energy.
+NOTE: Only makes a difference if daughters is False</p>
+<blockquote>
+<div><p>and the event is not a Corsika event.</p>
+</div></blockquote>
+</dd>
+<dt>cascade_deposited_only: If True, consider only energies from</dt><dd><p>cascades that are marked as visible. If False the total
+energy of a cascade is counted.</p>
+</dd>
+</dl>
+<p>Variable explanation:
+- e_entrance_track: Total energy of tracks entering the hull.
+- e_deposited_track: Total energy deposited by tracks in the hull.
+- e_cascade: Total energy of cascade particles in the hull.
+- e_visible: Total energy of particles entering the hull.</p>
+<blockquote>
+<div><p>NOTE: if daughters is True, this is the total visible energy
+of daughter particles of the primary particles. If this is 0
+that means that all the light in the detector comes from
+particles that are daughters of coincident primaries.</p>
+</div></blockquote>
+<ul class="simple">
+<li><dl class="simple">
+<dt>fraction_primary: Fraction of <cite>e_visible</cite> compared to</dt><dd><p>the primary energy.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>fraction_cascade: Fraction of the total energy that is</dt><dd><p>deposited by cascade particles compared to the total energy.</p>
+</dd>
+</dl>
+</li>
+</ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -764,10 +798,29 @@ daughters: If True, only consider particles that are</p>
 <li><p><strong>mmctracklist</strong> (<em>str</em>)</p></li>
 <li><p><strong>extractor_name</strong> (<em>str</em>)</p></li>
 <li><p><strong>daughters</strong> (<em>bool</em>)</p></li>
+<li><p><strong>highest_energy_primary</strong> (<em>bool</em>)</p></li>
+<li><p><strong>cascade_deposited_only</strong> (<em>bool</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.get_energies">
+<span class="sig-name descname"><span class="pre">get_energies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">track_lookup</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3calorimetry.html#I3Calorimetry.get_energies"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.get_energies" title="Link to this definition">¶</a></dt>
+<dd><p>Get the total energy of cascade particles on entrance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
+<li><p><strong>particles</strong> (<em>List</em><em>[</em><em>icecube.dataclasses.I3Particle</em><em>]</em>)</p></li>
+<li><p><strong>track_lookup</strong> (<em>Dict</em><em>[</em><em>icecube.icetray.I3ParticleID</em><em>, </em><em>icecube.icetray.I3Particle</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.frame_contains_info">
 <span class="sig-name descname"><span class="pre">frame_contains_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3calorimetry.html#I3Calorimetry.frame_contains_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.frame_contains_info" title="Link to this definition">¶</a></dt>
@@ -782,28 +835,15 @@ daughters: If True, only consider particles that are</p>
 </dl>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_track_energy">
-<span class="sig-name descname"><span class="pre">total_track_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3calorimetry.html#I3Calorimetry.total_track_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_track_energy" title="Link to this definition">¶</a></dt>
-<dd><p>Get the total energy of track particles on entrance.</p>
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.is_in_hull">
+<span class="sig-name descname"><span class="pre">is_in_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3calorimetry.html#I3Calorimetry.is_in_hull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.is_in_hull" title="Link to this definition">¶</a></dt>
+<dd><p>Check if a particle is in the hull.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p>
-</dd>
-</dl>
-</dd></dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_cascade_energy">
-<span class="sig-name descname"><span class="pre">total_cascade_energy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3calorimetry.html#I3Calorimetry.total_cascade_energy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3calorimetry.I3Calorimetry.total_cascade_energy" title="Link to this definition">¶</a></dt>
-<dd><p>Get the total energy of cascade particles on entrance.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
-</dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p>
+<dd class="field-even"><p><strong>particle</strong> (<em>icecube.dataclasses.I3Particle</em>)</p>
 </dd>
 </dl>
 </dd></dl>
