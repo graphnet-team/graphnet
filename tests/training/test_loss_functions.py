@@ -3,6 +3,7 @@
 import numpy as np
 import pytest
 import torch
+import warnings
 from torch import Tensor
 from torch.autograd import grad
 
@@ -182,3 +183,93 @@ def test_von_mises_fisher_approximation_large_kappa(
     assert torch.allclose(
         grads_approx[exact_is_valid], grads_exact[exact_is_valid], rtol=1e-2
     )
+
+
+def test_logcmk_backward_zero_handling(dtype: torch.dtype = torch.float64) -> None:
+    """Test LogCMK backward pass handles arrays with zero values correctly.
+    
+    This test ensures that the LogCMK.backward method correctly handles cases
+    where the kappa tensor contains zero values without raising division by zero
+    errors or warnings. The implementation uses boolean masking to conditionally
+    apply different formulas for small (including zero) and large kappa values,
+    avoiding double evaluation that would cause RuntimeWarnings.
+    
+    Args:
+        dtype: PyTorch data type for the test tensors.
+    """
+    # Test parameters
+    m = 3  # Dimension for which we have the exact formula
+    
+    # Create kappa tensor with zeros and other values, including edge cases
+    kappa_values = [0.0, 1e-7, 1e-6, 1e-5, 0.1, 1.0, 10.0]
+    kappa = torch.tensor(kappa_values, dtype=dtype, requires_grad=True)
+    
+    # Forward pass using VonMisesFisherLoss.log_cmk_exact which internally uses LogCMK
+    result = VonMisesFisherLoss.log_cmk_exact(m, kappa)
+    
+    # Test that backward pass doesn't raise any errors or warnings
+    # Capture warnings to ensure no RuntimeWarnings are generated
+    with warnings.catch_warnings(record=True) as caught_warnings:
+        warnings.simplefilter("always")
+        try:
+            grads = torch.autograd.grad(
+                outputs=result.sum(),
+                inputs=kappa,
+                grad_outputs=None,
+                retain_graph=False,
+                create_graph=False,
+            )[0]
+            backward_success = True
+            error_msg = ""
+        except (ZeroDivisionError, RuntimeWarning) as e:
+            backward_success = False
+            error_msg = str(e)
+    
+    # Verify no errors occurred
+    assert backward_success, f"Backward pass failed with error: {error_msg}"
+    
+    # Verify no RuntimeWarnings were generated
+    runtime_warnings = [w for w in caught_warnings if issubclass(w.category, RuntimeWarning)]
+    assert len(runtime_warnings) == 0, f"RuntimeWarnings were generated: {[str(w.message) for w in runtime_warnings]}"
+    
+    # Verify gradients are finite
+    assert torch.all(torch.isfinite(grads)), "Gradients should be finite for all kappa values"
+    
+    # Test specific values for correctness
+    # For kappa=0, the gradient should be -kappa/3 = 0
+    zero_idx = 0  # Index where kappa=0
+    assert torch.isclose(grads[zero_idx], torch.tensor(0.0, dtype=dtype)), \
+        f"Gradient at kappa=0 should be 0, got {grads[zero_idx]}"
+    
+    # For very small kappa (1e-7), should use -kappa/3 approximation
+    small_kappa_idx = 1  # Index where kappa=1e-7
+    expected_small_grad = -kappa_values[small_kappa_idx] / 3
+    assert torch.isclose(grads[small_kappa_idx], torch.tensor(expected_small_grad, dtype=dtype), atol=1e-10), \
+        "Gradient for small kappa should use -kappa/3 approximation"
+    
+    # Test with array containing multiple zeros
+    kappa_multi_zero = torch.tensor([0.0, 0.0, 1.0, 0.0, 10.0], dtype=dtype, requires_grad=True)
+    result_multi = VonMisesFisherLoss.log_cmk_exact(m, kappa_multi_zero)
+    
+    with warnings.catch_warnings(record=True) as caught_warnings_multi:
+        warnings.simplefilter("always")
+        try:
+            grads_multi = torch.autograd.grad(
+                outputs=result_multi.sum(),
+                inputs=kappa_multi_zero,
+                grad_outputs=None,
+            )[0]
+            multi_zero_success = True
+        except (ZeroDivisionError, RuntimeWarning):
+            multi_zero_success = False
+    
+    assert multi_zero_success, "Should handle arrays with multiple zero values"
+    assert torch.all(torch.isfinite(grads_multi)), "All gradients should be finite with multiple zeros"
+    
+    # Verify no RuntimeWarnings for multiple zeros case
+    runtime_warnings_multi = [w for w in caught_warnings_multi if issubclass(w.category, RuntimeWarning)]
+    assert len(runtime_warnings_multi) == 0, f"RuntimeWarnings were generated with multiple zeros: {[str(w.message) for w in runtime_warnings_multi]}"
+    
+    # Verify that zero elements have zero gradients
+    zero_mask = kappa_multi_zero == 0.0
+    assert torch.all(grads_multi[zero_mask] == 0.0), "Zero kappa values should have zero gradients"
