@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-data-extractors-icecube-i3highesteparticleextractor--page-root">Source code for graphnet.data.extractors.icecube.i3highesteparticleextractor</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Extract the highest energy particle in the event."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span>
 
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.i3extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Extractor</span>
@@ -541,13 +541,15 @@
 
         <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mmctracklist</span><span class="p">]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">daughters</span><span class="p">:</span>
-            <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="n">track</span>
-                <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">MMCTrackList</span>
-                <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">get_primary</span><span class="p">(</span><span class="n">track</span><span class="o">.</span><span class="n">GetI3Particle</span><span class="p">())</span>
-                <span class="ow">in</span> <span class="n">primaries</span>
-            <span class="p">]</span>
-            <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">simclasses</span><span class="o">.</span><span class="n">I3MMCTrackList</span><span class="p">(</span><span class="n">MMCTrackList</span><span class="p">)</span>
+            <span class="n">temp_MMCTrackList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">track</span> <span class="ow">in</span> <span class="n">MMCTrackList</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">is_in_subtree</span><span class="p">(</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">GetI3Particle</span><span class="p">()</span><span class="o">.</span><span class="n">id</span>
+                    <span class="p">):</span>
+                        <span class="n">temp_MMCTrackList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">track</span><span class="p">)</span>
+                        <span class="k">break</span>
+            <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">simclasses</span><span class="o">.</span><span class="n">I3MMCTrackList</span><span class="p">(</span><span class="n">temp_MMCTrackList</span><span class="p">)</span>
 
         <span class="n">MuonGun_tracks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="n">MuonGun</span><span class="o">.</span><span class="n">Track</span><span class="o">.</span><span class="n">harvest</span><span class="p">(</span><span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">],</span> <span class="n">MMCTrackList</span><span class="p">)</span>
@@ -586,14 +588,16 @@
 
 <div class="viewcode-block" id="I3HighestEparticleExtractor.get_bundle_HEP">
 <a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3highesteparticleextractor.html#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_bundle_HEP">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_bundle_HEP</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">particles</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"dataclasses.I3Particle"</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_bundle_HEP</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">particles</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="s2">"dataclasses.I3Particle"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Get the energy averaged particle of a list of particles.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">        particles: List of I3Particles</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="p">(),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span> <span class="kc">True</span>
 
         <span class="n">energies</span><span class="p">,</span> <span class="n">lengths</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
             <span class="p">[[</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">length</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">particles</span><span class="p">]</span>
@@ -686,7 +690,28 @@
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span>
                     <span class="n">intersections</span><span class="o">.</span><span class="n">first</span> <span class="o">&lt;</span> <span class="n">length</span>
                 <span class="p">):</span>
-                    <span class="k">if</span> <span class="n">MGtrack</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">EonEntrance</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">tmp_EonEntrance</span> <span class="o">=</span> <span class="n">MGtrack</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span>
+                            <span class="nb">max</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                        <span class="p">)</span>
+                    <span class="c1"># Catch MuonGun errors</span>
+                    <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="s2">"sum of losses is smaller than "</span>
+                            <span class="s2">"energy at last checkpoint"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                        <span class="p">):</span>
+                            <span class="n">hdr</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">]</span>
+                            <span class="n">e</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">"Error in MuonGun track in event </span><span class="si">{</span><span class="n">hdr</span><span class="si">}</span><span class="s2">"</span>
+                            <span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                                <span class="sa">f</span><span class="s2">"Detected corrupt track in </span><span class="si">{</span><span class="n">hdr</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span>
+                            <span class="p">)</span>
+                            <span class="k">continue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span>  <span class="c1"># re-raise unexpected errors</span>
+
+                    <span class="k">if</span> <span class="n">tmp_EonEntrance</span> <span class="o">&gt;</span> <span class="n">EonEntrance</span><span class="p">:</span>
                         <span class="n">particle</span> <span class="o">=</span> <span class="n">track_particle</span>
 
                         <span class="n">closest_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -697,12 +722,18 @@
                             <span class="p">]</span>
                         <span class="p">)</span>
 
-                        <span class="n">EonEntrance</span> <span class="o">=</span> <span class="n">MGtrack</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span>
-                            <span class="nb">max</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">EonEntrance</span> <span class="o">=</span> <span class="n">tmp_EonEntrance</span>
+
                         <span class="n">visible_length</span> <span class="o">=</span> <span class="n">intersections</span><span class="o">.</span><span class="n">second</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span>
                             <span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="mi">0</span>
                         <span class="p">)</span>
+
+                        <span class="c1"># It can happen that both intersections are negative</span>
+                        <span class="c1"># in this case the particle never reaches the detector</span>
+                        <span class="c1"># and therefore should not be considered for the HEP</span>
+                        <span class="k">if</span> <span class="n">visible_length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">continue</span>
+
                         <span class="n">e_mask</span> <span class="o">=</span> <span class="n">energies</span> <span class="o">&gt;</span> <span class="n">EonEntrance</span>
                         <span class="n">energies</span> <span class="o">=</span> <span class="n">energies</span><span class="p">[</span><span class="n">e_mask</span><span class="p">]</span>
                         <span class="n">MMCTrackList</span> <span class="o">=</span> <span class="n">MMCTrackList</span><span class="p">[</span><span class="n">e_mask</span><span class="p">]</span>
@@ -762,26 +793,15 @@
             <span class="n">primaries</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">check_primary_energy</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">primaries</span>
             <span class="p">]</span>
-            <span class="n">particles</span> <span class="o">=</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">ListI3Particle</span><span class="p">()</span>
 
-            <span class="n">particles</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span>
+            <span class="n">particles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_descendants</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">primaries</span><span class="p">)</span>
 
-            <span class="n">e_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span> <span class="n">p</span><span class="p">])</span>
-                    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">particles</span>
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="p">(</span>
-                            <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">energy</span> <span class="o">&gt;</span> <span class="n">min_e</span><span class="p">)</span>
-                            <span class="o">&amp;</span> <span class="p">(</span>
-                                <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">get_primary</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
-                                <span class="ow">in</span> <span class="n">primaries</span>
-                            <span class="p">)</span>
-                        <span class="p">)</span>
-                        <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">is_track</span><span class="p">)</span>
-                    <span class="p">)</span>
-                <span class="p">]</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">e_p</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">particles</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">part</span><span class="o">.</span><span class="n">energy</span> <span class="o">&gt;</span> <span class="n">min_e</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="n">part</span><span class="o">.</span><span class="n">is_track</span><span class="p">):</span>
+                    <span class="n">e_p</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">part</span><span class="o">.</span><span class="n">energy</span><span class="p">,</span> <span class="n">part</span><span class="p">]))</span>
+
+            <span class="n">e_p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">e_p</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
         <span class="k">else</span><span class="p">:</span>
 
@@ -804,9 +824,9 @@
                 <span class="n">visible_length</span><span class="p">,</span>
                 <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">energies</span> <span class="o">=</span> <span class="n">e_p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">particles</span> <span class="o">=</span> <span class="n">e_p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">e_p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">particles</span> <span class="o">=</span> <span class="n">e_p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="n">pos</span><span class="p">,</span> <span class="n">direc</span><span class="p">,</span> <span class="n">lengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_pos_dir_length</span><span class="p">(</span><span class="n">particles</span><span class="p">)</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="o">+</span> <span class="n">direc</span> <span class="o">*</span> <span class="n">lengths</span>
@@ -863,10 +883,17 @@
                 <span class="n">intersections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hull</span><span class="o">.</span><span class="n">surface</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
                     <span class="n">track</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">track</span><span class="o">.</span><span class="n">dir</span>
                 <span class="p">)</span>
-                <span class="n">visible_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-                    <span class="n">visible_length</span><span class="p">,</span>
-                    <span class="n">intersections</span><span class="o">.</span><span class="n">second</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+
+                <span class="n">visible_length</span> <span class="o">=</span> <span class="n">intersections</span><span class="o">.</span><span class="n">second</span> <span class="o">-</span> <span class="nb">max</span><span class="p">(</span>
+                    <span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">,</span> <span class="mi">0</span>
                 <span class="p">)</span>
+
+                <span class="c1"># It can happen that both intersections are negative</span>
+                <span class="c1"># in this case the particle never reaches the detector</span>
+                <span class="c1"># and therefore should not be considered for the HEP</span>
+                <span class="k">if</span> <span class="n">visible_length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
                 <span class="c1"># Check if we have a single topologically "real" track</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">real_track</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3MCTree</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span>
@@ -1070,7 +1097,32 @@
                 <span class="n">MGtrack</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span> <span class="n">MGtrack</span><span class="o">.</span><span class="n">dir</span>
             <span class="p">)</span>
 
-            <span class="n">track_energy</span> <span class="o">=</span> <span class="n">MGtrack</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">)</span>
+            <span class="c1"># Particles that passed the sphere check but</span>
+            <span class="c1"># do not actually intersect the hull</span>
+            <span class="k">if</span> <span class="n">intersections</span><span class="o">.</span><span class="n">second</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">track_energy</span> <span class="o">=</span> <span class="n">MGtrack</span><span class="o">.</span><span class="n">get_energy</span><span class="p">(</span><span class="n">intersections</span><span class="o">.</span><span class="n">first</span><span class="p">)</span>
+            <span class="c1"># Catch MuonGun errors</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="s2">"sum of losses is smaller than "</span>
+                    <span class="s2">"energy at last checkpoint"</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+                <span class="p">):</span>
+                    <span class="n">hdr</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="s2">"I3EventHeader"</span><span class="p">]</span>
+                    <span class="n">e</span><span class="o">.</span><span class="n">add_note</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error in MuonGun track in event </span><span class="si">{</span><span class="n">hdr</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Detected corrupt track in </span><span class="si">{</span><span class="n">hdr</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="p">(</span>
+                        <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="p">(),</span>
+                        <span class="mf">0.0</span><span class="p">,</span>
+                        <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>
+                        <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="n">GN_containment_types</span><span class="o">.</span><span class="n">no_intersect</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span>  <span class="c1"># re-raise unexpected errors</span>
+
             <span class="n">EonEntrance</span> <span class="o">+=</span> <span class="n">track_energy</span>
 
             <span class="n">closest_pos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
@@ -1096,6 +1148,23 @@
                     <span class="n">containment</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">GN_containment_types</span><span class="o">.</span><span class="n">throughgoing_bundle</span><span class="o">.</span><span class="n">value</span>
                     <span class="p">)</span>
+
+        <span class="c1"># If no intersection.second is every positive</span>
+        <span class="c1"># the visible_length can still be negative here</span>
+        <span class="c1"># this means that all particles that passed the</span>
+        <span class="c1"># sphere check do not actually make it to the real hull</span>
+        <span class="k">if</span> <span class="n">visible_length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">dataclasses</span><span class="o">.</span><span class="n">I3Particle</span><span class="p">(),</span>
+                <span class="mf">0.0</span><span class="p">,</span>
+                <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span>
+                <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">GN_containment_types</span><span class="o">.</span><span class="n">no_intersect</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">visible_length</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"Visible length is negative for particle </span><span class="si">{</span><span class="n">frame</span><span class="p">[</span><span class="s1">'I3EventHeader'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span>
 
         <span class="n">closest_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">closest_pos</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">EonEntrance</span>
 
@@ -1146,6 +1215,38 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">visible_particles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">daughter</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">visible_particles</span></div>
+
+
+<div class="viewcode-block" id="I3HighestEparticleExtractor.get_descendants">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.extractors.icecube.i3highesteparticleextractor.html#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_descendants">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_descendants</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">frame</span><span class="p">:</span> <span class="s2">"icetray.I3Frame"</span><span class="p">,</span>
+        <span class="n">particle</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span>
+            <span class="s2">"dataclasses.I3Particle"</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="s2">"dataclasses.I3Particle"</span><span class="p">]</span>
+        <span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"dataclasses.ListI3Particle"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Get the descendants of a particle and the particle as a list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            frame: I3Frame object</span>
+<span class="sd">            particle: I3Particle object</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">particle</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">particle</span><span class="p">:</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_descendants</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">ret</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">daughters</span> <span class="o">=</span> <span class="n">frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mctree</span><span class="p">]</span><span class="o">.</span><span class="n">get_daughters</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">daughters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">particle</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">daughters</span><span class="p">:</span>
+                    <span class="n">ret</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_descendants</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">p</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">ret</span></div>
 </div>
 
 </pre></div>

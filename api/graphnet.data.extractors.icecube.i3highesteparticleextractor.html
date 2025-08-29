@@ -432,6 +432,8 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.highest_energy_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">highest_energy_bundle()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_visible_produced_particles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_visible_produced_particles()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_descendants" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_descendants()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -498,6 +500,13 @@
     
     
       <a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_visible_produced_particles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_visible_produced_particles()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_descendants" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_descendants()</span></code></a>
       
     
     </li></ul>
@@ -777,6 +786,8 @@
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.highest_energy_bundle" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">highest_energy_bundle()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_visible_produced_particles" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_visible_produced_particles()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_descendants" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">get_descendants()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -866,7 +877,7 @@ particles: List of I3Particles</p>
 particles: List of I3Particles</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Particle</span></code></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">I3Particle</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]</span></p>
 </dd>
 <dt class="field-even">Parameters<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>particles</strong> (<em>array</em>)</p>
@@ -949,6 +960,22 @@ particle: I3Particle object</p>
 <li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
 <li><p><strong>particle</strong> (<em>icecube.dataclasses.I3Particle</em>)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_descendants">
+<span class="sig-name descname"><span class="pre">get_descendants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/i3highesteparticleextractor.html#I3HighestEparticleExtractor.get_descendants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.get_descendants" title="Link to this definition">¶</a></dt>
+<dd><p>Get the descendants of a particle and the particle as a list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frame</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Frame</span></code></span>) – I3Frame object</p></li>
+<li><p><strong>particle</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">I3Particle</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">I3Particle</span></code>]]</span>) – I3Particle object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ListI3Particle</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
