@@ -71,16 +71,19 @@ Note that this installation will add `km3io` ensuring it is built with a compati
 
    git clone https://github.com/graphnet-team/graphnet.git
    cd graphnet
-   # Choose the appropriate requirements file based on your system
+   # Choose the appropriate requirements file based on your system.
+   # Here there is an example of installation with PyTorch-2.5.1 but versions are also compatible with the installation
    # For CPU-only enviroments:
-   pip install -e .[torch-25] -f https://data.pyg.org/whl/torch-2.5.1+cpu.html
+   pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cpu
+   pip3 install -e .[torch-25] -f https://data.pyg.org/whl/torch-2.5.1+cpu.html
    # For GPU enviroments with, for instance, CUDA 11.8 drivers:
-   pip install -e .[torch-25] -f https://data.pyg.org/whl/torch-2.5.1+cu118.html
+   pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118
+   pip3 install -e .[torch-25] -f https://data.pyg.org/whl/torch-2.5.1+cu118.html
 
    # Downgrade setuptools for compatibility
-   pip install --force-reinstall setuptools==70.3.0
+   pip3 install --force-reinstall setuptools==70.3.0
    # Install the correct versions of km3io
-   pip install km3io
+   pip3 install km3io==1.2.0
    
 
 .. note::
