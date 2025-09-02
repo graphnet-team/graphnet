@@ -74,7 +74,7 @@ class KM3NeTPulseExtractor(KM3NeTExtractor):
             df = df[df["trig"] != 0]
 
         # Final processing
-        df = df.drop(["entry", "subentry"], axis=1)
+        df = df.drop(["entry", "subentry"], axis=1) if "subentry" in df.columns else df.drop(["entry"], axis=1)
         df = creating_time_zero(df)
         df = df.reset_index(drop=True)
 
