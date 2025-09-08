@@ -327,6 +327,8 @@
         <li class="md-nav__item"><a href="#experiment-tracking" class="md-nav__link">Experiment Tracking</a>
         </li>
         <li class="md-nav__item"><a href="#example-energy-reconstruction-using-modelconfig" class="md-nav__link">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#mathematical-background" class="md-nav__link">Mathematical Background</a>
         </li></ul>
             </nav>
         </li>
@@ -416,6 +418,13 @@
       <a href="#example-energy-reconstruction-using-modelconfig" class="md-nav__link">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
       
     
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#mathematical-background" class="md-nav__link">Mathematical Background</a>
+      
+    
     </li></ul>
     
     </li>
@@ -497,6 +506,8 @@
         <li class="md-nav__item"><a href="#experiment-tracking" class="md-nav__link">Experiment Tracking</a>
         </li>
         <li class="md-nav__item"><a href="#example-energy-reconstruction-using-modelconfig" class="md-nav__link">Example: Energy Reconstruction using <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#mathematical-background" class="md-nav__link">Mathematical Background</a>
         </li></ul>
             </nav>
         </li>
@@ -957,6 +968,13 @@ Therefore, we strongly recommend using Weights &amp; Biases or a similar system 
 <p>Because <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> summarises a <code class="code docutils literal notranslate"><span class="pre">Model</span></code> completely, including its <code class="code docutils literal notranslate"><span class="pre">Task</span></code>(s),
 the only modifications required to change the example to reconstruct (or classify) a different attribute than energy, is to pass a <code class="code docutils literal notranslate"><span class="pre">ModelConfig</span></code> that defines a model with the corresponding <code class="code docutils literal notranslate"><span class="pre">Task</span></code>.
 Similarly, if you wanted to train on a different <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code>, you would just have to pass a <code class="code docutils literal notranslate"><span class="pre">DatasetConfig</span></code> that defines <em>that</em> <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> instead.</p>
+</section>
+<section id="mathematical-background">
+<h2 id="mathematical-background">Mathematical Background<a class="headerlink" href="#mathematical-background" title="Link to this heading">¶</a></h2>
+<p>For detailed mathematical derivations and implementation details of specific loss functions:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="von_mises_fisher_mathematical_background.html"><span class="doc">Mathematical Background: von Mises-Fisher Loss Implementation</span></a> - Mathematical background for the von Mises-Fisher loss function implementation, including Taylor series analysis and numerical stability considerations.</p></li>
+</ul>
 </section>
 </section>
 

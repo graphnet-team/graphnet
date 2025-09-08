@@ -799,7 +799,7 @@ elementwise terms with shape [N,] (if <cite>return_elements = True</cite>).</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">LogCoshLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#LogCoshLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LogCoshLoss" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
 <p>Log-cosh loss function.</p>
-<p>Acts like x^2 for small x; and like <a href="#id1"><span class="problematic" id="id2">|x|</span></a> for large x.</p>
+<p>Acts like x^2 for small x; and like <a href="#id3"><span class="problematic" id="id4">|x|</span></a> for large x.</p>
 <p>Construct <cite>LossFunction</cite>, saving model config.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -902,16 +902,60 @@ results.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.LogCMK.backward">
 <em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grad_output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#LogCMK.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.LogCMK.backward" title="Link to this definition">¶</a></dt>
-<dd><p>Backward pass.</p>
+<dd><p>Backward pass for LogCMK computation.</p>
+<section id="mathematical-background">
+<h2 id="mathematical-background">Mathematical Background:<a class="headerlink" href="#mathematical-background" title="Link to this heading">¶</a></h2>
+<p>For the von Mises-Fisher distribution, the gradient of log C_m(κ) with
+respect to κ is given by the ratio of modified Bessel functions:</p>
+<p>∂/∂κ log C_m(κ) = (m/2-1)/κ - I_{m/2}(κ)/I_{m/2-1}(κ)</p>
+<p>For m=3, this simplifies to the exact formula:
+∂/∂κ log C_3(κ) = 1/κ - 1/tanh(κ)</p>
+<p>For small κ values, we use the Taylor series approximation:
+f(κ) = -κ/3 + κ³/45 - 2κ⁵/945 + O(κ⁷)</p>
+<p>The first-order approximation -κ/3 provides sufficient accuracy for
+<a href="#id5"><span class="problematic" id="id6">|κ|</span></a> &lt; 1e-6, with truncation error bounded by <a href="#id1"><span class="problematic" id="id2">|</span></a>κ|³/45 ≲ O(10⁻²¹).</p>
+</section>
+<section id="implementation-details">
+<h2 id="implementation-details">Implementation Details:<a class="headerlink" href="#implementation-details" title="Link to this heading">¶</a></h2>
+<p>Uses boolean masking to avoid double evaluation and RuntimeWarnings:
+- Small κ: <a href="#id7"><span class="problematic" id="id8">|κ|</span></a> &lt; 1e-6 → gradient = -κ/3 (Taylor approximation)
+- Large κ: <a href="#id9"><span class="problematic" id="id10">|κ|</span></a> ≥ 1e-6 → gradient = 1/κ - 1/tanh(κ) (exact formula)</p>
+</section>
+<section id="references">
+<h2 id="references">References:<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
+<p>[1] von Mises-Fisher distribution: Wikipedia
+[2] arXiv:1812.04616, Section 8.2
+[3] MIT License (c) 2019 Max Ryabinin - Modified for GraphNeT</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dt class="field-odd">type ctx<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+<dt class="field-even">param ctx<span class="colon">:</span></dt>
+<dd class="field-even"><p>Autograd context containing saved tensors and metadata.</p>
+</dd>
+<dt class="field-odd">type grad_output<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
 </dd>
-<dt class="field-even">Parameters<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
+<dt class="field-even">param grad_output<span class="colon">:</span></dt>
+<dd class="field-even"><p>Gradient with respect to the output tensor.</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(None for m, gradient w.r.t. κ).</p>
+</dd>
+<dt class="field-even">rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>Tuple of gradients</p>
+</dd>
+</dl>
+</section>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>ctx</strong> (<em>Any</em>)</p></li>
 <li><p><strong>grad_output</strong> (<em>Tensor</em>)</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Tensor</em></p>
 </dd>
 </dl>
 </dd></dl>

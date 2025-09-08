@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
+  
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="../_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="../_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="../_static/javascripts/modernizr.js"></script>
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-XXXXX');
+</script>
+  
+  
+    <title>Mathematical Background: von Mises-Fisher Loss Implementation &#8212; graphnet  documentation</title>
+
+<style>
+  dt:target {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+
+  /*
+    .sig-prename {
+     display: none;
+  }
+  */
+
+  .py.class .sig-name,
+  .py.function .sig-name,
+  .py.method .sig-name,
+  .py.exception .sig-name {
+    color: #37474f;
+    font-feature-settings: "kern";
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.method .sig-object,
+  .py.exception .sig-object {
+    padding: 1ex;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.exception .sig-object {
+    border-top: 1px solid gray;
+  }
+  .py.method .sig-object {
+    border-top: 1px solid lightgray;
+  }
+
+  .py.class .sig-object,
+  .py.exception .sig-object {
+    background: rgba(0,0,0,0.06);
+  }
+  .py.function .sig-object,
+  .py.method .sig-object {
+    background: rgba(0,0,0,0.03);
+  }
+
+  #eu-emblem {
+    margin: 0;
+  }
+
+  #eu-emblem figcaption {
+    display: none;
+  }
+
+</style>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
+    <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="icon" href="../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  
+   
+
+  </head>
+  <body dir=ltr
+        data-md-color-primary=indigo data-md-color-accent=blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#models/von_mises_fisher_mathematical_background" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../index.html" title="graphnet  documentation"
+           class="md-header-nav__button md-logo">
+          
+            &nbsp;
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">GraphNeT</span>
+          <span class="md-header-nav__topic"> Mathematical Background: von Mises-Fisher Loss Implementation </span>
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="../search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="../_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = "../"versions.json"",
+        target_loc = "../../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+            
+            <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../index.html" title="graphnet documentation" class="md-nav__button md-logo">
+      
+        <img src="../_static/" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="../index.html"
+       title="graphnet documentation">GraphNeT</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="../installation/install.html" class="md-nav__link">Installation</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="models.html" class="md-nav__link">Models In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../datasets/datasets.html" class="md-nav__link">Datasets In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../data_conversion/data_conversion.html" class="md-nav__link">Data Conversion in GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../integration/integration.html" class="md-nav__link">Integrating New Experiments into GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../contribute/contribute.html" class="md-nav__link">Contributing To GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../api/graphnet.html" class="md-nav__link">API</a>
+      
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#models-von-mises-fisher-mathematical-background--page-root" class="md-nav__link">Mathematical Background: von Mises-Fisher Loss Implementation</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#calculation-for-3d" class="md-nav__link">Calculation for 3D</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#expressing-bessel-functions" class="md-nav__link">Expressing Bessel Functions</a>
+        </li>
+        <li class="md-nav__item"><a href="#calculating-the-ratio" class="md-nav__link">Calculating the Ratio</a>
+        </li>
+        <li class="md-nav__item"><a href="#final-result" class="md-nav__link">Final Result</a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#taylor-series-approximation" class="md-nav__link">Taylor Series Approximation</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#well-defined-at-kappa-0" class="md-nav__link">Well-Defined at $\kappa = 0$</a>
+        </li>
+        <li class="md-nav__item"><a href="#alternating-series" class="md-nav__link">Alternating Series</a>
+        </li>
+        <li class="md-nav__item"><a href="#error-bound" class="md-nav__link">Error Bound</a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#implementation-in-graphnet" class="md-nav__link">Implementation in GraphNeT</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#problem-statement" class="md-nav__link">Problem Statement</a>
+        </li>
+        <li class="md-nav__item"><a href="#numerical-challenge" class="md-nav__link">Numerical Challenge</a>
+        </li>
+        <li class="md-nav__item"><a href="#solution-strategy" class="md-nav__link">Solution Strategy</a>
+        </li>
+        <li class="md-nav__item"><a href="#key-implementation-features" class="md-nav__link">Key Implementation Features</a>
+        </li>
+        <li class="md-nav__item"><a href="#verification" class="md-nav__link">Verification</a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
+  <section id="mathematical-background-von-mises-fisher-loss-implementation">
+<h1 id="models-von-mises-fisher-mathematical-background--page-root">Mathematical Background: von Mises-Fisher Loss Implementation<a class="headerlink" href="#models-von-mises-fisher-mathematical-background--page-root" title="Link to this heading">¶</a></h1>
+<section id="calculation-for-3d">
+<h2 id="calculation-for-3d">Calculation for 3D<a class="headerlink" href="#calculation-for-3d" title="Link to this heading">¶</a></h2>
+<p>To show that for $m=3$,</p>
+<p>$$- \frac{I_{m/2}(\kappa)}{I_{m/2-1}(\kappa)} = \frac{1}{\kappa}-\frac{1}{\tanh(\kappa)}$$</p>
+<p>we first substitute $m=3$ into the equation. This gives us:</p>
+<p>$$- \frac{I_{3/2}(\kappa)}{I_{1/2}(\kappa)} = \frac{1}{\kappa}-\frac{1}{\tanh(\kappa)}$$</p>
+<p>We need to evaluate the left side of this equation, which involves <strong>modified Bessel functions of the first kind</strong> of half-integer order, specifically $I_{3/2}(\kappa)$ and $I_{1/2}(\kappa)$.</p>
+<section id="expressing-bessel-functions">
+<h3 id="expressing-bessel-functions">Expressing Bessel Functions<a class="headerlink" href="#expressing-bessel-functions" title="Link to this heading">¶</a></h3>
+<p>The modified Bessel functions of the first kind of half-integer order can be expressed in terms of elementary hyperbolic functions.</p>
+<p>For the order $1/2$, the function is:</p>
+<p>$$I_{1/2}(\kappa) = \sqrt{\frac{2}{\pi\kappa}} \sinh(\kappa)$$</p>
+<p>For the order $3/2$, the function is:</p>
+<p>$$I_{3/2}(\kappa) = \sqrt{\frac{2}{\pi\kappa}} \left( \cosh(\kappa) - \frac{\sinh(\kappa)}{\kappa} \right)$$</p>
+</section>
+<section id="calculating-the-ratio">
+<h3 id="calculating-the-ratio">Calculating the Ratio<a class="headerlink" href="#calculating-the-ratio" title="Link to this heading">¶</a></h3>
+<p>Now, we can compute the ratio on the left side of the equation:</p>
+<p>$$- \frac{I_{3/2}(\kappa)}{I_{1/2}(\kappa)} = - \frac{\sqrt{\frac{2}{\pi\kappa}} \left( \cosh(\kappa) - \frac{\sinh(\kappa)}{\kappa} \right)}{\sqrt{\frac{2}{\pi\kappa}} \sinh(\kappa)}$$</p>
+<p>The term $\sqrt{\frac{2}{\pi\kappa}}$ cancels out, leaving:</p>
+<p>$$- \frac{\cosh(\kappa) - \frac{\sinh(\kappa)}{\kappa}}{\sinh(\kappa)} = - \left( \frac{\cosh(\kappa)}{\sinh(\kappa)} - \frac{1}{\kappa} \right)$$</p>
+<p>Using the definition of the <strong>hyperbolic cotangent</strong>, $\coth(\kappa) = \frac{\cosh(\kappa)}{\sinh(\kappa)}$, we have:</p>
+<p>$$- \left(\coth(\kappa) - \frac{1}{\kappa}\right) = \frac{1}{\kappa} - \coth(\kappa)$$</p>
+</section>
+<section id="final-result">
+<h3 id="final-result">Final Result<a class="headerlink" href="#final-result" title="Link to this heading">¶</a></h3>
+<p>Finally, since $\coth(\kappa) = \frac{1}{\tanh(\kappa)}$, we can write:</p>
+<p>$$\frac{1}{\kappa} - \frac{1}{\tanh(\kappa)}$$</p>
+<p>This is exactly the right side of the initial equation. Thus, we have shown that for $m=3$:</p>
+<p>$$- \frac{I_{3/2}(\kappa)}{I_{1/2}(\kappa)} = \frac{1}{\kappa}-\frac{1}{\tanh(\kappa)} \quad \blacksquare$$</p>
+</section>
+</section>
+<hr class="docutils"/>
+<section id="taylor-series-approximation">
+<h2 id="taylor-series-approximation">Taylor Series Approximation<a class="headerlink" href="#taylor-series-approximation" title="Link to this heading">¶</a></h2>
+<p>To prove that the Taylor series for $f(\kappa) = \frac{1}{\kappa}-\frac{1}{\tanh(\kappa)}$ is well-defined and alternating at $\kappa = 0$, we first need to analyze the behavior of the function at the origin and then examine the structure of its series expansion.</p>
+<section id="well-defined-at-kappa-0">
+<h3 id="well-defined-at-kappa-0">Well-Defined at $\kappa = 0$<a class="headerlink" href="#well-defined-at-kappa-0" title="Link to this heading">¶</a></h3>
+<p>The function $f(\kappa)$ appears to be singular at $\kappa=0$ because both $\frac{1}{\kappa}$ and $\frac{1}{\tanh(\kappa)}$ diverge. To determine if the singularity is removable, we can evaluate the limit as $\kappa \to 0$.</p>
+<p>First, rewrite the function as a single fraction:</p>
+<p>$$f(\kappa) = \frac{1}{\kappa} - \frac{\cosh(\kappa)}{\sinh(\kappa)} = \frac{\sinh(\kappa) - \kappa\cosh(\kappa)}{\kappa\sinh(\kappa)}$$</p>
+<p>We can find the limit by expanding the hyperbolic functions into their Taylor series around $\kappa = 0$:</p>
+<p>$$\sinh(\kappa) = \kappa + \frac{\kappa^3}{3!} + \frac{\kappa^5}{5!} + O(\kappa^7)$$</p>
+<p>$$\cosh(\kappa) = 1 + \frac{\kappa^2}{2!} + \frac{\kappa^4}{4!} + O(\kappa^6)$$</p>
+<p>Substituting these into the numerator and denominator:</p>
+<p><strong>Numerator:</strong></p>
+<p>$$\sinh(\kappa) - \kappa\cosh(\kappa) = \left(\kappa + \frac{\kappa^3}{6} + \dots\right) - \kappa\left(1 + \frac{\kappa^2}{2} + \dots\right)$$</p>
+<p>$$= \left(\kappa + \frac{\kappa^3}{6}\right) - \left(\kappa + \frac{\kappa^3}{2}\right) + \dots = \left(\frac{1}{6} - \frac{1}{2}\right)\kappa^3 + \dots = -\frac{1}{3}\kappa^3 + O(\kappa^5)$$</p>
+<p><strong>Denominator:</strong></p>
+<p>$$\kappa\sinh(\kappa) = \kappa\left(\kappa + \frac{\kappa^3}{6} + \dots\right) = \kappa^2 + \frac{\kappa^4}{6} + O(\kappa^6)$$</p>
+<p>Now, the limit of the function is:</p>
+<p>$$\lim_{\kappa \to 0} f(\kappa) = \lim_{\kappa \to 0} \frac{-\frac{1}{3}\kappa^3 + O(\kappa^5)}{\kappa^2 + O(\kappa^4)} = \lim_{\kappa \to 0} \frac{\kappa^3(-\frac{1}{3} + O(\kappa^2))}{\kappa^2(1 + O(\kappa^2))} = \lim_{\kappa \to 0} \kappa \frac{-\frac{1}{3} + O(\kappa^2)}{1 + O(\kappa^2)} = 0$$</p>
+<p>Since the limit exists and is finite, the singularity at $\kappa=0$ is removable. We can define $f(0) = 0$, and thus the Taylor series for $f(\kappa)$ around $\kappa=0$ is <strong>well-defined</strong>.</p>
+</section>
+<section id="alternating-series">
+<h3 id="alternating-series">Alternating Series<a class="headerlink" href="#alternating-series" title="Link to this heading">¶</a></h3>
+<p>To show the series is alternating, we derive its form using the known series expansion for $\kappa \coth(\kappa)$ which involves the <strong>Bernoulli numbers</strong>, $B_{2n}$. The expansion is:</p>
+<p>$$\kappa \coth(\kappa) = \sum_{n=0}^{\infty} \frac{B_{2n} (2\kappa)^{2n}}{(2n)!} = 1 + \frac{1}{3}\kappa^2 - \frac{1}{45}\kappa^4 + \frac{2}{945}\kappa^6 - \dots$$</p>
+<p>Our function can be written as $f(\kappa) = \frac{1}{\kappa} - \coth(\kappa) = \frac{1 - \kappa \coth(\kappa)}{\kappa}$. Substituting the series:</p>
+<p>$$f(\kappa) = \frac{1}{\kappa} \left( 1 - \sum_{n=0}^{\infty} \frac{B_{2n} (2\kappa)^{2n}}{(2n)!} \right)$$</p>
+<p>The first term of the sum (for $n=0$) is $\frac{B_0 (2\kappa)^0}{0!} = 1$, since $B_0 = 1$.</p>
+<p>$$f(\kappa) = \frac{1}{\kappa} \left( 1 - \left(1 + \sum_{n=1}^{\infty} \frac{B_{2n} (2\kappa)^{2n}}{(2n)!} \right) \right) = \frac{1}{\kappa} \left( - \sum_{n=1}^{\infty} \frac{B_{2n} 2^{2n} \kappa^{2n}}{(2n)!} \right)$$</p>
+<p>$$f(\kappa) = - \sum_{n=1}^{\infty} \frac{B_{2n} 2^{2n} \kappa^{2n-1}}{(2n)!}$$</p>
+<p>The sign of the Bernoulli numbers $B_{2n}$ for $n \ge 1$ alternates according to the formula $\text{sgn}(B_{2n}) = (-1)^{n-1}$. We can write $B_{2n} = (-1)^{n-1} |B_{2n}|$. Substituting this into the series for $f(\kappa)$:</p>
+<p>$$f(\kappa) = - \sum_{n=1}^{\infty} \frac{(-1)^{n-1} |B_{2n}| 2^{2n} \kappa^{2n-1}}{(2n)!} = \sum_{n=1}^{\infty} (-1)^n \frac{|B_{2n}| 2^{2n} \kappa^{2n-1}}{(2n)!}$$</p>
+<p>Let’s write out the first few terms of the series:</p>
+<p>$$f(\kappa) = -\frac{|B_2| 2^2}{(2)!}\kappa^1 + \frac{|B_4| 2^4}{(4)!}\kappa^3 - \frac{|B_6| 2^6}{(6)!}\kappa^5 + \dots$$</p>
+<p>With $B_2=1/6$, $B_4=-1/30$, $B_6=1/42$:</p>
+<p>$$f(\kappa) = -\frac{1/6 \cdot 4}{2}\kappa + \frac{1/30 \cdot 16}{24}\kappa^3 - \frac{1/42 \cdot 64}{720}\kappa^5 + \dots = -\frac{1}{3}\kappa + \frac{1}{45}\kappa^3 - \frac{2}{945}\kappa^5 + \dots$$</p>
+<p>The series for $f(\kappa)$ contains only odd powers of $\kappa$. The coefficient of the term $\kappa^{2n-1}$ is:</p>
+<p>$$c_{2n-1} = (-1)^n \frac{|B_{2n}| 2^{2n}}{(2n)!}$$</p>
+<p>The coefficient of the next non-zero term, $\kappa^{2(n+1)-1} = \kappa^{2n+1}$, is:</p>
+<p>$$c_{2n+1} = (-1)^{n+1} \frac{|B_{2(n+1)}| 2^{2(n+1)}}{(2(n+1))!}$$</p>
+<p>Since $|B_{2k}|$ is positive for all $k \ge 1$, the sign of the coefficient $c_{2n-1}$ is determined by $(-1)^n$, and the sign of $c_{2n+1}$ is determined by $(-1)^{n+1}$. Clearly, these are opposite. Therefore, the coefficients of successive non-zero terms have alternating signs. This proves that the Taylor series for $f(\kappa)$ at $\kappa=0$ is an <strong>alternating series</strong>.</p>
+</section>
+<section id="error-bound">
+<h3 id="error-bound">Error Bound<a class="headerlink" href="#error-bound" title="Link to this heading">¶</a></h3>
+<p>The Taylor series derived for the function $f(\kappa)$ is an alternating series, meaning the signs of successive terms alternate. For such series, the error from truncating the series can be estimated using the <strong>Alternating Series Estimation Theorem</strong>. This theorem states that if you approximate the sum of a convergent alternating series by its $N$-th partial sum, the absolute value of the error (the remainder) is less than or equal to the absolute value of the first neglected term. This holds true under the conditions that the absolute values of the terms are monotonically decreasing and approach zero.</p>
+<p>These conditions are met by the series for $f(\kappa)$ within its radius of convergence ($|\kappa| &lt; \pi$). The magnitude of the general term, $\frac{|B_{2n}| 2^{2n} |\kappa|^{2n-1}}{(2n)!}$, tends to zero as $n \to \infty$, ensuring convergence. Moreover, for any given $\kappa$ in this interval, the magnitudes of the terms will eventually be monotonically decreasing. For sufficiently small values of $\kappa$, this decreasing trend holds from the very first term. Therefore, the error in approximating the function with the sum of its first $N$ terms is bounded by the magnitude of the $(N+1)$-th term. For example, the error in the approximation $f(\kappa) \approx -\frac{1}{3}\kappa$ is less than or equal to the next term’s magnitude, $\frac{1}{45}|\kappa|^3$. Thus:</p>
+<p>$$\left\lvert \kappa \right\rvert &lt; 10^{-6} \implies \varepsilon \lesssim \mathcal{O}(10^{-21})$$</p>
+</section>
+</section>
+<hr class="docutils"/>
+<section id="implementation-in-graphnet">
+<h2 id="implementation-in-graphnet">Implementation in GraphNeT<a class="headerlink" href="#implementation-in-graphnet" title="Link to this heading">¶</a></h2>
+<section id="problem-statement">
+<h3 id="problem-statement">Problem Statement<a class="headerlink" href="#problem-statement" title="Link to this heading">¶</a></h3>
+<p>The mathematical derivation above provides exact formulas for computing gradients in the von Mises-Fisher loss function. However, a naive implementation would encounter <strong>division by zero errors</strong> when $\kappa = 0$, even though the mathematical limit is well-defined. This creates RuntimeWarnings and potential numerical instability.</p>
+</section>
+<section id="numerical-challenge">
+<h3 id="numerical-challenge">Numerical Challenge<a class="headerlink" href="#numerical-challenge" title="Link to this heading">¶</a></h3>
+<p>The core issue arises in the backward pass when computing:</p>
+<p>$$\frac{\partial}{\partial \kappa} \log C_3(\kappa) = \frac{1}{\kappa} - \frac{1}{\tanh(\kappa)}$$</p>
+<p>For $\kappa = 0$:</p>
+<ul class="simple">
+<li><p>Both $\frac{1}{\kappa}$ and $\frac{1}{\tanh(\kappa)}$ diverge individually</p></li>
+<li><p>Their difference converges to the finite limit $\lim_{\kappa \to 0} f(\kappa) = 0$- Standard floating-point evaluation triggers division by zero warnings</p></li>
+</ul>
+</section>
+<section id="solution-strategy">
+<h3 id="solution-strategy">Solution Strategy<a class="headerlink" href="#solution-strategy" title="Link to this heading">¶</a></h3>
+<p>Our implementation uses <strong>boolean masking</strong> to conditionally apply different computational approaches:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize gradient array</span>
+<span class="n">grads</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span>
+
+<span class="c1"># Handle small kappa values (including zero)</span>
+<span class="n">small_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+<span class="n">grads</span><span class="p">[</span><span class="n">small_mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">kappa</span><span class="p">[</span><span class="n">small_mask</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span>
+
+<span class="c1"># Handle large kappa values  </span>
+<span class="n">large_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">small_mask</span>
+<span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">large_mask</span><span class="p">):</span>
+    <span class="n">kappa_large</span> <span class="o">=</span> <span class="n">kappa</span><span class="p">[</span><span class="n">large_mask</span><span class="p">]</span>
+    <span class="n">grads</span><span class="p">[</span><span class="n">large_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa_large</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">kappa_large</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="key-implementation-features">
+<h3 id="key-implementation-features">Key Implementation Features<a class="headerlink" href="#key-implementation-features" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Threshold Selection</strong>: $|\kappa| &lt; 10^{-6}$   - Based on error analysis: truncation error $\leq \frac{|\kappa|^3}{45} \approx 10^{-21}$   - Well below machine precision for typical floating-point arithmetic</p>
+<ul class="simple">
+<li><p>Provides excellent numerical accuracy</p></li>
+</ul>
+</li>
+<li><p><strong>Boolean Masking vs. np.where()</strong></p>
+<ul class="simple">
+<li><p><strong>Avoided</strong>: <code class="docutils literal notranslate"><span class="pre">np.where(condition,</span> <span class="pre">small_branch,</span> <span class="pre">large_branch)</span></code></p>
+<ul>
+<li><p>Evaluates both branches, still triggers warnings</p></li>
+</ul>
+</li>
+<li><p><strong>Used</strong>: Boolean indexing with separate computations</p>
+<ul>
+<li><p>Only evaluates necessary expressions</p></li>
+<li><p>Eliminates all RuntimeWarnings</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Mathematical Consistency</strong></p>
+<ul class="simple">
+<li><p>Small $\kappa$: Uses first-order Taylor approximation $-\kappa/3$   - Large $\kappa$: Uses exact formula $\frac{1}{\kappa} - \frac{1}{\tanh(\kappa)}$   - Seamless transition preserves continuity and differentiability</p></li>
+</ul>
+</li>
+<li><p><strong>Edge Case Handling</strong></p>
+<ul class="simple">
+<li><p>$\kappa = 0$: Returns exactly $0$ (no approximation needed)</p></li>
+<li><p>Multiple zeros in batch: Each handled independently</p></li>
+<li><p>Mixed arrays: Efficient vectorized computation</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="verification">
+<h3 id="verification">Verification<a class="headerlink" href="#verification" title="Link to this heading">¶</a></h3>
+<p>The implementation is validated through comprehensive unit tests that verify:</p>
+<ul class="simple">
+<li><p>✅ No RuntimeWarnings generated during backward pass</p></li>
+<li><p>✅ Gradients remain finite for all input values</p></li>
+<li><p>✅ Mathematical accuracy: $f(0) = 0$ exactly</p></li>
+<li><p>✅ Correct Taylor approximation for small $|\kappa|$</p></li>
+<li><p>✅ Proper handling of arrays containing multiple zeros</p></li>
+</ul>
+<p>This approach ensures both mathematical correctness and numerical stability, making the von Mises-Fisher loss function robust for practical deep learning applications where $\kappa$ values may include zeros or near-zero elements.</p>
+</section>
+</section>
+</section>
+
+
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021-2025, GraphNeT team.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
+</html>
