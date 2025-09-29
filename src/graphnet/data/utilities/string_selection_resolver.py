@@ -127,7 +127,10 @@ class StringSelectionResolver(Logger):
 
             # Save names of functions
             elif isinstance(node, ast.Call):
-                functions.append(node.func.id)  # type: ignore[attr-defined]
+                if isinstance(node.func, ast.Attribute):
+                    functions.append(node.func.attr)
+                elif isinstance(node.func, ast.Name):
+                    functions.append(node.func.id)
 
         variables = list(set(names) - set(functions))
 
