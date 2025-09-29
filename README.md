@@ -26,6 +26,7 @@ Feel free to join the [GraphNeT Slack group](https://join.slack.com/t/graphnet-t
 | Proceeding | Sensitivity of the IceCube Upgrade to Atmospheric Neutrino Oscillations | [![PoS](https://img.shields.io/badge/PoS-ICRC2023.1036-blue)]([https://doi.org/10.1088/1748-0221/17/11/P11003](https://pos.sissa.it/444/1036/pdf)) |
 | Paper | GraphNeT: Graph neural networks for neutrino telescope event reconstruction | [![status](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf/status.svg)](https://joss.theoj.org/papers/eecab02fb1ecd174a5273750c1ea0baf) |
 | Paper | Graph Neural Networks for low-energy event classification & reconstruction in IceCube | [![JINST](https://img.shields.io/badge/JINST-10.1088%2F1748--0221%2F17%2F11%2FP11003-blue)](https://doi.org/10.1088/1748-0221/17/11/P11003) |
+| Paper | Classification of electron and muon neutrino events for the ESSνSB near water Cherenkov detector using Graph Neural Networks | [![JINST](https://img.shields.io/badge/JINST-10.1088%2F1748--0221%2F20%2F08%2FP08030-blue)](https://doi.org/10.1088/1748-0221/20/08/P08030) |
 
 ## :gear:  Install
 
