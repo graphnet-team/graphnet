@@ -20,7 +20,7 @@ from graphnet.training.loss_functions import MSELoss
 
 def dense_mse_loss(reco, orig, bv):
     squared_errs = (reco - orig)**2
-    losses = torch.mean(scatter(src=squared_errs, index=bv, reduce='mean', dim=0), dim=0)
+    losses = torch.mean(scatter(src=squared_errs, index=bv, reduce='mean', dim=0), dim=1)
 
     return losses.view(-1,1)
 
@@ -122,7 +122,7 @@ class mask_pred_frame(EasySyntax):
                  final_loss: str = 'mse',
                  add_charge_pred: bool = False,
                  need_charge_rep: bool = False,
-                 custom_charge_target: Tensor = None,
+                 custom_charge_target: Model = None,
                  optimizer_class: Type[torch.optim.Optimizer] = Adam,
                  optimizer_kwargs: Optional[Dict] = None,
                  scheduler_class: Optional[type] = None,
@@ -172,13 +172,15 @@ class mask_pred_frame(EasySyntax):
         elif final_loss == 'mse':
             self.loss_func = dense_mse_loss
 
-        self.custom_charge_target = custom_charge_target
         self.add_charge_pred = add_charge_pred
         self.need_charge_rep = need_charge_rep
-        if add_charge_pred:
+        if need_charge_rep:
+            self.add_charge_pred = True
+        if self.add_charge_pred:
             self.charge_net = torch.nn.Linear(lat_dim, 1)
             if need_charge_rep:
                 self.lin_layer_scatter = torch.nn.Linear(lat_dim, lat_dim)
+            self.custom_charge_target = custom_charge_target
 
             
     def forward(self, data: Union[Data, List[Data]]) -> List[Tensor]:
@@ -211,7 +213,7 @@ class mask_pred_frame(EasySyntax):
                 charge_tensor = torch.pow(10, data.x[:,4]).view(-1,1)
                 charge_sums = torch.log10(scatter(src=charge_tensor, index=data.batch, dim = 0, reduce='sum'))
             else:
-                charge_sums = self.custom_charge_target
+                charge_sums = self.custom_charge_target(data)
             pred_charge = self.charge_net(cls_tensor)
             loss = loss + (charge_sums - pred_charge)**2
 
@@ -243,7 +245,7 @@ class mask_pred_frame(EasySyntax):
 
         save_path = os.path.join(save_path, run_name)
         print('saving to', save_path)
-        os.makedirs(save_path, exist_ok=True)
+        #os.makedirs(save_path, exist_ok=True)
 
-        model.save_state_dict(f"{save_path}/state_dict.pth")
-        model.save_config(f"{save_path}/model_config.yml")
+        #model.save_state_dict(f"{save_path}/state_dict.pth")
+        #model.save_config(f"{save_path}/model_config.yml")
