@@ -245,7 +245,7 @@ class mask_pred_frame(EasySyntax):
 
         save_path = os.path.join(save_path, run_name)
         print('saving to', save_path)
-        #os.makedirs(save_path, exist_ok=True)
+        os.makedirs(save_path, exist_ok=True)
 
-        #model.save_state_dict(f"{save_path}/state_dict.pth")
-        #model.save_config(f"{save_path}/model_config.yml")
+        model.save_state_dict(f"{save_path}/state_dict.pth")
+        model.save_config(f"{save_path}/model_config.yml")
