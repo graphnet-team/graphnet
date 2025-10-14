@@ -62,12 +62,18 @@ This installation is only necessary if you want to process KM3NeT/ARCA or KM3NeT
 
 Note that this installation will add `km3io` ensuring it is built with a compatible versions. The steps below are provided for a conda environment, with an enviroment created in the same way it is done above in this page, but feel free to choose a different enviroment setup.
 
+As mentioned, it is highly reommended to create a conda enviroment where your installation is done to do not mess up any dependecy. It can be done with the following commands:
+
 .. code-block:: bash
 
    # Create an environment with Python 3.10
-   conda create -p <path-to-env> --no-default-packages python=3.10 -y
+   conda create -p <full-path-to-env> --no-default-packages python=3.10 -y
    # Activate the environment and move to the graphnet repository you just cloned. If using conda:
-   conda activate <path-to-env>
+   conda activate <full-path-to-env>
+
+The isntallation of GraphNeT is then done by:
+
+.. code-block:: bash
 
    git clone https://github.com/graphnet-team/graphnet.git
    cd graphnet
