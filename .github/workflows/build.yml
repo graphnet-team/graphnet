@@ -14,8 +14,8 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
-  check-codeclimate-credentials:
-    name: Check CodeClimate credentials
+  check-Qlty-credentials:
+    name: Check Qlty credentials
     runs-on: ubuntu-22.04
     outputs:
       has_credentials: ${{ steps.setvar.outputs.has_credentials }}
@@ -23,18 +23,17 @@ jobs:
       - name: Check secrets
         id: setvar
         run: |
-         if [[ "${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}" != "" ]]; \
-         then
-           echo "Credentials to access CodeClimate found"
-           echo has_credentials="true" >> $GITHUB_OUTPUT
-         else
-           echo "Credentials to access CodeClimate not found"
-           echo has_credentials="false" >> $GITHUB_OUTPUT
-         fi
+          if [[ -n "${{ secrets.QLTY_TOKEN }}" ]]; then
+            echo "Credentials to access Qlty found"
+            echo "has_credentials=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "Credentials to access Qlty not found"
+            echo "has_credentials=false" >> "$GITHUB_OUTPUT"
+          fi
 
   build-icetray:
     name: Unit tests - IceTray (v1.13.0 - 3.10)  
-    needs: [ check-codeclimate-credentials ]
+    needs: [ check-Qlty-credentials ]
     runs-on: ubuntu-22.04
     strategy:
       matrix:
@@ -132,12 +131,11 @@ jobs:
         run: |
           git config --global --add safe.directory /__w/graphnet/graphnet
       - name: Publish code coverage
-        uses: paambaati/codeclimate-action@v9.0.0
-        if: needs.check-codeclimate-credentials.outputs.has_credentials == 'true'
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
-        with: 
-          coverageLocations: coverage.xml:coverage.py
+        uses: qltysh/qlty-action/coverage@v2
+        if: needs.check-Qlty-credentials.outputs.has_credentials == 'true'
+        with:
+          token: ${{secrets.QLTY_TOKEN}}
+          files: coverage.xml
           
 
   build-matrix-examples:
