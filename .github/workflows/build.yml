@@ -24,10 +24,10 @@ jobs:
         id: setvar
         run: |
           if [[ -n "${{ secrets.QLTY_TOKEN }}" ]]; then
-            echo "Credentials to access Qlty found"
+            echo "Credentials to access Qlty found."
             echo "has_credentials=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Credentials to access Qlty not found"
+            echo "Credentials to access Qlty not found."
             echo "has_credentials=false" >> "$GITHUB_OUTPUT"
           fi
 
