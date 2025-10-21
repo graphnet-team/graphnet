@@ -8,11 +8,9 @@ on:
   release:
     types: [published]
 
-  push:
-
   # 3) When pull requests are merged into the default branch (e.g. main)
   pull_request:
-    types: [closed]
+    #types: [closed]
     branches:
       - main     # change if your default branch is different
       # - stable  # add more target branches if needed
