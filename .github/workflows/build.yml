@@ -32,7 +32,7 @@ jobs:
           fi
 
   build-icetray:
-    name: Unit tests - IceTray (v1.13.0 - 3.10)  
+    name: Unit tests - IceTray (v1.13.0 - 3.10)
     needs: [ check-Qlty-credentials ]
     runs-on: ubuntu-22.04
     strategy:
@@ -43,7 +43,7 @@ jobs:
       # GitHub Actions overwrite the docker container entrypoint
       # inspect <image> --format '{{.Config.Entrypoint}}'
       image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
-    
+
     steps:
       - name: Mimmick Docker Entrypoint
         # The entrypoint of the container sets python paths
@@ -62,7 +62,7 @@ jobs:
       - name: Verify IceCube is importable
         run: python3 -c "import icecube; print('Import Successful')"
       - name: Show python version
-        run: | 
+        run: |
           python3 --version
           pip --version
           pip3 list
@@ -122,9 +122,9 @@ jobs:
         shell: bash
         run: |
           source ~/venv/bin/activate
-          coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities 
+          coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities
           coverage run -a --source=graphnet -m pytest tests/examples/04_training
-          coverage run -a --source=graphnet -m pytest tests/utilities 
+          coverage run -a --source=graphnet -m pytest tests/utilities
           coverage xml -o coverage.xml
           coverage report -m
       - name: Work around permission issue
@@ -136,7 +136,7 @@ jobs:
         with:
           token: ${{secrets.QLTY_TOKEN}}
           files: coverage.xml
-          
+
 
   build-matrix-examples:
     name: Examples - Ubuntu 22.04

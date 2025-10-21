@@ -401,7 +401,7 @@ class I3HighestEparticleExtractor(I3Extractor):
 
         return particle, EonEntrance, distance, visible_length, containment
 
-    def highest_energy_starting(
+    def highest_energy_starting(  # noqa: C901
         self,
         frame: "icetray.I3Frame",
         min_e: float = 0,

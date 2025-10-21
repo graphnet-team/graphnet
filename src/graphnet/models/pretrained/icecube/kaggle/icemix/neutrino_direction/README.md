@@ -11,7 +11,7 @@ Original repository can be found [here](https://github.com/DrHB/icecube-2nd-plac
 
 The state dict of the models is an exact copy of the one used in the competition, so further state_dict keys might be needed to load the models. Here is some pseudo-code which might help you load the weights into GraphNet:
 
-```python     
+```python
 checkpoint = torch.load(path_to_checkpoint, torch.device("cpu"))
 if "state_dict" in checkpoint:
        checkpoint = checkpoint["state_dict"]
@@ -65,7 +65,7 @@ class Direction_flipped(Label):
         ).reshape(-1, 1)
         z = torch.cos(graph[self._zenith_key]).reshape(-1, 1)
         return torch.cat((y, x, z), dim=1) # Flipped x and y
-```    
+```
 
 ## Hard Local Coincidence feature
 
@@ -89,7 +89,7 @@ def _hlc(self, x: torch.tensor) -> torch.tensor:
 
 The original models were stacked using a simple linear combination of the predictions. Here is some pseudo-code which can be used to stack the models:
 
-```python	
+```python
 MODEL_NAMES = [
     "B_d32",
     "B_d64",

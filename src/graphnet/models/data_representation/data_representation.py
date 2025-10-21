@@ -289,14 +289,14 @@ class DataRepresentation(Model):
         # `DataRepresentation` was instantiated with.
         assert len(input_feature_names) == len(
             self._input_feature_names
-        ), f"""Input features ({input_feature_names}) is not what 
+        ), f"""Input features ({input_feature_names}) is not what
                {self.__class__.__name__} was instatiated
                with ({self._input_feature_names})"""  # noqa
         for idx in range(len(input_feature_names)):
             assert (
                 input_feature_names[idx] == self._input_feature_names[idx]
             ), f""" Order of representation features in data
-                    are not the same as expected. Got {input_feature_names} 
+                    are not the same as expected. Got {input_feature_names}
                     vs. {self._input_feature_names}"""  # noqa
 
     def _perturb_input(self, input_features: np.ndarray) -> np.ndarray:
