@@ -8,6 +8,8 @@ on:
   release:
     types: [published]
 
+  push:
+
   # 3) When pull requests are merged into the default branch (e.g. main)
   pull_request:
     types: [closed]
