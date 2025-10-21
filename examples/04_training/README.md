@@ -30,7 +30,7 @@ This subfolder contains two main training scripts:
 # Same as above, as this is the default model config.
 (graphnet) $ python examples/04_training/03_train_dynedge_from_config.py \
     --model-config configs/models/example_energy_reconstruction_model.yml
-    
+
 # Train a vertex position reconstruction model
 (graphnet) $ python examples/04_training/03_train_dynedge_from_config.py \
     --model-config configs/models/example_vertex_position_reconstruction_model.yml
