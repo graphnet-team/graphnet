@@ -43,7 +43,7 @@ jobs:
             DOCKERFILE_PATH: docker/standalone/Dockerfile
             BASE_IMAGE: ubuntu:22.04
             DOCKERHUB_NAME: rorsoe/graphnet
-    uses: ./.github/actions/docker/docker_action.yml #graphnet-team/graphnet/.github/actions/docker_action.yml@main
+    uses: graphnet-team/graphnet/.github/actions/docker_action.yml@main #./.github/actions/docker/docker_action.yml
     with:
       DOCKERHUB_NAME: ${{ matrix.DOCKERHUB_NAME }}
       GRAPHNET_VERSION: main
