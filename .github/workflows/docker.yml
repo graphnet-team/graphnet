@@ -7,20 +7,15 @@ on:
   # 2) When a GitHub Release is published
   release:
     types: [published]
-
-  # 3) When pull requests are merged into the default branch (e.g. main)
-  pull_request:
-    types: [closed]
-    branches:
-      - main     # change if your default branch is different
-      # - stable  # add more target branches if needed
+  # 3) When push is completed to main (i.e. PRs are merged)
+  push:
+    branches: [ main ]
 
 jobs:
   build:
     # run if:
     # - not a PR event (i.e., release or manual), OR
     # - it *is* a PR event and the PR was merged
-    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     name: Docker Image - ${{ matrix.name }}
     strategy:
       matrix:
