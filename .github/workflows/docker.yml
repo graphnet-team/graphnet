@@ -20,7 +20,7 @@ jobs:
     # run if:
     # - not a PR event (i.e., release or manual), OR
     # - it *is* a PR event and the PR was merged
-    #if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
+    if: github.event_name != 'pull_request' || github.event.pull_request.merged == true
     name: Docker Image - ${{ matrix.name }}
     strategy:
       matrix:
