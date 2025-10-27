@@ -1,0 +1,119 @@
+name: Build & Publish GraphNeT Image
+
+on:
+  workflow_call:
+    inputs:
+      DOCKERHUB_NAME:        { type: string, required: true }
+      DOCKERFILE_PATH:       { type: string, required: true} 
+      GRAPHNET_VERSION:      { type: string, default: "main" }
+      BASE_IMAGE:            { type: string, default: "ubuntu:22.04" }
+      TORCH_CHOICE:          { type: string, default: "torch-2.6.0" }  # torch-2.7.0|2.6.0|2.5.1|no_torch
+      HARDWARE:              { type: string, default: "cpu" }          # cpu|cu118|cu121|cu124|cu126|cu128
+      PYTHON_VERSION:        { type: string, default: "3.11" }
+      PLATFORMS:             { type: string, default: "linux/amd64" }
+      CONTEXT_PATH:          { type: string, default: "." }           
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_TOKEN:
+        required: true
+
+env:
+  # map inputs to env so existing shell snippets still work
+  DOCKERHUB_NAME:    ${{ inputs.DOCKERHUB_NAME }}
+  GRAPHNET_VERSION:  ${{ inputs.GRAPHNET_VERSION }}
+  BASE_IMAGE:        ${{ inputs.BASE_IMAGE }}
+  TORCH_CHOICE:      ${{ inputs.TORCH_CHOICE }}
+  HARDWARE:          ${{ inputs.HARDWARE }}
+  PYTHON_VERSION:    ${{ inputs.PYTHON_VERSION }}
+  PLATFORMS:         ${{ inputs.PLATFORMS }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set version from Release
+        run: |
+          RAW="${{ github.ref_name }}"      # e.g. v1.0.0
+          V="${RAW#v}"
+          # Only override if this run is on a tag and user didn't explicitly set a version
+          if [[ "${{ inputs.GRAPHNET_VERSION }}" == "main" && "$RAW" == v* ]]; then
+            echo "GRAPHNET_VERSION=$V" >> $GITHUB_ENV
+          fi
+
+      - name: Set up QEMU
+        if: contains(env.PLATFORMS, 'arm64')
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Derive OS_TAG from BASE_IMAGE
+        id: os
+        shell: bash
+        run: |
+          OS_TAG="${BASE_IMAGE//\//-}"    # replace / with -
+          OS_TAG="${OS_TAG//:/-}"         # replace : with -
+          echo "OS_TAG=${OS_TAG}" >> "$GITHUB_ENV"
+
+      - name: Compute tag (graphnet-{version}-{hardware}-torch{MM}-{OS})
+        id: tag
+        shell: bash
+        run: |
+          if [[ "${TORCH_CHOICE}" == "no_torch" ]]; then
+            TORCH_MM="00"
+          else
+            V="${TORCH_CHOICE#torch-}"
+            IFS='.' read -r MA MI _ <<< "$V"
+            TORCH_MM="${MA}${MI}"
+          fi
+
+          if [[ "${GRAPHNET_VERSION}" == "main" ]]; then
+            SAFE_VERSION="latest"
+          else
+            SAFE_VERSION="${GRAPHNET_VERSION}"
+          fi
+
+          FINAL="graphnet-${SAFE_VERSION}-${HARDWARE}-torch${TORCH_MM}-${OS_TAG}"
+
+          echo "final=${FINAL}" >> "$GITHUB_OUTPUT"
+          echo "full=${DOCKERHUB_NAME}:${FINAL}" >> "$GITHUB_OUTPUT"
+          echo "Final tag: ${FINAL}"
+
+      - name: Show workspace & Dockerfile
+        run: |
+          echo "GITHUB_WORKSPACE=${{ github.workspace }}"
+          ls -la ${{ github.workspace }}
+          ls -la "$(dirname "${{ inputs.DOCKERFILE_PATH }}")" || true
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context:   ${{ inputs.CONTEXT_PATH }}
+          file:      ${{ inputs.DOCKERFILE_PATH }}         
+          platforms: ${{ env.PLATFORMS }}
+          push: true
+          tags: ${{ steps.tag.outputs.full }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BASE_IMAGE=${{ env.BASE_IMAGE }}
+            TORCH_CHOICE=${{ env.TORCH_CHOICE }}
+            HARDWARE=${{ env.HARDWARE }}
+            PYTHON_VERSION=${{ env.PYTHON_VERSION }}
+            GRAPHNET_REF=${{ env.GRAPHNET_VERSION }}
+
+      - name: Show pushed image
+        run: echo "Pushed ${{ steps.tag.outputs.full }}"
