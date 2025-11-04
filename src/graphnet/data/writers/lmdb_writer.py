@@ -14,7 +14,43 @@ import pandas as pd
 
 from .graphnet_writer import GraphNeTWriter
 from graphnet.models.data_representation import DataRepresentation
-from graphnet.data.utilities.lmdb_utilities import get_serialization_method
+from graphnet.data.utilities.lmdb_utilities import (
+    get_serialization_method_name,
+)
+
+
+def _serialize_pickle(obj: Any) -> bytes:
+    """Serialize object using pickle."""
+    import pickle  # type: ignore
+
+    return pickle.dumps(obj)
+
+
+def _serialize_json(obj: Any) -> bytes:
+    """Serialize object using json."""
+    import json  # type: ignore
+
+    return json.dumps(obj).encode("utf-8")
+
+
+def _serialize_msgpack(obj: Any) -> bytes:
+    """Serialize object using msgpack."""
+    try:
+        import msgpack  # type: ignore
+    except ImportError as e:
+        raise ImportError("msgpack is not installed.") from e
+
+    return msgpack.packb(obj, use_bin_type=True)
+
+
+def _serialize_dill(obj: Any) -> bytes:
+    """Serialize object using dill."""
+    try:
+        import dill  # type: ignore
+    except ImportError as e:
+        raise ImportError("dill is not installed.") from e
+
+    return dill.dumps(obj)
 
 
 class LMDBWriter(GraphNeTWriter):
@@ -78,27 +114,13 @@ class LMDBWriter(GraphNeTWriter):
         if callable(serialization):
             return serialization
         if serialization == "pickle":
-            import pickle
-
-            return lambda obj: pickle.dumps(obj)
+            return _serialize_pickle
         if serialization == "json":
-            import json
-
-            return lambda obj: json.dumps(obj).encode("utf-8")
+            return _serialize_json
         if serialization == "msgpack":
-            try:
-                import msgpack  # type: ignore
-            except Exception as e:  # pragma: no cover
-                raise ImportError("msgpack is not installed.") from e
-
-            return lambda obj: msgpack.packb(obj, use_bin_type=True)
+            return _serialize_msgpack
         if serialization == "dill":
-            try:
-                import dill  # type: ignore
-            except Exception as e:  # pragma: no cover
-                raise ImportError("dill is not installed.") from e
-
-            return lambda obj: dill.dumps(obj)
+            return _serialize_dill
         raise ValueError(
             "Unsupported serialization. Use 'pickle', 'json', "
             "'msgpack', 'dill', or a callable."
@@ -376,7 +398,7 @@ class LMDBWriter(GraphNeTWriter):
             for src in files:
                 src_env_path = src if os.path.isdir(src) else src
                 try:
-                    serialization_method = get_serialization_method(
+                    serialization_method = get_serialization_method_name(
                         src_env_path
                     )
                     if serialization_method is not None:
