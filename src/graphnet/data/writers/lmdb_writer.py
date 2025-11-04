@@ -310,13 +310,34 @@ class LMDBWriter(GraphNeTWriter):
             self.warning("No LMDB files provided for merging. Skipping.")
             return
 
+        # Calculate total size of source files to set appropriate map_size
+        total_size = 0
+        for src in files:
+            src_env_path = src
+            if os.path.isdir(src_env_path):
+                # Sum up all file sizes in the LMDB directory
+                for root, dirs, filenames in os.walk(src_env_path):
+                    for filename in filenames:
+                        filepath = os.path.join(root, filename)
+                        if os.path.exists(filepath):
+                            total_size += os.path.getsize(filepath)
+            elif os.path.exists(src_env_path):
+                total_size += os.path.getsize(src_env_path)
+
+        # Set map_size to total size plus 20% overhead,
+        # or use default if calculated size is smaller
+        map_size = max(
+            self._map_size_bytes,
+            int(total_size * 1.2),  # 20% overhead for LMDB metadata
+        )
+
         os.makedirs(output_dir, exist_ok=True)
         target_path = os.path.join(output_dir, target_name)
         os.makedirs(target_path, exist_ok=True)
 
         target_env = lmdb.open(
             target_path,
-            map_size=self._map_size_bytes,
+            map_size=map_size,
             subdir=True,
             lock=True,
             max_dbs=1,
