@@ -65,7 +65,9 @@ class LMDBWriter(GraphNeTWriter):
         index_column: str = "event_no",
         map_size_bytes: int = 8 * 1024 * 1024 * 1024,
         serialization: Union[str, Callable[[Any], bytes]] = "pickle",
-        data_representation: Optional[DataRepresentation] = None,
+        data_representation: Optional[
+            Union[DataRepresentation, List[DataRepresentation]]
+        ] = None,
         pulsemap_extractor_name: Optional[str] = None,
         truth_extractor_name: Optional[str] = None,
         truth_label_names: Optional[List[str]] = None,
@@ -78,10 +80,11 @@ class LMDBWriter(GraphNeTWriter):
             map_size_bytes: LMDB map size. Defaults to 8 GiB.
             serialization: Either a string in {"pickle", "json", "msgpack",
                 "dill"}, or a callable that takes an object and returns bytes.
-            data_representation: Optional `DataRepresentation` instance. If
-                provided together with extractor names and truth labels, the
-                stored value will be the result of
-                `data_representation.forward(...)` instead of raw tables.
+            data_representation: Optional `DataRepresentation` instance or list
+                of instances. If provided together with extractor names and
+                truth labels, the stored value will contain a
+                "data_representations" field with outputs from each
+                `data_representation.forward(...)` keyed by class name.
             pulsemap_extractor_name: Name of the extractor providing
                 pulse-level features.
             truth_extractor_name: Name of the extractor providing event-level
@@ -103,7 +106,17 @@ class LMDBWriter(GraphNeTWriter):
             self._serialization_method = "__custom__"
 
         self._serializer = self._resolve_serializer(serialization)
-        self._data_representation = data_representation
+
+        # Convert single DataRepresentation to list for consistent handling
+        if data_representation is None:
+            self._data_representations: Optional[List[DataRepresentation]] = (
+                None
+            )
+        elif isinstance(data_representation, list):
+            self._data_representations = data_representation
+        else:
+            self._data_representations = [data_representation]
+
         self._pulsemap_name = pulsemap_extractor_name
         self._truth_name = truth_extractor_name
         self._truth_label_names = truth_label_names
@@ -169,7 +182,7 @@ class LMDBWriter(GraphNeTWriter):
         self, per_event_tables: Dict[str, pd.DataFrame]
     ) -> Any:
         """Build the object to serialize for a single event from tables."""
-        if self._data_representation is not None:
+        if self._data_representations is not None:
             if self._pulsemap_name is None or self._truth_name is None:
                 raise ValueError(
                     "pulsemap_extractor_name and truth_extractor_name must"
@@ -185,17 +198,7 @@ class LMDBWriter(GraphNeTWriter):
                     for name, df in per_event_tables.items()
                 }
 
-            feature_names = getattr(
-                self._data_representation, "_input_feature_names", None
-            ) or getattr(
-                self._data_representation, "input_feature_names", None
-            )
-            if feature_names is None:
-                feature_names = [
-                    c for c in pulse_df.columns if c != self._index_column
-                ]
-
-            x = pulse_df[feature_names].to_numpy()
+            # Prepare truth data
             truth_row = truth_df.iloc[0].to_dict()
             if self._truth_label_names is not None:
                 truth_row = {
@@ -205,11 +208,55 @@ class LMDBWriter(GraphNeTWriter):
                 }
             truth_dicts = [truth_row]
 
-            return self._data_representation.forward(
-                input_features=x,
-                input_feature_names=list(feature_names),
-                truth_dicts=truth_dicts,
-            )  # type: ignore[arg-type]
+            # Process each data representation
+            data_representations_output: Dict[str, Any] = {}
+            class_name_counts: Dict[str, int] = {}
+
+            for data_rep in self._data_representations:
+                # Get feature names for this representation
+                feature_names = getattr(
+                    data_rep, "_input_feature_names", None
+                ) or getattr(data_rep, "input_feature_names", None)
+                if feature_names is None:
+                    feature_names = [
+                        c for c in pulse_df.columns if c != self._index_column
+                    ]
+
+                x = pulse_df[feature_names].to_numpy()
+
+                # Get the output from this data representation
+                rep_output = data_rep.forward(
+                    input_features=x,
+                    input_feature_names=list(feature_names),
+                    truth_dicts=truth_dicts,
+                )  # type: ignore[arg-type]
+
+                # Generate unique key for this representation
+                base_class_name = data_rep.__class__.__name__
+
+                # Track occurrences of each class name
+                if base_class_name not in class_name_counts:
+                    # First occurrence - check if base name is available
+                    if base_class_name in data_representations_output:
+                        # Base name already taken (shouldn't happen), use _0
+                        class_name_counts[base_class_name] = 0
+                        key_name = f"{base_class_name}_0"
+                    else:
+                        # First occurrence - use base name
+                        class_name_counts[base_class_name] = 0
+                        key_name = base_class_name
+                else:
+                    # We've seen this class name before -
+                    # increment and append tag
+                    class_name_counts[base_class_name] += 1
+                    # Break for max line length..
+                    count = class_name_counts[base_class_name]
+                    key_name = f"{base_class_name}_{count}"
+
+                data_representations_output[key_name] = rep_output
+
+            # Return structure with data_representations field
+            return {"data_representations": data_representations_output}
 
         return {
             name: df.to_dict(orient="list")
