@@ -85,3 +85,56 @@ def get_serialization_method(
     if method_name is not None:
         return _resolve_deserializer(method_name)
     return None
+
+
+def query_database(
+    database: str,
+    index: int,
+    deserialization: Optional[Callable[[bytes], Any]] = None,
+) -> Any:
+    """Retrieve and deserialize a record from an LMDB database.
+
+    Args:
+        database: Path to the LMDB database directory.
+        index: The index (event_no) of the record to retrieve.
+        deserialization: Optional deserialization callable. If not provided,
+            the deserialization method will be fetched from the database
+            metadata.
+
+    Returns:
+        The deserialized object stored at the given index.
+
+    Raises:
+        KeyError: If the index is not found in the database.
+        ValueError: If deserialization is required but cannot be determined
+            from the database metadata.
+    """
+    # Get deserialization method if not provided
+    if deserialization is None:
+        deserialization = get_serialization_method(database)
+        if deserialization is None:
+            raise ValueError(
+                "Deserialization method could not be determined from "
+                "database metadata. Please provide a deserialization "
+                "callable."
+            )
+
+    # Open database and retrieve record
+    env = lmdb.open(database, readonly=True, lock=False, subdir=True)
+    try:
+        with env.begin(write=False) as txn:
+            # Convert index to key (same format as in LMDBWriter)
+            key_bytes = str(index).encode("utf-8")
+            value_bytes = txn.get(key_bytes)
+            if value_bytes is None:
+                raise KeyError(f"Index {index} not found in database.")
+            # Deserialize and return
+            result = deserialization(value_bytes)
+        return result
+    except (KeyError, ValueError):
+        raise
+    except Exception as e:
+        # Re-raise other exceptions with context
+        raise RuntimeError(f"Failed to query database at index {index}") from e
+    finally:
+        env.close()
