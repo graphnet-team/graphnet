@@ -14,6 +14,7 @@ import pandas as pd
 
 from .graphnet_writer import GraphNeTWriter
 from graphnet.models.data_representation import DataRepresentation
+from graphnet.data.utilities.lmdb_utilities import get_serialization_method
 
 
 class LMDBWriter(GraphNeTWriter):
@@ -39,8 +40,8 @@ class LMDBWriter(GraphNeTWriter):
             index_column: Column used as the per-event key
                 (default: `event_no`).
             map_size_bytes: LMDB map size. Defaults to 8 GiB.
-            serialization: Either a string in {"pickle", "json", "msgpack"}
-                or a callable that takes an object and returns bytes.
+            serialization: Either a string in {"pickle", "json", "msgpack",
+                "dill"}, or a callable that takes an object and returns bytes.
             data_representation: Optional `DataRepresentation` instance. If
                 provided together with extractor names and truth labels, the
                 stored value will be the result of
@@ -58,6 +59,12 @@ class LMDBWriter(GraphNeTWriter):
         self._merge_dataframes = False
         self._index_column = index_column
         self._map_size_bytes = map_size_bytes
+
+        # Store the serialization method name for metadata
+        if isinstance(serialization, str):
+            self._serialization_method = serialization
+        else:
+            self._serialization_method = "__custom__"
 
         self._serializer = self._resolve_serializer(serialization)
         self._data_representation = data_representation
@@ -85,10 +92,27 @@ class LMDBWriter(GraphNeTWriter):
                 raise ImportError("msgpack is not installed.") from e
 
             return lambda obj: msgpack.packb(obj, use_bin_type=True)
+        if serialization == "dill":
+            try:
+                import dill  # type: ignore
+            except Exception as e:  # pragma: no cover
+                raise ImportError("dill is not installed.") from e
+
+            return lambda obj: dill.dumps(obj)
         raise ValueError(
             "Unsupported serialization. Use 'pickle', 'json', "
-            "'msgpack', or a callable."
+            "'msgpack', 'dill', or a callable."
         )
+
+    def _store_serialization_metadata(self, txn: lmdb.Transaction) -> None:
+        """Store serialization method metadata in the LMDB database.
+
+        This metadata allows future readers to determine which
+        serialization method was used to create the database.
+        """
+        metadata_key = b"__meta_serialization__"
+        metadata_value = self._serialization_method.encode("utf-8")
+        txn.put(metadata_key, metadata_value, overwrite=True)
 
     def _event_dict_from_merged_tables(
         self, tables: Dict[str, pd.DataFrame], event_no: int
@@ -200,6 +224,9 @@ class LMDBWriter(GraphNeTWriter):
         )
         written = 0
         with env.begin(write=True) as txn:
+            # Store serialization method metadata
+            self._store_serialization_metadata(txn)
+
             is_merged = all(isinstance(v, pd.DataFrame) for v in data.values())
             if is_merged:
                 written += self._save_from_merged(txn, data)
@@ -343,6 +370,29 @@ class LMDBWriter(GraphNeTWriter):
             max_dbs=1,
         )
         with target_env.begin(write=True) as target_txn:
+            # Determine serialization method from first source file
+            # and store it in the merged database
+            serialization_method = None
+            for src in files:
+                src_env_path = src if os.path.isdir(src) else src
+                try:
+                    serialization_method = get_serialization_method(
+                        src_env_path
+                    )
+                    if serialization_method is not None:
+                        break
+                except Exception:
+                    continue
+
+            # If no metadata found, use the current writer's method
+            if serialization_method is None:
+                serialization_method = self._serialization_method
+
+            # Store metadata in merged database
+            metadata_key = b"__meta_serialization__"
+            metadata_value = serialization_method.encode("utf-8")
+            target_txn.put(metadata_key, metadata_value, overwrite=True)
+
             for src in files:
                 if not os.path.isdir(src):
                     # Expecting LMDB dir; if a file path was passed, try dir
@@ -359,6 +409,9 @@ class LMDBWriter(GraphNeTWriter):
                 with src_env.begin(write=False) as src_txn:
                     cursor = src_txn.cursor()
                     for key, val in cursor:
+                        # Skip metadata keys from source (we've already set it)
+                        if key == b"__meta_serialization__":
+                            continue
                         if (not allow_overwrite) and target_txn.get(
                             key
                         ) is not None:
