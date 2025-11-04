@@ -1,6 +1,6 @@
 """LMDB-specific utility functions for use in `graphnet.data`."""
 
-from typing import Any, Callable, Optional
+from typing import Any, Callable, List, Optional
 
 import lmdb
 
@@ -136,5 +136,47 @@ def query_database(
     except Exception as e:
         # Re-raise other exceptions with context
         raise RuntimeError(f"Failed to query database at index {index}") from e
+    finally:
+        env.close()
+
+
+def get_all_indices(database: str) -> List[int]:
+    """Retrieve all indices (event numbers) from an LMDB database.
+
+    Args:
+        database: Path to the LMDB database directory.
+
+    Returns:
+        A sorted list of all indices (event numbers) in the database,
+        excluding the metadata entry.
+
+    Raises:
+        RuntimeError: If the database cannot be opened or accessed.
+    """
+    env = lmdb.open(database, readonly=True, lock=False, subdir=True)
+    try:
+        indices: List[int] = []
+        metadata_key = b"__meta_serialization__"
+
+        with env.begin(write=False) as txn:
+            cursor = txn.cursor()
+            for key_bytes, _ in cursor:
+                # Skip the metadata entry
+                if key_bytes == metadata_key:
+                    continue
+                # Convert key back to integer
+                try:
+                    key_str = key_bytes.decode("utf-8")
+                    index = int(key_str)
+                    indices.append(index)
+                except (ValueError, UnicodeDecodeError):
+                    # Skip keys that can't be decoded as integers
+                    # (shouldn't happen in normal operation,
+                    # but handle gracefully)
+                    continue
+
+        return sorted(indices)
+    except Exception as e:
+        raise RuntimeError("Failed to retrieve indices from database") from e
     finally:
         env.close()
