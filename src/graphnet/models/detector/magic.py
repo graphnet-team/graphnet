@@ -19,7 +19,12 @@ class MAGIC(Detector):
     xyz = ["x_cam", "y_cam", "tel_id"]
 
     def feature_map(self) -> Dict[str, Callable]:
-        """Map standardization functions to each dimension of input data."""
+        """Map standardization functions to each dimension.
+
+        Note: tel_id can take the integer values 0 or 1, where:
+            - 0 corresponds to MAGIC-I
+            - 1 corresponds to MAGIC-II
+        """
         feature_map = {
             "x_cam": self._xy,
             "y_cam": self._xy,
