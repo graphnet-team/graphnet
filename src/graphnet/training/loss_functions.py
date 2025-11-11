@@ -15,6 +15,7 @@ from torch import nn
 from torch.nn.functional import (
     one_hot,
     binary_cross_entropy,
+    binary_cross_entropy_with_logits,
     softplus,
 )
 
@@ -203,16 +204,30 @@ class CrossEntropyLoss(LossFunction):
 
 
 class BinaryCrossEntropyLoss(LossFunction):
-    """Compute binary cross entropy loss.
+    """Compute binary cross entropy loss."""
 
-    Predictions are vector probabilities (i.e., values between 0 and 1),
-    and targets should be 0 and 1.
-    """
+    def __init__(self, from_logits: bool = False, *args: Any, **kwargs: Any):
+        """Construct BinaryCrossEntropyLoss.
+
+        Args:
+            from_logits: Whether the predictions are logits.
+                NOTE: If True, the predictions are expected to be raw scores
+                (i.e., not passed through a sigmoid function). If False, the
+                predictions are expected to be probabilities
+                (i.e., passed through a sigmoid function).
+        """
+        super().__init__(*args, **kwargs)
+        self._from_logits = from_logits
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        return binary_cross_entropy(
-            prediction.float(), target.float(), reduction="none"
-        )
+        if self._from_logits:
+            return binary_cross_entropy_with_logits(
+                prediction.float(), target.float(), reduction="none"
+            )
+        else:
+            return binary_cross_entropy(
+                prediction.float(), target.float(), reduction="none"
+            )
 
 
 class LogCMK(torch.autograd.Function):
