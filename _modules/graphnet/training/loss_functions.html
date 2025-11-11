@@ -366,6 +366,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">one_hot</span><span class="p">,</span>
     <span class="n">binary_cross_entropy</span><span class="p">,</span>
+    <span class="n">binary_cross_entropy_with_logits</span><span class="p">,</span>
     <span class="n">softplus</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -577,16 +578,30 @@
 <div class="viewcode-block" id="BinaryCrossEntropyLoss">
 <a class="viewcode-back" href="../../../api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.BinaryCrossEntropyLoss">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinaryCrossEntropyLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Compute binary cross entropy loss.</span>
+<span class="w">    </span><span class="sd">"""Compute binary cross entropy loss."""</span>
 
-<span class="sd">    Predictions are vector probabilities (i.e., values between 0 and 1),</span>
-<span class="sd">    and targets should be 0 and 1.</span>
-<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">from_logits</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct BinaryCrossEntropyLoss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            from_logits: Whether the predictions are logits.</span>
+<span class="sd">                NOTE: If True, the predictions are expected to be raw scores</span>
+<span class="sd">                (i.e., not passed through a sigmoid function). If False, the</span>
+<span class="sd">                predictions are expected to be probabilities</span>
+<span class="sd">                (i.e., passed through a sigmoid function).</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_from_logits</span> <span class="o">=</span> <span class="n">from_logits</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">binary_cross_entropy</span><span class="p">(</span>
-            <span class="n">prediction</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">"none"</span>
-        <span class="p">)</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_from_logits</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">binary_cross_entropy_with_logits</span><span class="p">(</span>
+                <span class="n">prediction</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">"none"</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">binary_cross_entropy</span><span class="p">(</span>
+                <span class="n">prediction</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">target</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">"none"</span>
+            <span class="p">)</span></div>
 
 
 
