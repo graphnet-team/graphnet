@@ -287,7 +287,6 @@ class LogCMK(torch.autograd.Function):
     ) -> Tensor:  # pylint: disable=invalid-name,arguments-differ
         """Backward pass for LogCMK computation.
 
-
         Mathematical Background:
         -----------------------
         For the von Mises-Fisher distribution, the gradient of log C_m(κ) with
