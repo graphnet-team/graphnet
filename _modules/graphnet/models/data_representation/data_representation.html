@@ -645,14 +645,14 @@
         <span class="c1"># `DataRepresentation` was instantiated with.</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_feature_names</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">"""Input features (</span><span class="si">{</span><span class="n">input_feature_names</span><span class="si">}</span><span class="s2">) is not what </span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">"""Input features (</span><span class="si">{</span><span class="n">input_feature_names</span><span class="si">}</span><span class="s2">) is not what</span>
 <span class="s2">               </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was instatiated</span>
 <span class="s2">               with (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="si">}</span><span class="s2">)"""</span>  <span class="c1"># noqa</span>
         <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_feature_names</span><span class="p">)):</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">input_feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
             <span class="p">),</span> <span class="sa">f</span><span class="s2">""" Order of representation features in data</span>
-<span class="s2">                    are not the same as expected. Got </span><span class="si">{</span><span class="n">input_feature_names</span><span class="si">}</span><span class="s2"> </span>
+<span class="s2">                    are not the same as expected. Got </span><span class="si">{</span><span class="n">input_feature_names</span><span class="si">}</span>
 <span class="s2">                    vs. </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_feature_names</span><span class="si">}</span><span class="s2">"""</span>  <span class="c1"># noqa</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_perturb_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>

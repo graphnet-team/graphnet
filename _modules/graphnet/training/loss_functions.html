@@ -653,39 +653,39 @@
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">grad_output</span><span class="p">:</span> <span class="n">Tensor</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>  <span class="c1"># pylint: disable=invalid-name,arguments-differ</span>
 <span class="w">        </span><span class="sd">"""Backward pass for LogCMK computation.</span>
-<span class="sd">        </span>
+
 <span class="sd">        Mathematical Background:</span>
 <span class="sd">        -----------------------</span>
-<span class="sd">        For the von Mises-Fisher distribution, the gradient of log C_m(κ) with </span>
+<span class="sd">        For the von Mises-Fisher distribution, the gradient of log C_m(κ) with</span>
 <span class="sd">        respect to κ is given by the ratio of modified Bessel functions:</span>
-<span class="sd">        </span>
+
 <span class="sd">        ∂/∂κ log C_m(κ) = (m/2-1)/κ - I_{m/2}(κ)/I_{m/2-1}(κ)</span>
-<span class="sd">        </span>
+
 <span class="sd">        For m=3, this simplifies to the exact formula:</span>
 <span class="sd">        ∂/∂κ log C_3(κ) = 1/κ - 1/tanh(κ)</span>
-<span class="sd">        </span>
+
 <span class="sd">        For small κ values, we use the Taylor series approximation:</span>
 <span class="sd">        f(κ) = -κ/3 + κ³/45 - 2κ⁵/945 + O(κ⁷)</span>
-<span class="sd">        </span>
-<span class="sd">        The first-order approximation -κ/3 provides sufficient accuracy for </span>
+
+<span class="sd">        The first-order approximation -κ/3 provides sufficient accuracy for</span>
 <span class="sd">        |κ| &lt; 1e-6, with truncation error bounded by |κ|³/45 ≲ O(10⁻²¹).</span>
-<span class="sd">        </span>
+
 <span class="sd">        Implementation Details:</span>
 <span class="sd">        ----------------------</span>
 <span class="sd">        Uses boolean masking to avoid double evaluation and RuntimeWarnings:</span>
 <span class="sd">        - Small κ: |κ| &lt; 1e-6 → gradient = -κ/3 (Taylor approximation)</span>
 <span class="sd">        - Large κ: |κ| ≥ 1e-6 → gradient = 1/κ - 1/tanh(κ) (exact formula)</span>
-<span class="sd">        </span>
+
 <span class="sd">        References:</span>
 <span class="sd">        ----------</span>
 <span class="sd">        [1] von Mises-Fisher distribution: Wikipedia</span>
 <span class="sd">        [2] arXiv:1812.04616, Section 8.2</span>
 <span class="sd">        [3] MIT License (c) 2019 Max Ryabinin - Modified for GraphNeT</span>
-<span class="sd">        </span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            ctx: Autograd context containing saved tensors and metadata.</span>
 <span class="sd">            grad_output: Gradient with respect to the output tensor.</span>
-<span class="sd">            </span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            Tuple of gradients: (None for m, gradient w.r.t. κ).</span>
 <span class="sd">        """</span>
@@ -696,16 +696,16 @@
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
             <span class="c1"># Initialize gradient array</span>
             <span class="n">grads</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span>
-            
+
             <span class="c1"># Handle small kappa values (including zero) to avoid division by zero</span>
             <span class="n">small_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
             <span class="n">grads</span><span class="p">[</span><span class="n">small_mask</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">kappa</span><span class="p">[</span><span class="n">small_mask</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3</span>
-            
+
             <span class="c1"># Handle large kappa values</span>
             <span class="n">large_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">small_mask</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">large_mask</span><span class="p">):</span>
                 <span class="n">kappa_large</span> <span class="o">=</span> <span class="n">kappa</span><span class="p">[</span><span class="n">large_mask</span><span class="p">]</span>
-                <span class="n">grads</span><span class="p">[</span><span class="n">large_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">kappa_large</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">kappa_large</span><span class="p">)</span>
+                <span class="n">grads</span><span class="p">[</span><span class="n">large_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">kappa_large</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">kappa_large</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">grads</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span>
                 <span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">special</span><span class="o">.</span><span class="n">iv</span><span class="p">(</span><span class="n">m</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">kappa</span><span class="p">))</span>
