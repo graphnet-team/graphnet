@@ -481,11 +481,19 @@ class LMDBWriter(GraphNeTWriter):
                         # Skip metadata keys from source (we've already set it)
                         if key == b"__meta_serialization__":
                             continue
-                        if (not allow_overwrite) and target_txn.get(
-                            key
-                        ) is not None:
+                        try:
+                            if (not allow_overwrite) and target_txn.get(
+                                key
+                            ) is not None:
+                                continue
+                        except Exception as e:
+                            self.error(f"Error checking for overwrite: {e}")
                             continue
-                        target_txn.put(key, val, overwrite=True)
+                        try:
+                            target_txn.put(key, val, overwrite=True)
+                        except Exception as e:
+                            self.error(f"Error writing key {key}: {e}")
+                            continue
                 src_env.close()
 
         target_env.sync()
