@@ -4,14 +4,14 @@ on:
   workflow_call:
     inputs:
       DOCKERHUB_NAME:        { type: string, required: true }
-      DOCKERFILE_PATH:       { type: string, required: true} 
+      DOCKERFILE_PATH:       { type: string, required: true}
       GRAPHNET_VERSION:      { type: string, default: "main" }
       BASE_IMAGE:            { type: string, default: "ubuntu:22.04" }
       TORCH_CHOICE:          { type: string, default: "torch-2.6.0" }  # torch-2.7.0|2.6.0|2.5.1|no_torch
       HARDWARE:              { type: string, default: "cpu" }          # cpu|cu118|cu121|cu124|cu126|cu128
       PYTHON_VERSION:        { type: string, default: "3.11" }
       PLATFORMS:             { type: string, default: "linux/amd64" }
-      CONTEXT_PATH:          { type: string, default: "." }           
+      CONTEXT_PATH:          { type: string, default: "." }
     secrets:
       DOCKERHUB_USERNAME:
         required: true
@@ -102,7 +102,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context:   ${{ inputs.CONTEXT_PATH }}
-          file:      ${{ inputs.DOCKERFILE_PATH }}         
+          file:      ${{ inputs.DOCKERFILE_PATH }}
           platforms: ${{ env.PLATFORMS }}
           push: true
           tags: ${{ steps.tag.outputs.full }}
