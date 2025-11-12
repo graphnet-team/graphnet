@@ -1,16 +1,19 @@
 """Module for extracting pulse information from a KM3NeT file."""
 
-from typing import Any, Dict
+from typing import Any, Dict, TYPE_CHECKING
 import numpy as np
 import pandas as pd
-import awkward as ak
 
 from .km3netextractor import KM3NeTExtractor
+from graphnet.utilities.imports import has_km3net_package
 from graphnet.data.extractors.km3net.utilities.km3net_utilities import (
     create_unique_id_run_by_run,
     assert_no_uint_values,
     creating_time_zero,
 )
+
+if has_km3net_package() or TYPE_CHECKING:
+    import awkward as ak
 
 
 class KM3NeTPulseExtractor(KM3NeTExtractor):
