@@ -182,6 +182,11 @@ class LMDBWriter(GraphNeTWriter):
         self, per_event_tables: Dict[str, pd.DataFrame]
     ) -> Any:
         """Build the object to serialize for a single event from tables."""
+        extractor_dict = {
+            name: df.to_dict(orient="list")
+            for name, df in per_event_tables.items()
+        }
+        rep_dict = {}
         if self._data_representations is not None:
             if self._pulsemap_name is None or self._truth_name is None:
                 raise ValueError(
@@ -255,13 +260,11 @@ class LMDBWriter(GraphNeTWriter):
 
                 data_representations_output[key_name] = rep_output
 
-            # Return structure with data_representations field
-            return {"data_representations": data_representations_output}
+            rep_dict = {"data_representations": data_representations_output}
 
-        return {
-            name: df.to_dict(orient="list")
-            for name, df in per_event_tables.items()
-        }
+        if len(rep_dict) > 0:
+            extractor_dict.update(rep_dict)
+        return extractor_dict
 
     def _save_file(
         self,

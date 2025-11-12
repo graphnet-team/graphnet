@@ -1,17 +1,17 @@
 """`Dataset` class(es) for reading data from LMDB databases."""
 
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 import os
-import pandas as pd
 import numpy as np
 import lmdb
-
+from tqdm import tqdm
 from torch_geometric.data import Data
 from graphnet.data.dataset.dataset import Dataset, ColumnMissingException
 from graphnet.data.utilities.lmdb_utilities import (
     get_all_indices,
     get_serialization_method,
 )
+from graphnet.training.utils import add_custom_labels, add_truth
 
 
 class LMDBDataset(Dataset):
@@ -47,6 +47,7 @@ class LMDBDataset(Dataset):
         labels: Optional[Dict[str, Any]] = None,
         # LMDB-specific parameters
         pre_computed_representation: Optional[str] = None,
+        repeat_labels_by: Optional[int] = None,
     ):
         """Construct `LMDBDataset`.
 
@@ -88,12 +89,15 @@ class LMDBDataset(Dataset):
                 representation to use. If None, reads raw tables and computes
                 representations in real-time. If specified, extracts the
                 pre-computed representation directly (by class name or key).
+            repeat_labels_by: If specified, repeats the labels along the
+                specified dimension.
         """
         # Store LMDB-specific parameter before calling super().__init__
         self._pre_computed_representation = pre_computed_representation
         self._deserializer: Optional[Any] = None
         self._env: Optional[lmdb.Environment] = None
-
+        self._repeat_labels_by = repeat_labels_by
+        self._tables: Optional[List[str]] = None
         # Call parent constructor
         super().__init__(
             path=path,
@@ -145,8 +149,7 @@ class LMDBDataset(Dataset):
             )
 
         # Initialize cache for deserialized data (single index at a time)
-        self._cached_index: Optional[int] = None
-        self._cached_data: Optional[Dict[str, Any]] = None
+        self._reset_cache()
 
         # Set custom member variable(s) for raw table mode
         if self._pre_computed_representation is None:
@@ -155,6 +158,11 @@ class LMDBDataset(Dataset):
             if self._node_truth:
                 self._node_truth_string = ", ".join(self._node_truth)
 
+    def _reset_cache(self) -> None:
+        """Reset the cache."""
+        self._cached_index: int = -1
+        self._cached_data: Dict[str, Any] = {}
+
     def _post_init(self) -> None:
         """Implementation-specific code executed after the main constructor."""
         self._missing_variables: Dict[str, List[str]] = {}
@@ -162,6 +170,67 @@ class LMDBDataset(Dataset):
             # Only check for missing columns if using raw tables
             self._remove_missing_columns()
         self._close_connection()
+        if self._pre_computed_representation is not None:
+            self._identify_missing_truth_labels()
+
+    def _identify_missing_truth_labels(self) -> None:
+        """Identify missing truth labels in the pre-computed representation."""
+        data = self._get_pre_computed_data_representation(0)
+        if self._truth_table in self._cached_data.keys():
+            labels = [
+                label for label in self._truth if label not in data.keys()
+            ]
+            self._missing_truth_labels = labels
+            self.info(
+                f"The following truth labels will be added to the "
+                f"pre-computed representation: {self._missing_truth_labels}"
+            )
+        else:
+            self._missing_truth_labels = []
+
+    def _update_cache(self, sequential_index: int) -> None:
+        """Update the cache with the data for the given sequential index.
+
+        Args:
+            sequential_index: Sequentially index of the event to query.
+        """
+        index = self._get_event_index(sequential_index)
+
+        # Query LMDB database
+        assert index is not None
+        self._establish_connection()
+
+        # Check cache first
+        if self._cached_index == index and self._cached_data is not None:
+            data = self._cached_data
+        else:
+            # Cache miss - deserialize and update cache
+            assert self._env is not None
+            assert self._deserializer is not None
+            with self._env.begin(write=False) as txn:
+                key_bytes = str(index).encode("utf-8")
+                value_bytes = txn.get(key_bytes)
+                if value_bytes is None:
+                    raise KeyError(f"Index {index} not found in database.")
+
+                # Deserialize data
+                data = self._deserializer(value_bytes)
+                # Update cache
+                self._cached_index = index
+                self._cached_data = data
+        return
+
+    def _get_tables(self) -> List[str]:
+        """Return a list of all tables in the database."""
+        if self._tables is not None:
+            return self._tables
+        else:
+            if len(self._cached_data) == 0:
+                self._update_cache(0)
+            tables = list(self._cached_data.keys())
+            self._reset_cache()
+            self._tables = tables
+            return tables
 
     def query_table(
         self,
@@ -172,9 +241,6 @@ class LMDBDataset(Dataset):
     ) -> np.ndarray:
         """Query table at a specific index, optionally with some selection.
 
-        This method is used when reading raw tables (not pre-computed
-        representations).
-
         Args:
             table: Table name (extractor name) to query.
             columns: Columns to read out.
@@ -182,91 +248,53 @@ class LMDBDataset(Dataset):
             selection: Selection to be imposed (not fully supported for LMDB).
 
         Returns:
-            Array containing the values in `columns`.
-
-        Raises:
-            ColumnMissingException: If one or more element in `columns` is not
-                present in `table`.
+            Numpy array containing the values in `columns`.
         """
-        if self._pre_computed_representation is not None:
-            raise RuntimeError(
-                "query_table() cannot be used when "
-                "pre_computed_representation is set."
-            )
-
+        # Convert columns to list if string
         if isinstance(columns, str):
             columns = [columns]
 
-        index = self._get_event_index(sequential_index)
+        # Check if we're in the string-resolver mode
+        if (sequential_index is None) and (selection is None):
+            if not hasattr(self, "_indices"):
+                self._indices = self._get_all_indices()
 
-        # Query LMDB database
-        assert index is not None
-        self._establish_connection()
+        # Check if the table is in the entry
+        tables = self._get_tables()
+        if table not in tables:
+            raise ColumnMissingException(
+                f"Table '{table}' not found in database ({tables})."
+            )
 
-        try:
-            # Check cache first
-            if self._cached_index == index and self._cached_data is not None:
-                data = self._cached_data
-            else:
-                # Cache miss - deserialize and update cache
-                assert self._env is not None
-                assert self._deserializer is not None
-                with self._env.begin(write=False) as txn:
-                    key_bytes = str(index).encode("utf-8")
-                    value_bytes = txn.get(key_bytes)
-                    if value_bytes is None:
-                        raise KeyError(f"Index {index} not found in database.")
+        # If a sequential index is provided, load single entry into the cache
+        if sequential_index is not None:
+            self._update_cache(sequential_index)
 
-                    # Deserialize data
-                    data = self._deserializer(value_bytes)
+            table_data = self._query_cache(table=table, columns=columns)
+        else:
+            # If no sequential index is provided, return all entries
+            table_data = []
+            self.info(
+                f"Querying table '{table}' for all entries."
+                " This may take a while..."
+            )
+            for sequential_index in tqdm(range(len(self))):
+                self._update_cache(sequential_index)
+                single_entry = self._query_cache(table=table, columns=columns)
+                table_data.append(single_entry)
+            table_data = np.concatenate(table_data, axis=0)
+        return table_data
 
-                    # Update cache
-                    self._cached_index = index
-                    self._cached_data = data
-
-            # Extract data from raw tables
-            if not isinstance(data, dict):
-                raise ValueError(
-                    f"Unexpected data format at index {index}. "
-                    "Expected dict of tables."
-                )
-
-            # Get table data
-            if table not in data:
-                raise ColumnMissingException(
-                    f"Table '{table}' not found in database. "
-                    f"Available tables: {list(data.keys())}"
-                )
-
-            table_data = data[table]
-
-            # Convert to DataFrame if needed
-            if isinstance(table_data, dict):
-                # Data stored as dict (from to_dict(orient="list"))
-                df = pd.DataFrame(table_data)
-            elif isinstance(table_data, pd.DataFrame):
-                df = table_data
-            else:
-                raise ValueError(f"Unexpected table data format for '{table}'")
-
-            # Apply string selection if provided
-            if selection and self._string_column in df.columns:
-                # Parse selection (full SQL parsing not implemented)
-                # For now, just check if string_column is in selection
-                pass  # TODO: Implement proper selection parsing
-
-            # Extract requested columns
-            missing_columns = [c for c in columns if c not in df.columns]
-            if missing_columns:
-                raise ColumnMissingException(
-                    f"Columns {missing_columns} not found in table '{table}'"
-                )
-
-            result = df[columns].values
-            return result
-
-        except KeyError as e:
-            raise ColumnMissingException(str(e)) from e
+    def _query_cache(
+        self, table: str, columns: Union[List[str], str]
+    ) -> np.ndarray:
+        """Query the cache for the table data."""
+        data = self._cached_data[table]
+        table_data = [
+            np.array(data[column]).reshape(-1, 1) for column in columns
+        ]
+        table_data = np.concatenate(table_data, axis=1)
+        return table_data
 
     def _get_all_indices(self) -> List[int]:
         """Return a list of all unique values in `self._index_column`."""
@@ -309,128 +337,38 @@ class LMDBDataset(Dataset):
             self._env = None
         return self
 
-    def _query(
+    def _get_pre_computed_data_representation(
         self, sequential_index: int
-    ) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray], Optional[float]]:
-        """Query file for event features and truth information.
-
-        Overrides base class to handle pre-computed representations.
-        For pre-computed mode, returns dummy values since we skip this step.
-
-        Args:
-            sequential_index: Sequentially index of the event to query.
-
-        Returns:
-            Tuple containing pulse-level event features; event-level truth
-                information; pulse-level truth information; and event-level
-                loss weights, respectively.
-        """
-        # If using pre-computed representation, skip querying raw tables
-        if self._pre_computed_representation is not None:
-            # Return dummy values - these won't be used
-            return (
-                np.array([]).reshape(0, len(self._features)),
-                np.array([]),
-                None,
-                None,
-            )
-
-        # Otherwise, use base class implementation
-        return super()._query(sequential_index)
-
-    def _create_graph(
-        self,
-        features: np.ndarray,
-        truth: np.ndarray,
-        node_truth: Optional[np.ndarray] = None,
-        loss_weight: Optional[float] = None,
-    ) -> Any:
-        """Create Pytorch Data (i.e. graph) object.
-
-        Overrides base class to support pre-computed representations.
-
-        Args:
-            features: List of tuples, containing event features (used only
-                for raw table mode).
-            truth: List of tuples, containing truth information (used only
-                for raw table mode).
-            node_truth: List of tuples, containing node-level truth (used only
-                for raw table mode).
-            loss_weight: A weight associated with the event (used only
-                for raw table mode).
-
-        Returns:
-            Graph object (torch_geometric.Data).
-        """
-        # If using pre-computed representation, extract it directly
-        if self._pre_computed_representation is not None:
-            data = self._get_pre_computed_graph()
-        else:
-            data = super()._create_graph(
-                features, truth, node_truth, loss_weight
-            )
-
-        return data
-
-    def _get_pre_computed_graph(self) -> Any:
+    ) -> Data:
         """Extract pre-computed data representation from LMDB.
 
         Returns:
             Pre-computed graph object (torch_geometric.Data).
         """
-        sequential_index = getattr(self, "_current_sequential_index", None)
-        if sequential_index is None:
+        self._update_cache(sequential_index)
+        data = self._cached_data
+
+        if "data_representations" not in data.keys():
             raise RuntimeError(
-                "_get_pre_computed_graph() called without sequential_index"
+                "Database entry does not contain pre-computed "
+                "representations. Set pre_computed_representation=None "
+                "to use raw tables."
             )
 
-        index = self._get_event_index(sequential_index)
-        self._establish_connection()
+        representations = data["data_representations"]
+        if not isinstance(representations, dict):
+            raise RuntimeError(
+                "Pre-computed representations are malformed. "
+                "Expected dictionary of representations."
+            )
 
-        try:
-            assert self._env is not None
-            assert self._deserializer is not None
-            with self._env.begin(write=False) as txn:
-                key_bytes = str(index).encode("utf-8")
-                value_bytes = txn.get(key_bytes)
-                if value_bytes is None:
-                    raise KeyError(f"Index {index} not found in database.")
+        if self._pre_computed_representation not in representations:
+            raise KeyError(
+                f"Pre-computed representation "
+                f"'{self._pre_computed_representation}' not found."
+            )
 
-                # Deserialize data
-                data = self._deserializer(value_bytes)
-
-                # Check if data contains pre-computed representations
-                if (
-                    not isinstance(data, dict)
-                    or "data_representations" not in data
-                ):
-                    raise RuntimeError(
-                        f"Database at index {index} does not contain "
-                        "pre-computed representations. Set "
-                        "pre_computed_representation=None to use raw tables."
-                    )
-
-                representations = data["data_representations"]
-
-                # Find the requested representation
-                if self._pre_computed_representation in representations:
-                    graph = representations[self._pre_computed_representation]
-                else:
-                    raise KeyError(
-                        f"Pre-computed representation "
-                        f"'{self._pre_computed_representation}' not found."
-                    )
-
-            if not isinstance(graph, Data):
-                raise TypeError(
-                    f"Pre-computed representation is not a Data object. "
-                    f"Got {type(graph)}"
-                )
-
-            return graph
-
-        except KeyError as e:
-            raise ColumnMissingException(str(e)) from e
+        return representations[self._pre_computed_representation]
 
     def __getitem__(self, sequential_index: int) -> Any:
         """Return graph `Data` object at `index`.
@@ -449,13 +387,27 @@ class LMDBDataset(Dataset):
             )
 
         # Store sequential index for pre-computed mode
-        self._current_sequential_index = sequential_index
 
         if self._pre_computed_representation is not None:
-            features, truth, node_truth, loss_weight = self._query(
-                sequential_index
+            data = self._get_pre_computed_data_representation(sequential_index)
+
+            # If the user specifies missing truth labels, add them to the data
+            if self._missing_truth_labels:
+                truth_table = self._cached_data[self._truth_table]
+                truth_dict = {
+                    label: truth_table[label]
+                    for label in self._missing_truth_labels
+                }
+                data = add_truth(
+                    data=data, truth_dicts=truth_dict, dtype=self._dtype
+                )
+            data = add_custom_labels(
+                data=data,
+                custom_label_functions=self._label_fns,
+                repeat_labels_by=self._repeat_labels_by,
             )
-            return self._create_graph(features, truth, node_truth, loss_weight)
         else:
             # Use base class implementation for raw tables
-            return super().__getitem__(sequential_index)
+            data = super().__getitem__(sequential_index)
+
+        return data
