@@ -16,6 +16,7 @@ from .graphnet_writer import GraphNeTWriter
 from graphnet.models.data_representation import DataRepresentation
 from graphnet.data.utilities.lmdb_utilities import (
     get_serialization_method_name,
+    _get_data_representation_metadata_dict,
 )
 
 
@@ -147,6 +148,73 @@ class LMDBWriter(GraphNeTWriter):
         """
         metadata_key = b"__meta_serialization__"
         metadata_value = self._serialization_method.encode("utf-8")
+        txn.put(metadata_key, metadata_value, overwrite=True)
+
+    def _get_data_representation_field_names(
+        self,
+    ) -> Dict[str, DataRepresentation]:
+        """Get mapping of field names to data representations.
+
+        Returns a dictionary where keys are the field names used to
+        store data representations (matching the keys in
+        data_representations_output) and values are the corresponding
+        DataRepresentation instances.
+        """
+        if self._data_representations is None:
+            return {}
+
+        field_name_to_rep: Dict[str, DataRepresentation] = {}
+        class_name_counts: Dict[str, int] = {}
+
+        for data_rep in self._data_representations:
+            base_class_name = data_rep.__class__.__name__
+
+            # Track occurrences of each class name
+            if base_class_name not in class_name_counts:
+                # First occurrence - check if base name is available
+                if base_class_name in field_name_to_rep:
+                    # Base name already taken (shouldn't happen), use _0
+                    class_name_counts[base_class_name] = 0
+                    key_name = f"{base_class_name}_0"
+                else:
+                    # First occurrence - use base name
+                    class_name_counts[base_class_name] = 0
+                    key_name = base_class_name
+            else:
+                # We've seen this class name before - increment and append tag
+                class_name_counts[base_class_name] += 1
+                count = class_name_counts[base_class_name]
+                key_name = f"{base_class_name}_{count}"
+
+            field_name_to_rep[key_name] = data_rep
+
+        return field_name_to_rep
+
+    def _store_data_representation_metadata(
+        self, txn: lmdb.Transaction
+    ) -> None:
+        """Store data representation metadata in the LMDB database.
+
+        This metadata allows future readers to determine which data
+        representations were used and their configurations.
+        """
+        if self._data_representations is None:
+            return
+
+        # Get mapping of field names to data representations
+        field_name_to_rep = self._get_data_representation_field_names()
+
+        # Build metadata dictionary with configs
+        metadata_dict: Dict[str, Any] = {}
+        for field_name, data_rep in field_name_to_rep.items():
+            # Get the config and convert to dict
+            config = data_rep.config
+            # Use dict() to get a serializable representation
+            metadata_dict[field_name] = config
+
+        # Serialize the metadata dictionary
+        metadata_key = b"__meta_data_representations__"
+        metadata_value = self._serializer(metadata_dict)
         txn.put(metadata_key, metadata_value, overwrite=True)
 
     def _event_dict_from_merged_tables(
@@ -298,6 +366,8 @@ class LMDBWriter(GraphNeTWriter):
         with env.begin(write=True) as txn:
             # Store serialization method metadata
             self._store_serialization_metadata(txn)
+            # Store data representation metadata
+            self._store_data_representation_metadata(txn)
 
             is_merged = all(isinstance(v, pd.DataFrame) for v in data.values())
             if is_merged:
@@ -465,6 +535,37 @@ class LMDBWriter(GraphNeTWriter):
             metadata_value = serialization_method.encode("utf-8")
             target_txn.put(metadata_key, metadata_value, overwrite=True)
 
+            # Determine data representation metadata from first source file
+            # and store it in the merged database
+            data_rep_metadata = None
+            for src in files:
+                src_env_path = src if os.path.isdir(src) else src
+                try:
+                    data_rep_metadata = _get_data_representation_metadata_dict(
+                        src_env_path
+                    )
+                    if data_rep_metadata is not None:
+                        break
+                except Exception:
+                    continue
+
+            # If metadata found, store it in merged database
+            # Use the serializer that matches the merged database's
+            # serialization method
+            if data_rep_metadata is not None:
+                try:
+                    merged_serializer = self._resolve_serializer(
+                        serialization_method
+                    )
+                except ValueError:
+                    # Fall back to writer's serializer for custom methods
+                    merged_serializer = self._serializer
+                metadata_key_dr = b"__meta_data_representations__"
+                metadata_value_dr = merged_serializer(data_rep_metadata)
+                target_txn.put(
+                    metadata_key_dr, metadata_value_dr, overwrite=True
+                )
+
             for src in files:
                 if not os.path.isdir(src):
                     # Expecting LMDB dir; if a file path was passed, try dir
@@ -482,7 +583,10 @@ class LMDBWriter(GraphNeTWriter):
                     cursor = src_txn.cursor()
                     for key, val in cursor:
                         # Skip metadata keys from source (we've already set it)
-                        if key == b"__meta_serialization__":
+                        if (
+                            key == b"__meta_serialization__"
+                            or key == b"__meta_data_representations__"
+                        ):
                             continue
                         try:
                             if (not allow_overwrite) and target_txn.get(

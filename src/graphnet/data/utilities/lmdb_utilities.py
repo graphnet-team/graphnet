@@ -1,8 +1,11 @@
 """LMDB-specific utility functions for use in `graphnet.data`."""
 
-from typing import Any, Callable, List, Optional
+from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING
 
 import lmdb
+
+if TYPE_CHECKING:
+    from graphnet.models.data_representation import DataRepresentation
 
 
 def _resolve_deserializer(
@@ -140,6 +143,81 @@ def query_database(
         env.close()
 
 
+def _get_data_representation_metadata_dict(
+    lmdb_path: str,
+) -> Optional[Dict[str, Any]]:
+    """Retrieve the raw data representation metadata dictionary from LMDB.
+
+    This is a helper function for internal use.
+
+    Args:
+        lmdb_path: Path to the LMDB database directory.
+
+    Returns:
+        A dictionary mapping field names to data representation configs,
+        or None if the metadata is not found or the database cannot be opened.
+    """
+    try:
+        # First get the serialization method to deserialize the metadata
+        serialization_method = get_serialization_method(lmdb_path)
+        if serialization_method is None:
+            return None
+
+        env = lmdb.open(lmdb_path, readonly=True, lock=False, subdir=True)
+        with env.begin(write=False) as txn:
+            metadata_key = b"__meta_data_representations__"
+            metadata_value = txn.get(metadata_key)
+            if metadata_value is not None:
+                # Deserialize the metadata
+                return serialization_method(metadata_value)
+        env.close()
+    except Exception:
+        pass
+    return None
+
+
+def get_data_representation_from_metadata(
+    lmdb_path: str,
+    field_name: str,
+    trust: bool = False,
+) -> Optional["DataRepresentation"]:
+    """Retrieve a DataRepresentation instance from an LMDB database metadata.
+
+    Args:
+        lmdb_path: Path to the LMDB database directory.
+        field_name: The field name of the data representation to retrieve
+            (e.g., "GraphDefinition", "GraphDefinition_0", etc.).
+        trust: Whether to trust the ModelConfig enough to `eval(...)`
+            any lambda function expressions contained. Defaults to False.
+
+    Returns:
+        A DataRepresentation instance reconstructed from the stored config,
+        or None if the metadata is not found, the field name doesn't exist,
+        or the database cannot be opened.
+
+    Raises:
+        KeyError: If the field_name is not found in the metadata.
+    """
+    from graphnet.models.data_representation import DataRepresentation
+
+    # Get the full metadata dictionary
+    metadata = _get_data_representation_metadata_dict(lmdb_path)
+    if metadata is None:
+        return None
+
+    # Extract the config for the specific field name
+    if field_name not in metadata:
+        raise KeyError(
+            f"Field name '{field_name}' not found in data representation "
+            f"metadata. Available field names: {list(metadata.keys())}"
+        )
+
+    model_config = metadata[field_name]
+
+    # Use DataRepresentation.from_config to create the instance
+    return DataRepresentation.from_config(model_config, trust=trust)
+
+
 def get_all_indices(database: str) -> List[int]:
     """Retrieve all indices (event numbers) from an LMDB database.
 
@@ -161,8 +239,11 @@ def get_all_indices(database: str) -> List[int]:
         with env.begin(write=False) as txn:
             cursor = txn.cursor()
             for key_bytes, _ in cursor:
-                # Skip the metadata entry
-                if key_bytes == metadata_key:
+                # Skip the metadata entries
+                if (
+                    key_bytes == metadata_key
+                    or key_bytes == b"__meta_data_representations__"
+                ):
                     continue
                 # Convert key back to integer
                 try:

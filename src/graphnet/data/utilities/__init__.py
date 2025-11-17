@@ -8,4 +8,5 @@ from .lmdb_utilities import (
     get_serialization_method,
     get_serialization_method_name,
     query_database as query_lmdb_database,
+    get_data_representation_from_metadata,
 )
