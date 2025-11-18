@@ -85,7 +85,6 @@ class KM3NeTPulseExtractor(KM3NeTExtractor):
 
     def _determine_unique_id(self, file: Any) -> np.ndarray:
         """Determine the unique ID for events."""
-        padding_value = 99999999.0
         if len(file.mc_trks.E[0]) > 0:  # Monte Carlo
             primaries = file.mc_trks[:, 0]
             nus_flavor = [12, 14, 16]
