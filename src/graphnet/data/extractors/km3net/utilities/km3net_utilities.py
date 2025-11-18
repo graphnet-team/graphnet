@@ -13,7 +13,7 @@ def create_unique_id_run_by_run(
     run_id: List[int],
     evt_id: List[int],
     hnl_model: str,
-)->List[str]:
+)->List[int]:
     """Create a unique ID for each event based on its parameters.
 
     Args:
