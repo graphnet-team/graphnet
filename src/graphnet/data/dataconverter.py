@@ -21,6 +21,7 @@ from .extractors.icecube import I3Extractor
 from .extractors.liquido import H5Extractor
 from .extractors.internal import ParquetExtractor
 from .extractors.prometheus import PrometheusExtractor
+from .extractors.km3net import KM3NeTExtractor
 
 from .dataclasses import I3FileSet
 
@@ -51,6 +52,7 @@ class DataConverter(ABC, Logger):
             List[ParquetExtractor],
             List[H5Extractor],
             List[PrometheusExtractor],
+            List[KM3NeTExtractor],
         ],
         index_column: str = "event_no",
         num_workers: int = 1,
