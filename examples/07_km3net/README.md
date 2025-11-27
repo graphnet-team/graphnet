@@ -38,8 +38,8 @@ The generated SQLite or Parquet file contains:
 
 The output files can be read using Python.
 
-- **If you chose to create a Parquet output**:  
-  You will find several `.parquet` files in the output folder, each corresponding to a different extracted table (e.g., a table with the true event information, a table with pulse information, etc.).  
+- **If you chose to create a Parquet output**:
+  You will find several `.parquet` files in the output folder, each corresponding to a different extracted table (e.g., a table with the true event information, a table with pulse information, etc.).
   To read one of these tables:
 
   ```python
@@ -48,8 +48,8 @@ The output files can be read using Python.
   df = pd.read_parquet("FILE_NAME.parquet")
   print(df.head())
 
-- **If you chose to create an SQLite output**:  
-  In this case, you will find a single `.db` file per converted input, which contains all the tables inside.  
+- **If you chose to create an SQLite output**:
+  In this case, you will find a single `.db` file per converted input, which contains all the tables inside.
   To list the table names and preview their contents:
 
   ```python
@@ -85,4 +85,3 @@ or
 ```bash
 python 01_convert_km3net.py --help
 ```
-

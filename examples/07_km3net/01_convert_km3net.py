@@ -29,9 +29,9 @@ def main(backend: str, triggered: str, HNL: str, OUTPUT_DIR: str) -> None:
     else:
         outdir = f"{EXAMPLE_OUTPUT_DIR}/{backend}"
     os.makedirs(outdir, exist_ok=True)
-    print(60*'*')
+    print(60 * "*")
     print(f"Saving to {outdir}")
-    print(60*'*')
+    print(60 * "*")
     if backend == "parquet":
         save_method = ParquetWriter(truth_table="truth")
     elif backend == "sqlite":

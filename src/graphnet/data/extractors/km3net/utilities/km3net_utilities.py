@@ -6,14 +6,12 @@ import numpy as np
 import pandas as pd
 
 
-
-
 def create_unique_id_run_by_run(
     file_type: str,
     run_id: List[int],
     evt_id: List[int],
     hnl_model: str,
-)->List[int]:
+) -> List[int]:
     """Create a unique ID for each event based on its parameters.
 
     Args:
@@ -33,11 +31,18 @@ def create_unique_id_run_by_run(
     }
 
     hnl_type_dict = {
-        'none': 0, #possibility of adding hnl models to break run-filetype degeneracy
+        "none": 0,  # possibility of adding hnl models to break run-filetype degeneracy
     }
     unique_id = []
     for i in range(len(run_id)):
-        unique_id.append(int(str(run_id[i]) + str(evt_id[i]) + str(file_type_dict[file_type]) + str(hnl_type_dict[hnl_model])))
+        unique_id.append(
+            int(
+                str(run_id[i])
+                + str(evt_id[i])
+                + str(file_type_dict[file_type])
+                + str(hnl_type_dict[hnl_model])
+            )
+        )
 
     return unique_id
 

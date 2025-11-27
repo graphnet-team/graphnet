@@ -12,8 +12,10 @@ from graphnet.data.extractors.km3net.utilities.km3net_utilities import (
     assert_no_uint_values,
     filter_None_NaN,
 )
+
 if has_km3net_package() or TYPE_CHECKING:
     import km3io as ki
+
 
 class KM3NeTTruthExtractor(KM3NeTExtractor):
     """Class for extracting the truth information from a file."""
@@ -150,11 +152,11 @@ class KM3NeTTruthExtractor(KM3NeTExtractor):
             raise ValueError("File type not recognized")
 
         unique_id = create_unique_id_run_by_run(
-                    file_type=file_type,
-                    run_id=np.array(file.run_id),
-                    evt_id=np.array(file.id),
-                    hnl_model=model_hnl,
-                )
+            file_type=file_type,
+            run_id=np.array(file.run_id),
+            evt_id=np.array(file.id),
+            hnl_model=model_hnl,
+        )
 
         return {
             "run_id": run_id,
@@ -359,7 +361,9 @@ class KM3NeTTruthExtractor(KM3NeTExtractor):
             ##############################################################
             # MUON-FILE####################################################
             ##############################################################
-            if (abs(np.array(primaries.pdgid)[0]) not in nus_flavor) and (abs(np.array(primaries.pdgid)[0]) > 0.1):
+            if (abs(np.array(primaries.pdgid)[0]) not in nus_flavor) and (
+                abs(np.array(primaries.pdgid)[0]) > 0.1
+            ):
                 primaries_jshower = ki.tools.best_jshower(file.trks)
                 primaries_jmuon = ki.tools.best_jmuon(file.trks)
                 dict_truth = self._construct_truth_dictionary(
@@ -374,7 +378,9 @@ class KM3NeTTruthExtractor(KM3NeTExtractor):
             ###############################################################
             # HNL-FILE######################################################
             ###############################################################
-            elif (5914 in file.mc_trks.pdgid[0]) or (file.mc_trks.pdgid[0][0] == 0):
+            elif (5914 in file.mc_trks.pdgid[0]) or (
+                file.mc_trks.pdgid[0][0] == 0
+            ):
                 primaries_jshower = ki.tools.best_jshower(file.trks)
                 primaries_jmuon = ki.tools.best_jmuon(file.trks)
                 dict_truth = self._construct_truth_dictionary(
