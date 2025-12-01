@@ -19,6 +19,7 @@ from graphnet.training.loss_functions import MSELoss
 
 
 def dense_mse_loss(reco: Tensor, orig: Tensor, bv: Tensor):
+    """Loss function for the mask prediction."""
     squared_errs = (reco - orig) ** 2
     losses = torch.mean(
         scatter(src=squared_errs, index=bv, reduce="mean", dim=0), dim=1
@@ -28,6 +29,7 @@ def dense_mse_loss(reco: Tensor, orig: Tensor, bv: Tensor):
 
 
 def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor):
+    """Loss function for the mask prediction."""
     reco_norm = torch.nn.functional.normalize(reco, dim=1)
     orig_norm = torch.nn.functional.normalize(orig, dim=1)
     cos = -(reco_norm * orig_norm).sum(dim=1)
@@ -37,6 +39,7 @@ def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor):
 
 
 class standard_maskpred_net(Model):
+    """A small NN that is used in some places of the mask_pred frame as a default."""
     def __init__(
         self,
         in_dim: int,
@@ -44,6 +47,7 @@ class standard_maskpred_net(Model):
         out_dim: int = 5,
         nb_linear: int = 5,
     ) -> None:
+        """Construct the default NN."""
         super().__init__()
 
         self.activation = torch.nn.SELU()
@@ -58,6 +62,7 @@ class standard_maskpred_net(Model):
         self.final_proj = torch.nn.Linear(hidden_dim, out_dim)
 
     def forward(self, data: Union[Data, Tensor]) -> Tensor:
+        """Forward pass, combining a few linear layers and a final projection."""
         if isinstance(data, Data):
             x_hat = data.x
         else:
@@ -74,6 +79,7 @@ class standard_maskpred_net(Model):
 
 
 class mask_pred_augment(Model):
+    """The module for augmentation, produces the masked nodes as well as the mask with their positions."""
     def __init__(
         self,
         masked_ratio: float = 0.25,
@@ -81,6 +87,7 @@ class mask_pred_augment(Model):
         learned_masking_value: bool = True,
         hlc_pos: int = None,
     ) -> None:
+        """Construct the augmentation."""
 
         super().__init__()
         self.ratio = masked_ratio
@@ -95,6 +102,7 @@ class mask_pred_augment(Model):
             self.values = torch.nn.Parameter(torch.randn(1, len(self.masked_feat)))
 
     def forward(self, data: Data) -> Tuple[Union[Data, Tensor]]:
+        """Forward pass, produce the random (learnable) masking values, targets and the mask needed later."""
         auged = data.clone()
 
         rand_score = torch.rand_like(data.batch.to(dtype=torch.bfloat16))
@@ -120,6 +128,11 @@ class mask_pred_augment(Model):
 
 
 class mask_pred_frame(EasySyntax):
+    """The module that pretrains other modules using BERT-Style mask prediction.
+    
+    Should be compatible with any module as long as it does not change the length of the input data in dense rep.
+    
+    optionally a representation vector, the cls-vector, can be provided for a flexible prediciton of some summary value."""
     def __init__(
         self,
         encoder: Model,
@@ -141,6 +154,7 @@ class mask_pred_frame(EasySyntax):
         scheduler_kwargs: Optional[Dict] = None,
         scheduler_config: Optional[Dict] = None,
     ) -> None:
+        """Construct the pretraining framework."""
 
         # just because I need to specify a task
         task = IdentityTask(
@@ -208,6 +222,7 @@ class mask_pred_frame(EasySyntax):
             self.custom_charge_target = custom_charge_target
 
     def forward(self, data: Union[Data, List[Data]]) -> List[Tensor]:
+        """Forward pass, produce latent view of input data and compare against target (optionally predict summary value)."""
         if not isinstance(data, Data):
             data = data[0]
 
@@ -253,11 +268,17 @@ class mask_pred_frame(EasySyntax):
         return [loss]
 
     def validate_tasks(self) -> None:
+        """Verify that self._tasks contain compatible elements."""
         accepted_tasks = IdentityTask
         for task in self._tasks:
             assert isinstance(task, accepted_tasks)
 
     def shared_step(self, batch: List[Data], batch_idx: int) -> Tensor:
+        """Perform shared step.
+
+        Applies the forward pass and the following loss calculation,
+        shared between the training and validation step.
+        """
         loss = self(batch)
         if isinstance(loss, list):
             assert len(loss) == 1
@@ -265,12 +286,11 @@ class mask_pred_frame(EasySyntax):
         return torch.mean(loss, dim=0)
 
     def give_encoder_model(self) -> Model:
-        # function to return the encoder model
-        # as a way to transport the pretrained encoder
-        # into another learning context or saving the parameters manually
+        """Return the encoder model to transport the pretrained encoder into another learning context or save the parameters manually."""
         return self.backbone
 
     def save_pretrained_model(self, save_path: str) -> None:
+        """Automates the saving of the pretrained encoder to the path specified in save_path."""
         model = self.backbone
 
         run_name = "pretrained_model"
