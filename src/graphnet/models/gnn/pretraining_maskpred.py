@@ -255,7 +255,7 @@ class mask_pred_frame(EasySyntax):
             len(data_hat.shape) == 2
         ), "dense data representation [n_pulses, lat_dim] is required for the processed tensor as an artifact"
 
-        rep = self.rep(data_hat) # type: ignore
+        rep = self.rep(data_hat)  # type: ignore
 
         nodes = rep[~mask.bool()]
         btch = data.batch[~mask.bool()]
