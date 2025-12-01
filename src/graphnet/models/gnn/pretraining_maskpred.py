@@ -1,3 +1,4 @@
+"""Modules for unsupervised pretraining using BERT-style mask prediction."""
 from typing import Tuple, Union, List, Type, Optional, Dict
 import os
 
@@ -39,8 +40,7 @@ def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor):
 
 
 class standard_maskpred_net(Model):
-    """A small NN that is used in some places of the mask_pred frame as a
-    default."""
+    """A small NN that is used as a default."""
 
     def __init__(
         self,
@@ -64,8 +64,7 @@ class standard_maskpred_net(Model):
         self.final_proj = torch.nn.Linear(hidden_dim, out_dim)
 
     def forward(self, data: Union[Data, Tensor]) -> Tensor:
-        """Forward pass, combining a few linear layers and a final
-        projection."""
+        """Forward pass,linear layers plus final projection."""
         if isinstance(data, Data):
             x_hat = data.x
         else:
@@ -82,8 +81,7 @@ class standard_maskpred_net(Model):
 
 
 class mask_pred_augment(Model):
-    """The module for augmentation, produces the masked nodes as well as the
-    mask with their positions."""
+    """The module that produces target mask and masked nodes."""
 
     def __init__(
         self,
@@ -93,7 +91,6 @@ class mask_pred_augment(Model):
         hlc_pos: int = None,
     ) -> None:
         """Construct the augmentation."""
-
         super().__init__()
         self.ratio = masked_ratio
         self.hlc_pos = hlc_pos
@@ -107,8 +104,7 @@ class mask_pred_augment(Model):
             self.values = torch.nn.Parameter(torch.randn(1, len(self.masked_feat)))
 
     def forward(self, data: Data) -> Tuple[Union[Data, Tensor]]:
-        """Forward pass, produce the random (learnable) masking values, targets
-        and the mask needed later."""
+        """Forward pass."""
         auged = data.clone()
 
         rand_score = torch.rand_like(data.batch.to(dtype=torch.bfloat16))
@@ -134,8 +130,7 @@ class mask_pred_augment(Model):
 
 
 class mask_pred_frame(EasySyntax):
-    """The module that pretrains other modules using BERT-Style mask
-    prediction.
+    """The BERT-Style mask prediction module.
 
     Should be compatible with any module as long as it does not change
     the length of the input data in dense rep.
@@ -166,7 +161,6 @@ class mask_pred_frame(EasySyntax):
         scheduler_config: Optional[Dict] = None,
     ) -> None:
         """Construct the pretraining framework."""
-
         # just because I need to specify a task
         task = IdentityTask(
             nb_outputs=1, target_labels=["skip"], hidden_size=2, loss_function=MSELoss()
@@ -233,8 +227,10 @@ class mask_pred_frame(EasySyntax):
             self.custom_charge_target = custom_charge_target
 
     def forward(self, data: Union[Data, List[Data]]) -> List[Tensor]:
-        """Forward pass, produce latent view of input data and compare against
-        target (optionally predict summary value)."""
+        """Forward pass, produce latent view compare against target.
+
+        optionally predict summary value.
+        """
         if not isinstance(data, Data):
             data = data[0]
 
@@ -298,13 +294,11 @@ class mask_pred_frame(EasySyntax):
         return torch.mean(loss, dim=0)
 
     def give_encoder_model(self) -> Model:
-        """Return the encoder model to transport the pretrained encoder into
-        another learning context or save the parameters manually."""
+        """Return the pretrained encoder model."""
         return self.backbone
 
     def save_pretrained_model(self, save_path: str) -> None:
-        """Automates the saving of the pretrained encoder to the path specified
-        in save_path."""
+        """Automates the saving of the pretrained encoder."""
         model = self.backbone
 
         run_name = "pretrained_model"
