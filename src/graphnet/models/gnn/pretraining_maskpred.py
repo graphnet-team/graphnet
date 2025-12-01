@@ -166,7 +166,7 @@ class mask_pred_frame(EasySyntax):
             assert mask_pred_net.nb_outputs == len(masked_feat), f'make sure that your \"mask_pred_net\" has number of output feats equal to nb of masked feats ({len(masked_feat)})'
             self.rep = mask_pred_net
         
-        assert final_loss in ['cosine', 'mse'], f'can only choose from {['cosine', 'mse']} for loss function'
+        assert final_loss in ['cosine', 'mse'], 'can only choose from [cosine, mse] for loss function'
         if final_loss == 'cosine':
             self.loss_func = neg_cosine_loss
         elif final_loss == 'mse':
