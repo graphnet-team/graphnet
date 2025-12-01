@@ -18,7 +18,7 @@ from graphnet.models.task import IdentityTask
 from graphnet.training.loss_functions import MSELoss
 
 
-def dense_mse_loss(reco, orig, bv):
+def dense_mse_loss(reco: Tensor, orig: Tensor, bv: Tensor):
     squared_errs = (reco - orig) ** 2
     losses = torch.mean(
         scatter(src=squared_errs, index=bv, reduce="mean", dim=0), dim=1
@@ -27,7 +27,7 @@ def dense_mse_loss(reco, orig, bv):
     return losses.view(-1, 1)
 
 
-def neg_cosine_loss(reco, orig, bv):
+def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor):
     reco_norm = torch.nn.functional.normalize(reco, dim=1)
     orig_norm = torch.nn.functional.normalize(orig, dim=1)
     cos = -(reco_norm * orig_norm).sum(dim=1)
@@ -270,7 +270,7 @@ class mask_pred_frame(EasySyntax):
         # into another learning context or saving the parameters manually
         return self.backbone
 
-    def save_pretrained_model(self, save_path) -> None:
+    def save_pretrained_model(self, save_path: str) -> None:
         model = self.backbone
 
         run_name = "pretrained_model"
