@@ -1,4 +1,4 @@
-"""Modules for unsupervised pretraining using BERT-style mask prediction."""
+"""Unsupervised pretraining using BERT-style mask prediction."""
 
 from typing import Tuple, Union, List, Type, Optional, Dict
 import os
