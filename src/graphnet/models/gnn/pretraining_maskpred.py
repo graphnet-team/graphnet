@@ -1,4 +1,4 @@
-"""Self-supervised pretraining using BERT-style mask prediction."""
+"""Unsupervised pretraining using BERT-style mask prediction."""
 
 from typing import Any, Tuple, Union, List, Type, Optional, Dict
 import os
