@@ -40,6 +40,7 @@ def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor):
 
 class standard_maskpred_net(Model):
     """A small NN that is used in some places of the mask_pred frame as a default."""
+
     def __init__(
         self,
         in_dim: int,
@@ -80,6 +81,7 @@ class standard_maskpred_net(Model):
 
 class mask_pred_augment(Model):
     """The module for augmentation, produces the masked nodes as well as the mask with their positions."""
+
     def __init__(
         self,
         masked_ratio: float = 0.25,
@@ -129,10 +131,12 @@ class mask_pred_augment(Model):
 
 class mask_pred_frame(EasySyntax):
     """The module that pretrains other modules using BERT-Style mask prediction.
-    
+
     Should be compatible with any module as long as it does not change the length of the input data in dense rep.
-    
-    optionally a representation vector, the cls-vector, can be provided for a flexible prediciton of some summary value."""
+
+    optionally a representation vector, the cls-vector, can be provided for a flexible prediciton of some summary value.
+    """
+
     def __init__(
         self,
         encoder: Model,
