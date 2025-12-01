@@ -20,7 +20,7 @@ from graphnet.models.task import IdentityTask
 from graphnet.training.loss_functions import MSELoss
 
 
-def dense_mse_loss(reco: Tensor, orig: Tensor, bv: Tensor):
+def dense_mse_loss(reco: Tensor, orig: Tensor, bv: Tensor) -> Tensor:
     """Loss function for the mask prediction."""
     squared_errs = (reco - orig) ** 2
     losses = torch.mean(
@@ -30,7 +30,7 @@ def dense_mse_loss(reco: Tensor, orig: Tensor, bv: Tensor):
     return losses.view(-1, 1)
 
 
-def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor):
+def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor) -> Tensor:
     """Loss function for the mask prediction."""
     reco_norm = torch.nn.functional.normalize(reco, dim=1)
     orig_norm = torch.nn.functional.normalize(orig, dim=1)
@@ -89,7 +89,7 @@ class mask_pred_augment(Model):
         masked_ratio: float = 0.25,
         masked_feat: List[int] = [0, 1, 2, 3, 4],
         learned_masking_value: bool = True,
-        hlc_pos: int = None,
+        hlc_pos: Optional[int] = None,
     ) -> None:
         """Construct the augmentation."""
         super().__init__()
@@ -143,18 +143,18 @@ class mask_pred_frame(EasySyntax):
     def __init__(
         self,
         encoder: Model,
-        encoder_out_dim: int = None,
+        encoder_out_dim: Optional[int] = None,
         masked_ratio: float = 0.25,
         masked_feat: List[int] = [0, 1, 2, 3, 4],
         learned_masking_value: bool = True,
-        hlc_pos: int = None,
-        mask_pred_net: Model = None,
+        hlc_pos: Optional[int] = None,
+        mask_pred_net: Optional[Model] = None,
         default_hidden_dim: int = 1000,
         default_nb_linear: int = 5,
         final_loss: str = "mse",
         add_charge_pred: bool = False,
         need_charge_rep: bool = False,
-        custom_charge_target: Model = None,
+        custom_charge_target: Optional[Model] = None,
         optimizer_class: Type[torch.optim.Optimizer] = Adam,
         optimizer_kwargs: Optional[Dict] = None,
         scheduler_class: Optional[type] = None,
