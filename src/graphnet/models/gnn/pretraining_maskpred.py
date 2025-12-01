@@ -1,6 +1,6 @@
 """Self-supervised pretraining using BERT-style mask prediction."""
 
-from typing import Tuple, Union, List, Type, Optional, Dict
+from typing import Any, Tuple, Union, List, Type, Optional, Dict
 import os
 
 import torch
@@ -104,7 +104,7 @@ class mask_pred_augment(Model):
             )
             self.values = torch.nn.Parameter(torch.randn(1, len(self.masked_feat)))
 
-    def forward(self, data: Data) -> Tuple[Union[Data, Tensor]]:
+    def forward(self, data: Data) -> Tuple[Any, Any, Any]:
         """Forward pass."""
         auged = data.clone()
 
