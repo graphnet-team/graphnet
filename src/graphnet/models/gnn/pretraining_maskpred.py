@@ -100,9 +100,12 @@ class mask_pred_augment(Model):
 
         if self.learned_value:
             print(
-                "warning: can currently only mask adjacent features, e.g. only (x,y,z) or only (t,q) but not e.g. (x,t,q)"
+                """warning: can currently only mask adjacent features,
+                  e.g. only (x,y,z) or only (t,q) but not e.g. (x,t,q)"""
             )
-            self.values = torch.nn.Parameter(torch.randn(1, len(self.masked_feat)))
+            self.values = torch.nn.Parameter(
+                torch.randn(1, len(self.masked_feat))
+            )
 
     def forward(self, data: Data) -> Tuple[Any, Any, Any]:
         """Forward pass."""
@@ -118,13 +121,17 @@ class mask_pred_augment(Model):
         mask = torch.ones_like(data.batch.to(dtype=torch.bfloat16))
         mask[ind] = 0
 
-        target = mask_select(src=auged.x, dim=0, mask=~mask.bool())[:, self.masked_feat]
+        target = mask_select(src=auged.x, dim=0, mask=~mask.bool())[
+            :, self.masked_feat
+        ]
         if not self.learned_value:
-            auged.x[:, self.masked_feat] = auged.x[:, self.masked_feat] * mask.view(
-                -1, 1
-            )
+            auged.x[:, self.masked_feat] = auged.x[
+                :, self.masked_feat
+            ] * mask.view(-1, 1)
         else:
-            auged.x[ind, self.masked_feat[0] : self.masked_feat[-1] + 1] = self.values
+            auged.x[ind, self.masked_feat[0] : self.masked_feat[-1] + 1] = (
+                self.values
+            )
 
         # returned mask is zero at the target position and 1 else
         return auged, target, mask
@@ -164,7 +171,10 @@ class mask_pred_frame(EasySyntax):
         """Construct the pretraining framework."""
         # just because I need to specify a task
         task = IdentityTask(
-            nb_outputs=1, target_labels=["skip"], hidden_size=2, loss_function=MSELoss()
+            nb_outputs=1,
+            target_labels=["skip"],
+            hidden_size=2,
+            loss_function=MSELoss(),
         )
 
         super().__init__(
@@ -195,7 +205,9 @@ class mask_pred_frame(EasySyntax):
             lat_dim = encoder_out_dim
 
         if mask_pred_net is None:
-            print("no custom net for mask prediction specified; using a standard net")
+            print(
+                "no custom net for mask prediction specified; using a standard net"
+            )
             self.rep = standard_maskpred_net(
                 in_dim=lat_dim,
                 hidden_dim=default_hidden_dim,
@@ -247,7 +259,10 @@ class mask_pred_frame(EasySyntax):
             )
             for i in range(1, len(reduce_list)):
                 cls_tensor = cls_tensor + scatter(
-                    src=data_hat, index=data.batch, reduce=reduce_list[i], dim=0
+                    src=data_hat,
+                    index=data.batch,
+                    reduce=reduce_list[i],
+                    dim=0,
                 )
             cls_tensor = self.lin_layer_scatter(cls_tensor)
 
@@ -266,7 +281,12 @@ class mask_pred_frame(EasySyntax):
             if self.custom_charge_target is None:
                 charge_tensor = torch.pow(10, data.x[:, 4]).view(-1, 1)
                 charge_sums = torch.log10(
-                    scatter(src=charge_tensor, index=data.batch, dim=0, reduce="sum")
+                    scatter(
+                        src=charge_tensor,
+                        index=data.batch,
+                        dim=0,
+                        reduce="sum",
+                    )
                 )
             else:
                 charge_sums = self.custom_charge_target(data)
