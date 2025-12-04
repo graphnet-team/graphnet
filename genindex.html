@@ -424,6 +424,8 @@
         <li><a href="api/graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig.as_dict">(graphnet.utilities.config.model_config.ModelConfig method)</a>
 </li>
       </ul></li>
+      <li><a href="api/graphnet.data.extractors.km3net.utilities.km3net_utilities.html#graphnet.data.extractors.km3net.utilities.km3net_utilities.assert_no_uint_values">assert_no_uint_values() (in module graphnet.data.extractors.km3net.utilities.km3net_utilities)</a>
+</li>
       <li><a href="api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.attach_index">attach_index() (in module graphnet.data.utilities.sqlite_utilities)</a>
 </li>
       <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Attention_rel">Attention_rel (class in graphnet.models.components.layers)</a>
@@ -514,10 +516,10 @@
 </li>
       <li><a href="api/graphnet.data.extractors.combine_extractors.html#graphnet.data.extractors.combine_extractors.CombinedExtractor">CombinedExtractor (class in graphnet.data.extractors.combine_extractors)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.CuratedDataset.comments">comments (graphnet.data.curated_datamodule.CuratedDataset property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.models.easy_model.html#graphnet.models.easy_model.EasySyntax.compute_loss">compute_loss() (graphnet.models.easy_model.EasySyntax method)</a>
 
       <ul>
@@ -547,6 +549,10 @@
       <li><a href="api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.create_table">create_table() (in module graphnet.data.utilities.sqlite_utilities)</a>
 </li>
       <li><a href="api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.create_table_and_save_to_sql">create_table_and_save_to_sql() (in module graphnet.data.utilities.sqlite_utilities)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.utilities.km3net_utilities.html#graphnet.data.extractors.km3net.utilities.km3net_utilities.create_unique_id_run_by_run">create_unique_id_run_by_run() (in module graphnet.data.extractors.km3net.utilities.km3net_utilities)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.utilities.km3net_utilities.html#graphnet.data.extractors.km3net.utilities.km3net_utilities.creating_time_zero">creating_time_zero() (in module graphnet.data.extractors.km3net.utilities.km3net_utilities)</a>
 </li>
       <li><a href="api/graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.CuratedDataset.creator">creator (graphnet.data.curated_datamodule.CuratedDataset property)</a>
 </li>
@@ -834,12 +840,16 @@
 </li>
       <li><a href="api/graphnet.utilities.logging.html#graphnet.utilities.logging.RepeatFilter.filter">filter() (graphnet.utilities.logging.RepeatFilter method)</a>
 </li>
+      <li><a href="api/graphnet.data.extractors.km3net.utilities.km3net_utilities.html#graphnet.data.extractors.km3net.utilities.km3net_utilities.filter_None_NaN">filter_None_NaN() (in module graphnet.data.extractors.km3net.utilities.km3net_utilities)</a>
+</li>
       <li><a href="api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.find_files">find_files() (graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader method)</a>
 
       <ul>
         <li><a href="api/graphnet.data.readers.i3reader.html#graphnet.data.readers.i3reader.I3Reader.find_files">(graphnet.data.readers.i3reader.I3Reader method)</a>
 </li>
         <li><a href="api/graphnet.data.readers.internal_parquet_reader.html#graphnet.data.readers.internal_parquet_reader.ParquetReader.find_files">(graphnet.data.readers.internal_parquet_reader.ParquetReader method)</a>
+</li>
+        <li><a href="api/graphnet.data.readers.km3netreader.html#graphnet.data.readers.km3netreader.KM3NeTReader.find_files">(graphnet.data.readers.km3netreader.KM3NeTReader method)</a>
 </li>
         <li><a href="api/graphnet.data.readers.liquido_reader.html#graphnet.data.readers.liquido_reader.LiquidOReader.find_files">(graphnet.data.readers.liquido_reader.LiquidOReader method)</a>
 </li>
@@ -1403,6 +1413,48 @@
 </li>
       </ul></li>
       <li>
+    graphnet.data.extractors.km3net
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.km3net.html#module-graphnet.data.extractors.km3net">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.km3net.km3netextractor
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.km3net.km3netextractor.html#module-graphnet.data.extractors.km3net.km3netextractor">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.km3net.km3netpulseextractor
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.km3net.km3netpulseextractor.html#module-graphnet.data.extractors.km3net.km3netpulseextractor">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.km3net.km3nettruthextractor
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.km3net.km3nettruthextractor.html#module-graphnet.data.extractors.km3net.km3nettruthextractor">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.km3net.utilities
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.km3net.utilities.html#module-graphnet.data.extractors.km3net.utilities">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.data.extractors.km3net.utilities.km3net_utilities
+
+      <ul>
+        <li><a href="api/graphnet.data.extractors.km3net.utilities.km3net_utilities.html#module-graphnet.data.extractors.km3net.utilities.km3net_utilities">module</a>
+</li>
+      </ul></li>
+      <li>
     graphnet.data.extractors.liquido
 
       <ul>
@@ -1487,6 +1539,13 @@
 </li>
       </ul></li>
       <li>
+    graphnet.data.readers.km3netreader
+
+      <ul>
+        <li><a href="api/graphnet.data.readers.km3netreader.html#module-graphnet.data.readers.km3netreader">module</a>
+</li>
+      </ul></li>
+      <li>
     graphnet.data.readers.liquido_reader
 
       <ul>
@@ -1542,6 +1601,8 @@
         <li><a href="api/graphnet.data.utilities.sqlite_utilities.html#module-graphnet.data.utilities.sqlite_utilities">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.utilities.string_selection_resolver
 
@@ -1570,8 +1631,6 @@
         <li><a href="api/graphnet.data.writers.parquet_writer.html#module-graphnet.data.writers.parquet_writer">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.writers.sqlite_writer
 
@@ -2219,11 +2278,13 @@
 </li>
       <li><a href="api/graphnet.utilities.filesys.html#graphnet.utilities.filesys.has_extension">has_extension() (in module graphnet.utilities.filesys)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_icecube_package">has_icecube_package() (in module graphnet.utilities.imports)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_jammy_flows_package">has_jammy_flows_package() (in module graphnet.utilities.imports)</a>
+</li>
+      <li><a href="api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_km3net_package">has_km3net_package() (in module graphnet.utilities.imports)</a>
 </li>
       <li><a href="api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_torch_package">has_torch_package() (in module graphnet.utilities.imports)</a>
 </li>
@@ -2395,10 +2456,42 @@
       </ul></li>
       <li><a href="api/graphnet.training.labels.html#graphnet.training.labels.Label.key">key (graphnet.training.labels.Label property)</a>
 </li>
-      <li><a href="api/graphnet.models.utils.html#graphnet.models.utils.knn_graph_batch">knn_graph_batch() (in module graphnet.models.utils)</a>
+      <li><a href="api/graphnet.data.constants.html#graphnet.data.constants.FEATURES.KM3NET">KM3NET (graphnet.data.constants.FEATURES attribute)</a>
+
+      <ul>
+        <li><a href="api/graphnet.data.constants.html#graphnet.data.constants.TRUTH.KM3NET">(graphnet.data.constants.TRUTH attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/graphnet.data.constants.html#graphnet.data.constants.FEATURES.KM3NET_HNL">KM3NET_HNL (graphnet.data.constants.FEATURES attribute)</a>
+
+      <ul>
+        <li><a href="api/graphnet.data.constants.html#graphnet.data.constants.TRUTH.KM3NET_HNL">(graphnet.data.constants.TRUTH attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3netextractor.html#graphnet.data.extractors.km3net.km3netextractor.KM3NeTExtractor">KM3NeTExtractor (class in graphnet.data.extractors.km3net.km3netextractor)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3netpulseextractor.html#graphnet.data.extractors.km3net.km3netpulseextractor.KM3NeTFullPulseExtractor">KM3NeTFullPulseExtractor (class in graphnet.data.extractors.km3net.km3netpulseextractor)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3nettruthextractor.html#graphnet.data.extractors.km3net.km3nettruthextractor.KM3NeTHNLRecoExtractor">KM3NeTHNLRecoExtractor (class in graphnet.data.extractors.km3net.km3nettruthextractor)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3nettruthextractor.html#graphnet.data.extractors.km3net.km3nettruthextractor.KM3NeTHNLTruthExtractor">KM3NeTHNLTruthExtractor (class in graphnet.data.extractors.km3net.km3nettruthextractor)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/graphnet.data.extractors.km3net.km3netpulseextractor.html#graphnet.data.extractors.km3net.km3netpulseextractor.KM3NeTPulseExtractor">KM3NeTPulseExtractor (class in graphnet.data.extractors.km3net.km3netpulseextractor)</a>
+</li>
+      <li><a href="api/graphnet.data.readers.km3netreader.html#graphnet.data.readers.km3netreader.KM3NeTReader">KM3NeTReader (class in graphnet.data.readers.km3netreader)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3nettruthextractor.html#graphnet.data.extractors.km3net.km3nettruthextractor.KM3NeTRegularRecoExtractor">KM3NeTRegularRecoExtractor (class in graphnet.data.extractors.km3net.km3nettruthextractor)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3nettruthextractor.html#graphnet.data.extractors.km3net.km3nettruthextractor.KM3NeTRegularTruthExtractor">KM3NeTRegularTruthExtractor (class in graphnet.data.extractors.km3net.km3nettruthextractor)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3netpulseextractor.html#graphnet.data.extractors.km3net.km3netpulseextractor.KM3NeTTriggPulseExtractor">KM3NeTTriggPulseExtractor (class in graphnet.data.extractors.km3net.km3netpulseextractor)</a>
+</li>
+      <li><a href="api/graphnet.data.extractors.km3net.km3nettruthextractor.html#graphnet.data.extractors.km3net.km3nettruthextractor.KM3NeTTruthExtractor">KM3NeTTruthExtractor (class in graphnet.data.extractors.km3net.km3nettruthextractor)</a>
+</li>
+      <li><a href="api/graphnet.models.utils.html#graphnet.models.utils.knn_graph_batch">knn_graph_batch() (in module graphnet.models.utils)</a>
+</li>
       <li><a href="api/graphnet.models.data_representation.graphs.edges.edges.html#graphnet.models.data_representation.graphs.edges.edges.KNNDistanceEdges">KNNDistanceEdges (class in graphnet.models.data_representation.graphs.edges.edges)</a>
 </li>
       <li><a href="api/graphnet.models.data_representation.graphs.edges.edges.html#graphnet.models.data_representation.graphs.edges.edges.KNNEdges">KNNEdges (class in graphnet.models.data_representation.graphs.edges.edges)</a>
@@ -2623,6 +2716,18 @@
 </li>
         <li><a href="api/graphnet.data.extractors.internal.parquet_extractor.html#module-graphnet.data.extractors.internal.parquet_extractor">graphnet.data.extractors.internal.parquet_extractor</a>
 </li>
+        <li><a href="api/graphnet.data.extractors.km3net.html#module-graphnet.data.extractors.km3net">graphnet.data.extractors.km3net</a>
+</li>
+        <li><a href="api/graphnet.data.extractors.km3net.km3netextractor.html#module-graphnet.data.extractors.km3net.km3netextractor">graphnet.data.extractors.km3net.km3netextractor</a>
+</li>
+        <li><a href="api/graphnet.data.extractors.km3net.km3netpulseextractor.html#module-graphnet.data.extractors.km3net.km3netpulseextractor">graphnet.data.extractors.km3net.km3netpulseextractor</a>
+</li>
+        <li><a href="api/graphnet.data.extractors.km3net.km3nettruthextractor.html#module-graphnet.data.extractors.km3net.km3nettruthextractor">graphnet.data.extractors.km3net.km3nettruthextractor</a>
+</li>
+        <li><a href="api/graphnet.data.extractors.km3net.utilities.html#module-graphnet.data.extractors.km3net.utilities">graphnet.data.extractors.km3net.utilities</a>
+</li>
+        <li><a href="api/graphnet.data.extractors.km3net.utilities.km3net_utilities.html#module-graphnet.data.extractors.km3net.utilities.km3net_utilities">graphnet.data.extractors.km3net.utilities.km3net_utilities</a>
+</li>
         <li><a href="api/graphnet.data.extractors.liquido.html#module-graphnet.data.extractors.liquido">graphnet.data.extractors.liquido</a>
 </li>
         <li><a href="api/graphnet.data.extractors.liquido.h5_extractor.html#module-graphnet.data.extractors.liquido.h5_extractor">graphnet.data.extractors.liquido.h5_extractor</a>
@@ -2646,6 +2751,8 @@
         <li><a href="api/graphnet.data.readers.i3reader.html#module-graphnet.data.readers.i3reader">graphnet.data.readers.i3reader</a>
 </li>
         <li><a href="api/graphnet.data.readers.internal_parquet_reader.html#module-graphnet.data.readers.internal_parquet_reader">graphnet.data.readers.internal_parquet_reader</a>
+</li>
+        <li><a href="api/graphnet.data.readers.km3netreader.html#module-graphnet.data.readers.km3netreader">graphnet.data.readers.km3netreader</a>
 </li>
         <li><a href="api/graphnet.data.readers.liquido_reader.html#module-graphnet.data.readers.liquido_reader">graphnet.data.readers.liquido_reader</a>
 </li>
@@ -3508,6 +3615,10 @@
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.WaterDemo81.xyz">(graphnet.models.detector.prometheus.WaterDemo81 attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/graphnet.data.extractors.km3net.utilities.km3net_utilities.html#graphnet.data.extractors.km3net.utilities.km3net_utilities.xyz_dir_to_zen_az">xyz_dir_to_zen_az() (in module graphnet.data.extractors.km3net.utilities.km3net_utilities)</a>
+</li>
   </ul></td>
 </tr></table>
 

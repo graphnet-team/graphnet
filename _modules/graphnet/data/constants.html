@@ -404,7 +404,19 @@
         <span class="s2">"dom_type"</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="n">KAGGLE</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">,</span> <span class="s2">"time"</span><span class="p">,</span> <span class="s2">"charge"</span><span class="p">,</span> <span class="s2">"auxiliary"</span><span class="p">]</span>
-    <span class="n">LIQUIDO</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"sipm_x"</span><span class="p">,</span> <span class="s2">"sipm_y"</span><span class="p">,</span> <span class="s2">"sipm_z"</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">]</span></div>
+    <span class="n">LIQUIDO</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"sipm_x"</span><span class="p">,</span> <span class="s2">"sipm_y"</span><span class="p">,</span> <span class="s2">"sipm_z"</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">]</span>
+    <span class="n">KM3NET</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"t"</span><span class="p">,</span>
+        <span class="s2">"pos_x"</span><span class="p">,</span>
+        <span class="s2">"pos_y"</span><span class="p">,</span>
+        <span class="s2">"pos_z"</span><span class="p">,</span>
+        <span class="s2">"dir_x"</span><span class="p">,</span>
+        <span class="s2">"dir_y"</span><span class="p">,</span>
+        <span class="s2">"dir_z"</span><span class="p">,</span>
+        <span class="s2">"tot"</span><span class="p">,</span>
+        <span class="s2">"trig"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">KM3NET_HNL</span> <span class="o">=</span> <span class="n">KM3NET</span></div>
 
 
 
@@ -427,8 +439,6 @@
         <span class="s2">"interaction_type"</span><span class="p">,</span>
         <span class="s2">"interaction_time"</span><span class="p">,</span>  <span class="c1"># Added for vertex reconstruction</span>
         <span class="s2">"inelasticity"</span><span class="p">,</span>
-        <span class="s2">"visible_inelasticity"</span><span class="p">,</span>
-        <span class="s2">"visible_energy"</span><span class="p">,</span>
         <span class="s2">"stopped_muon"</span><span class="p">,</span>
     <span class="p">]</span>
     <span class="n">DEEPCORE</span> <span class="o">=</span> <span class="n">ICECUBE86</span>
@@ -522,6 +532,52 @@
         <span class="s2">"interaction_time"</span><span class="p">,</span>
         <span class="s2">"energy"</span><span class="p">,</span>
         <span class="s2">"pid"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">KM3NET</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"true_pdgid"</span><span class="p">,</span>
+        <span class="s2">"true_E"</span><span class="p">,</span>
+        <span class="s2">"true_pos_x"</span><span class="p">,</span>
+        <span class="s2">"true_pos_y"</span><span class="p">,</span>
+        <span class="s2">"true_pos_z"</span><span class="p">,</span>
+        <span class="s2">"true_dir_x"</span><span class="p">,</span>
+        <span class="s2">"true_dir_y"</span><span class="p">,</span>
+        <span class="s2">"true_dir_z"</span><span class="p">,</span>
+        <span class="s2">"true_zenith"</span><span class="p">,</span>
+        <span class="s2">"true_azimuth"</span><span class="p">,</span>
+        <span class="s2">"run_id"</span><span class="p">,</span>
+        <span class="s2">"evt_id"</span><span class="p">,</span>
+        <span class="s2">"frame_index"</span><span class="p">,</span>
+        <span class="s2">"trigger_counter"</span><span class="p">,</span>
+        <span class="s2">"n_hits"</span><span class="p">,</span>
+        <span class="s2">"event_no"</span><span class="p">,</span>
+        <span class="s2">"is_cc_flag"</span><span class="p">,</span>
+        <span class="s2">"tau_topology"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">KM3NET_HNL</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"true_pdgid"</span><span class="p">,</span>
+        <span class="s2">"true_E"</span><span class="p">,</span>
+        <span class="s2">"true_pos_x"</span><span class="p">,</span>
+        <span class="s2">"true_pos_y"</span><span class="p">,</span>
+        <span class="s2">"true_pos_z"</span><span class="p">,</span>
+        <span class="s2">"true_dir_x"</span><span class="p">,</span>
+        <span class="s2">"true_dir_y"</span><span class="p">,</span>
+        <span class="s2">"true_dir_z"</span><span class="p">,</span>
+        <span class="s2">"true_zenith"</span><span class="p">,</span>
+        <span class="s2">"run_id"</span><span class="p">,</span>
+        <span class="s2">"evt_id"</span><span class="p">,</span>
+        <span class="s2">"frame_index"</span><span class="p">,</span>
+        <span class="s2">"trigger_counter"</span><span class="p">,</span>
+        <span class="s2">"n_hits"</span><span class="p">,</span>
+        <span class="s2">"event_no"</span><span class="p">,</span>
+        <span class="s2">"is_cc_flag"</span><span class="p">,</span>
+        <span class="s2">"tau_topology"</span><span class="p">,</span>
+        <span class="s2">"zenith_hnl"</span><span class="p">,</span>
+        <span class="s2">"azimuth_hnl"</span><span class="p">,</span>
+        <span class="s2">"angle_between_showers"</span><span class="p">,</span>
+        <span class="s2">"Energy_hnl"</span><span class="p">,</span>
+        <span class="s2">"Energy_second_shower"</span><span class="p">,</span>
+        <span class="s2">"Energy_imbalance"</span><span class="p">,</span>
+        <span class="s2">"distance"</span><span class="p">,</span>
     <span class="p">]</span></div>
 
 </pre></div>

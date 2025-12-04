@@ -407,6 +407,22 @@
 
 
 
+<div class="viewcode-block" id="has_km3net_package">
+<a class="viewcode-back" href="../../../api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_km3net_package">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">has_km3net_package</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Check whether the `km3net` packages are available."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">km3io</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">Logger</span><span class="p">(</span><span class="n">log_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+            <span class="s2">"`km3net` not available. Some functionality may be missing."</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
 <div class="viewcode-block" id="requires_icecube">
 <a class="viewcode-back" href="../../../api/graphnet.utilities.imports.html#graphnet.utilities.imports.requires_icecube">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">requires_icecube</span><span class="p">(</span><span class="n">test_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>

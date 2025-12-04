@@ -16,6 +16,7 @@ extractors
 
    graphnet.data.extractors.icecube
    graphnet.data.extractors.internal
+   graphnet.data.extractors.km3net
    graphnet.data.extractors.liquido
    graphnet.data.extractors.prometheus
 

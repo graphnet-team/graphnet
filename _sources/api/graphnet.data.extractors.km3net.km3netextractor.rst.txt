@@ -1,0 +1,8 @@
+
+km3netextractor
+===============
+
+.. automodule:: graphnet.data.extractors.km3net.km3netextractor
+   :members:
+   :show-inheritance:
+   :undoc-members:

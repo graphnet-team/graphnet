@@ -296,6 +296,8 @@
         <li class="md-nav__item"><a href="#quick-start" class="md-nav__link">Quick Start</a>
         </li>
         <li class="md-nav__item"><a href="#installation-in-cvmfs-icecube" class="md-nav__link">Installation in CVMFS (IceCube)</a>
+        </li>
+        <li class="md-nav__item"><a href="#installation-with-km3io-km3net" class="md-nav__link">Installation with km3io (KM3NeT)</a>
         </li></ul>
             </nav>
         </li>
@@ -313,6 +315,13 @@
     
     
       <a href="#installation-in-cvmfs-icecube" class="md-nav__link">Installation in CVMFS (IceCube)</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#installation-with-km3io-km3net" class="md-nav__link">Installation with km3io (KM3NeT)</a>
       
     
     </li></ul>
@@ -379,6 +388,8 @@
         <li class="md-nav__item"><a href="#quick-start" class="md-nav__link">Quick Start</a>
         </li>
         <li class="md-nav__item"><a href="#installation-in-cvmfs-icecube" class="md-nav__link">Installation in CVMFS (IceCube)</a>
+        </li>
+        <li class="md-nav__item"><a href="#installation-with-km3io-km3net" class="md-nav__link">Installation with km3io (KM3NeT)</a>
         </li></ul>
             </nav>
         </li>
@@ -646,6 +657,39 @@ pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w">
 </pre></div>
 </div>
 <p>Once installed, <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT is available whenever you open the CVMFS locally.</p>
+</section>
+<section id="installation-with-km3io-km3net">
+<h2 id="installation-with-km3io-km3net">Installation with km3io (KM3NeT)<a class="headerlink" href="#installation-with-km3io-km3net" title="Link to this heading">¶</a></h2>
+<p>This installation is only necessary if you want to process KM3NeT/ARCA or KM3NeT/ORCA files. Processing means converting them from a <cite>.root</cite> offline format into a suitable format for training using <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>. If you already have your KM3NeT data in <cite>SQLite</cite> or <cite>parquet</cite> format and only want to train a model or perform inference on this database, this specific installation is not needed.</p>
+<p>Note that this installation will add <cite>km3io</cite> ensuring it is built with a compatible versions. The steps below are provided for a conda environment, with an enviroment created in the same way it is done above in this page, but feel free to choose a different enviroment setup.</p>
+<p>As mentioned, it is highly reommended to create a conda enviroment where your installation is done to do not mess up any dependecy. It can be done with the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an environment with Python 3.10</span>
+conda<span class="w"> </span>create<span class="w"> </span>-p<span class="w"> </span>&lt;full-path-to-env&gt;<span class="w"> </span>--no-default-packages<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10<span class="w"> </span>-y
+<span class="c1"># Activate the environment and move to the graphnet repository you just cloned. If using conda:</span>
+conda<span class="w"> </span>activate<span class="w"> </span>&lt;full-path-to-env&gt;
+</pre></div>
+</div>
+<p>The isntallation of GraphNeT is then done by:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/graphnet-team/graphnet.git
+<span class="nb">cd</span><span class="w"> </span>graphnet
+</pre></div>
+</div>
+<p>Choose the appropriate requirements file based on your system. Here there is just an example of installation with PyTorch-2.5.1 but check the matrix above for a full idea of all the versions can be installed.</p>
+<p>For CPU-only enviroments:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.20.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
+pip3<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>torch-25<span class="o">]</span><span class="w"> </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.5.1+cpu.html
+</pre></div>
+</div>
+<p>For GPU enviroments with, for instance, CUDA 11.8 drivers:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.20.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu118
+pip3<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>torch-25<span class="o">]</span><span class="w"> </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.5.1+cu118.html
+</pre></div>
+</div>
+<p>Downgrade setuptools for compatibility between km3io and GraphNeT.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3<span class="w"> </span>install<span class="w"> </span>--force-reinstall<span class="w"> </span><span class="nv">setuptools</span><span class="o">==</span><span class="m">70</span>.3.0
+pip3<span class="w"> </span>install<span class="w"> </span><span class="nv">km3io</span><span class="o">==</span><span class="m">1</span>.2.0
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We recommend installing <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT without GPU in clean metaprojects.</p>

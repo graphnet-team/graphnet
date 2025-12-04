@@ -369,6 +369,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetExtractor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.liquido</span><span class="w"> </span><span class="kn">import</span> <span class="n">H5Extractor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.prometheus</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrometheusExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.km3net</span><span class="w"> </span><span class="kn">import</span> <span class="n">KM3NeTExtractor</span>
 
 
 <div class="viewcode-block" id="GraphNeTFileReader">
@@ -458,6 +459,7 @@
             <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">H5Extractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">PrometheusExtractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">KM3NeTExtractor</span><span class="p">],</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Set `Extractor`(s) as member variable.</span>
@@ -480,6 +482,7 @@
             <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">H5Extractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">PrometheusExtractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">KM3NeTExtractor</span><span class="p">],</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">extractor</span> <span class="ow">in</span> <span class="n">extractors</span><span class="p">:</span>

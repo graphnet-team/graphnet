@@ -1,0 +1,8 @@
+
+km3netreader
+============
+
+.. automodule:: graphnet.data.readers.km3netreader
+   :members:
+   :show-inheritance:
+   :undoc-members:
