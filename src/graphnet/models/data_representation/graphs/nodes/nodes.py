@@ -502,6 +502,8 @@ class ClusterSummaryFeatures(NodeDefinition):
     For more details on some of the features see
     Theo Glauchs thesis (chapter 5.3):
     https://mediatum.ub.tum.de/node?id=1584755
+
+    NOTE: number of pulses per cluster is not mentioned/used in the thesis
     """
 
     def __init__(
