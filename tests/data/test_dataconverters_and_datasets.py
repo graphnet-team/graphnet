@@ -343,6 +343,3 @@ def test_sqlite_to_lmdb_converter() -> None:
                     )
                 else:
                     assert precomputed_truth == realtime_truth
-
-
-test_sqlite_to_lmdb_converter()
