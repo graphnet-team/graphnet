@@ -15,6 +15,7 @@ from torch import nn
 from torch.nn.functional import (
     one_hot,
     binary_cross_entropy,
+    binary_cross_entropy_with_logits,
     softplus,
 )
 
@@ -203,16 +204,30 @@ class CrossEntropyLoss(LossFunction):
 
 
 class BinaryCrossEntropyLoss(LossFunction):
-    """Compute binary cross entropy loss.
+    """Compute binary cross entropy loss."""
 
-    Predictions are vector probabilities (i.e., values between 0 and 1),
-    and targets should be 0 and 1.
-    """
+    def __init__(self, from_logits: bool = False, *args: Any, **kwargs: Any):
+        """Construct BinaryCrossEntropyLoss.
+
+        Args:
+            from_logits: Whether the predictions are logits.
+                NOTE: If True, the predictions are expected to be raw scores
+                (i.e., not passed through a sigmoid function). If False, the
+                predictions are expected to be probabilities
+                (i.e., passed through a sigmoid function).
+        """
+        super().__init__(*args, **kwargs)
+        self._from_logits = from_logits
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
-        return binary_cross_entropy(
-            prediction.float(), target.float(), reduction="none"
-        )
+        if self._from_logits:
+            return binary_cross_entropy_with_logits(
+                prediction.float(), target.float(), reduction="none"
+            )
+        else:
+            return binary_cross_entropy(
+                prediction.float(), target.float(), reduction="none"
+            )
 
 
 class LogCMK(torch.autograd.Function):
@@ -271,39 +286,39 @@ class LogCMK(torch.autograd.Function):
         ctx: Any, grad_output: Tensor
     ) -> Tensor:  # pylint: disable=invalid-name,arguments-differ
         """Backward pass for LogCMK computation.
-        
+
         Mathematical Background:
         -----------------------
-        For the von Mises-Fisher distribution, the gradient of log C_m(κ) with 
+        For the von Mises-Fisher distribution, the gradient of log C_m(κ) with
         respect to κ is given by the ratio of modified Bessel functions:
-        
+
         ∂/∂κ log C_m(κ) = (m/2-1)/κ - I_{m/2}(κ)/I_{m/2-1}(κ)
-        
+
         For m=3, this simplifies to the exact formula:
         ∂/∂κ log C_3(κ) = 1/κ - 1/tanh(κ)
-        
+
         For small κ values, we use the Taylor series approximation:
         f(κ) = -κ/3 + κ³/45 - 2κ⁵/945 + O(κ⁷)
-        
-        The first-order approximation -κ/3 provides sufficient accuracy for 
+
+        The first-order approximation -κ/3 provides sufficient accuracy for
         |κ| < 1e-6, with truncation error bounded by |κ|³/45 ≲ O(10⁻²¹).
-        
+
         Implementation Details:
         ----------------------
         Uses boolean masking to avoid double evaluation and RuntimeWarnings:
         - Small κ: |κ| < 1e-6 → gradient = -κ/3 (Taylor approximation)
         - Large κ: |κ| ≥ 1e-6 → gradient = 1/κ - 1/tanh(κ) (exact formula)
-        
+
         References:
         ----------
         [1] von Mises-Fisher distribution: Wikipedia
         [2] arXiv:1812.04616, Section 8.2
         [3] MIT License (c) 2019 Max Ryabinin - Modified for GraphNeT
-        
+
         Args:
             ctx: Autograd context containing saved tensors and metadata.
             grad_output: Gradient with respect to the output tensor.
-            
+
         Returns:
             Tuple of gradients: (None for m, gradient w.r.t. κ).
         """
@@ -314,16 +329,16 @@ class LogCMK(torch.autograd.Function):
         if np.isclose(m, 3, atol=1e-6):
             # Initialize gradient array
             grads = np.zeros_like(kappa)
-            
+
             # Handle small kappa values (including zero) to avoid division by zero
             small_mask = np.abs(kappa) < 1e-6
             grads[small_mask] = -kappa[small_mask] / 3
-            
+
             # Handle large kappa values
             large_mask = ~small_mask
             if np.any(large_mask):
                 kappa_large = kappa[large_mask]
-                grads[large_mask] = 1/kappa_large - 1/np.tanh(kappa_large)
+                grads[large_mask] = 1 / kappa_large - 1 / np.tanh(kappa_large)
         else:
             grads = -(
                 (scipy.special.iv(m / 2.0, kappa))
