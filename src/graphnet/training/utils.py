@@ -2,8 +2,8 @@
 
 from collections import OrderedDict
 import os
-from typing import Dict, List, Optional, Tuple, Union, Callable
-
+from typing import Dict, List, Optional, Tuple, Union, Callable, Any
+import torch
 import numpy as np
 import pandas as pd
 from pytorch_lightning import Trainer
@@ -328,3 +328,74 @@ def save_selection(selection: List[int], file_path: str) -> None:
     with open(file_path, "w") as f:
         f.write(",".join(map(str, selection)))
         f.write("\n")
+
+
+def add_custom_labels(
+    data: Data,
+    custom_label_functions: Dict[str, Callable[..., Any]],
+    repeat_labels_by: Optional[int] = None,
+) -> Data:
+    """Add custom labels to the data.
+
+    Args:
+        data: data where the label will be stored
+        custom_label_functions: dictionary containing the custom
+            label functions
+        repeat_labels_by: If specified, repeats the labels along the
+            specified dimension.
+
+    Returns:
+        data with labels
+    """
+    # Add custom labels to the data
+    for key, fn in custom_label_functions.items():
+        try:
+            label = fn(data)
+        except KeyError:
+            raise KeyError(f"Key {key} not found in data.")
+        if repeat_labels_by is not None:
+            label = label.repeat(data.x.shape[repeat_labels_by], 1)
+        data[key] = label
+    return data
+
+
+def add_truth(
+    data: Data,
+    truth_dicts: Union[Dict[str, Any], List[Dict[str, Any]]],
+    dtype: Optional[torch.dtype] = torch.float32,
+    repeat_labels_by: Optional[int] = None,
+) -> Data:
+    """Add truth labels from ´truth_dicts´ to ´data´.
+
+    I.e. ´data[key] = truth_dict[key]´
+
+
+    Args:
+        data: data where the label will be stored
+        truth_dicts: dictionary containing the labels
+        dtype: dtype of the truth labels
+        repeat_labels_by: If specified, repeats the labels along the
+            specified dimension.
+
+    Returns:
+        data with labels
+    """
+    # Write attributes, either target labels, truth info or original
+    # features.
+    if isinstance(truth_dicts, dict):
+        truth_dicts = [truth_dicts]
+    for truth_dict in truth_dicts:
+        for key, value in truth_dict.items():
+            try:
+                label = torch.tensor(value, dtype=dtype)
+                if repeat_labels_by is not None:
+                    label = label.repeat(data.x.shape[repeat_labels_by], 1)
+                data[key] = label
+            except TypeError:
+                # Cannot convert `value` to Tensor due to its data type,
+                # e.g. `str`.
+                raise TypeError(
+                    f"Could not assign `{key}` with type "
+                    f"'{type(value).__name__}' to data."
+                )
+    return data

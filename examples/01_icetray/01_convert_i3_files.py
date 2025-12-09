@@ -1,4 +1,4 @@
-"""Example of converting I3-files to SQLite and Parquet."""
+"""Example of converting I3-files to SQLite, Parquet, and LMDB."""
 
 from glob import glob
 
@@ -12,6 +12,7 @@ from graphnet.data.extractors.icecube import (
 from graphnet.data.dataconverter import DataConverter
 from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.sqlite import SQLiteDataConverter
+from graphnet.data.pre_configured.dataconverters import I3ToLMDBConverter
 from graphnet.utilities.argparse import ArgumentParser
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
@@ -29,6 +30,7 @@ ERROR_MESSAGE_MISSING_ICETRAY = (
 )
 
 CONVERTER_CLASS = {
+    "lmdb": I3ToLMDBConverter,
     "sqlite": SQLiteDataConverter,
     "parquet": ParquetDataConverter,
 }
@@ -55,7 +57,7 @@ def main_icecube86(backend: str) -> None:
         workers=1,
     )
     converter(inputs)
-    if backend == "sqlite":
+    if backend in ["sqlite", "lmdb"]:
         converter.merge_files()
 
 
@@ -83,7 +85,7 @@ def main_icecube_upgrade(backend: str) -> None:
         gcd_rescue=gcd_rescue,
     )
     converter(inputs)
-    if backend == "sqlite":
+    if backend in ["sqlite", "lmdb"]:
         converter.merge_files()
 
 
@@ -99,7 +101,13 @@ Convert I3 files to an intermediate format.
 """
         )
 
-        parser.add_argument("backend", choices=["sqlite", "parquet"])
+        parser.add_argument(
+            "backend",
+            nargs="?",
+            choices=["lmdb", "sqlite", "parquet"],
+            default="lmdb",
+            help="Backend format to convert to (default: %(default)s)",
+        )
         parser.add_argument(
             "detector", choices=["icecube-86", "icecube-upgrade"]
         )
