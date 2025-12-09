@@ -98,8 +98,7 @@ def test_dataconverter(
 
     # Perform conversion from I3 to `backend`
     converter(test_data_dir)
-    if backend in ["sqlite", "lmdb"]:
-        converter.merge_files()
+    converter.merge_files()
 
     # Check output
     if backend == "sqlite":
