@@ -61,7 +61,7 @@
 </script>
   
   
-    <title>detector &#8212; graphnet  documentation</title>
+    <title>magic &#8212; graphnet  documentation</title>
 
 <style>
   dt:target {
@@ -128,8 +128,8 @@
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="detector" href="graphnet.models.detector.detector.html" />
-    <link rel="prev" title="data_representation" href="graphnet.models.data_representation.data_representation.html" />
+    <link rel="next" title="prometheus" href="graphnet.models.detector.prometheus.html" />
+    <link rel="prev" title="liquido" href="graphnet.models.detector.liquido.html" />
   
    
 
@@ -148,7 +148,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.models.detector" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.models.detector.magic" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -166,7 +166,7 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           <span class="md-header-nav__topic">GraphNeT</span>
-          <span class="md-header-nav__topic"> detector </span>
+          <span class="md-header-nav__topic"> magic </span>
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -243,6 +243,7 @@
             <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
           <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
           <li class="md-tabs__item"><a href="graphnet.models.html" class="md-tabs__link">models</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.detector.html" class="md-tabs__link">detector</a></li>
       </ul>
     </div>
   </nav>
@@ -378,16 +379,7 @@
     <li class="md-nav__item">
     
     
-    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> detector </label>
-    
-      <a href="#" class="md-nav__link md-nav__link--active">detector</a>
-      
-        
-<nav class="md-nav md-nav--secondary">
-  <ul class="md-nav__list" data-md-scrollfix="">
-  </ul>
-</nav>
+      <a href="graphnet.models.detector.html" class="md-nav__link">detector</a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
@@ -413,8 +405,60 @@
     <li class="md-nav__item">
     
     
-      <a href="graphnet.models.detector.magic.html" class="md-nav__link">magic</a>
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> magic </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">magic</a>
       
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-models-detector-magic--page-root" class="md-nav__link">magic</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">MAGIC</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC.geometry_table_path" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">geometry_table_path</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC.xyz" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">xyz</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.detector.magic.MAGIC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">MAGIC</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.detector.magic.MAGIC.geometry_table_path" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">geometry_table_path</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.detector.magic.MAGIC.xyz" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">xyz</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.detector.magic.MAGIC.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
@@ -547,7 +591,22 @@
               <div class="md-sidebar__inner">
                 
 <nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-models-detector-magic--page-root" class="md-nav__link">magic</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">MAGIC</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC.geometry_table_path" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">geometry_table_path</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC.xyz" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">xyz</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.detector.magic.MAGIC.feature_map" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">feature_map()</span></code></a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
+        </li>
   </ul>
 </nav>
               </div>
@@ -557,49 +616,55 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.models.detector">
-<span id="detector"></span><h1 id="api-graphnet-models-detector--page-root">detector<a class="headerlink" href="#api-graphnet-models-detector--page-root" title="Link to this heading">¶</a></h1>
-<p>Detector-specific modules, for data ingestion and standardisation.</p>
-<p><h2> Submodules </h2></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.detector.detector.html">detector</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector"><code class="docutils literal notranslate"><span class="pre">Detector</span></code></a></li>
+  <section id="module-graphnet.models.detector.magic">
+<span id="magic"></span><h1 id="api-graphnet-models-detector-magic--page-root">magic<a class="headerlink" href="#api-graphnet-models-detector-magic--page-root" title="Link to this heading">¶</a></h1>
+<p>MAGIC-specific <cite>Detector</cite> class(es).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.detector.magic.MAGIC">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.magic.</span></span><span class="sig-name descname"><span class="pre">MAGIC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/magic.html#MAGIC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.magic.MAGIC" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a></p>
+<p><cite>Detector</cite> class for MAGIC telescopes.</p>
+<p>Construct detector for the MAGIC telescopes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>use_charge_epsilon</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – Whether to add a small epsilon value to charge
+before taking log10 to avoid log(0). Defaults to True (uses
+1e-6). Set to False if data is guaranteed to have zero-padding.</p></li>
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.detector.icecube.html">icecube</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCube86"><code class="docutils literal notranslate"><span class="pre">IceCube86</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCubeKaggle"><code class="docutils literal notranslate"><span class="pre">IceCubeKaggle</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCubeDeepCore"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCubeUpgrade"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade</span></code></a></li>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.magic.MAGIC.geometry_table_path">
+<span class="sig-name descname"><span class="pre">geometry_table_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/runner/work/graphnet/graphnet/data/geometry_tables/magic/magic.parquet'</span></em><a class="headerlink" href="#graphnet.models.detector.magic.MAGIC.geometry_table_path" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.models.detector.magic.MAGIC.xyz">
+<span class="sig-name descname"><span class="pre">xyz</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['x_cam',</span> <span class="pre">'y_cam',</span> <span class="pre">'tel_id']</span></em><a class="headerlink" href="#graphnet.models.detector.magic.MAGIC.xyz" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.detector.magic.MAGIC.feature_map">
+<span class="sig-name descname"><span class="pre">feature_map</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/magic.html#MAGIC.feature_map"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.magic.MAGIC.feature_map" title="Link to this definition">¶</a></dt>
+<dd><p>Map standardization functions to each dimension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Note: tel_id can take the integer values 0 or 1, where:</dt><dd><ul class="simple">
+<li><p>0 corresponds to MAGIC-I</p></li>
+<li><p>1 corresponds to MAGIC-II</p></li>
 </ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.detector.liquido.html">liquido</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.liquido.html#graphnet.models.detector.liquido.LiquidO_v1"><code class="docutils literal notranslate"><span class="pre">LiquidO_v1</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.detector.magic.html">magic</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.magic.html#graphnet.models.detector.magic.MAGIC"><code class="docutils literal notranslate"><span class="pre">MAGIC</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.detector.prometheus.html">prometheus</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ORCA150SuperDense"><code class="docutils literal notranslate"><span class="pre">ORCA150SuperDense</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.TRIDENT1211"><code class="docutils literal notranslate"><span class="pre">TRIDENT1211</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCubeUpgrade7"><code class="docutils literal notranslate"><span class="pre">IceCubeUpgrade7</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.WaterDemo81"><code class="docutils literal notranslate"><span class="pre">WaterDemo81</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.BaikalGVD8"><code class="docutils literal notranslate"><span class="pre">BaikalGVD8</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceDemo81"><code class="docutils literal notranslate"><span class="pre">IceDemo81</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ARCA115"><code class="docutils literal notranslate"><span class="pre">ARCA115</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ORCA150"><code class="docutils literal notranslate"><span class="pre">ORCA150</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCube86Prometheus"><code class="docutils literal notranslate"><span class="pre">IceCube86Prometheus</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCubeDeepCore8"><code class="docutils literal notranslate"><span class="pre">IceCubeDeepCore8</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCubeGen2"><code class="docutils literal notranslate"><span class="pre">IceCubeGen2</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.PONETriangle"><code class="docutils literal notranslate"><span class="pre">PONETriangle</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.Prometheus"><code class="docutils literal notranslate"><span class="pre">Prometheus</span></code></a></li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
 </section>
 
 
@@ -612,7 +677,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.models.data_representation.data_representation.html" title="data_representation"
+            <a href="graphnet.models.detector.liquido.html" title="liquido"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -621,17 +686,17 @@
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> data_representation </span>
+                      class="md-footer-nav__direction"> "Previous" </span> liquido </span>
               </div>
             </a>
           
           
-            <a href="graphnet.models.detector.detector.html" title="detector"
+            <a href="graphnet.models.detector.prometheus.html" title="prometheus"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> detector </span>
+                class="md-footer-nav__direction"> "Next" </span> prometheus </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

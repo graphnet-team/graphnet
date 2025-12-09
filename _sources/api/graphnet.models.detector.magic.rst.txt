@@ -1,0 +1,8 @@
+
+magic
+=====
+
+.. automodule:: graphnet.models.detector.magic
+   :members:
+   :show-inheritance:
+   :undoc-members:
