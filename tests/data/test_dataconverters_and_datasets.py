@@ -252,8 +252,8 @@ def test_sqlite_to_lmdb_converter() -> None:
     outdir = os.path.join(TEST_OUTPUT_DIR, "sqlite_to_lmdb")
     converter = SQLiteToLMDBConverter(
         extractors=[
-            SQLiteExtractor(extractor_name="truth"),
-            SQLiteExtractor(extractor_name="SRTInIcePulses"),
+            SQLiteExtractor(extractor_name="truth"),  # type: ignore[abstract]
+            SQLiteExtractor(extractor_name="SRTInIcePulses"),  # type: ignore[abstract]
         ],
         outdir=outdir,
         num_workers=1,
@@ -279,9 +279,9 @@ def test_sqlite_to_lmdb_converter() -> None:
         graph_definition=graph_definition,
     )
 
-    dataset_from_lmdb_raw = LMDBDataset(
+    dataset_from_lmdb_raw = LMDBDataset(  # type: ignore[arg-type]
         path, **opt_raw
-    )  # type: ignore[arg-type]
+    )
     dataset_sqlite = SQLiteDataset(
         get_file_path("sqlite"), **opt_raw  # type: ignore[arg-type]
     )
@@ -305,8 +305,8 @@ def test_sqlite_to_lmdb_converter() -> None:
         pre_computed_representation=pre_computed_field_name,
     )
 
-    dataset_from_lmdb_precomputed = LMDBDataset(
-        path, **opt_precomputed  # type: ignore[arg-type]
+    dataset_from_lmdb_precomputed = LMDBDataset(  # type: ignore[arg-type]
+        path, **opt_precomputed
     )
 
     assert len(dataset_from_lmdb_precomputed) == len(dataset_sqlite)
