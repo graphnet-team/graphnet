@@ -17,12 +17,12 @@ from graphnet.data.extractors.icecube import (
     I3RetroExtractor,
 )
 from graphnet.data.extractors.internal import ParquetExtractor, SQLiteExtractor
-from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset, LMDBDataset
-from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
 from graphnet.data.pre_configured.dataconverters import (
     I3ToLMDBConverter,
+    I3ToParquetConverter,
+    I3ToSQLiteConverter,
     SQLiteToLMDBConverter,
 )
 from graphnet.models.graphs import KNNGraph
@@ -83,14 +83,14 @@ def test_dataconverter(
             test_data_dir,
             GCD_FILE,
         ),
-        workers=1,
+        num_workers=1,
     )
 
     converter: DataConverter
     if backend == "sqlite":
-        converter = SQLiteDataConverter(**opt)  # type: ignore[arg-type]
+        converter = I3ToSQLiteConverter(**opt)  # type: ignore[arg-type]
     elif backend == "parquet":
-        converter = ParquetDataConverter(**opt)  # type: ignore[arg-type]
+        converter = I3ToParquetConverter(**opt)  # type: ignore[arg-type]
     elif backend == "lmdb":
         converter = I3ToLMDBConverter(**opt)  # type: ignore[arg-type]
     else:
