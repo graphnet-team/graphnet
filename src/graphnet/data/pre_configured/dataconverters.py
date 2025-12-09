@@ -1,13 +1,14 @@
 """Pre-configured combinations of writers and readers."""
 
-from typing import List, Union, Optional
+from typing import Any, Callable, List, Union, Optional
 
 from graphnet.data import DataConverter
-from graphnet.data.readers import I3Reader, ParquetReader
-from graphnet.data.writers import ParquetWriter, SQLiteWriter
+from graphnet.data.readers import I3Reader, ParquetReader, SQLiteReader
+from graphnet.data.writers import ParquetWriter, SQLiteWriter, LMDBWriter
 from graphnet.data.extractors.icecube import I3Extractor
-from graphnet.data.extractors.internal import ParquetExtractor
+from graphnet.data.extractors.internal import ParquetExtractor, SQLiteExtractor
 from graphnet.data.extractors.icecube.utilities.i3_filters import I3Filter
+from graphnet.models.data_representation import DataRepresentation
 
 
 class I3ToParquetConverter(DataConverter):
@@ -135,6 +136,76 @@ class ParquetToSQLiteConverter(DataConverter):
         super().__init__(
             file_reader=ParquetReader(),
             save_method=SQLiteWriter(),
+            extractors=extractors,
+            num_workers=num_workers,
+            index_column=index_column,
+            outdir=outdir,
+        )
+
+
+class SQLiteToLMDBConverter(DataConverter):
+    """Preconfigured DataConverter for converting SQLite to LMDB files.
+
+    This class converts SQLite files written by SQLiteWriter to LMDB.
+    """
+
+    def __init__(
+        self,
+        extractors: List[SQLiteExtractor],
+        outdir: str,
+        index_column: str = "event_no",
+        num_workers: int = 1,
+        subset_size: int = 10000,
+        map_size_bytes: int = 8 * 1024 * 1024 * 1024,
+        serialization: Union[str, Callable[[Any], bytes]] = "pickle",
+        data_representation: Optional[
+            Union[DataRepresentation, List[DataRepresentation]]
+        ] = None,
+        pulsemap_extractor_name: Optional[str] = None,
+        truth_extractor_name: Optional[str] = None,
+        truth_label_names: Optional[List[str]] = None,
+    ):
+        """Convert internal SQLite files to LMDB.
+
+        Args:
+            extractors: The `Extractor`(s) that will be applied to the input
+                        files.
+            outdir: The directory to save the files in.
+            index_column: Name of the event id column added to the events.
+                          Defaults to "event_no".
+            num_workers: The number of CPUs used for parallel processing.
+                         Defaults to 1 (no multiprocessing).
+            subset_size: Number of events per fileset chunk for SQLiteReader.
+                         Defaults to 10000.
+            map_size_bytes: LMDB map size. Defaults to 8 GiB.
+            serialization: Either a string in {"pickle", "json", "msgpack",
+                         "dill"}, or a callable that takes an object and
+                         returns bytes. Defaults to "pickle".
+            data_representation: Optional `DataRepresentation` instance or list
+                                of instances. If provided together with
+                                extractor_name and truth_extractor_name,
+                                names and truth labels, the stored value will
+                                contain a "data_representations" field with
+                                outputs from each
+                                `data_representation.forward(...)` keyed by
+                                class name.
+            pulsemap_extractor_name: Name of the extractor providing
+                                    pulse-level features.
+            truth_extractor_name: Name of the extractor providing event-level
+                                 truth labels.
+            truth_label_names: Names of truth columns to include.
+        """
+        super().__init__(
+            file_reader=SQLiteReader(subset_size=subset_size),
+            save_method=LMDBWriter(
+                index_column=index_column,
+                map_size_bytes=map_size_bytes,
+                serialization=serialization,
+                data_representation=data_representation,
+                pulsemap_extractor_name=pulsemap_extractor_name,
+                truth_extractor_name=truth_extractor_name,
+                truth_label_names=truth_label_names,
+            ),
             extractors=extractors,
             num_workers=num_workers,
             index_column=index_column,

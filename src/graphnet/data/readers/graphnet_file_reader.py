@@ -15,7 +15,7 @@ from graphnet.utilities.logging import Logger
 from graphnet.data.dataclasses import I3FileSet, SQLiteFileSet
 from graphnet.data.extractors.extractor import Extractor
 from graphnet.data.extractors.icecube import I3Extractor
-from graphnet.data.extractors.internal import ParquetExtractor
+from graphnet.data.extractors.internal import ParquetExtractor, SQLiteExtractor
 from graphnet.data.extractors.liquido import H5Extractor
 from graphnet.data.extractors.prometheus import PrometheusExtractor
 
@@ -100,6 +100,7 @@ class GraphNeTFileReader(Logger, ABC):
             List[ParquetExtractor],
             List[H5Extractor],
             List[PrometheusExtractor],
+            List[SQLiteExtractor],
         ],
     ) -> None:
         """Set `Extractor`(s) as member variable.
@@ -121,6 +122,7 @@ class GraphNeTFileReader(Logger, ABC):
             List[ParquetExtractor],
             List[H5Extractor],
             List[PrometheusExtractor],
+            List[SQLiteExtractor],
         ],
     ) -> None:
         for extractor in extractors:
