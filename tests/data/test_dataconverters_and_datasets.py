@@ -16,11 +16,12 @@ from graphnet.data.extractors.icecube import (
     I3TruthExtractor,
     I3RetroExtractor,
 )
-from graphnet.data.extractors.internal import ParquetExtractor
+from graphnet.data.extractors.internal import ParquetExtractor, SQLiteExtractor
 from graphnet.data.parquet import ParquetDataConverter
-from graphnet.data.dataset import ParquetDataset, SQLiteDataset
+from graphnet.data.dataset import ParquetDataset, SQLiteDataset, LMDBDataset
 from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
+from graphnet.data.pre_configured.dataconverters import SQLiteToLMDBConverter
 from graphnet.models.graphs import KNNGraph
 from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.detector import IceCubeDeepCore
@@ -233,3 +234,110 @@ def test_database_query_plan(pulsemap: str, event_no: int) -> None:
     assert "USING INDEX event_no" in parquet_plan["detail"].iloc[0]
 
     assert (sqlite_plan["detail"] == parquet_plan["detail"]).all()
+
+
+@pytest.mark.order(5)
+def test_sqlite_to_lmdb_converter() -> None:
+    """Test the implementation of `SQLiteToLMDBConverter`."""
+    # Create graph definition for pre-computed representation
+    graph_definition = KNNGraph(
+        detector=IceCubeDeepCore(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+        input_feature_names=FEATURES.DEEPCORE,
+    )
+
+    # Constructor SQLiteToLMDBConverter instance with pre-computed
+    # representation
+    outdir = os.path.join(TEST_OUTPUT_DIR, "sqlite_to_lmdb")
+    converter = SQLiteToLMDBConverter(
+        extractors=[
+            SQLiteExtractor(extractor_name="truth"),
+            SQLiteExtractor(extractor_name="SRTInIcePulses"),
+        ],
+        outdir=outdir,
+        num_workers=1,
+        data_representation=graph_definition,
+        pulsemap_extractor_name="SRTInIcePulses",
+        truth_extractor_name="truth",
+        truth_label_names=TRUTH.DEEPCORE,
+    )
+    # Perform conversion from SQLite to LMDB
+    converter(get_file_path("sqlite"))
+    converter.merge_files()
+
+    # Check that output exists
+    path = f"{outdir}/merged/merged.lmdb"
+    assert os.path.exists(path), path
+    assert os.path.isdir(path), f"{path} should be a directory"
+
+    # Test 1: Check that datasets agree when reading raw tables
+    opt_raw = dict(
+        pulsemaps="SRTInIcePulses",
+        features=FEATURES.DEEPCORE,
+        truth=TRUTH.DEEPCORE,
+        graph_definition=graph_definition,
+    )
+
+    dataset_from_lmdb_raw = LMDBDataset(
+        path, **opt_raw
+    )  # type: ignore[arg-type]
+    dataset_sqlite = SQLiteDataset(
+        get_file_path("sqlite"), **opt_raw  # type: ignore[arg-type]
+    )
+
+    assert len(dataset_from_lmdb_raw) == len(dataset_sqlite)
+    for ix in range(len(dataset_sqlite)):
+        dataset_from_lmdb_raw[ix].x
+        dataset_sqlite[ix].x
+        assert torch.allclose(
+            dataset_from_lmdb_raw[ix].x, dataset_sqlite[ix].x
+        )
+
+    # Test 2: Check that pre-computed representation matches real-time computed
+    # The pre-computed representation field name is the class name
+    pre_computed_field_name = graph_definition.__class__.__name__
+
+    opt_precomputed = dict(
+        pulsemaps="SRTInIcePulses",
+        features=FEATURES.DEEPCORE,
+        truth=TRUTH.DEEPCORE,
+        pre_computed_representation=pre_computed_field_name,
+    )
+
+    dataset_from_lmdb_precomputed = LMDBDataset(
+        path, **opt_precomputed  # type: ignore[arg-type]
+    )
+
+    assert len(dataset_from_lmdb_precomputed) == len(dataset_sqlite)
+
+    # Compare pre-computed representation with real-time computed from SQLite
+    for ix in range(len(dataset_sqlite)):
+        precomputed_event = dataset_from_lmdb_precomputed[ix]
+        realtime_event = dataset_sqlite[ix]
+
+        # Compare node features
+        assert torch.allclose(precomputed_event.x, realtime_event.x)
+
+        # Compare edge indices if they exist
+        if hasattr(precomputed_event, "edge_index") and hasattr(
+            realtime_event, "edge_index"
+        ):
+            assert torch.equal(
+                precomputed_event.edge_index, realtime_event.edge_index
+            )
+
+        # Compare number of pulses
+        assert precomputed_event.n_pulses == realtime_event.n_pulses
+
+        # Compare truth labels
+        for truth_key in TRUTH.DEEPCORE:
+            if hasattr(precomputed_event, truth_key) and hasattr(
+                realtime_event, truth_key
+            ):
+                precomputed_truth = getattr(precomputed_event, truth_key)
+                realtime_truth = getattr(realtime_event, truth_key)
+                if isinstance(precomputed_truth, torch.Tensor):
+                    assert torch.allclose(precomputed_truth, realtime_truth)
+                else:
+                    assert precomputed_truth == realtime_truth
