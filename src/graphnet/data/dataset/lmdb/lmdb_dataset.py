@@ -290,6 +290,20 @@ class LMDBDataset(Dataset):
     ) -> np.ndarray:
         """Query the cache for the table data."""
         data = self._cached_data[table]
+        try:
+            table_data = [
+                np.array(data[column]).reshape(-1, 1) for column in columns
+            ]
+        except KeyError:
+            missing = []
+            for column in columns:
+                if column not in data.keys():
+                    missing.append(column)
+
+            raise ColumnMissingException(
+                f"Columns '{missing}' not found in table '{table}'."
+            )
+
         table_data = [
             np.array(data[column]).reshape(-1, 1) for column in columns
         ]
@@ -394,10 +408,15 @@ class LMDBDataset(Dataset):
             # If the user specifies missing truth labels, add them to the data
             if self._missing_truth_labels:
                 truth_table = self._cached_data[self._truth_table]
-                truth_dict = {
-                    label: truth_table[label]
-                    for label in self._missing_truth_labels
-                }
+
+                add_these = []
+                for label in self._missing_truth_labels:
+                    if label in truth_table.keys():
+                        add_these.append(label)
+
+                truth_dict = [
+                    {label: truth_table[label]} for label in add_these
+                ]
                 data = add_truth(
                     data=data, truth_dicts=truth_dict, dtype=self._dtype
                 )

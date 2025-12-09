@@ -336,6 +336,13 @@ def test_sqlite_to_lmdb_converter() -> None:
                 precomputed_truth = getattr(precomputed_event, truth_key)
                 realtime_truth = getattr(realtime_event, truth_key)
                 if isinstance(precomputed_truth, torch.Tensor):
-                    assert torch.allclose(precomputed_truth, realtime_truth)
+
+                    assert torch.allclose(
+                        precomputed_truth,
+                        realtime_truth.to(precomputed_truth.dtype),
+                    )
                 else:
                     assert precomputed_truth == realtime_truth
+
+
+test_sqlite_to_lmdb_converter()
