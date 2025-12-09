@@ -21,7 +21,10 @@ from graphnet.data.parquet import ParquetDataConverter
 from graphnet.data.dataset import ParquetDataset, SQLiteDataset, LMDBDataset
 from graphnet.data.sqlite import SQLiteDataConverter
 from graphnet.data.utilities.parquet_to_sqlite import ParquetToSQLiteConverter
-from graphnet.data.pre_configured.dataconverters import SQLiteToLMDBConverter
+from graphnet.data.pre_configured.dataconverters import (
+    I3ToLMDBConverter,
+    SQLiteToLMDBConverter,
+)
 from graphnet.models.graphs import KNNGraph
 from graphnet.models.graphs.nodes import NodesAsPulses
 from graphnet.models.detector import IceCubeDeepCore
@@ -42,6 +45,7 @@ def get_file_path(backend: str, table: str = "") -> str:
     suffix = {
         "sqlite": ".db",
         "parquet": ".parquet",
+        "lmdb": ".lmdb",
     }[backend]
     if backend == "sqlite":
         path = os.path.join(TEST_OUTPUT_DIR, backend, FILE_NAME + suffix)
@@ -49,11 +53,15 @@ def get_file_path(backend: str, table: str = "") -> str:
         path = os.path.join(
             TEST_OUTPUT_DIR, backend, table, FILE_NAME + f"_{table}" + suffix
         )
+    elif backend == "lmdb":
+        path = os.path.join(
+            TEST_OUTPUT_DIR, backend, "merged", "merged" + suffix
+        )
     return path
 
 
 @pytest.mark.order(1)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite", "parquet", "lmdb"])
 def test_dataconverter(
     backend: str, test_data_dir: str = TEST_DATA_DIR
 ) -> None:
@@ -83,12 +91,15 @@ def test_dataconverter(
         converter = SQLiteDataConverter(**opt)  # type: ignore[arg-type]
     elif backend == "parquet":
         converter = ParquetDataConverter(**opt)  # type: ignore[arg-type]
+    elif backend == "lmdb":
+        converter = I3ToLMDBConverter(**opt)  # type: ignore[arg-type]
     else:
         assert False, "Shouldn't reach here"
 
     # Perform conversion from I3 to `backend`
     converter(test_data_dir)
-    converter.merge_files()
+    if backend in ["sqlite", "lmdb"]:
+        converter.merge_files()
 
     # Check output
     if backend == "sqlite":
@@ -99,16 +110,22 @@ def test_dataconverter(
             table = extractor._extractor_name
             path = get_file_path(backend, table=table)
             assert os.path.exists(path), path
+    elif backend == "lmdb":
+        path = get_file_path(backend)
+        assert os.path.exists(path), path
+        assert os.path.isdir(path), f"{path} should be a directory"
 
 
 @pytest.mark.order(2)
-@pytest.mark.parametrize("backend", ["sqlite", "parquet"])
+@pytest.mark.parametrize("backend", ["sqlite", "parquet", "lmdb"])
 def test_dataset(backend: str) -> None:
     """Test the implementation of `Dataset` for `backend`."""
     if backend == "sqlite":
         path = get_file_path(backend)
     elif backend == "parquet":
         path = os.path.join(TEST_OUTPUT_DIR, backend, "merged")
+    elif backend == "lmdb":
+        path = get_file_path(backend)
     graph_definition = KNNGraph(
         detector=IceCubeDeepCore(),
         node_definition=NodesAsPulses(),
@@ -129,6 +146,8 @@ def test_dataset(backend: str) -> None:
         dataset = SQLiteDataset(**opt)  # type: ignore[arg-type]
     elif backend == "parquet":
         dataset = ParquetDataset(**opt)  # type: ignore[arg-type]
+    elif backend == "lmdb":
+        dataset = LMDBDataset(**opt)  # type: ignore[arg-type]
     else:
         assert False, "Shouldn't reach here"
 
