@@ -279,9 +279,7 @@ def test_sqlite_to_lmdb_converter() -> None:
         graph_definition=graph_definition,
     )
 
-    dataset_from_lmdb_raw = LMDBDataset(  # type: ignore[arg-type]
-        path, **opt_raw
-    )
+    dataset_from_lmdb_raw = LMDBDataset(path, **opt_raw)  # type: ignore
     dataset_sqlite = SQLiteDataset(
         get_file_path("sqlite"), **opt_raw  # type: ignore[arg-type]
     )
@@ -305,8 +303,8 @@ def test_sqlite_to_lmdb_converter() -> None:
         pre_computed_representation=pre_computed_field_name,
     )
 
-    dataset_from_lmdb_precomputed = LMDBDataset(  # type: ignore[arg-type]
-        path, **opt_precomputed
+    dataset_from_lmdb_precomputed = LMDBDataset(
+        path, **opt_precomputed  # type: ignore
     )
 
     assert len(dataset_from_lmdb_precomputed) == len(dataset_sqlite)
