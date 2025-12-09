@@ -463,7 +463,7 @@ class LMDBWriter(GraphNeTWriter):
             written += 1
         return written
 
-    def merge_files(
+    def merge_files(  # noqa: C901
         self,
         files: List[str],
         output_dir: str,
