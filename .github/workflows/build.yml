@@ -75,6 +75,7 @@ jobs:
           sudo apt update --fix-missing --yes
           sudo apt upgrade --yes
           sudo apt-get install --yes git
+          sudo apt-get clean 
 
       - uses: actions/checkout@v4
 
@@ -88,17 +89,17 @@ jobs:
           pip show setuptools
 
       - name: Print available disk space before graphnet install
-        run: df -h
-
+        run: | 
+          df -h
       - name: Upgrade packages in virtual environment
         shell: bash
         run: |
           source ~/venv/bin/activate
-          pip install --upgrade astropy
-          pip install --upgrade PyYAML
-          pip install --upgrade psutil
-          pip install --upgrade setuptools
-          pip install --upgrade versioneer
+          pip install --no-cache-dir --upgrade astropy
+          pip install --no-cache-dir --upgrade PyYAML
+          pip install --no-cache-dir --upgrade psutil
+          pip install --no-cache-dir --upgrade setuptools
+          pip install --no-cache-dir --upgrade versioneer
           pip show setuptools
           pip show versioneer
       - name: Install package
