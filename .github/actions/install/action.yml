@@ -69,4 +69,4 @@ runs:
         echo "pip install ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html"
         pip install --no-cache-dir${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html
 
-        pip install --no-cache-dirgit+https://github.com/thoglu/jammy_flows.git
+        pip install --no-cache-dir git+https://github.com/thoglu/jammy_flows.git
