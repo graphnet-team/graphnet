@@ -119,6 +119,9 @@ jobs:
           pip show torch-sparse
           pip show torch-scatter
           pip show jammy_flows
+      - name: Print available disk space after graphnet install
+        run: | 
+          df -h
       - name: Run unit tests and generate coverage report
         shell: bash
         run: |
