@@ -129,11 +129,10 @@ class DataConverter(ABC, Logger):
         map_fn, pool = self.get_map_function(nb_files=len(input_files))
 
         # Iterate over files
-        for _ in map_fn(
+        map_fn(
             self._process_file,
             tqdm(input_files, unit=" file(s)", colour="green"),
-        ):
-            self.debug("processing file.")
+        )
         self._update_shared_variables(pool)
 
     @final
