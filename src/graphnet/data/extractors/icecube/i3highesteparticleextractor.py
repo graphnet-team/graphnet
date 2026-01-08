@@ -1,7 +1,7 @@
 """Extract the highest energy particle in the event."""
 
 from typing import Dict, Any, TYPE_CHECKING, Tuple, Union, List
-
+from copy import deepcopy
 
 from .i3extractor import I3Extractor
 from .utilities.gcd_hull import GCD_hull
@@ -198,6 +198,8 @@ class I3HighestEparticleExtractor(I3Extractor):
         )
         MMCTrackList = np.array(MMCTrackList)
 
+        assert len(MuonGun_tracks) == len(MMCTrackList), "Length mismatch"
+
         return (
             MuonGun_tracks,
             MMCTrackList,
@@ -240,7 +242,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         ).T
         loc_max = np.argmax(energies)
         # Inherit from the highest energy particle
-        bundle = particles[loc_max]
+        bundle = deepcopy(particles[loc_max])
 
         intersections = self.hull.surface.intersection(bundle.pos, bundle.dir)
 
@@ -271,6 +273,9 @@ class I3HighestEparticleExtractor(I3Extractor):
         containment = -1
 
         MuonGun_tracks, MMCTrackList = self.get_tracks(frame)
+        assert len(MuonGun_tracks) == len(
+            MMCTrackList
+        ), f"MuonGun and MCTracklist have different lengths in {frame['I3EventHeader']}"
 
         energies = np.array([track.energy for track in MuonGun_tracks])
 
@@ -308,7 +313,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         while len(energies) > 0:
             loc = np.argmax(energies)
             track = MMCTrackList[loc]
-            track_particle = track_particles[loc]
+            track_particle = deepcopy(track_particles[loc])
             length = lengths[loc]
             energies = np.delete(energies, loc)
             MMCTrackList = np.delete(MMCTrackList, loc)
@@ -478,7 +483,7 @@ class I3HighestEparticleExtractor(I3Extractor):
 
         # Move the particle position to the interaction vertex.
         HE_loc = np.argmax(energies)
-        entry_particle = particles[HE_loc]
+        entry_particle = deepcopy(particles[HE_loc])
         entry_particle.pos = dataclasses.I3Position(
             pos[HE_loc][0], pos[HE_loc][1], pos[HE_loc][2]
         )
