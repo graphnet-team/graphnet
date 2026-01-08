@@ -57,12 +57,14 @@
 
 <div class="quick-start">
   <div class="title-column">
+    <div>GraphNeT</div>
     <div>PyTorch</div>
     <div>Your OS</div>
     <div>CUDA</div>
     <div>Run:</div>
   </div>
   <div class="content-column">
+    <div class="row" id="graphnet"></div>
     <div class="row" id="torch"></div>
     <div class="row" id="os"></div>
     <div class="row" id="cuda"></div>
@@ -72,6 +74,11 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  var graphnetList = [
+    ['v1.8.0', 'v1.8.0'],
+    ['latest', 'Latest'],
+  ];
+
   var torchList = [
     ['torch-2.7.0', 'PyTorch 2.7.0'],
     ['torch-2.6.0', 'PyTorch 2.6.0'],
@@ -105,6 +112,10 @@
     "torch-2.5.1": "torch-25"
   };
 
+  for (var i = 0; i < graphnetList.length; i++) {
+    $("#graphnet").append('<div id="' + graphnetList[i][0] + '">' + graphnetList[i][1] + '</div>');
+  }
+
   for (var i = 0; i < torchList.length; i++) {
     $("#torch").append('<div id="' + torchList[i][0] + '">' + torchList[i][1] + '</div>');
   }
@@ -123,42 +134,53 @@
   }
 
   function updateCommand() {
-  var torch = $("#command").attr("torch");
-  var os = $("#command").attr("os");
-  var cuda = $("#command").attr("cuda");
+    var graphnet = $("#command").attr("graphnet");
+    var torch = $("#command").attr("torch");
+    var os = $("#command").attr("os");
+    var cuda = $("#command").attr("cuda");
 
-  if (!torch || !os || !cuda) return;
+    if (!graphnet || !torch || !os || !cuda) return;
 
-  if (os === "macos" && cuda !== "cpu") {
-    $("#command pre").text('# macOS binaries do not support CUDA');
-    return;
-  }
+    if (os === "macos" && cuda !== "cpu") {
+      $("#command pre").text('# macOS binaries do not support CUDA');
+      return;
+    }
 
-  if (cuda !== "cpu" && torch === "no_torch") {
-    $("#command pre").text('# GPU acceleration is not available without PyTorch.');
-    return;
-  }
+    if (cuda !== "cpu" && torch === "no_torch") {
+      $("#command pre").text('# GPU acceleration is not available without PyTorch.');
+      return;
+    }
 
-  if (
-    (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
-    (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
-    (torch === "torch-2.5.1" && (cuda === "cu126" || cuda === "cu128"))
-  ) {
-    $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
-    return;
-  }
+    if (
+      (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
+      (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
+      (torch === "torch-2.5.1" && (cuda === "cu126" || cuda === "cu128"))
+    ) {
+      $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
+      return;
+    }
 
-  if (torch === "no_torch") {
-    $("#command pre").text("pip3 install -e .[develop]");
-  } else {
+    var gitCloneCmd =
+      graphnet === "v1.8.0"
+        ? "git clone --branch v1.8.0 --depth 1 https://github.com/graphnet-team/graphnet.git"
+        : "git clone https://github.com/graphnet-team/graphnet.git";
+
+    if (torch === "no_torch") {
+      $("#command pre").text([
+        "# Clone and Install GraphNeT",
+        gitCloneCmd,
+        "cd graphnet",
+        "pip3 install -e .[develop]"
+      ].join("\n"));
+      return;
+    }
+
     var torchVersion = torchWheelMap[torch];
     var extrasPrefix = torchExtrasMap[torch];
-
     var installLine = "pip3 install -e .[" + extrasPrefix + "]";
     var wheelUrl = "https://data.pyg.org/whl/torch-" + torchVersion + "+" + (cuda === "cpu" ? "cpu" : cuda) + ".html";
     installLine += " -f " + wheelUrl;
 
-    // --- Added PyTorch wheels install command here ---
     var pytorchInstallCommands = {
       "torch-2.5.1": {
         "cu118": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118",
@@ -180,18 +202,15 @@
       }
     };
 
-    // Pick PyTorch install command or fallback to cpu
-    var pytorchCmd = pytorchInstallCommands[torch][cuda];
-    if (!pytorchCmd) {
-      pytorchCmd = pytorchInstallCommands[torch]["cpu"] || "pip3 install torch torchvision torchaudio";
-    }
+    var pytorchCmd = pytorchInstallCommands[torch][cuda] ||
+                     pytorchInstallCommands[torch]["cpu"];
 
     $("#command pre").text([
-      "# Install PyTorch ",
+      "# Install PyTorch",
       pytorchCmd,
       " ",
       "# Clone and Install GraphNeT",
-      "git clone https://github.com/graphnet-team/graphnet.git",
+      gitCloneCmd,
       "cd graphnet",
       installLine,
       " ",
@@ -199,8 +218,6 @@
       "pip3 install git+https://github.com/thoglu/jammy_flows.git"
     ].join("\n"));
   }
-}
-
 
   $(".quick-start .content-column .row div").click(function () {
     $(this).parent().children().removeClass("selected");
@@ -209,7 +226,7 @@
     updateCommand();
   });
 
-  // Default selection
+  $("#graphnet").children().get(0).click();
   $("#torch").children().get(0).click();
   $("#linux").click();
   $("#cpu").click();
