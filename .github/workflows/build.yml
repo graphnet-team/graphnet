@@ -104,6 +104,11 @@ jobs:
           pip show setuptools
           pip show versioneer
           rm -rf ~/.cache/pip
+      - name: Install PyTorch and dependencies
+        shell: bash
+        run: |
+          source ~/venv/bin/activate
+          pip3 install torch==${{ matrix.torch_version }}+${{ matrix.hardware }} torchvision torchaudio --index-url https://download.pytorch.org/whl/${{ matrix.hardware }}
       - name: Install package
         uses: ./.github/actions/install
         with:
