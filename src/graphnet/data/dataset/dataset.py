@@ -344,8 +344,11 @@ class Dataset(
                     "will be deprecated in GraphNeT 2.0. "
                     "Please use `data_representation` instead."
                 )
-            else:
+            elif "LMDBDataset" not in [
+                cls.__name__ for cls in self.__class__.__mro__
+            ]:
                 # Code stops
+                # Check class hierarchy as string to avoid circular import
                 raise TypeError(
                     "__init__() missing 1 required keyword argument:"
                     "'data_representation'"
@@ -353,7 +356,12 @@ class Dataset(
 
         self._data_representation = deepcopy(data_representation)
         self._labels = labels
-        self._string_column = data_representation._detector.string_index_name
+        if data_representation is None:
+            self._string_column = None
+        else:
+            self._string_column = (
+                data_representation._detector.string_index_name
+            )
 
         if node_truth is not None:
             assert isinstance(node_truth_table, str)
@@ -447,6 +455,11 @@ class Dataset(
             "DeprecationWarning: `_graph_definition` will be deprecated in"
             " GraphNeT 2.0. Please use `_data_representation` instead."
         )
+        if self._data_representation is None:
+            raise AttributeError(
+                "No data representation available. Provide a data "
+                "representation when constructing the dataset."
+            )
         return self._data_representation
 
     # Abstract method(s)
@@ -706,7 +719,14 @@ class Dataset(
 
         assert isinstance(features, np.ndarray)
         # Construct graph data object
-        assert self._data_representation is not None
+        try:
+            assert self._data_representation is not None
+        except AssertionError:
+            raise AssertionError(
+                "Real-time computation of data representation requires "
+                "a data representation to be provided. Please provide a "
+                "data representation when initializing the dataset."
+            )
         graph = self._data_representation(
             input_features=node_features,
             input_feature_names=self._features,

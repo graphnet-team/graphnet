@@ -11,6 +11,7 @@ from graphnet.data.dataset import (
     EnsembleDataset,
     SQLiteDataset,
     ParquetDataset,
+    LMDBDataset,
 )
 from graphnet.utilities.logging import Logger
 from graphnet.data.dataloader import DataLoader
@@ -22,7 +23,10 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
     def __init__(
         self,
         dataset_reference: Union[
-            Type[SQLiteDataset], Type[ParquetDataset], Type[Dataset]
+            Type[SQLiteDataset],
+            Type[ParquetDataset],
+            Type[LMDBDataset],
+            Type[Dataset],
         ],
         dataset_args: Dict[str, Any],
         selection: Optional[Union[List[int], List[List[int]]]] = None,
@@ -250,6 +254,22 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         ):
             self._test_dataset._close_connection()
 
+        # Close LMDB connections
+        if hasattr(self, "_train_dataset") and isinstance(
+            self._train_dataset, LMDBDataset
+        ):
+            self._train_dataset._close_connection()
+
+        if hasattr(self, "_val_dataset") and isinstance(
+            self._val_dataset, LMDBDataset
+        ):
+            self._val_dataset._close_connection()
+
+        if hasattr(self, "_test_dataset") and isinstance(
+            self._test_dataset, LMDBDataset
+        ):
+            self._test_dataset._close_connection()
+
         return
 
     def _create_dataloader(
@@ -317,14 +337,15 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
         """Sanity checks on the dataset reference (self._dataset).
 
         Checks whether the dataset is an instance of SQLiteDataset,
-        ParquetDataset, or Dataset. Raises a TypeError if an invalid
-        dataset type is detected, or if an EnsembleDataset is used.
+        ParquetDataset, LMDBDataset, or Dataset. Raises a TypeError if
+        an invalid dataset type is detected, or if an EnsembleDataset is
+        used.
         """
-        allowed_types = (SQLiteDataset, ParquetDataset, Dataset)
+        allowed_types = (SQLiteDataset, ParquetDataset, LMDBDataset, Dataset)
         if self._dataset not in allowed_types:
             raise TypeError(
                 "dataset_reference must be an instance "
-                "of SQLiteDataset, ParquetDataset, or Dataset."
+                "of SQLiteDataset, ParquetDataset, LMDBDataset, or Dataset."
             )
         if self._dataset is EnsembleDataset:
             raise TypeError(
