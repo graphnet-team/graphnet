@@ -99,8 +99,6 @@ jobs:
       - name: Create virtual environment
         shell: bash
         run: |
-          python3 -m venv ~/venv --upgrade-deps
-          source ~/venv/bin/activate
           pip --version
           python --version
           pip show setuptools
@@ -111,7 +109,6 @@ jobs:
       - name: Upgrade packages in virtual environment
         shell: bash
         run: |
-          source ~/venv/bin/activate
           pip install --no-cache-dir --upgrade astropy
           pip install --no-cache-dir --upgrade PyYAML
           pip install --no-cache-dir --upgrade psutil
@@ -123,13 +120,12 @@ jobs:
         uses: ./.github/actions/install
         with:
           editable: false
-          use_vm: true
+          use_vm: false
           torch_version: ${{ matrix.torch_version }}
           hardware: ${{ matrix.hardware }}
       - name: Print packages in pip
         shell: bash
         run: |
-          source ~/venv/bin/activate
           pip show torch
           pip show torch-geometric
           pip show torch-cluster
@@ -142,7 +138,6 @@ jobs:
       - name: Run unit tests and generate coverage report
         shell: bash
         run: |
-          source ~/venv/bin/activate
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities
           coverage run -a --source=graphnet -m pytest tests/examples/04_training
           coverage run -a --source=graphnet -m pytest tests/utilities
