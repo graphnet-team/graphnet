@@ -86,7 +86,6 @@ def test_dataconverter(
         assert False, "Shouldn't reach here"
 
     # Perform conversion from I3 to `backend`
-    print(test_data_dir, os.listdir(test_data_dir))
     converter(test_data_dir)
     converter.merge_files()
 
