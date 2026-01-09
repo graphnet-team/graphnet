@@ -45,23 +45,6 @@ jobs:
       image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
 
     steps:
-      - name: Remove IceTray build artifacts
-        run: |
-          echo "Initial disk usage:"
-          df -h
-
-          rm -rf /opt/icetray_src
-          rm -rf /root/icetray/build
-
-          rm -rf /var/lib/apt/lists/*
-          rm -rf /usr/share/man/*
-          rm -rf /usr/share/doc/*
-          rm -rf /usr/share/locale/*
-
-          rm -rf ~/.cache/pip /tmp/*
-
-          echo "Disk usage after cleanup:"
-          df -h
       - name: Mimmick Docker Entrypoint
         # The entrypoint of the container sets python paths
         # Because the entrypoint is skipped by GitHub, we set it here
@@ -99,16 +82,20 @@ jobs:
       - name: Create virtual environment
         shell: bash
         run: |
+          python3 -m venv ~/venv --upgrade-deps
+          source ~/venv/bin/activate
           pip --version
           python --version
           pip show setuptools
-
+          rm -rf ~/.cache/pip
+      
       - name: Print available disk space before graphnet install
         run: | 
           df -h
       - name: Upgrade packages in virtual environment
         shell: bash
         run: |
+          source ~/venv/bin/activate
           pip install --no-cache-dir --upgrade astropy
           pip install --no-cache-dir --upgrade PyYAML
           pip install --no-cache-dir --upgrade psutil
@@ -116,16 +103,18 @@ jobs:
           pip install --no-cache-dir --upgrade versioneer
           pip show setuptools
           pip show versioneer
+          rm -rf ~/.cache/pip
       - name: Install package
         uses: ./.github/actions/install
         with:
           editable: false
-          use_vm: false
+          use_vm: true
           torch_version: ${{ matrix.torch_version }}
           hardware: ${{ matrix.hardware }}
       - name: Print packages in pip
         shell: bash
         run: |
+          source ~/venv/bin/activate
           pip show torch
           pip show torch-geometric
           pip show torch-cluster
@@ -138,6 +127,7 @@ jobs:
       - name: Run unit tests and generate coverage report
         shell: bash
         run: |
+          source ~/venv/bin/activate
           coverage run --source=graphnet -m pytest tests/ --ignore=tests/examples/04_training --ignore=tests/utilities
           coverage run -a --source=graphnet -m pytest tests/examples/04_training
           coverage run -a --source=graphnet -m pytest tests/utilities
