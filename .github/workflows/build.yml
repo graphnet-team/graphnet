@@ -45,6 +45,13 @@ jobs:
       image: icecube/icetray:icetray-devel-v1.13.0-ubuntu22.04-2025-02-12
 
     steps:
+      - name: Remove IceTray build artifacts
+        run: |
+          df -h
+          rm -rf /opt/icetray_src
+          rm -rf /root/icetray/build
+          df -h
+
       - name: Mimmick Docker Entrypoint
         # The entrypoint of the container sets python paths
         # Because the entrypoint is skipped by GitHub, we set it here
