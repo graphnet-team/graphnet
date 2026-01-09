@@ -105,7 +105,7 @@ jobs:
       - name: Install package
         uses: ./.github/actions/install
         with:
-          editable: true
+          editable: False
           use_vm: true
           torch_version: ${{ matrix.torch_version }}
           hardware: ${{ matrix.hardware }}
