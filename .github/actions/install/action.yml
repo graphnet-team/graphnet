@@ -53,6 +53,7 @@ runs:
         if [[ "${{ inputs.use_vm }}" == "true" ]]; then source ~/venv/bin/activate; fi
         pip install --no-cache-dir --upgrade 'pip>=20'
         pip install --no-cache-dir --upgrade 'setuptools>=68.2.2'
+        rm -rf ~/.cache/pip
 
     - name: Print pip and setuptools versions
       shell: bash
@@ -68,5 +69,5 @@ runs:
         echo "Installing graphnet with flags: ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }}"
         echo "pip install ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html"
         pip install --no-cache-dir${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html
-
+        rm -rf ~/.cache/pip
         pip install --no-cache-dir git+https://github.com/thoglu/jammy_flows.git
