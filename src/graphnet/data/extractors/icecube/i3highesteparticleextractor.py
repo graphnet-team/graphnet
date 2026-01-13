@@ -126,11 +126,17 @@ class I3HighestEparticleExtractor(I3Extractor):
                 )
             except IndexError:
                 parent_type = 0
-
             if primary_energy > 0:
                 primary_fraction = EonEntrance / primary_energy
             else:
                 primary_fraction = -1
+
+            if visible_length != -1:
+                primary = frame[self.mctree].get_primary(HEParticle.id)
+                primary_is_nu, primary_type = primary.is_neutrino, primary.type
+            else:
+                primary_type = 0
+                primary_is_nu = False
             output.update(
                 {
                     "e_fraction_" + self._extractor_name: primary_fraction,
@@ -153,6 +159,8 @@ class I3HighestEparticleExtractor(I3Extractor):
                     "particle_type_" + self._extractor_name: HEParticle.type,
                     "containment_" + self._extractor_name: containment,
                     "parent_type_" + self._extractor_name: parent_type,
+                    "primary_type_" + self._extractor_name: primary_type,
+                    "primary_is_nu_" + self._extractor_name: primary_is_nu,
                 }
             )
 
