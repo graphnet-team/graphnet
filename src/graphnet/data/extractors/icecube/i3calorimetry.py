@@ -236,7 +236,9 @@ class I3Calorimetry(I3Extractor):
                     continue
                 if length == np.nan:
                     length = 0
-                if daughter.is_cascade and daughter.shape != "Dark":
+                if daughter.is_cascade and (
+                    daughter.shape != dataclasses.I3Particle.ParticleShape.Dark
+                ):
                     e_deposited += daughter.energy
                 else:
                     daughters = np.concatenate(
