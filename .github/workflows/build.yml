@@ -87,7 +87,8 @@ jobs:
           pip --version
           python --version
           pip show setuptools
-
+          rm -rf ~/.cache/pip
+      
       - name: Print available disk space before graphnet install
         run: | 
           df -h
@@ -102,6 +103,13 @@ jobs:
           pip install --no-cache-dir --upgrade versioneer
           pip show setuptools
           pip show versioneer
+          rm -rf ~/.cache/pip
+      - name: Install PyTorch and dependencies
+        shell: bash
+        run: |
+          source ~/venv/bin/activate
+          pip3 install --no-cache-dir torch==${{ matrix.torch_version }}+${{ matrix.hardware }} torchvision torchaudio --index-url https://download.pytorch.org/whl/${{ matrix.hardware }}
+          rm -rf ~/.cache/pip
       - name: Install package
         uses: ./.github/actions/install
         with:
