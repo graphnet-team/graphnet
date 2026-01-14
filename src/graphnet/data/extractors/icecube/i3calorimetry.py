@@ -8,6 +8,7 @@ from .i3extractor import I3Extractor
 import numpy as np
 
 from graphnet.utilities.imports import has_icecube_package
+from copy import deepcopy
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
@@ -32,6 +33,7 @@ class I3Calorimetry(I3Extractor):
         mmctracklist: str = "MMCTrackList",
         extractor_name: str = "I3Calorimetry",
         daughters: bool = False,
+        highest_energy_primary: bool = False,
         **kwargs: Any,
     ) -> None:
         """Create a ConvexHull object from the GCD file.
@@ -49,12 +51,15 @@ class I3Calorimetry(I3Extractor):
         self.mctree = mctree
         self.mmctracklist = mmctracklist
         self.daughters = daughters
+        self.highest_energy_primary = highest_energy_primary
         # Base class constructor
         super().__init__(extractor_name=extractor_name, **kwargs)
 
     def __call__(self, frame: "icetray.I3Frame") -> Dict[str, Any]:
         """Extract all the visible particles entering the volume."""
         output = {}
+        # copy the original mctree because we will be modifying it
+        tree_copy = deepcopy(frame[self.mctree])
         if self.frame_contains_info(frame):
 
             e_entrance_track, e_deposited_track = self.total_track_energy(
@@ -67,7 +72,12 @@ class I3Calorimetry(I3Extractor):
                 [
                     p.energy
                     for p in self.check_primary_energy(
-                        frame, self.get_primaries(frame, self.daughters)
+                        frame,
+                        self.get_primaries(
+                            frame,
+                            self.daughters,
+                            highest_energy_primary=self.highest_energy_primary,
+                        ),
                     )
                 ]
             )
@@ -113,6 +123,9 @@ class I3Calorimetry(I3Extractor):
             )
 
         output = {k: v for k, v in output.items() if k not in self._exclude}
+        # restore original mctree
+        frame.Delete(self.mctree)
+        frame[self.mctree] = tree_copy
         return output
 
     def frame_contains_info(self, frame: "icetray.I3Frame") -> bool:
@@ -138,8 +151,12 @@ class I3Calorimetry(I3Extractor):
             ]
             MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList)
 
-        for track in MuonGun.Track.harvest(frame[self.mctree], MMCTrackList):
-            assert track.is_track, "Track is not a track"
+        track_list = MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
+        track_ids = np.array([track.id for track in track_list])
+
+        total_tracks = len(track_list)
+        while len(track_list) > 0:
+            track = track_list[0]
 
             # Find distance to entrance and exit from sampling volume
             intersections = self.hull.surface.intersection(
@@ -160,6 +177,19 @@ class I3Calorimetry(I3Extractor):
                 assert e_deposited <= sum(
                     [p.energy for p in primaries]
                 ), "Energy deposited is greater than primary energy"
+            # erase particle and children
+            exclude_ids = set(
+                [c.id for c in frame[self.mctree].children(track.id)]
+            )
+            exclude_ids.add(track.id)
+            frame[self.mctree].erase_children(track.id)
+            frame[self.mctree].erase(track.id)
+            track_mask = [tid not in exclude_ids for tid in track_ids]
+            track_list = list(np.array(track_list)[track_mask])
+            track_ids = track_ids[track_mask]
+            self._logger.debug(
+                f"Remaining tracks: {len(track_list)}/{total_tracks}"
+            )
         return e_entrance, e_deposited
 
     def total_cascade_energy(
