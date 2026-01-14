@@ -155,6 +155,7 @@ class I3Calorimetry(I3Extractor):
         track_ids = np.array([track.id for track in track_list])
 
         total_tracks = len(track_list)
+        exclude_ids = set()
         while len(track_list) > 0:
             track = track_list[0]
 
@@ -162,23 +163,32 @@ class I3Calorimetry(I3Extractor):
             intersections = self.hull.surface.intersection(
                 track.pos, track.dir
             )
-            # Get the corresponding energies
 
+            # Check if the track actually enters the volume
+            if not (
+                np.isfinite(intersections.first)
+                and (
+                    intersections.first
+                    < frame[self.mctree].get_particle(track.id).length
+                )
+            ):
+                track_list = track_list[1:]
+                track_ids = track_ids[1:]
+                frame[self.mctree].erase(track.id)
+                self._logger.debug(
+                    f"Remaining tracks: {len(track_list)}/{total_tracks}"
+                )
+                continue
+
+            # Get the corresponding energies
             e0 = track.get_energy(intersections.first)
             e1 = track.get_energy(intersections.second)
 
             # Accumulate
             e_deposited += e0 - e1
             e_entrance += e0
-            if self.daughters:
-                assert e_entrance <= sum(
-                    [p.energy for p in primaries]
-                ), "Energy on entrance is greater than primary energy"
-                assert e_deposited <= sum(
-                    [p.energy for p in primaries]
-                ), "Energy deposited is greater than primary energy"
             # erase particle and children
-            exclude_ids = set(
+            exclude_ids.update(
                 [c.id for c in frame[self.mctree].children(track.id)]
             )
             exclude_ids.add(track.id)
@@ -190,6 +200,14 @@ class I3Calorimetry(I3Extractor):
             self._logger.debug(
                 f"Remaining tracks: {len(track_list)}/{total_tracks}"
             )
+        # Sanity check ensuring no double counting
+        if self.daughters:
+            assert e_entrance <= sum(
+                [p.energy for p in primaries]
+            ), "Energy on entrance is greater than primary energy"
+            assert e_deposited <= sum(
+                [p.energy for p in primaries]
+            ), "Energy deposited is greater than primary energy"
         return e_entrance, e_deposited
 
     def total_cascade_energy(
