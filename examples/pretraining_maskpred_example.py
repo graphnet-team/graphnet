@@ -52,7 +52,8 @@ class simple_target_gen(Model):
 
 
 def test() -> None:
-    """Function that just evaluates the model to test it and has a save example commented in the end."""
+    """Function that just evaluates the model to test it and has a save example
+    commented in the end."""
     graph_definition = KNNGraph(
         detector=Prometheus(),
         node_definition=NodesAsPulses(),
