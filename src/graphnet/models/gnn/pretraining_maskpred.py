@@ -256,9 +256,12 @@ class mask_pred_frame(EasySyntax):
         nodes = rep[~mask.bool()]
         btch = data.batch[~mask.bool()]
 
-        loss = scatter(src=self.loss_func(nodes,target,return_elements=True), 
-                       index = btch, reduce="mean", 
-                       dim=0).view(-1,1)
+        loss = scatter(
+            src=self.loss_func(nodes, target, return_elements=True),
+            index=btch,
+            reduce="mean",
+            dim=0,
+        ).view(-1, 1)
 
         if self.add_charge_pred:
             if self.custom_charge_target is None:
