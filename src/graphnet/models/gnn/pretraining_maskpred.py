@@ -18,26 +18,7 @@ from graphnet.models.easy_model import EasySyntax
 from graphnet.models.task import IdentityTask
 
 from graphnet.training.loss_functions import MSELoss
-
-
-def dense_mse_loss(reco: Tensor, orig: Tensor, bv: Tensor) -> Tensor:
-    """Loss function for the mask prediction."""
-    squared_errs = (reco - orig) ** 2
-    losses = torch.mean(
-        scatter(src=squared_errs, index=bv, reduce="mean", dim=0), dim=1
-    )
-
-    return losses.view(-1, 1)
-
-
-def neg_cosine_loss(reco: Tensor, orig: Tensor, bv: Tensor) -> Tensor:
-    """Loss function for the mask prediction."""
-    reco_norm = torch.nn.functional.normalize(reco, dim=1)
-    orig_norm = torch.nn.functional.normalize(orig, dim=1)
-    cos = -(reco_norm * orig_norm).sum(dim=1)
-    losses = scatter(src=cos, index=bv, reduce="mean", dim=0)
-
-    return losses.view(-1, 1)
+from graphnet.training.loss_functions import NegCosLoss
 
 
 class standard_maskpred_net(Model):
@@ -225,9 +206,9 @@ class mask_pred_frame(EasySyntax):
             "mse",
         ], "can only choose from [cosine, mse] for loss function"
         if final_loss == "cosine":
-            self.loss_func = neg_cosine_loss
+            self.loss_func = NegCosLoss()
         elif final_loss == "mse":
-            self.loss_func = dense_mse_loss
+            self.loss_func = MSELoss()
 
         self.add_charge_pred = add_charge_pred
         self.need_charge_rep = need_charge_rep
@@ -275,7 +256,9 @@ class mask_pred_frame(EasySyntax):
         nodes = rep[~mask.bool()]
         btch = data.batch[~mask.bool()]
 
-        loss = self.loss_func(reco=nodes, orig=target, bv=btch)
+        loss = scatter(src=self.loss_func(nodes,target,return_elements=True), 
+                       index = btch, reduce="mean", 
+                       dim=0).view(-1,1)
 
         if self.add_charge_pred:
             if self.custom_charge_target is None:
