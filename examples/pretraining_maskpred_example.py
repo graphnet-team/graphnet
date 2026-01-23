@@ -12,7 +12,6 @@ from torch_scatter import scatter
 import torch
 
 from graphnet.models.detector.prometheus import Prometheus
-from graphnet.models.graphs import KNNGraph
 from graphnet.models.graphs.nodes import NodesAsPulses
 
 
