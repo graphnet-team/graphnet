@@ -1,5 +1,7 @@
 """Minimal example for use of maskpred pretraining."""
 
+from typing import Tuple
+
 from graphnet.models.gnn.pretraining_maskpred import mask_pred_frame
 from graphnet.models import Model
 from torch_geometric.data import Data
@@ -10,6 +12,7 @@ from graphnet.data.dataloader import DataLoader
 from torch_scatter import scatter
 
 import torch
+from torch import Tensor
 
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.graphs.nodes import NodesAsPulses
@@ -27,7 +30,7 @@ class simple_model(Model):
             torch.nn.Linear(4, 10), torch.nn.SELU(), torch.nn.Linear(10, 5)
         )
 
-    def forward(self, data: Data):
+    def forward(self, data: Data) -> Tuple[Tensor, Tensor]:
         """Forward pass."""
         x = self.net(data.x)
         x_rep = scatter(src=x, index=data.batch, dim=0, reduce="max")
@@ -43,7 +46,7 @@ class simple_target_gen(Model):
         """Construct."""
         super().__init__()
 
-    def forward(self, data: Data):
+    def forward(self, data: Data) -> Tensor:
         """Forward pass."""
         target = torch.sum(
             scatter(src=data.x, index=data.batch, dim=0, reduce="max"), dim=1
