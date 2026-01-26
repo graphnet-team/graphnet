@@ -8,6 +8,7 @@ from torch_geometric.data import Data
 from graphnet.models.data_representation.graphs import KNNGraph
 from graphnet.data.dataset.sqlite.sqlite_dataset import SQLiteDataset
 from graphnet.data.dataloader import DataLoader
+from graphnet.constants import EXAMPLE_DATA_DIR
 
 from torch_scatter import scatter
 
@@ -63,7 +64,7 @@ def test() -> None:
     )
 
     dataset = SQLiteDataset(
-        path="/ptmp/mpp/nikme/graphnet/data/examples/sqlite/prometheus/prometheus-events.db",
+        path=f"{EXAMPLE_DATA_DIR}/sqlite/prometheus/prometheus-events.db",
         pulsemaps="total",
         truth_table="mc_truth",
         features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t"],
