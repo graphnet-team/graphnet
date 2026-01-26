@@ -19,6 +19,7 @@ detector
    graphnet.models.detector.icecube
    graphnet.models.detector.liquido
    graphnet.models.detector.magic
+   graphnet.models.detector.nubench
    graphnet.models.detector.prometheus
 
 

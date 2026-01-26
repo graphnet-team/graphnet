@@ -123,8 +123,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -656,7 +656,7 @@
 file formats.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.data.readers.graphnet_file_reader.</span></span><span class="sig-name descname"><span class="pre">GraphNeTFileReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/readers/graphnet_file_reader.html#GraphNeTFileReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.data.readers.graphnet_file_reader.</span></span><span class="sig-name descname"><span class="pre">GraphNeTFileReader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_folder</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/readers/graphnet_file_reader.html#GraphNeTFileReader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.utilities.logging.html#graphnet.utilities.logging.Logger" title="graphnet.utilities.logging.Logger"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
 <p>A generic base class for FileReaders in GraphNeT.</p>
 <p>Classes inheriting from <cite>GraphNeTFileReader</cite> must implement a
@@ -678,17 +678,17 @@ class properties <cite>accepted_file_extensions</cite> and <cite>accepted_extrac
 </dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.accepted_file_extensions">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">accepted_file_extensions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.accepted_file_extensions" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">accepted_file_extensions</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.accepted_file_extensions" title="Link to this definition">¶</a></dt>
 <dd><p>Return list of accepted file extensions.</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.accepted_extractors">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">accepted_extractors</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.data.extractors.extractor.html#graphnet.data.extractors.extractor.Extractor" title="graphnet.data.extractors.extractor.Extractor"><span class="pre">Extractor</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.accepted_extractors" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">accepted_extractors</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.data.extractors.extractor.html#graphnet.data.extractors.extractor.Extractor" title="graphnet.data.extractors.extractor.Extractor"><span class="pre">Extractor</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.accepted_extractors" title="Link to this definition">¶</a></dt>
 <dd><p>Return list of compatible <a href="#id3"><span class="problematic" id="id4">`</span></a>Extractor`(s).</p>
 </dd></dl>
 <dl class="py property">
 <dt class="sig sig-object py" id="graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.extracor_names">
-<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extracor_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.extracor_names" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">extracor_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.extracor_names" title="Link to this definition">¶</a></dt>
 <dd><p>Return list of table names produced by extractors.</p>
 </dd></dl>
 <dl class="py method">
@@ -784,7 +784,7 @@ class properties <cite>accepted_file_extensions</cite> and <cite>accepted_extrac
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

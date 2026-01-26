@@ -123,8 +123,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -666,7 +666,7 @@
 <p>Classification-specific <cite>Model</cite> class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.MulticlassClassificationTask">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">MulticlassClassificationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#MulticlassClassificationTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.MulticlassClassificationTask" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">MulticlassClassificationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#MulticlassClassificationTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.MulticlassClassificationTask" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.IdentityTask" title="graphnet.models.task.task.IdentityTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdentityTask</span></code></a></p>
 <p>General task for classifying any number of classes.</p>
 <p>Requires the same number of input features as the number of classes
@@ -689,7 +689,7 @@ the direct inputs from <cite>Model</cite>.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTask">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">BinaryClassificationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#BinaryClassificationTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">BinaryClassificationTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#BinaryClassificationTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask" title="graphnet.models.task.task.StandardLearnedTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code></a></p>
 <p>Performs binary classification.</p>
 <p>Construct <cite>StandardLearnedTask</cite>.</p>
@@ -709,20 +709,20 @@ Available through <cite>Model.nb_outputs</cite></p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTask.nb_inputs">
-<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask.nb_inputs" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nb_inputs</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask.nb_inputs" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTask.default_target_labels">
-<span class="sig-name descname"><span class="pre">default_target_labels</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target']</span></em><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask.default_target_labels" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">default_target_labels</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target']</span></span><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask.default_target_labels" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTask.default_prediction_labels">
-<span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target_pred']</span></em><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask.default_prediction_labels" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target_pred']</span></span><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTask.default_prediction_labels" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTaskLogits">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">BinaryClassificationTaskLogits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#BinaryClassificationTaskLogits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.task.classification.</span></span><span class="sig-name descname"><span class="pre">BinaryClassificationTaskLogits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/task/classification.html#BinaryClassificationTaskLogits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.task.task.html#graphnet.models.task.task.StandardLearnedTask" title="graphnet.models.task.task.StandardLearnedTask"><code class="xref py py-class docutils literal notranslate"><span class="pre">StandardLearnedTask</span></code></a></p>
 <p>Performs binary classification form logits.</p>
 <p>Construct <cite>StandardLearnedTask</cite>.</p>
@@ -742,15 +742,15 @@ Available through <cite>Model.nb_outputs</cite></p></li>
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTaskLogits.nb_inputs">
-<span class="sig-name descname"><span class="pre">nb_inputs</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits.nb_inputs" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">nb_inputs</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></span><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits.nb_inputs" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTaskLogits.default_target_labels">
-<span class="sig-name descname"><span class="pre">default_target_labels</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target']</span></em><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits.default_target_labels" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">default_target_labels</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target']</span></span><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits.default_target_labels" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.task.classification.BinaryClassificationTaskLogits.default_prediction_labels">
-<span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target_pred']</span></em><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits.default_prediction_labels" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">default_prediction_labels</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['target_pred']</span></span><a class="headerlink" href="#graphnet.models.task.classification.BinaryClassificationTaskLogits.default_prediction_labels" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 </dd></dl>
 </section>
@@ -802,7 +802,7 @@ Available through <cite>Model.nb_outputs</cite></p></li>
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

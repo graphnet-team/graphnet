@@ -123,8 +123,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -548,7 +548,7 @@ If you’re unfamiliar with these terms, we recommend that you consult the <a cl
 <h2 id="the-model-class">The <code class="code docutils literal notranslate"><span class="pre">Model</span></code> class<a class="headerlink" href="#the-model-class" title="Link to this heading">¶</a></h2>
 <p><code class="code docutils literal notranslate"><span class="pre">Model</span></code> is the generic base class for <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.model.html">Model</a>s in GraphNeT, and forms the basis from which all models are expected to originate.
 It comes with very few restrictions and you can therefore implement nearly any deep learning technique using <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT by subclassing <code class="code docutils literal notranslate"><span class="pre">Model</span></code>.</p>
-<a class="with-shadow reference internal image-reference" href="../_images/model.svg"><img alt="../_images/model.svg" class="with-shadow align-center" src="../_images/model.svg" style="width: 250px;"/>
+<a class="with-shadow reference internal image-reference" href="../_images/model.svg"><img alt="../_images/model.svg" class="align-center with-shadow" src="../_images/model.svg" width="250"/>
 </a>
 <p>Any subclass of <code class="code docutils literal notranslate"><span class="pre">Model</span></code> will inherit the methods <code class="code docutils literal notranslate"><span class="pre">Model.to_config</span></code> and <code class="code docutils literal notranslate"><span class="pre">Model.from_config</span></code>, which allows the model to be exported as <code class="code docutils literal notranslate"><span class="pre">.yml</span></code> files and reloaded in a different session. E.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">Model</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -682,7 +682,7 @@ You can do so by:</p>
 <h2 id="the-standardmodel-class">The <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> class<a class="headerlink" href="#the-standardmodel-class" title="Link to this heading">¶</a></h2>
 <p>The simplest way to define a <code class="code docutils literal notranslate"><span class="pre">Model</span></code> in GraphNeT is through the <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> subclass, which provides additional functionality on top of <code class="code docutils literal notranslate"><span class="pre">Model</span></code>.</p>
 <p>The <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> consists of a series of modules - a <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.graphs.html#module-graphnet.models.graphs">GraphDefinition</a> , which defines the representation of the raw data,  <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.gnn.gnn.html#module-graphnet.models.gnn.gnn">Backbone</a>, which defines the actual achitecture, and one or more <a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.models.task.task.html#module-graphnet.models.task.task">Task</a>  which defines the problem(s) that the model needs to solve.</p>
-<a class="with-shadow reference internal image-reference" href="../_images/standardmodel.svg"><img alt="../_images/standardmodel.svg" class="with-shadow align-right" src="../_images/standardmodel.svg" style="width: 350px;"/>
+<a class="with-shadow reference internal image-reference" href="../_images/standardmodel.svg"><img alt="../_images/standardmodel.svg" class="align-right with-shadow" src="../_images/standardmodel.svg" width="350"/>
 </a>
 <p>This structure guarantees modularity and reuseability of models in <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT, as these modules are interchangeable. The role of each of these model components is outlined below.</p>
 <p>For example, the only adaptation needed to run a <code class="code docutils literal notranslate"><span class="pre">StandardModel</span></code> made for IceCube on a different experiment — say, KM3NeT — would be to switch out the <code class="code docutils literal notranslate"><span class="pre">Detector</span></code> component in <code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>
@@ -695,7 +695,7 @@ All <code class="code docutils literal notranslate"><span class="pre">Model</spa
 <h3 id="graphdefinition-backbone-task"><code class="code docutils literal notranslate"><span class="pre">GraphDefinition</span></code>, <code class="code docutils literal notranslate"><span class="pre">backbone</span></code> &amp; <code class="code docutils literal notranslate"><span class="pre">Task</span></code><a class="headerlink" href="#graphdefinition-backbone-task" title="Link to this heading">¶</a></h3>
 <p>These components are packaged in a particularly simple way in <cite>StandardModel</cite>, but they are not specific to it.
 That is, they can be used in any combination, and alongside more specialised PyTorch/PyG code.</p>
-<a class="with-shadow reference internal image-reference" href="../_images/datarepresentation.svg"><img alt="../_images/datarepresentation.svg" class="with-shadow align-right" src="../_images/datarepresentation.svg" style="width: 600px;"/>
+<a class="with-shadow reference internal image-reference" href="../_images/datarepresentation.svg"><img alt="../_images/datarepresentation.svg" class="align-right with-shadow" src="../_images/datarepresentation.svg" width="600"/>
 </a>
 <dl class="field-list">
 <dt class="field-odd">GraphDefinition<span class="colon">:</span></dt>
@@ -1025,7 +1025,7 @@ Similarly, if you wanted to train on a different <code class="code docutils lite
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

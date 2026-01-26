@@ -122,8 +122,8 @@
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="_static/material.css?v=79c92029" />
     <script src="_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="_static/doctools.js?v=9bcbadda"></script>
-    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="_static/favicon.svg"/>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" />
@@ -482,6 +482,8 @@
 </li>
       <li><a href="api/graphnet.data.extractors.icecube.utilities.types.html#graphnet.data.extractors.icecube.utilities.types.cast_pulse_series_to_pure_python">cast_pulse_series_to_pure_python() (in module graphnet.data.extractors.icecube.utilities.types)</a>
 </li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector.charge_column">charge_column (graphnet.models.detector.nubench.NuBenchDetector attribute)</a>
+</li>
       <li><a href="api/graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.ChargeFilter">ChargeFilter (class in graphnet.data.extractors.icecube.utilities.i3_filters)</a>
 </li>
       <li><a href="api/graphnet.data.extractors.icecube.i3extractor.html#graphnet.data.extractors.icecube.i3extractor.I3Extractor.check_primary_energy">check_primary_energy() (graphnet.data.extractors.icecube.i3extractor.I3Extractor method)</a>
@@ -495,6 +497,8 @@
       <li><a href="api/graphnet.utilities.config.model_config.html#graphnet.utilities.config.model_config.ModelConfig.class_name">class_name (graphnet.utilities.config.model_config.ModelConfig attribute)</a>
 </li>
       <li><a href="api/graphnet.models.rnn.node_rnn.html#graphnet.models.rnn.node_rnn.Node_RNN.clean_up_data_object">clean_up_data_object() (graphnet.models.rnn.node_rnn.Node_RNN method)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.Cluster">Cluster (class in graphnet.models.detector.nubench)</a>
 </li>
       <li><a href="api/graphnet.models.data_representation.graphs.utils.html#graphnet.models.data_representation.graphs.utils.cluster_and_pad">cluster_and_pad (class in graphnet.models.data_representation.graphs.utils)</a>
 </li>
@@ -516,10 +520,10 @@
 </li>
       <li><a href="api/graphnet.data.extractors.combine_extractors.html#graphnet.data.extractors.combine_extractors.CombinedExtractor">CombinedExtractor (class in graphnet.data.extractors.combine_extractors)</a>
 </li>
-      <li><a href="api/graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.CuratedDataset.comments">comments (graphnet.data.curated_datamodule.CuratedDataset property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.CuratedDataset.comments">comments (graphnet.data.curated_datamodule.CuratedDataset property)</a>
+</li>
       <li><a href="api/graphnet.models.easy_model.html#graphnet.models.easy_model.EasySyntax.compute_loss">compute_loss() (graphnet.models.easy_model.EasySyntax method)</a>
 
       <ul>
@@ -803,6 +807,8 @@
 </li>
         <li><a href="api/graphnet.models.detector.magic.html#graphnet.models.detector.magic.MAGIC.feature_map">(graphnet.models.detector.magic.MAGIC method)</a>
 </li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector.feature_map">(graphnet.models.detector.nubench.NuBenchDetector method)</a>
+</li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ARCA115.feature_map">(graphnet.models.detector.prometheus.ARCA115 method)</a>
 </li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.BaikalGVD8.feature_map">(graphnet.models.detector.prometheus.BaikalGVD8 method)</a>
@@ -871,6 +877,12 @@
 </li>
       </ul></li>
       <li><a href="api/graphnet.data.extractors.icecube.utilities.collections.html#graphnet.data.extractors.icecube.utilities.collections.flatten_nested_dictionary">flatten_nested_dictionary() (in module graphnet.data.extractors.icecube.utilities.collections)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.FlowerL">FlowerL (class in graphnet.models.detector.nubench)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.FlowerS">FlowerS (class in graphnet.models.detector.nubench)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.FlowerXL">FlowerXL (class in graphnet.models.detector.nubench)</a>
 </li>
       <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening.forward">forward() (graphnet.models.coarsening.Coarsening method)</a>
 
@@ -1020,6 +1032,18 @@
         <li><a href="api/graphnet.models.detector.liquido.html#graphnet.models.detector.liquido.LiquidO_v1.geometry_table_path">(graphnet.models.detector.liquido.LiquidO_v1 attribute)</a>
 </li>
         <li><a href="api/graphnet.models.detector.magic.html#graphnet.models.detector.magic.MAGIC.geometry_table_path">(graphnet.models.detector.magic.MAGIC attribute)</a>
+</li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.Cluster.geometry_table_path">(graphnet.models.detector.nubench.Cluster attribute)</a>
+</li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.FlowerL.geometry_table_path">(graphnet.models.detector.nubench.FlowerL attribute)</a>
+</li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.FlowerS.geometry_table_path">(graphnet.models.detector.nubench.FlowerS attribute)</a>
+</li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.FlowerXL.geometry_table_path">(graphnet.models.detector.nubench.FlowerXL attribute)</a>
+</li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.Hexagon.geometry_table_path">(graphnet.models.detector.nubench.Hexagon attribute)</a>
+</li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.Triangle.geometry_table_path">(graphnet.models.detector.nubench.Triangle attribute)</a>
 </li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ARCA115.geometry_table_path">(graphnet.models.detector.prometheus.ARCA115 attribute)</a>
 </li>
@@ -1605,6 +1629,8 @@
         <li><a href="api/graphnet.data.utilities.sqlite_utilities.html#module-graphnet.data.utilities.sqlite_utilities">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.utilities.string_selection_resolver
 
@@ -1612,8 +1638,6 @@
         <li><a href="api/graphnet.data.utilities.string_selection_resolver.html#module-graphnet.data.utilities.string_selection_resolver">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.writers
 
@@ -1899,6 +1923,13 @@
 
       <ul>
         <li><a href="api/graphnet.models.detector.magic.html#module-graphnet.models.detector.magic">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.detector.nubench
+
+      <ul>
+        <li><a href="api/graphnet.models.detector.nubench.html#module-graphnet.models.detector.nubench">module</a>
 </li>
       </ul></li>
       <li>
@@ -2298,6 +2329,8 @@
       <li><a href="api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_km3net_package">has_km3net_package() (in module graphnet.utilities.imports)</a>
 </li>
       <li><a href="api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_torch_package">has_torch_package() (in module graphnet.utilities.imports)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.Hexagon">Hexagon (class in graphnet.models.detector.nubench)</a>
 </li>
       <li><a href="api/graphnet.data.extractors.icecube.i3highesteparticleextractor.html#graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor.highest_energy_bundle">highest_energy_bundle() (graphnet.data.extractors.icecube.i3highesteparticleextractor.I3HighestEparticleExtractor method)</a>
 </li>
@@ -2867,6 +2900,8 @@
 </li>
         <li><a href="api/graphnet.models.detector.magic.html#module-graphnet.models.detector.magic">graphnet.models.detector.magic</a>
 </li>
+        <li><a href="api/graphnet.models.detector.nubench.html#module-graphnet.models.detector.nubench">graphnet.models.detector.nubench</a>
+</li>
         <li><a href="api/graphnet.models.detector.prometheus.html#module-graphnet.models.detector.prometheus">graphnet.models.detector.prometheus</a>
 </li>
         <li><a href="api/graphnet.models.easy_model.html#module-graphnet.models.easy_model">graphnet.models.easy_model</a>
@@ -3059,6 +3094,8 @@
       <li><a href="api/graphnet.models.data_representation.graphs.nodes.nodes.html#graphnet.models.data_representation.graphs.nodes.nodes.NodesAsPulses">NodesAsPulses (class in graphnet.models.data_representation.graphs.nodes.nodes)</a>
 </li>
       <li><a href="api/graphnet.models.normalizing_flow.html#graphnet.models.normalizing_flow.NormalizingFlow">NormalizingFlow (class in graphnet.models.normalizing_flow)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector">NuBenchDetector (class in graphnet.models.detector.nubench)</a>
 </li>
       <li><a href="api/graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.NullSplitI3Filter">NullSplitI3Filter (class in graphnet.data.extractors.icecube.utilities.i3_filters)</a>
 </li>
@@ -3289,6 +3326,8 @@
 </li>
         <li><a href="api/graphnet.models.detector.liquido.html#graphnet.models.detector.liquido.LiquidO_v1.sensor_id_column">(graphnet.models.detector.liquido.LiquidO_v1 attribute)</a>
 </li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector.sensor_id_column">(graphnet.models.detector.nubench.NuBenchDetector attribute)</a>
+</li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ARCA115.sensor_id_column">(graphnet.models.detector.prometheus.ARCA115 attribute)</a>
 </li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.BaikalGVD8.sensor_id_column">(graphnet.models.detector.prometheus.BaikalGVD8 attribute)</a>
@@ -3317,6 +3356,8 @@
       <li><a href="api/graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector.sensor_index_name">sensor_index_name (graphnet.models.detector.detector.Detector property)</a>
 </li>
       <li><a href="api/graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector.sensor_position_names">sensor_position_names (graphnet.models.detector.detector.Detector property)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector.sensor_time_column">sensor_time_column (graphnet.models.detector.nubench.NuBenchDetector attribute)</a>
 </li>
       <li><a href="api/graphnet.data.extractors.icecube.utilities.collections.html#graphnet.data.extractors.icecube.utilities.collections.serialise">serialise() (in module graphnet.data.extractors.icecube.utilities.collections)</a>
 </li>
@@ -3406,6 +3447,8 @@
         <li><a href="api/graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCubeUpgrade.string_id_column">(graphnet.models.detector.icecube.IceCubeUpgrade attribute)</a>
 </li>
         <li><a href="api/graphnet.models.detector.liquido.html#graphnet.models.detector.liquido.LiquidO_v1.string_id_column">(graphnet.models.detector.liquido.LiquidO_v1 attribute)</a>
+</li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector.string_id_column">(graphnet.models.detector.nubench.NuBenchDetector attribute)</a>
 </li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ARCA115.string_id_column">(graphnet.models.detector.prometheus.ARCA115 attribute)</a>
 </li>
@@ -3497,6 +3540,8 @@
       <li><a href="api/graphnet.data.extractors.icecube.utilities.collections.html#graphnet.data.extractors.icecube.utilities.collections.transpose_list_of_dicts">transpose_list_of_dicts() (in module graphnet.data.extractors.icecube.utilities.collections)</a>
 </li>
       <li><a href="api/graphnet.utilities.config.parsing.html#graphnet.utilities.config.parsing.traverse_and_apply">traverse_and_apply() (in module graphnet.utilities.config.parsing)</a>
+</li>
+      <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.Triangle">Triangle (class in graphnet.models.detector.nubench)</a>
 </li>
       <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.TRIDENT1211">TRIDENT1211 (class in graphnet.models.detector.prometheus)</a>
 </li>
@@ -3607,6 +3652,8 @@
 </li>
         <li><a href="api/graphnet.models.detector.magic.html#graphnet.models.detector.magic.MAGIC.xyz">(graphnet.models.detector.magic.MAGIC attribute)</a>
 </li>
+        <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector.xyz">(graphnet.models.detector.nubench.NuBenchDetector attribute)</a>
+</li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.ARCA115.xyz">(graphnet.models.detector.prometheus.ARCA115 attribute)</a>
 </li>
         <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.BaikalGVD8.xyz">(graphnet.models.detector.prometheus.BaikalGVD8 attribute)</a>
@@ -3675,7 +3722,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

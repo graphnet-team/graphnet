@@ -123,8 +123,8 @@
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
     <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
     <script src="../_static/documentation_options.js?v=5929fcd5"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -482,6 +482,13 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.models.detector.nubench.html" class="md-nav__link">nubench</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.detector.prometheus.html" class="md-nav__link">prometheus</a>
       
     
@@ -643,7 +650,7 @@
 <p>LiquidO-specific <cite>Detector</cite> class(es).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.detector.liquido.LiquidO_v1">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.liquido.</span></span><span class="sig-name descname"><span class="pre">LiquidO_v1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/liquido.html#LiquidO_v1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.detector.liquido.</span></span><span class="sig-name descname"><span class="pre">LiquidO_v1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/detector/liquido.html#LiquidO_v1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a></p>
 <p><cite>Detector</cite> class for LiquidO prototype.</p>
 <p>Construct <cite>Detector</cite>.</p>
@@ -663,19 +670,19 @@
 </dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.detector.liquido.LiquidO_v1.geometry_table_path">
-<span class="sig-name descname"><span class="pre">geometry_table_path</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/runner/work/graphnet/graphnet/data/geometry_tables/liquid-o/liquido_v1.parquet'</span></em><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.geometry_table_path" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">geometry_table_path</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'/home/runner/work/graphnet/graphnet/data/geometry_tables/liquid-o/liquido_v1.parquet'</span></span><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.geometry_table_path" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.detector.liquido.LiquidO_v1.xyz">
-<span class="sig-name descname"><span class="pre">xyz</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['sipm_x',</span> <span class="pre">'sipm_y',</span> <span class="pre">'sipm_z']</span></em><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.xyz" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">xyz</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['sipm_x',</span> <span class="pre">'sipm_y',</span> <span class="pre">'sipm_z']</span></span><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.xyz" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.detector.liquido.LiquidO_v1.string_id_column">
-<span class="sig-name descname"><span class="pre">string_id_column</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fiber_id'</span></em><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.string_id_column" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">string_id_column</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'fiber_id'</span></span><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.string_id_column" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="graphnet.models.detector.liquido.LiquidO_v1.sensor_id_column">
-<span class="sig-name descname"><span class="pre">sensor_id_column</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sipm_id'</span></em><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.sensor_id_column" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sensor_id_column</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'sipm_id'</span></span><a class="headerlink" href="#graphnet.models.detector.liquido.LiquidO_v1.sensor_id_column" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.detector.liquido.LiquidO_v1.feature_map">
@@ -737,7 +744,7 @@
               
           </div>
             Created using
-            <a href="http://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
              and
             <a href="https://github.com/bashtage/sphinx-material/">Material for
               Sphinx</a>

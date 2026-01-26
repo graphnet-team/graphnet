@@ -1,0 +1,8 @@
+
+nubench
+=======
+
+.. automodule:: graphnet.models.detector.nubench
+   :members:
+   :show-inheritance:
+   :undoc-members:
