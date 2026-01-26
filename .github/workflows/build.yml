@@ -75,6 +75,7 @@ jobs:
           sudo apt update --fix-missing --yes
           sudo apt upgrade --yes
           sudo apt-get install --yes git
+          sudo apt-get clean 
 
       - uses: actions/checkout@v4
 
@@ -86,21 +87,29 @@ jobs:
           pip --version
           python --version
           pip show setuptools
-
+          rm -rf ~/.cache/pip
+      
       - name: Print available disk space before graphnet install
-        run: df -h
-
+        run: | 
+          df -h
       - name: Upgrade packages in virtual environment
         shell: bash
         run: |
           source ~/venv/bin/activate
-          pip install --upgrade astropy
-          pip install --upgrade PyYAML
-          pip install --upgrade psutil
-          pip install --upgrade setuptools
-          pip install --upgrade versioneer
+          pip install --no-cache-dir --upgrade astropy
+          pip install --no-cache-dir --upgrade PyYAML
+          pip install --no-cache-dir --upgrade psutil
+          pip install --no-cache-dir --upgrade setuptools
+          pip install --no-cache-dir --upgrade versioneer
           pip show setuptools
           pip show versioneer
+          rm -rf ~/.cache/pip
+      - name: Install PyTorch and dependencies
+        shell: bash
+        run: |
+          source ~/venv/bin/activate
+          pip3 install --no-cache-dir torch==${{ matrix.torch_version }}+${{ matrix.hardware }} torchvision torchaudio --index-url https://download.pytorch.org/whl/${{ matrix.hardware }}
+          rm -rf ~/.cache/pip
       - name: Install package
         uses: ./.github/actions/install
         with:
@@ -118,6 +127,9 @@ jobs:
           pip show torch-sparse
           pip show torch-scatter
           pip show jammy_flows
+      - name: Print available disk space after graphnet install
+        run: | 
+          df -h
       - name: Run unit tests and generate coverage report
         shell: bash
         run: |

@@ -21,7 +21,7 @@ from graphnet.utilities.config import (
 class Model(
     Logger, Configurable, LightningModule, ABC, metaclass=ModelConfigSaverABC
 ):
-    """Base class for all components in graphnet."""
+    """Base class for all components in GraphNeT."""
 
     verbose_print = True
 
