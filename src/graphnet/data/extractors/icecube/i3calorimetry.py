@@ -9,6 +9,7 @@ import numpy as np
 
 from graphnet.utilities.imports import has_icecube_package
 from copy import deepcopy
+from collections import deque
 
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
@@ -17,6 +18,8 @@ if has_icecube_package() or TYPE_CHECKING:
         MuonGun,
         simclasses,
     )  # pyright: reportMissingImports=false
+
+DARK = dataclasses.I3Particle.ParticleShape.Dark
 
 
 class I3Calorimetry(I3Extractor):
@@ -224,7 +227,7 @@ class I3Calorimetry(I3Extractor):
         frame: "icetray.I3Frame",
     ) -> float:
         """Get the total energy of cascade particles on entrance."""
-        particles = np.array(
+        particles = deque(
             self.get_primaries(
                 frame, self.daughters, self.highest_energy_primary
             )
@@ -240,31 +243,27 @@ class I3Calorimetry(I3Extractor):
             [],
             [],
         )
+
+        mctree = frame[self.mctree]
         while len(particles) > 0:
-            p = particles[0]
-            particles = particles[1:]
-            p_children = dataclasses.I3MCTree.get_daughters(
-                frame[self.mctree], p
-            )
+            p = particles.popleft()
+            p_children = mctree.get_daughters(p)
             if len(p_children) > 0:
-                particles = np.concatenate((particles, p_children))
+                particles.extend(p_children)
                 continue
-            elif (
-                p.is_track
-                or p.shape == dataclasses.I3Particle.ParticleShape.Dark
-            ):
+            if p.is_track or p.shape == DARK:
                 continue
 
-            pos_list.append(np.array(p.pos))
-            direc_list.append(np.array([p.dir.x, p.dir.y, p.dir.z]))
+            pos_list.append([p.pos.x, p.pos.y, p.pos.z])
+            direc_list.append([p.dir.x, p.dir.y, p.dir.z])
             length_list.append(p.length)
             cascade_bool.append(p.is_cascade)
             energies.append(p.energy)
 
         length = np.array(length_list).astype(float)
         length[np.isnan(length)] = 0
-        pos = np.array(pos_list)
-        direc = np.array(direc_list)
+        pos = np.asarray(pos_list)
+        direc = np.asarray(direc_list)
         cascade_bool = np.array(cascade_bool)
         energies = np.array(energies)
         pos = (pos.T + direc.T * length).T
