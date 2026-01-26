@@ -23,9 +23,7 @@ class Extractor(ABC, Logger):
     An extractor is used in conjunction with a specific `FileReader`.
     """
 
-    def __init__(
-        self, extractor_name: str, exclude: list = [None], timed: bool = False
-    ) -> None:
+    def __init__(self, extractor_name: str, exclude: list = [None]):
         """Construct Extractor.
 
         Args:
@@ -34,12 +32,10 @@ class Extractor(ABC, Logger):
                             data, and to name tables to which this data is
                             saved. E.g. "mc_truth".
             exclude: List of keys to exclude from the extracted data.
-            timed: Whether to time the execution of the __call__ method.
         """
         # Member variable(s)
         self._extractor_name: str = extractor_name
         self._exclude = exclude
-        self._timed = timed
 
         # Base class constructor
         super().__init__(name=__name__, class_name=self.__class__.__name__)
@@ -76,7 +72,7 @@ class Extractor(ABC, Logger):
     def __init_subclass__(cls) -> None:
         """Initialize subclass and apply the exclude decorator to __call__."""
         super().__init_subclass__()
-        if not cls._timed:
+        if cls._get_root_logger().getEffectiveLevel() > 10:
             cls.__call__ = cls.exclude(cls.__call__)  # type: ignore
         else:
             import time
@@ -91,7 +87,7 @@ class Extractor(ABC, Logger):
                 start_time = time.time()
                 result = original_call(cls, *args)
                 end_time = time.time()
-                cls._logger.info(
+                cls._logger.debug(
                     f"Extractor {cls.name} took {end_time - start_time:.4f} seconds."
                 )
                 return result
