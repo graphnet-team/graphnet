@@ -1,6 +1,6 @@
 """Extract all the visible particles entering the volume."""
 
-from typing import Dict, Any, TYPE_CHECKING, Tuple
+from typing import Dict, Any, TYPE_CHECKING, Tuple, Union, List
 
 from .utilities.gcd_hull import GCD_hull
 from .i3extractor import I3Extractor
@@ -45,6 +45,8 @@ class I3Calorimetry(I3Extractor):
         extractor_name: Name of the extractor.
         daughters: If True, only consider particles that are
             daughters of the primary.
+        highest_energy_primary: If True, only consider particles that are
+            daughters of the highest energy primary.
         """
         # Member variable(s)
         self.hull = hull
@@ -62,12 +64,6 @@ class I3Calorimetry(I3Extractor):
         tree_copy = deepcopy(frame[self.mctree])
         if self.frame_contains_info(frame):
 
-            e_entrance_track, e_deposited_track = self.total_track_energy(
-                frame
-            )
-
-            e_deposited_cascade = self.total_cascade_energy(frame)
-
             primary_energy = sum(
                 [
                     p.energy
@@ -81,7 +77,31 @@ class I3Calorimetry(I3Extractor):
                     )
                 ]
             )
+
+            e_entrance_track, e_deposited_track = self.total_track_energy(
+                frame
+            )
+
+            e_deposited_cascade = self.total_cascade_energy(frame)
+
             e_total = e_entrance_track + e_deposited_cascade
+
+            if all(
+                (
+                    not self.daughters,
+                    not self.highest_energy_primary,
+                    e_total == 0,
+                )
+            ):
+                self.warning(
+                    "No energy deposited in the hull, "
+                    "Think about increasing the padding."
+                    f"\nCurrent padding: {self.hull.padding}"
+                    f"\nTotal energy: {e_total}"
+                    f"\nTrack energy: {e_entrance_track}"
+                    f"\nCascade energy: {e_deposited_cascade}"
+                    f"\nEvent header: {frame['I3EventHeader']}"
+                )
 
             if self.daughters:
                 assert e_total <= (
@@ -138,7 +158,9 @@ class I3Calorimetry(I3Extractor):
         """Get the total energy of track particles on entrance."""
         e_entrance = 0
         e_deposited = 0
-        primaries = self.get_primaries(frame, self.daughters)
+        primaries = self.get_primaries(
+            frame, self.daughters, self.highest_energy_primary
+        )
         primaries = self.check_primary_energy(frame, primaries)
 
         MMCTrackList = frame[self.mmctracklist]
@@ -151,13 +173,18 @@ class I3Calorimetry(I3Extractor):
             ]
             MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList)
 
-        track_list = MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
-        track_ids = np.array([track.id for track in track_list])
+        track_list = np.array(
+            MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
+        )
 
-        total_tracks = len(track_list)
-        exclude_ids = set()
         while len(track_list) > 0:
             track = track_list[0]
+            track_list = track_list[1:]
+            try:
+                particle = frame[self.mctree].get_particle(track.id)
+            except RuntimeError:
+                # If the particle does not exist in the mctree, that means a partcle further up was processed and therefore it should not be counted
+                continue
 
             # Find distance to entrance and exit from sampling volume
             intersections = self.hull.surface.intersection(
@@ -167,17 +194,8 @@ class I3Calorimetry(I3Extractor):
             # Check if the track actually enters the volume
             if not (
                 np.isfinite(intersections.first)
-                and (
-                    intersections.first
-                    < frame[self.mctree].get_particle(track.id).length
-                )
+                and (intersections.first < particle.length)
             ):
-                track_list = track_list[1:]
-                track_ids = track_ids[1:]
-                frame[self.mctree].erase(track.id)
-                self._logger.debug(
-                    f"Remaining tracks: {len(track_list)}/{total_tracks}"
-                )
                 continue
 
             # Get the corresponding energies
@@ -187,19 +205,10 @@ class I3Calorimetry(I3Extractor):
             # Accumulate
             e_deposited += e0 - e1
             e_entrance += e0
-            # erase particle and children
-            exclude_ids.update(
-                [c.id for c in frame[self.mctree].children(track.id)]
-            )
-            exclude_ids.add(track.id)
-            frame[self.mctree].erase_children(track.id)
+            # get descendant ids
+            # erase particle and children from mctree
             frame[self.mctree].erase(track.id)
-            track_mask = [tid not in exclude_ids for tid in track_ids]
-            track_list = list(np.array(track_list)[track_mask])
-            track_ids = track_ids[track_mask]
-            self._logger.debug(
-                f"Remaining tracks: {len(track_list)}/{total_tracks}"
-            )
+
         # Sanity check ensuring no double counting
         if self.daughters:
             assert e_entrance <= sum(
@@ -215,86 +224,50 @@ class I3Calorimetry(I3Extractor):
         frame: "icetray.I3Frame",
     ) -> float:
         """Get the total energy of cascade particles on entrance."""
-        e_deposited = 0
-
-        particles = self.get_primaries(frame, self.daughters)
-
-        particles = np.array([p for p in particles if (not p.is_track)])
+        particles = np.array(
+            self.get_primaries(
+                frame, self.daughters, self.highest_energy_primary
+            )
+        )
 
         if len(particles) == 0:
-            return e_deposited
+            return 0.0
 
-        pos, direc, length = np.asarray(
-            [
-                [
-                    np.array(p.pos),
-                    np.array([p.dir.x, p.dir.y, p.dir.z]),
-                    p.length,
-                ]
-                for p in particles
-            ],
-            dtype=object,
-        ).T
+        pos_list, direc_list, length_list, cascade_bool, energies = (
+            [],
+            [],
+            [],
+            [],
+            [],
+        )
+        while len(particles) > 0:
+            p = particles[0]
+            particles = particles[1:]
+            p_children = dataclasses.I3MCTree.get_daughters(
+                frame[self.mctree], p
+            )
+            if len(p_children) > 0:
+                particles = np.concatenate((particles, p_children))
+                continue
+            elif (
+                p.is_track
+                or p.shape == dataclasses.I3Particle.ParticleShape.Dark
+            ):
+                continue
 
-        length = length.astype(float)
+            pos_list.append(np.array(p.pos))
+            direc_list.append(np.array([p.dir.x, p.dir.y, p.dir.z]))
+            length_list.append(p.length)
+            cascade_bool.append(p.is_cascade)
+            energies.append(p.energy)
 
-        # replace length nan with 0
+        length = np.array(length_list).astype(float)
         length[np.isnan(length)] = 0
-        pos = pos + direc * length
-        pos = np.stack(pos)
+        pos = np.array(pos_list)
+        direc = np.array(direc_list)
+        cascade_bool = np.array(cascade_bool)
+        energies = np.array(energies)
+        pos = (pos.T + direc.T * length).T
+        in_hull = self.hull.point_in_hull(pos)
 
-        in_volume = self.hull.point_in_hull(pos)
-        particles = particles[in_volume]
-
-        for particle in particles:
-            if particle.is_cascade:
-                e_deposited += particle.energy
-            else:
-                daughters = dataclasses.I3MCTree.get_daughters(
-                    frame[self.mctree], particle
-                )
-
-                pos, direc, length = np.asarray(
-                    [
-                        [
-                            np.array(p.pos),
-                            np.array([p.dir.x, p.dir.y, p.dir.z]),
-                            p.length,
-                        ]
-                        for p in daughters
-                    ],
-                    dtype=object,
-                ).T
-
-                length = length.astype(float)
-
-                # replace length nan with 0
-                length[np.isnan(length)] = 0
-                pos = pos + direc * length
-                pos = np.stack(pos)
-
-                in_volume = self.hull.point_in_hull(pos)
-                daughters = np.array(daughters)[in_volume]
-
-            while len(daughters) > 0:
-                daughter = daughters[0]
-                daughters = daughters[1:]
-                length = daughter.length
-                if daughter.is_track:
-                    continue
-                if length == np.nan:
-                    length = 0
-                if daughter.is_cascade and (
-                    daughter.shape != dataclasses.I3Particle.ParticleShape.Dark
-                ):
-                    e_deposited += daughter.energy
-                else:
-                    daughters = np.concatenate(
-                        [
-                            daughters,
-                            dataclasses.I3MCTree.get_daughters(
-                                frame[self.mctree], daughter
-                            ),
-                        ]
-                    )
-        return e_deposited
+        return np.sum(energies[cascade_bool & in_hull])
