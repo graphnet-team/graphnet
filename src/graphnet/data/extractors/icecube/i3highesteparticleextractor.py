@@ -190,7 +190,9 @@ class I3HighestEparticleExtractor(I3Extractor):
         primaries = [self.check_primary_energy(frame, p) for p in primaries]
 
         MMCTrackList = frame[self.mmctracklist]
-        if self.daughters:
+        if self.daughters & (
+            not self._is_corsika
+        ):  # expensive operation unecessary for CORSIKA
             temp_MMCTrackList = []
             for track in MMCTrackList:
                 for p in primaries:
@@ -200,6 +202,14 @@ class I3HighestEparticleExtractor(I3Extractor):
                         temp_MMCTrackList.append(track)
                         break
             MMCTrackList = simclasses.I3MMCTrackList(temp_MMCTrackList)
+        elif self._is_corsika & self.daughters:
+            MMCTrackList = [
+                track
+                for track in MMCTrackList
+                if frame[self.mctree].get_primary(track.GetI3Particle())
+                in primaries
+            ]
+            MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList)
 
         MuonGun_tracks = np.array(
             MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
