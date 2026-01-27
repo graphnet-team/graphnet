@@ -29,7 +29,7 @@ class SnowStormDataset(IceCubeHostedDataset):
     The data is organized by SnowStorm RunIDs containing pulsemaps input features
     along with event-level truth information.
 
-    Access to the data requires an IceCube Collaboration account.
+    The access to the data requires an IceCube Collaboration account.
 
     References:
     SnowStorm documentation: https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations
