@@ -20,10 +20,10 @@ AVAILABLE_RUN_IDS = [
 
 
 class SnowStormDataset(IceCubeHostedDataset):
-    """IceCube SnowStorm Monte Carlo simulation dataset. 
+    """IceCube SnowStorm Monte Carlo simulation dataset.
 
     This module provides access to the SnowStorm simulation data and prepares it
-    for the training and evaluation of deep learning models in GraphNet by parsing 
+    for the training and evaluation of deep learning models in GraphNet by parsing
     the data into the GraphNeT-compatible CuratedDataset format.
 
     The data is organized by SnowStorm RunIDs containing pulsemaps input features
@@ -31,11 +31,11 @@ class SnowStormDataset(IceCubeHostedDataset):
     
     Access to the data requires an IceCube Collaboration account.
 
-    References: 
+    References:
     SnowStorm documentation: https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations
     SnowStorm paper: arXiv:1909.01530
     """
-
+    
     _experiment = "IceCube SnowStorm dataset"
     _creator = "Aske Rosted"
     _citation = "arXiv:1909.01530"
@@ -104,7 +104,7 @@ class SnowStormDataset(IceCubeHostedDataset):
         Args:
             backend: backend of dataset. Only "sqlite" is supported.
             features: List of features from user to use as input.
-            truth: List of event-level truth from user. 
+            truth: List of event-level truth from user.
             
         Returns: Dataset arguments, train/val selection, test selection
         """
@@ -164,7 +164,7 @@ class SnowStormDataset(IceCubeHostedDataset):
             )
             test_selection.append(
                 test["event_no"].get_group(path).tolist()
-                )
+            )
 
         dataset_args = {
             "truth_table": self._truth_table,
