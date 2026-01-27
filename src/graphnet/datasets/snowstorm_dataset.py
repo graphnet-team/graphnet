@@ -23,7 +23,7 @@ class SnowStormDataset(IceCubeHostedDataset):
     """IceCube SnowStorm Monte Carlo simulation dataset.
 
     This module provides access to the SnowStorm simulation data and prepares it
-    for the training and evaluation of deep learning models in GraphNet by parsing
+    for the training and evaluation of deep learning models in GraphNeT by parsing
     the data into the GraphNeT-compatible CuratedDataset format.
 
     The data is organized by SnowStorm RunIDs containing pulsemaps input features
