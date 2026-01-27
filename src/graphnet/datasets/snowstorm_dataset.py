@@ -28,7 +28,7 @@ class SnowStormDataset(IceCubeHostedDataset):
 
     The data is organized by SnowStorm RunIDs containing pulsemaps input features
     along with event-level truth information.
-    
+
     Access to the data requires an IceCube Collaboration account.
 
     References:
@@ -100,12 +100,12 @@ class SnowStormDataset(IceCubeHostedDataset):
         self, backend: str, features: List[str], truth: List[str]
     ) -> Tuple[Dict[str, Any], Union[List[int], None], Union[List[int], None]]:
         """Prepare arguments for dataset.
-        
+
         Args:
             backend: backend of dataset. Only "sqlite" is supported.
             features: List of features from user to use as input.
             truth: List of event-level truth from user.
-            
+
         Returns: Dataset arguments, train/val selection, test selection
         """
         assert backend == "sqlite"
