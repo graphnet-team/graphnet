@@ -35,7 +35,7 @@ class SnowStormDataset(IceCubeHostedDataset):
     SnowStorm documentation: https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations
     SnowStorm paper: arXiv:1909.01530
     """
-    
+
     _experiment = "IceCube SnowStorm dataset"
     _creator = "Aske Rosted"
     _citation = "arXiv:1909.01530"
