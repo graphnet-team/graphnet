@@ -19,7 +19,7 @@ if has_icecube_package() or TYPE_CHECKING:
         simclasses,
     )  # pyright: reportMissingImports=false
 
-DARK = dataclasses.I3Particle.ParticleShape.Dark
+    DARK = dataclasses.I3Particle.ParticleShape.Dark
 
 
 class I3Calorimetry(I3Extractor):
