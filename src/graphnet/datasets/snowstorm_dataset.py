@@ -159,12 +159,8 @@ class SnowStormDataset(IceCubeHostedDataset):
         train_val_selection = []
         test_selection = []
         for path in dataset_paths:
-            train_val_selection.append(
-                train_val["event_no"].get_group(path).tolist()
-            )
-            test_selection.append(
-                test["event_no"].get_group(path).tolist()
-            )
+            train_val_selection.append(train_val["event_no"].get_group(path).tolist())
+            test_selection.append(test["event_no"].get_group(path).tolist())
 
         dataset_args = {
             "truth_table": self._truth_table,
@@ -192,9 +188,7 @@ class SnowStormDataset(IceCubeHostedDataset):
             runid_string += f"RunID {k} contains {v:10d} events\n"
             tot += v
         cls._comments = (
-            f"Contains ~{tot/1e6:.1f} million events:\n"
-            + runid_string
-            + fixed_string
+            f"Contains ~{tot/1e6:.1f} million events:\n" + runid_string + fixed_string
         )
 
     def _get_dir_name(self, source_file_path: str) -> str:
