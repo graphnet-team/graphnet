@@ -1,10 +1,7 @@
-"""CNN used for muon energy reconstruction in IceCube.
+"""Implementation of the IceCube DNN image convolution model by Theo Glauch.
 
-Copy of `upgoing_muon_energy` model from
+Based on the `upgoing_muon_energy` model from
 https://github.com/IceCubeOpenSource/i3deepice/tree/master
-
-Class and variable names are kept for
-compatibility with the original code.
 """
 
 from typing import Tuple, Union
@@ -17,7 +14,7 @@ from .cnn import CNN
 
 
 class Conv3dBN(LightningModule):
-    """The Conv3dBN module from Theos CNN model."""
+    """3D convolution with batch normalization from Theo Glauch's DNN."""
 
     def __init__(
         self,
@@ -55,7 +52,7 @@ class Conv3dBN(LightningModule):
 
 
 class InceptionBlock4(LightningModule):
-    """The inception_block4 module from Theos CNN model."""
+    """Inception block with 4 parallel towers from Theo Glauch's DNN."""
 
     def __init__(
         self,
@@ -159,7 +156,7 @@ class InceptionBlock4(LightningModule):
 
 
 class InceptionResnet(LightningModule):
-    """The inception_resnet module from Theos CNN model."""
+    """Inception block with residual connections from Theo Glauch's DNN."""
 
     def __init__(
         self,
@@ -261,11 +258,16 @@ class InceptionResnet(LightningModule):
         return x + self._scale * tmp
 
 
-class TheosMuonEUpgoing(CNN):
-    """The TheosMuonEUpgoing module."""
+class IceCubeDNN(CNN):
+    """Implementation of the IceCube DNN by Theo Glauch.
+
+    An inception-based 3D CNN originally used within IceCube. Based on
+    the model from
+    https://github.com/IceCubeOpenSource/i3deepice/tree/master
+    """
 
     def __init__(self, nb_inputs: int = 15, nb_outputs: int = 16) -> None:
-        """Construct `TheosMuonEUpgoing`.
+        """Construct `IceCubeDNN`.
 
         Args:
             nb_inputs: Number of input features.
