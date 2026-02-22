@@ -4,7 +4,7 @@ Based on the `upgoing_muon_energy` model from
 https://github.com/IceCubeOpenSource/i3deepice/tree/master
 """
 
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 
 import torch
 from torch import nn
