@@ -84,6 +84,11 @@ class ImageDefinition(DataRepresentation):
         self._node_definition = node_definition
         self._pixel_mapping = pixel_mapping
 
+    @property
+    def shape(self) -> List[List[int]]:
+        """Return the shape of the output images."""
+        return self._pixel_mapping.shape
+
     def _set_output_feature_names(
         self, input_feature_names: List[str]
     ) -> List[str]:
