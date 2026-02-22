@@ -83,7 +83,7 @@ class IC86PixelMapping(PixelMapping):
         Args:
             dtype: data type used for node features. e.g. ´torch.float´
             string_label: Name of the feature corresponding
-                to the DOM string number. Values Integers betweem 1 - 86
+                to the DOM string number. Values Integers between 1 - 86
             dom_number_label: Name of the feature corresponding
                 to the DOM number (1 - 60). Values Integers between 1 - 60
                 where 1 is the dom with the highest z coordinate.
@@ -108,7 +108,7 @@ class IC86PixelMapping(PixelMapping):
         self._dom_number_label = dom_number_label
         self._pixel_feature_names = pixel_feature_names
 
-        self._set_indeces(pixel_feature_names, dom_number_label, string_label)
+        self._set_indices(pixel_feature_names, dom_number_label, string_label)
 
         self._nb_cnn_features = (
             len(pixel_feature_names) - 2
@@ -136,7 +136,7 @@ class IC86PixelMapping(PixelMapping):
         self._mapping = df
         super().__init__(pixel_feature_names=pixel_feature_names)
 
-    def _set_indeces(
+    def _set_indices(
         self,
         feature_names: List[str],
         dom_number_label: str,
@@ -172,7 +172,8 @@ class IC86PixelMapping(PixelMapping):
             )
 
         # data.x is expected to be a tensor with shape (N, F)
-        # where N is the number of nodes and F is the number of features.
+        # where N is the number of pixels (DOMs) and F is the number
+        # of features. Each row represents a single pixel.
         x = data.x
 
         # Direct coordinate and feature extraction
@@ -218,7 +219,7 @@ class IC86PixelMapping(PixelMapping):
                         row[3],  # mat_ax1
                     ] = batch_row_features[i]
 
-        # unqueeze to add dimension for batching
+        # unsqueeze to add dimension for batching
         # with collate_fn Batch.from_data_list
         ret: List[torch.Tensor] = []
         if self._include_main_array:
@@ -293,7 +294,7 @@ class ExamplePrometheusMapping(PixelMapping):
         self._sensor_number_label = sensor_number_label
         self._pixel_feature_names = pixel_feature_names
 
-        self._set_indeces(
+        self._set_indices(
             pixel_feature_names, sensor_number_label, string_label
         )
 
@@ -319,7 +320,7 @@ class ExamplePrometheusMapping(PixelMapping):
         self._mapping = df
         super().__init__(pixel_feature_names=pixel_feature_names)
 
-    def _set_indeces(
+    def _set_indices(
         self,
         feature_names: List[str],
         sensor_number_label: str,
@@ -372,7 +373,7 @@ class ExamplePrometheusMapping(PixelMapping):
                 row[4],  # mat_ax2
             ] = batch_row_features[i]
 
-        # unqueeze to add dimension for batching
+        # unsqueeze to add dimension for batching
         # with collate_fn Batch.from_data_list
         ret: List[torch.Tensor] = [image_tensor.unsqueeze(0)]
 
