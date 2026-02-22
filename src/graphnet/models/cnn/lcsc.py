@@ -15,8 +15,9 @@ class LCSC(CNN):
     All credits go to Alexander Harnisch (
     https://github.com/AlexHarn)
 
-    Intended to be used with the IceCube 86 image containing
-    only the Main Array image.
+    Works with any single-image representation. The default
+    parameters were tested on IceCube simulation using the
+    Main Array image only.
     """
 
     def __init__(
@@ -532,7 +533,7 @@ class LCSC(CNN):
 
     def forward(self, data: Data) -> torch.Tensor:
         """Forward pass of the LCSC."""
-        assert len(data.x) == 1, "Only Main Array image is supported for LCSC"
+        assert len(data.x) == 1, "Only a single image is expected"
         x = data.x[0]
         if self.input_norm:
             x = self.input_normal(x)
