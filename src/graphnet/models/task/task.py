@@ -472,3 +472,62 @@ class StandardFlowTask(Task):
         # Compute nllh
         x = self._forward(x, labels)
         return self._transform_prediction(x)
+
+
+class UnsupervisedTask(Task):
+    """A `Task` for Unsupervised training with augmentations."""
+
+    def __init__(
+        self,
+        augment_like: Model,
+        loss_computation: Model,
+        **task_kwargs: Any,
+    ):
+        """Construct `UnsupervisedTask`.
+
+        Args:
+            augment_like: a model to manipulate the data in desired way.
+            Make sure that outputs match required inputs of loss_computation.
+            This is also the opportunity to extract all that is needed downstream
+            like a custom additional target.
+            loss_computation: second step in task that calculates the loss e.g.
+            based on the model output and extracted nodes
+        """
+        # only needed for task to work, not actually relevant
+        self._default_target_labels = ["t", "q"]
+        self._default_prediction_labels = [
+            s + "_pred" for s in self._default_target_labels
+        ]
+        self._hidden_size = 4
+
+        super().__init__(**task_kwargs)
+        self.aug = augment_like
+        self.loss = loss_computation
+
+    @property
+    def default_target_labels(self) -> List[str]:
+        """Return default target labels."""
+        return self._default_target_labels
+
+    @property
+    def default_prediction_labels(self) -> List[str]:
+        """Return default prediction labels."""
+        return self._default_prediction_labels
+
+    def nb_inputs(self) -> int:  # type: ignore
+        """Return number of conditional inputs assumed by task."""
+        return self._hidden_size
+
+    def augment(self, data: Data) -> Data:
+        """Perform augmentation or similar."""
+        aug_out = self.aug(data)
+        self.aug_aux = aug_out[1:]
+        return aug_out[0]
+
+    def compute_loss(self, pred: Tensor, data: Data) -> Tensor:
+        """Perform loss calc with model output, data and aux from augment."""
+        assert (
+            self.aug_aux is not None
+        ), "augmentation or similar must happen before loss calc"
+
+        return self.loss(pred, data, self.aug_aux)
