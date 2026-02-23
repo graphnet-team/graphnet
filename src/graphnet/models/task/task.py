@@ -514,7 +514,7 @@ class UnsupervisedTask(Task):
         """Return default prediction labels."""
         return self._default_prediction_labels
 
-    def nb_inputs(self) -> Union[int, None]:
+    def nb_inputs(self) -> int:  # type: ignore
         """Return number of conditional inputs assumed by task."""
         return self._hidden_size
 
