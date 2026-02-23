@@ -472,7 +472,8 @@ class StandardFlowTask(Task):
         # Compute nllh
         x = self._forward(x, labels)
         return self._transform_prediction(x)
-    
+
+
 class UnsupervisedTask(Task):
     """A `Task` for Unsupervised training with augmentations."""
 
@@ -492,9 +493,11 @@ class UnsupervisedTask(Task):
             loss_computation: second step in task that calculates the loss e.g.
             based on the model output and extracted nodes
         """
-        #only needed for task to work, not actually relevant
-        self._default_target_labels = ['t','q']
-        self._default_prediction_labels = [s + '_pred' for s in self._default_target_labels]
+        # only needed for task to work, not actually relevant
+        self._default_target_labels = ["t", "q"]
+        self._default_prediction_labels = [
+            s + "_pred" for s in self._default_target_labels
+        ]
         self._hidden_size = 4
 
         super().__init__(**task_kwargs)
@@ -517,20 +520,14 @@ class UnsupervisedTask(Task):
 
     def augment(self, data: Data) -> Data:
         """Perform augmentation or similar."""
-        self.rand_var = torch.randint(10, (1,))
         aug_out = self.aug(data)
         self.aug_aux = aug_out[1:]
         return aug_out[0]
-        
-    def compute_loss(
-        self, pred: Tensor, data: Data
-    ) -> Tensor:
-        """Perform loss calculation based on model output, data 
-        and aux from augment."""
-        print(self.rand_var)
+
+    def compute_loss(self, pred: Tensor, data: Data) -> Tensor:
+        """Perform loss calc with model output, data and aux from augment."""
         assert (
             self.aug_aux is not None
-        ), 'augmentation or similar must happen before loss calc'
+        ), "augmentation or similar must happen before loss calc"
 
         return self.loss(pred, data, self.aug_aux)
-        

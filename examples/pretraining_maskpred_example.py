@@ -3,7 +3,8 @@
 from typing import Tuple
 
 from graphnet.models.pretraining_maskpred import mask_pred_frame
-from graphnet.models.pretraining_maskpred import mask_pred_frame_new
+from graphnet.models.pretraining_maskpred import default_mask_augment
+from graphnet.models.pretraining_maskpred import default_loss_calc
 from graphnet.models import Model
 from torch_geometric.data import Data
 from graphnet.models.data_representation.graphs import KNNGraph
@@ -86,28 +87,20 @@ def test() -> None:
         break
 
     dummy_model = simple_model()
-    dummy_target = simple_target_gen()
-
-    # model = mask_pred_frame(
-    #     encoder=dummy_model,
-    #     encoder_out_dim=5,
-    #     masked_feat=[0, 1],
-    #     learned_masking_value=True,
-    #     final_loss="cosine",
-    #     add_charge_pred=True,
-    #     need_charge_rep=False,
-    #     custom_charge_target=dummy_target,
-    # )
 
     # encoder: Model,
     # bert_task: UnsupervisedTask,
     # encoder_out_dim: Optional[int] = None,
     # need_charge_rep: bool = False,
+    default_task = UnsupervisedTask(
+        default_mask_augment(), default_loss_calc()
+    )
 
-    model = mask_pred_frame_new(
+    model = mask_pred_frame(
         encoder=dummy_model,
+        bert_task=default_task,
         encoder_out_dim=5,
-        need_charge_rep=False
+        need_charge_rep=False,
     )
 
     out = model(data)
