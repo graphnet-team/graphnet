@@ -2,7 +2,8 @@
 
 from typing import Tuple
 
-from graphnet.models.gnn.pretraining_maskpred import mask_pred_frame
+from graphnet.models.pretraining_maskpred import mask_pred_frame
+from graphnet.models.pretraining_maskpred import mask_pred_frame_new
 from graphnet.models import Model
 from torch_geometric.data import Data
 from graphnet.models.data_representation.graphs import KNNGraph
@@ -17,6 +18,8 @@ from torch import Tensor
 
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.graphs.nodes import NodesAsPulses
+
+from graphnet.models.task.task import UnsupervisedTask
 
 
 class simple_model(Model):
@@ -67,7 +70,7 @@ def test() -> None:
         path=f"{EXAMPLE_DATA_DIR}/sqlite/prometheus/prometheus-events.db",
         pulsemaps="total",
         truth_table="mc_truth",
-        features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t"],
+        features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", "q"],
         truth=["injection_energy", "injection_zenith"],
         data_representation=graph_definition,
     )
@@ -85,19 +88,33 @@ def test() -> None:
     dummy_model = simple_model()
     dummy_target = simple_target_gen()
 
-    model = mask_pred_frame(
+    # model = mask_pred_frame(
+    #     encoder=dummy_model,
+    #     encoder_out_dim=5,
+    #     masked_feat=[0, 1],
+    #     learned_masking_value=True,
+    #     final_loss="cosine",
+    #     add_charge_pred=True,
+    #     need_charge_rep=False,
+    #     custom_charge_target=dummy_target,
+    # )
+
+    # encoder: Model,
+    # bert_task: UnsupervisedTask,
+    # encoder_out_dim: Optional[int] = None,
+    # need_charge_rep: bool = False,
+
+    model = mask_pred_frame_new(
         encoder=dummy_model,
         encoder_out_dim=5,
-        masked_feat=[0, 1],
-        learned_masking_value=True,
-        final_loss="cosine",
-        add_charge_pred=True,
-        need_charge_rep=False,
-        custom_charge_target=dummy_target,
+        need_charge_rep=False
     )
 
     out = model(data)
     print(out)
+
+    # for training
+    # model.fit(train_dataloader=dataloader, max_epochs=10, gpus=1)
 
     # for saving
     # model.save_pretrained_model('some/path')
