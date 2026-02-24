@@ -12,10 +12,10 @@ import pandas as pd
 
 from graphnet.utilities.decorators import final
 from graphnet.utilities.logging import Logger
-from graphnet.data.dataclasses import I3FileSet
+from graphnet.data.dataclasses import I3FileSet, SQLiteFileSet
 from graphnet.data.extractors.extractor import Extractor
 from graphnet.data.extractors.icecube import I3Extractor
-from graphnet.data.extractors.internal import ParquetExtractor
+from graphnet.data.extractors.internal import ParquetExtractor, SQLiteExtractor
 from graphnet.data.extractors.liquido import H5Extractor
 from graphnet.data.extractors.prometheus import PrometheusExtractor
 from graphnet.data.extractors.km3net import KM3NeTExtractor
@@ -70,7 +70,7 @@ class GraphNeTFileReader(Logger, ABC):
 
     def find_files(
         self, path: Union[str, List[str]]
-    ) -> Union[List[str], List[I3FileSet]]:
+    ) -> Union[List[str], List[I3FileSet], List[SQLiteFileSet]]:
         """Search directory for input files recursively.
 
         This method may be overwritten by custom implementations.
@@ -101,6 +101,7 @@ class GraphNeTFileReader(Logger, ABC):
             List[ParquetExtractor],
             List[H5Extractor],
             List[PrometheusExtractor],
+            List[SQLiteExtractor],
             List[KM3NeTExtractor],
         ],
     ) -> None:
@@ -123,6 +124,7 @@ class GraphNeTFileReader(Logger, ABC):
             List[ParquetExtractor],
             List[H5Extractor],
             List[PrometheusExtractor],
+            List[SQLiteExtractor],
             List[KM3NeTExtractor],
         ],
     ) -> None:
@@ -140,7 +142,8 @@ class GraphNeTFileReader(Logger, ABC):
 
     @final
     def validate_files(
-        self, input_files: Union[List[str], List[I3FileSet]]
+        self,
+        input_files: Union[List[str], List[I3FileSet], List[SQLiteFileSet]],
     ) -> None:
         """Check that the input files are accepted by the reader.
 
@@ -152,6 +155,8 @@ class GraphNeTFileReader(Logger, ABC):
             if isinstance(input_file, I3FileSet):
                 self._validate_file(input_file.i3_file)
                 self._validate_file(input_file.gcd_file)
+            elif isinstance(input_file, SQLiteFileSet):
+                self._validate_file(input_file.db_path)
             else:
                 self._validate_file(input_file)
 

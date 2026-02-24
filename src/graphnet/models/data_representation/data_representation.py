@@ -8,7 +8,6 @@ from numpy.random import default_rng, Generator
 
 from graphnet.models.detector import Detector
 from graphnet.models import Model
-from abc import abstractmethod
 
 
 class DataRepresentation(Model):
@@ -406,7 +405,6 @@ class DataRepresentation(Model):
                     )
         return data
 
-    @abstractmethod
     def _set_output_feature_names(
         self, input_feature_names: List[str]
     ) -> List[str]:

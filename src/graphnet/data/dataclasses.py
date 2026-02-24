@@ -11,6 +11,12 @@ class I3FileSet:  # noqa: D101
 
 
 @dataclass
+class SQLiteFileSet:  # noqa: D101
+    db_path: str
+    event_nos: List[int]
+
+
+@dataclass
 class Settings:
     """Dataclass for workers in I3Deployer."""
 

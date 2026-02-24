@@ -19,11 +19,11 @@ from .writers.graphnet_writer import GraphNeTWriter
 from .extractors import Extractor
 from .extractors.icecube import I3Extractor
 from .extractors.liquido import H5Extractor
-from .extractors.internal import ParquetExtractor
+from .extractors.internal import ParquetExtractor, SQLiteExtractor
 from .extractors.prometheus import PrometheusExtractor
 from .extractors.km3net import KM3NeTExtractor
 
-from .dataclasses import I3FileSet
+from .dataclasses import I3FileSet, SQLiteFileSet
 
 
 def init_global_index(index: Synchronized, output_files: List[str]) -> None:
@@ -52,6 +52,7 @@ class DataConverter(ABC, Logger):
             List[ParquetExtractor],
             List[H5Extractor],
             List[PrometheusExtractor],
+            List[SQLiteExtractor],
             List[KM3NeTExtractor],
         ],
         index_column: str = "event_no",
@@ -115,7 +116,7 @@ class DataConverter(ABC, Logger):
     @final
     def _launch_jobs(
         self,
-        input_files: Union[List[str], List[I3FileSet]],
+        input_files: Union[List[str], List[I3FileSet], List[SQLiteFileSet]],
     ) -> None:
         """Multi Processing Logic.
 
@@ -137,7 +138,9 @@ class DataConverter(ABC, Logger):
         self._update_shared_variables(pool)
 
     @final
-    def _process_file(self, file_path: Union[str, I3FileSet]) -> None:
+    def _process_file(
+        self, file_path: Union[str, I3FileSet, SQLiteFileSet]
+    ) -> None:
         """Process a single file.
 
         Calls file reader to recieve extracted output, event ids is
@@ -183,15 +186,32 @@ class DataConverter(ABC, Logger):
         )
 
     @final
-    def _create_file_name(self, input_file_path: Union[str, I3FileSet]) -> str:
+    def _create_file_name(
+        self, input_file_path: Union[str, I3FileSet, SQLiteFileSet]
+    ) -> str:
         """Convert input file path to an output file name."""
+        # Handle different input types
+        event_subset_suffix = ""
         if isinstance(input_file_path, I3FileSet):
-            input_file_path = input_file_path.i3_file
-        file_name = os.path.basename(input_file_path)
+            actual_path = input_file_path.i3_file
+        elif isinstance(input_file_path, SQLiteFileSet):
+            actual_path = input_file_path.db_path
+            # Add subset identifier based on first and last event numbers
+            event_nos = input_file_path.event_nos
+            if len(event_nos) > 0:
+                event_subset_suffix = f"_{event_nos[0]}_{event_nos[-1]}"
+        else:
+            actual_path = input_file_path
+
+        # Now actual_path is always a string
+        file_name = os.path.basename(actual_path)
+        file_name_without_extension = file_name
         for ext in self._file_reader._accepted_file_extensions:
             if file_name.endswith(ext):
                 file_name_without_extension = file_name.replace(ext, "")
-        return file_name_without_extension.replace(".i3", "")
+        return (file_name_without_extension + event_subset_suffix).replace(
+            ".i3", ""
+        )
 
     @final
     def _assign_event_no(
