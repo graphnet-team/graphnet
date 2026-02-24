@@ -515,7 +515,7 @@ class I3TruthExtractor(I3Extractor):
             sim_type = "genie"
         elif "noise" in input_file:
             sim_type = "noise"
-        elif frame.Has("EventProprties") or frame.Has(
+        elif frame.Has("EventProperties") or frame.Has(
             "LeptonInjectorProperties"
         ):
             sim_type = "LeptonInjector"
