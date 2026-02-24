@@ -20,12 +20,20 @@ AVAILABLE_RUN_IDS = [
 
 
 class SnowStormDataset(IceCubeHostedDataset):
-    """IceCube SnowStorm simulation dataset.
+    """IceCube SnowStorm Monte Carlo simulation dataset.
 
-    More information can be found at
-    https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations
-    This is a IceCube Collaboration simulation dataset.
-    Requires a username and password.
+    This module provides access to the SnowStorm simulation data and prepares it
+    for the training and evaluation of deep learning models in GraphNeT by parsing
+    the data into the GraphNeT-compatible CuratedDataset format.
+
+    The data is organized by SnowStorm RunIDs containing pulsemaps input features
+    along with event-level truth information.
+
+    The access to the data requires an IceCube Collaboration account.
+
+    References:
+    SnowStorm documentation: https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations
+    SnowStorm paper: arXiv:1909.01530
     """
 
     _experiment = "IceCube SnowStorm dataset"
@@ -91,7 +99,15 @@ class SnowStormDataset(IceCubeHostedDataset):
     def _prepare_args(
         self, backend: str, features: List[str], truth: List[str]
     ) -> Tuple[Dict[str, Any], Union[List[int], None], Union[List[int], None]]:
-        """Prepare arguments for dataset."""
+        """Prepare arguments for dataset.
+
+        Args:
+            backend: backend of dataset. Only "sqlite" is supported.
+            features: List of features from user to use as input.
+            truth: List of event-level truth from user.
+
+        Returns: Dataset arguments, train/val selection, test selection
+        """
         assert backend == "sqlite"
         dataset_paths = []
         for rid in self._run_ids:
@@ -106,7 +122,6 @@ class SnowStormDataset(IceCubeHostedDataset):
         # get RunID
         pattern = rf"{re.escape(self.dataset_dir)}/(\d+)/.*"
         event_counts: Dict[str, int] = {}
-        event_counts = {}
         for path in dataset_paths:
 
             # Extract the ID
@@ -175,7 +190,7 @@ class SnowStormDataset(IceCubeHostedDataset):
             runid_string += f"RunID {k} contains {v:10d} events\n"
             tot += v
         cls._comments = (
-            f"Contains ~{tot/1e6:.1f} million events:\n"
+            f"Contains ~{tot / 1e6:.1f} million events:\n"
             + runid_string
             + fixed_string
         )
