@@ -133,7 +133,7 @@ class DataConverter(ABC, Logger):
             self._process_file,
             tqdm(input_files, unit=" file(s)", colour="green"),
         ):
-            self.debug("processing file.")
+            pass
         self._update_shared_variables(pool)
 
     @final
