@@ -43,7 +43,37 @@ While |graphnet|\ GraphNeT can be installed into existing IceTray environments t
 
 Details on how to run these images as Apptainer environments are provided in the `Docker & Apptainer Images`_ section.
 
+For users who prefer to install |graphnet|\ GraphNeT directly into a CVMFS environment rather than using Docker/Apptainer images, you can follow the steps below. This example uses PyTorch 2.7.0 (CPU) — adjust the PyTorch version and extras according to the compatibility matrix above.
 
+.. code-block:: bash
+
+   # Download GraphNeT
+   git clone https://github.com/graphnet-team/graphnet.git
+   cd graphnet
+
+   # Open your favorite CVMFS distribution
+   eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh`
+   /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/RHEL_7_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
+
+   # Upgrade central packaging libraries
+   pip install --user --upgrade setuptools versioneer
+
+   # Install PyTorch (CPU)
+   pip3 install --user torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+   # Install GraphNeT
+   pip3 install --user -e .[torch-27,develop] -f https://data.pyg.org/whl/torch-2.7.0+cpu.html
+
+To use |graphnet|\ GraphNeT in a new terminal session, re-activate the CVMFS distribution and the virtual environment:
+
+.. code-block:: bash
+
+   eval `/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh`
+   /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/RHEL_7_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
+   source ~/graphnet_venv/bin/activate
+   python -c "import graphnet; print(graphnet.__version__)"
+
+which should print the version of |graphnet|\ GraphNeT.
 
 km3io (KM3NeT)
 ~~~~~~~~~~~~~~~~
