@@ -351,8 +351,11 @@ def add_custom_labels(
     for key, fn in custom_label_functions.items():
         try:
             label = fn(data)
-        except KeyError:
-            raise KeyError(f"Key {key} not found in data.")
+        except KeyError as e:
+            raise KeyError(
+                f"Label '{key}' could not be computed because "
+                f"its required data field {e} is missing."
+            ) from e
         if repeat_labels_by is not None:
             label = label.repeat(data.x.shape[repeat_labels_by], 1)
         data[key] = label
