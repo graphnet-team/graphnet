@@ -203,13 +203,25 @@ class I3HighestEparticleExtractor(I3Extractor):
                         break
             MMCTrackList = simclasses.I3MMCTrackList(temp_MMCTrackList)
         elif self._is_corsika & self.daughters:
-            MMCTrackList = [
-                track
-                for track in MMCTrackList
-                if frame[self.mctree].get_primary(track.GetI3Particle())
-                in primaries
-            ]
-            MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList)
+            MMCTrackList_filtered = []
+            for track in MMCTrackList:
+                try:
+                    if (
+                        frame[self.mctree].get_primary(track.GetI3Particle())
+                        in primaries
+                    ):
+                        MMCTrackList_filtered.append(track)
+                except RuntimeError as e:
+                    if "particle not found" in str(e):
+                        # get event header
+                        self.warning(
+                            f"Particle {track.GetI3Particle().id} not found in MCTree."
+                            f" Skipping track in event {frame['I3EventHeader']}"
+                        )
+                    else:
+                        raise e  # re-raise unexpected errors
+
+            MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList_filtered)
 
         MuonGun_tracks = np.array(
             MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
