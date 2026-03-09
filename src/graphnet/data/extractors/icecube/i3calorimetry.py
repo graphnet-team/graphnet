@@ -168,13 +168,26 @@ class I3Calorimetry(I3Extractor):
 
         MMCTrackList = frame[self.mmctracklist]
         if self.daughters:
-            MMCTrackList = [
-                track
-                for track in MMCTrackList
-                if frame[self.mctree].get_primary(track.GetI3Particle())
-                in primaries
-            ]
-            MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList)
+            MMCTrackList_filtered = []
+            for track in MMCTrackList:
+                try:
+                    if (
+                        frame[self.mctree].get_primary(track.GetI3Particle())
+                        in primaries
+                    ):
+                        MMCTrackList_filtered.append(track)
+                except RuntimeError as e:
+                    if "particle not found" in str(e):
+                        # log warning with event header
+                        self.warning(
+                            f"Could not find primary for track {track.GetI3Particle()}"
+                            f" in event {frame['I3EventHeader']}: {e}"
+                        )
+                        # continue to next track
+                    else:
+                        raise e
+
+            MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList_filtered)
 
         track_list = np.array(
             MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
@@ -202,8 +215,24 @@ class I3Calorimetry(I3Extractor):
                 continue
 
             # Get the corresponding energies
-            e0 = track.get_energy(intersections.first)
-            e1 = track.get_energy(intersections.second)
+            try:
+                e0 = track.get_energy(intersections.first)
+                e1 = track.get_energy(intersections.second)
+
+            except RuntimeError as e:
+                if (
+                    "sum of losses is smaller than "
+                    "energy at last checkpoint" in str(e)
+                ):
+                    hdr = frame["I3EventHeader"]
+                    e.add_note(f"Error in MuonGun track in event {hdr}")
+                    self.warning(
+                        f"Skipping bad track {hdr}: {e}"
+                        f"\nTotal energy of offending particle: {particle.energy}"
+                    )
+                    continue
+                else:
+                    raise
 
             # Accumulate
             e_deposited += e0 - e1
@@ -259,6 +288,9 @@ class I3Calorimetry(I3Extractor):
             length_list.append(p.length)
             cascade_bool.append(p.is_cascade)
             energies.append(p.energy)
+
+        if len(energies) == 0:
+            return 0.0
 
         length = np.array(length_list).astype(float)
         length[np.isnan(length)] = 0
