@@ -265,8 +265,8 @@ In this example, the writer will save the entire set of extractor outputs - a di
 
 
 
-Two writers are implemented in GraphNeT; the :code:`SQLiteWriter` and :code:`ParquetWriter`, each of which output files that are directly used for
-training by :code:`ParquetDataset` and :code:`SQLiteDataset`.
+Three writers are implemented in GraphNeT; the :code:`SQLiteWriter`, :code:`ParquetWriter`, and :code:`LMDBWriter`, each of which output files that are directly used for
+training by :code:`SQLiteDataset`, :code:`ParquetDataset`, and :code:`LMDBDataset` respectively.
 
 
 
