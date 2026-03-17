@@ -12,6 +12,7 @@ if has_torch_package():
     )
     from .parquet.parquet_dataset import ParquetDataset
     from .sqlite.sqlite_dataset import SQLiteDataset
+    from .lmdb.lmdb_dataset import LMDBDataset
 
     torch.multiprocessing.set_sharing_strategy("file_system")
 

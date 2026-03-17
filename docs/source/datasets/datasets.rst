@@ -155,18 +155,19 @@ It looks like so:
     </details>
 
 
-:code:`SQLiteDataset` & :code:`ParquetDataset`
-----------------------------------------------
+:code:`SQLiteDataset`, :code:`ParquetDataset` & :code:`LMDBDataset`
+--------------------------------------------------------------------
 
-The two specific implementations of :code:`Dataset` exists :
+The three specific implementations of :code:`Dataset` exists :
 
 - `ParquetDataset <https://graphnet-team.github.io/graphnet/api/graphnet.data.parquet.parquet_dataset.html>`_ : Constructs :code:`Dataset` from files created by :code:`ParquetWriter`.
 - `SQLiteDataset <https://graphnet-team.github.io/graphnet/api/graphnet.data.sqlite.sqlite_dataset.html>`_ : Constructs :code:`Dataset` from files created by :code:`SQLiteWriter`.
+- `LMDBDataset <https://graphnet-team.github.io/graphnet/api/graphnet.data.dataset.lmdb.lmdb_dataset.html>`_ : Constructs :code:`Dataset` from files created by :code:`LMDBWriter`.
 
 
 To instantiate a :code:`Dataset` from your files, you must specify at least the following:
 
-- :code:`pulsemaps`: These are named fields in your Parquet files, or tables in your SQLite databases, which store one or more pulse series from which you would like to create a dataset. A pulse series represents the detector response, in the form of a series of PMT hits or pulses, in some time window, usually triggered by a single neutrino or atmospheric muon interaction. This is the data that will be served as input to the `Model`.
+- :code:`pulsemaps`: These are named fields in your Parquet files, or tables in your SQLite or LMDB databases, which store one or more pulse series from which you would like to create a dataset. A pulse series represents the detector response, in the form of a series of PMT hits or pulses, in some time window, usually triggered by a single neutrino or atmospheric muon interaction. This is the data that will be served as input to the `Model`.
 -  :code:`truth_table`: The name of a table/array that contains the truth-level information associated with the pulse series, and should contain the truth labels that you would like to reconstruct or classify. Often this table will contain the true physical attributes of the primary particle — such as its true direction, energy, PID, etc. — and is therefore graph- or event-level (as opposed to the pulse series tables, which are node- or hit-level) truth information.
 -  :code:`features`: The names of the columns in your pulse series table(s) that you would like to include for training; they typically constitute the per-node/-hit features such as xyz-position of sensors, charge, and photon arrival times.
 -  :code:`truth`: The columns in your truth table/array that you would like to include in the dataset.
@@ -225,6 +226,32 @@ Or similarly for Parquet files:
 
     graph = dataset[0]  # torch_geometric.data.Data
 
+Or similarly for LMDB files:
+
+.. code-block:: python
+
+    from graphnet.data.dataset.lmdb.lmdb_dataset import LMDBDataset
+    from graphnet.models.detector.prometheus  import  Prometheus
+    from graphnet.models.graphs  import  KNNGraph
+    from graphnet.models.graphs.nodes  import  NodesAsPulses
+  
+    graph_definition = KNNGraph(
+        detector=Prometheus(),
+        node_definition=NodesAsPulses(),
+        nb_nearest_neighbours=8,
+    )
+
+    dataset = LMDBDataset(
+        path="data/examples/lmdb/prometheus/prometheus-events.lmdb",
+        pulsemaps="total",
+        truth_table="mc_truth",
+        features=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z", "t", ...],
+        truth=["injection_energy", "injection_zenith", ...],
+        graph_definiton = graph_definition,
+    )
+
+    graph = dataset[0]  # torch_geometric.data.Data
+
 It's then straightforward to create a :code:`DataLoader` for training, which will take care of batching, shuffling, and such:
 
 .. code-block:: python
@@ -250,10 +277,10 @@ By default, the following fields will be available in a graph built by :code:`Da
 - :code:`graph[truth_label] for truth_label in truth`: For each truth label in the :code:`truth` argument, the corresponding data is stored as a  :code:`[num_rows, 1]` dimensional tensor. E.g., :code:`graph["energy"] = torch.tensor(26, dtype=torch.float)`
 - :code:`graph[feature] for feature in features`: For each feature given in the :code:`features` argument, the corresponding data is stored as a  :code:`[num_rows, 1]` dimensional tensor. E.g., :code:`graph["sensor_x"] = torch.tensor([100, -200, -300, 200], dtype=torch.float)``
 
-:code:`SQLiteDataset` vs. :code:`ParquetDataset`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+:code:`SQLiteDataset` vs. :code:`ParquetDataset` vs. :code:`LMDBDataset`
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Besides working on different file formats, :code:`SQLiteDataset` and :code:`ParquetDataset` have significant differences, 
+Besides working on different file formats, :code:`SQLiteDataset`, :code:`ParquetDataset`, and :code:`LMDBDataset` have significant differences, 
 which may lead you to choose one over the other, depending on the problem at hand.
 
 :SQLiteDataset: SQLite provides fast random access to all events inside it. This makes plotting and subsampling your dataset particularly easy, 
@@ -265,12 +292,19 @@ which may lead you to choose one over the other, depending on the problem at han
                 This means that the subsampling of your dataset needs to happen prior to the conversion to :code:`parquet`, unlike `SQLiteDataset` which allows for subsampling after conversion, due to it's fast random access.
                 Conversion of files to :code:`parquet` is significantly faster than its :code:`SQLite` counterpart.
 
+:LMDBDataset: LMDB databases produced by :code:`LMDBWriter` store events as key-value pairs with configurable serialization methods (pickle, json, msgpack, dill). 
+              :code:`LMDBDataset` supports two modes: reading raw tables and computing data representations in real-time (similar to :code:`SQLiteDataset`), or reading pre-computed data representations directly from the database for faster access. 
+              LMDB provides fast random access similar to SQLite, while also supporting efficient storage of pre-computed graph representations, making it suitable for scenarios where you want to pre-compute and cache data representations. 
+              LMDB takes up roughly half the space of SQLite, and is therefore a good compromise between SQLite and Parquet.
+
 
 .. note::
 
     :code:`ParquetDataset` is scalable to ultra large datasets, but is more difficult to work with and has a higher memory consumption.
 
     :code:`SQLiteDataset` does not scale to very large datasets, but is easy to work with and has minimal memory consumption.
+
+    :code:`LMDBDataset` provides a balance between SQLite and Parquet, offering fast random access and support for pre-computed representations, making it well-suited for scenarios where data representations are computed once and reused multiple times.
 
 
 Choosing a subset of events using `selection`
@@ -297,7 +331,7 @@ would produce a :code:`Dataset` with only those five events.
 
 .. note::
 
-    For :code:`SQLiteDatase`, the :code:`selection` argument specifies individual events chosen for the dataset, 
+    For :code:`SQLiteDataset` and :code:`LMDBDataset`, the :code:`selection` argument specifies individual events chosen for the dataset, 
     whereas for :code:`ParquetDataset`, the :code:`selection` argument specifies which batches are used in the dataset.
 
 
@@ -347,12 +381,14 @@ You can combine multiple instances of :code:`Dataset` from GraphNeT into a singl
     from graphnet.data import EnsembleDataset
     from graphnet.data.parquet import ParquetDataset
     from graphnet.data.sqlite import SQLiteDataset
+    from graphnet.data.dataset.lmdb.lmdb_dataset import LMDBDataset
 
     dataset_1 = SQLiteDataset(...)
     dataset_2 = SQLiteDataset(...)
     dataset_3 = ParquetDataset(...)
+    dataset_4 = LMDBDataset(...)
 
-    ensemble_dataset = EnsembleDataset([dataset_1, dataset_2, dataset_3])
+    ensemble_dataset = EnsembleDataset([dataset_1, dataset_2, dataset_3, dataset_4])
 
 You can find a detailed example `here <https://github.com/graphnet-team/graphnet/blob/main/examples/02_data/04_ensemble_dataset.py>`_ .
 
