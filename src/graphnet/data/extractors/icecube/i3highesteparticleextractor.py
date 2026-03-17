@@ -126,11 +126,17 @@ class I3HighestEparticleExtractor(I3Extractor):
                 )
             except IndexError:
                 parent_type = 0
-
             if primary_energy > 0:
                 primary_fraction = EonEntrance / primary_energy
             else:
                 primary_fraction = -1
+
+            if visible_length != -1:
+                primary = frame[self.mctree].get_primary(HEParticle.id)
+                primary_is_nu, primary_type = primary.is_neutrino, primary.type
+            else:
+                primary_type = 0
+                primary_is_nu = False
             output.update(
                 {
                     "e_fraction_" + self._extractor_name: primary_fraction,
@@ -153,6 +159,8 @@ class I3HighestEparticleExtractor(I3Extractor):
                     "particle_type_" + self._extractor_name: HEParticle.type,
                     "containment_" + self._extractor_name: containment,
                     "parent_type_" + self._extractor_name: parent_type,
+                    "primary_type_" + self._extractor_name: primary_type,
+                    "primary_is_nu_" + self._extractor_name: primary_is_nu,
                 }
             )
 
@@ -182,7 +190,9 @@ class I3HighestEparticleExtractor(I3Extractor):
         primaries = [self.check_primary_energy(frame, p) for p in primaries]
 
         MMCTrackList = frame[self.mmctracklist]
-        if self.daughters:
+        if self.daughters & (
+            not self._is_corsika
+        ):  # expensive operation unecessary for CORSIKA
             temp_MMCTrackList = []
             for track in MMCTrackList:
                 for p in primaries:
@@ -192,6 +202,26 @@ class I3HighestEparticleExtractor(I3Extractor):
                         temp_MMCTrackList.append(track)
                         break
             MMCTrackList = simclasses.I3MMCTrackList(temp_MMCTrackList)
+        elif self._is_corsika & self.daughters:
+            MMCTrackList_filtered = []
+            for track in MMCTrackList:
+                try:
+                    if (
+                        frame[self.mctree].get_primary(track.GetI3Particle())
+                        in primaries
+                    ):
+                        MMCTrackList_filtered.append(track)
+                except RuntimeError as e:
+                    if "particle not found" in str(e):
+                        # get event header
+                        self.warning(
+                            f"Particle {track.GetI3Particle().id} not found in MCTree."
+                            f" Skipping track in event {frame['I3EventHeader']}"
+                        )
+                    else:
+                        raise e  # re-raise unexpected errors
+
+            MMCTrackList = simclasses.I3MMCTrackList(MMCTrackList_filtered)
 
         MuonGun_tracks = np.array(
             MuonGun.Track.harvest(frame[self.mctree], MMCTrackList)
