@@ -41,6 +41,7 @@ class simple_model(Model):
         x_rep = scatter(src=x, index=data.batch, dim=0, reduce="max")
         return x, x_rep
 
+
 def test() -> None:
     """Short test with saving at the end."""
     graph_definition = KNNGraph(
