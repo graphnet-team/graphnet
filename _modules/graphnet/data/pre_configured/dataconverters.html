@@ -351,14 +351,15 @@
   <h1 id="modules-graphnet-data-pre-configured-dataconverters--page-root">Source code for graphnet.data.pre_configured.dataconverters</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Pre-configured combinations of writers and readers."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataConverter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Reader</span><span class="p">,</span> <span class="n">ParquetReader</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetWriter</span><span class="p">,</span> <span class="n">SQLiteWriter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.readers</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Reader</span><span class="p">,</span> <span class="n">ParquetReader</span><span class="p">,</span> <span class="n">SQLiteReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.writers</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetWriter</span><span class="p">,</span> <span class="n">SQLiteWriter</span><span class="p">,</span> <span class="n">LMDBWriter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.icecube</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Extractor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetExtractor</span><span class="p">,</span> <span class="n">SQLiteExtractor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.icecube.utilities.i3_filters</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Filter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.data_representation</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataRepresentation</span>
 
 
 <div class="viewcode-block" id="I3ToParquetConverter">
@@ -462,6 +463,85 @@
 
 
 
+<div class="viewcode-block" id="I3ToLMDBConverter">
+<a class="viewcode-back" href="../../../../api/graphnet.data.pre_configured.dataconverters.html#graphnet.data.pre_configured.dataconverters.I3ToLMDBConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">I3ToLMDBConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preconfigured DataConverter for converting i3 files to LMDB files."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">gcd_rescue</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">extractors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Extractor</span><span class="p">],</span>
+        <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">i3_filters</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">I3Filter</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># type: ignore</span>
+        <span class="n">map_size_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
+        <span class="n">serialization</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">"pickle"</span><span class="p">,</span>
+        <span class="n">data_representation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">DataRepresentation</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DataRepresentation</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pulsemap_extractor_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">truth_extractor_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">truth_label_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Convert I3 files to LMDB.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gcd_rescue: gcd_rescue: Path to a GCD file that will be used if</span>
+<span class="sd">                        no GCD file is found in subfolder. `I3Reader` will</span>
+<span class="sd">                        recursively search the input directory for I3-GCD file</span>
+<span class="sd">                        pairs. By IceCube convention,</span>
+<span class="sd">                        a folder containing i3 files will have an</span>
+<span class="sd">                        accompanying GCD file. However, in some cases, this</span>
+<span class="sd">                        convention is broken. In cases where a folder contains</span>
+<span class="sd">                        i3 files but no GCD file, the `gcd_rescue` is used</span>
+<span class="sd">                        instead.</span>
+<span class="sd">            extractors: The `Extractor`(s) that will be applied to the input</span>
+<span class="sd">                        files.</span>
+<span class="sd">            outdir: The directory to save the files in.</span>
+<span class="sd">            index_column: Name of the event id column added to the events.</span>
+<span class="sd">                          Defaults to "event_no".</span>
+<span class="sd">            num_workers: The number of CPUs used for parallel processing.</span>
+<span class="sd">                         Defaults to 1 (no multiprocessing).</span>
+<span class="sd">            i3_filters: Instances of `I3Filter` to filter PFrames. Defaults to</span>
+<span class="sd">                        `NullSplitI3Filter`.</span>
+<span class="sd">            map_size_bytes: LMDB map size. Defaults to 8 GiB.</span>
+<span class="sd">            serialization: Either a string in {"pickle", "json", "msgpack",</span>
+<span class="sd">                         "dill"}, or a callable that takes an object and</span>
+<span class="sd">                         returns bytes. Defaults to "pickle".</span>
+<span class="sd">            data_representation: Optional `DataRepresentation` instance or list</span>
+<span class="sd">                                of instances. If provided together with</span>
+<span class="sd">                                extractor_name and truth_extractor_name,</span>
+<span class="sd">                                the stored value will contain a</span>
+<span class="sd">                                "data_representations" field with outputs from</span>
+<span class="sd">                                each `data_representation.forward(...)` keyed</span>
+<span class="sd">                                by class name.</span>
+<span class="sd">            pulsemap_extractor_name: Name of the extractor providing</span>
+<span class="sd">                                    pulse-level features.</span>
+<span class="sd">            truth_extractor_name: Name of the extractor providing event-level</span>
+<span class="sd">                                 truth labels.</span>
+<span class="sd">            truth_label_names: Names of truth columns to include.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">file_reader</span><span class="o">=</span><span class="n">I3Reader</span><span class="p">(</span><span class="n">gcd_rescue</span><span class="o">=</span><span class="n">gcd_rescue</span><span class="p">,</span> <span class="n">i3_filters</span><span class="o">=</span><span class="n">i3_filters</span><span class="p">),</span>
+            <span class="n">save_method</span><span class="o">=</span><span class="n">LMDBWriter</span><span class="p">(</span>
+                <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+                <span class="n">map_size_bytes</span><span class="o">=</span><span class="n">map_size_bytes</span><span class="p">,</span>
+                <span class="n">serialization</span><span class="o">=</span><span class="n">serialization</span><span class="p">,</span>
+                <span class="n">data_representation</span><span class="o">=</span><span class="n">data_representation</span><span class="p">,</span>
+                <span class="n">pulsemap_extractor_name</span><span class="o">=</span><span class="n">pulsemap_extractor_name</span><span class="p">,</span>
+                <span class="n">truth_extractor_name</span><span class="o">=</span><span class="n">truth_extractor_name</span><span class="p">,</span>
+                <span class="n">truth_label_names</span><span class="o">=</span><span class="n">truth_label_names</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">extractors</span><span class="o">=</span><span class="n">extractors</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+            <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="ParquetToSQLiteConverter">
 <a class="viewcode-back" href="../../../../api/graphnet.data.pre_configured.dataconverters.html#graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParquetToSQLiteConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
@@ -494,6 +574,79 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">file_reader</span><span class="o">=</span><span class="n">ParquetReader</span><span class="p">(),</span>
             <span class="n">save_method</span><span class="o">=</span><span class="n">SQLiteWriter</span><span class="p">(),</span>
+            <span class="n">extractors</span><span class="o">=</span><span class="n">extractors</span><span class="p">,</span>
+            <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
+            <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+            <span class="n">outdir</span><span class="o">=</span><span class="n">outdir</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SQLiteToLMDBConverter">
+<a class="viewcode-back" href="../../../../api/graphnet.data.pre_configured.dataconverters.html#graphnet.data.pre_configured.dataconverters.SQLiteToLMDBConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SQLiteToLMDBConverter</span><span class="p">(</span><span class="n">DataConverter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Preconfigured DataConverter for converting SQLite to LMDB files.</span>
+
+<span class="sd">    This class converts SQLite files written by SQLiteWriter to LMDB.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">extractors</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SQLiteExtractor</span><span class="p">],</span>
+        <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">index_column</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"event_no"</span><span class="p">,</span>
+        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">subset_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+        <span class="n">map_size_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">,</span>
+        <span class="n">serialization</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="nb">bytes</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">"pickle"</span><span class="p">,</span>
+        <span class="n">data_representation</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span>
+            <span class="n">Union</span><span class="p">[</span><span class="n">DataRepresentation</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">DataRepresentation</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pulsemap_extractor_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">truth_extractor_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">truth_label_names</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Convert internal SQLite files to LMDB.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            extractors: The `Extractor`(s) that will be applied to the input</span>
+<span class="sd">                        files.</span>
+<span class="sd">            outdir: The directory to save the files in.</span>
+<span class="sd">            index_column: Name of the event id column added to the events.</span>
+<span class="sd">                          Defaults to "event_no".</span>
+<span class="sd">            num_workers: The number of CPUs used for parallel processing.</span>
+<span class="sd">                         Defaults to 1 (no multiprocessing).</span>
+<span class="sd">            subset_size: Number of events per fileset chunk for SQLiteReader.</span>
+<span class="sd">                         Defaults to 10000.</span>
+<span class="sd">            map_size_bytes: LMDB map size. Defaults to 8 GiB.</span>
+<span class="sd">            serialization: Either a string in {"pickle", "json", "msgpack",</span>
+<span class="sd">                         "dill"}, or a callable that takes an object and</span>
+<span class="sd">                         returns bytes. Defaults to "pickle".</span>
+<span class="sd">            data_representation: Optional `DataRepresentation` instance or list</span>
+<span class="sd">                                of instances. If provided together with</span>
+<span class="sd">                                extractor_name and truth_extractor_name,</span>
+<span class="sd">                                names and truth labels, the stored value will</span>
+<span class="sd">                                contain a "data_representations" field with</span>
+<span class="sd">                                outputs from each</span>
+<span class="sd">                                `data_representation.forward(...)` keyed by</span>
+<span class="sd">                                class name.</span>
+<span class="sd">            pulsemap_extractor_name: Name of the extractor providing</span>
+<span class="sd">                                    pulse-level features.</span>
+<span class="sd">            truth_extractor_name: Name of the extractor providing event-level</span>
+<span class="sd">                                 truth labels.</span>
+<span class="sd">            truth_label_names: Names of truth columns to include.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">file_reader</span><span class="o">=</span><span class="n">SQLiteReader</span><span class="p">(</span><span class="n">subset_size</span><span class="o">=</span><span class="n">subset_size</span><span class="p">),</span>
+            <span class="n">save_method</span><span class="o">=</span><span class="n">LMDBWriter</span><span class="p">(</span>
+                <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>
+                <span class="n">map_size_bytes</span><span class="o">=</span><span class="n">map_size_bytes</span><span class="p">,</span>
+                <span class="n">serialization</span><span class="o">=</span><span class="n">serialization</span><span class="p">,</span>
+                <span class="n">data_representation</span><span class="o">=</span><span class="n">data_representation</span><span class="p">,</span>
+                <span class="n">pulsemap_extractor_name</span><span class="o">=</span><span class="n">pulsemap_extractor_name</span><span class="p">,</span>
+                <span class="n">truth_extractor_name</span><span class="o">=</span><span class="n">truth_extractor_name</span><span class="p">,</span>
+                <span class="n">truth_label_names</span><span class="o">=</span><span class="n">truth_label_names</span><span class="p">,</span>
+            <span class="p">),</span>
             <span class="n">extractors</span><span class="o">=</span><span class="n">extractors</span><span class="p">,</span>
             <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
             <span class="n">index_column</span><span class="o">=</span><span class="n">index_column</span><span class="p">,</span>

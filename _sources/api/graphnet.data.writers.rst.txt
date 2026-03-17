@@ -16,6 +16,7 @@ writers
    :maxdepth: 2
 
    graphnet.data.writers.graphnet_writer
+   graphnet.data.writers.lmdb_writer
    graphnet.data.writers.parquet_writer
    graphnet.data.writers.sqlite_writer
 

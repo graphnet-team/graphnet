@@ -14,6 +14,7 @@ dataset
 .. toctree::
    :maxdepth: 2
 
+   graphnet.data.dataset.lmdb
    graphnet.data.dataset.parquet
    graphnet.data.dataset.sqlite
 

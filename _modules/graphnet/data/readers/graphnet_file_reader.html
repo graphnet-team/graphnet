@@ -363,10 +363,10 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.decorators</span><span class="w"> </span><span class="kn">import</span> <span class="n">final</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.utilities.logging</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3FileSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3FileSet</span><span class="p">,</span> <span class="n">SQLiteFileSet</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extractor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.icecube</span><span class="w"> </span><span class="kn">import</span> <span class="n">I3Extractor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.internal</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetExtractor</span><span class="p">,</span> <span class="n">SQLiteExtractor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.liquido</span><span class="w"> </span><span class="kn">import</span> <span class="n">H5Extractor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.prometheus</span><span class="w"> </span><span class="kn">import</span> <span class="n">PrometheusExtractor</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors.km3net</span><span class="w"> </span><span class="kn">import</span> <span class="n">KM3NeTExtractor</span>
@@ -425,7 +425,7 @@
 <a class="viewcode-back" href="../../../../api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.find_files">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3FileSet</span><span class="p">]]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3FileSet</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">SQLiteFileSet</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">"""Search directory for input files recursively.</span>
 
 <span class="sd">        This method may be overwritten by custom implementations.</span>
@@ -459,6 +459,7 @@
             <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">H5Extractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">PrometheusExtractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">SQLiteExtractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">KM3NeTExtractor</span><span class="p">],</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -482,6 +483,7 @@
             <span class="n">List</span><span class="p">[</span><span class="n">ParquetExtractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">H5Extractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">PrometheusExtractor</span><span class="p">],</span>
+            <span class="n">List</span><span class="p">[</span><span class="n">SQLiteExtractor</span><span class="p">],</span>
             <span class="n">List</span><span class="p">[</span><span class="n">KM3NeTExtractor</span><span class="p">],</span>
         <span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -501,7 +503,8 @@
 <a class="viewcode-back" href="../../../../api/graphnet.data.readers.graphnet_file_reader.html#graphnet.data.readers.graphnet_file_reader.GraphNeTFileReader.validate_files">[docs]</a>
     <span class="nd">@final</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">validate_files</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">input_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3FileSet</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_files</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">I3FileSet</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">SQLiteFileSet</span><span class="p">]],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Check that the input files are accepted by the reader.</span>
 
@@ -513,6 +516,8 @@
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">I3FileSet</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_validate_file</span><span class="p">(</span><span class="n">input_file</span><span class="o">.</span><span class="n">i3_file</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_validate_file</span><span class="p">(</span><span class="n">input_file</span><span class="o">.</span><span class="n">gcd_file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">SQLiteFileSet</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_validate_file</span><span class="p">(</span><span class="n">input_file</span><span class="o">.</span><span class="n">db_path</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_validate_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span></div>
 

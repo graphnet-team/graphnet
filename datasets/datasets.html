@@ -309,9 +309,9 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#dataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Dataset</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#sqlitedataset-parquetdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> & <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#sqlitedataset-parquetdataset-lmdbdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code>, <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> & <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#sqlitedataset-vs-parquetdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a>
+        <li class="md-nav__item"><a href="#sqlitedataset-vs-parquetdataset-vs-lmdbdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -338,12 +338,12 @@
     <li class="md-nav__item">
     
     
-      <a href="#sqlitedataset-parquetdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> & <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a>
+      <a href="#sqlitedataset-parquetdataset-lmdbdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code>, <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> & <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code></a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
     
-      <a href="#sqlitedataset-vs-parquetdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a>
+      <a href="#sqlitedataset-vs-parquetdataset-vs-lmdbdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code></a>
       
     
     </li></ul>
@@ -425,9 +425,9 @@
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#dataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">Dataset</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#sqlitedataset-parquetdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> & <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#sqlitedataset-parquetdataset-lmdbdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code>, <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> & <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#sqlitedataset-vs-parquetdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code></a>
+        <li class="md-nav__item"><a href="#sqlitedataset-vs-parquetdataset-vs-lmdbdataset" class="md-nav__link"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -576,16 +576,17 @@ It looks like so:</p>
 </pre></div>
 </div>
 </details></section>
-<section id="sqlitedataset-parquetdataset">
-<h2 id="sqlitedataset-parquetdataset"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> &amp; <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code><a class="headerlink" href="#sqlitedataset-parquetdataset" title="Link to this heading">¶</a></h2>
-<p>The two specific implementations of <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> exists :</p>
+<section id="sqlitedataset-parquetdataset-lmdbdataset">
+<h2 id="sqlitedataset-parquetdataset-lmdbdataset"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code>, <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> &amp; <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code><a class="headerlink" href="#sqlitedataset-parquetdataset-lmdbdataset" title="Link to this heading">¶</a></h2>
+<p>The three specific implementations of <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> exists :</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.data.parquet.parquet_dataset.html">ParquetDataset</a> : Constructs <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> from files created by <code class="code docutils literal notranslate"><span class="pre">ParquetWriter</span></code>.</p></li>
 <li><p><a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.data.sqlite.sqlite_dataset.html">SQLiteDataset</a> : Constructs <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> from files created by <code class="code docutils literal notranslate"><span class="pre">SQLiteWriter</span></code>.</p></li>
+<li><p><a class="reference external" href="https://graphnet-team.github.io/graphnet/api/graphnet.data.dataset.lmdb.lmdb_dataset.html">LMDBDataset</a> : Constructs <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> from files created by <code class="code docutils literal notranslate"><span class="pre">LMDBWriter</span></code>.</p></li>
 </ul>
 <p>To instantiate a <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> from your files, you must specify at least the following:</p>
 <ul class="simple">
-<li><p><code class="code docutils literal notranslate"><span class="pre">pulsemaps</span></code>: These are named fields in your Parquet files, or tables in your SQLite databases, which store one or more pulse series from which you would like to create a dataset. A pulse series represents the detector response, in the form of a series of PMT hits or pulses, in some time window, usually triggered by a single neutrino or atmospheric muon interaction. This is the data that will be served as input to the <cite>Model</cite>.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">pulsemaps</span></code>: These are named fields in your Parquet files, or tables in your SQLite or LMDB databases, which store one or more pulse series from which you would like to create a dataset. A pulse series represents the detector response, in the form of a series of PMT hits or pulses, in some time window, usually triggered by a single neutrino or atmospheric muon interaction. This is the data that will be served as input to the <cite>Model</cite>.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">truth_table</span></code>: The name of a table/array that contains the truth-level information associated with the pulse series, and should contain the truth labels that you would like to reconstruct or classify. Often this table will contain the true physical attributes of the primary particle — such as its true direction, energy, PID, etc. — and is therefore graph- or event-level (as opposed to the pulse series tables, which are node- or hit-level) truth information.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">features</span></code>: The names of the columns in your pulse series table(s) that you would like to include for training; they typically constitute the per-node/-hit features such as xyz-position of sensors, charge, and photon arrival times.</p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">truth</span></code>: The columns in your truth table/array that you would like to include in the dataset.</p></li>
@@ -639,6 +640,30 @@ It looks like so:</p>
 <span class="n">graph</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># torch_geometric.data.Data</span>
 </pre></div>
 </div>
+<p>Or similarly for LMDB files:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataset.lmdb.lmdb_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">LMDBDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.detector.prometheus</span><span class="w">  </span><span class="kn">import</span>  <span class="n">Prometheus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w">  </span><span class="kn">import</span>  <span class="n">KNNGraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs.nodes</span><span class="w">  </span><span class="kn">import</span>  <span class="n">NodesAsPulses</span>
+
+<span class="n">graph_definition</span> <span class="o">=</span> <span class="n">KNNGraph</span><span class="p">(</span>
+    <span class="n">detector</span><span class="o">=</span><span class="n">Prometheus</span><span class="p">(),</span>
+    <span class="n">node_definition</span><span class="o">=</span><span class="n">NodesAsPulses</span><span class="p">(),</span>
+    <span class="n">nb_nearest_neighbours</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">LMDBDataset</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">=</span><span class="s2">"data/examples/lmdb/prometheus/prometheus-events.lmdb"</span><span class="p">,</span>
+    <span class="n">pulsemaps</span><span class="o">=</span><span class="s2">"total"</span><span class="p">,</span>
+    <span class="n">truth_table</span><span class="o">=</span><span class="s2">"mc_truth"</span><span class="p">,</span>
+    <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s2">"sensor_pos_x"</span><span class="p">,</span> <span class="s2">"sensor_pos_y"</span><span class="p">,</span> <span class="s2">"sensor_pos_z"</span><span class="p">,</span> <span class="s2">"t"</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">truth</span><span class="o">=</span><span class="p">[</span><span class="s2">"injection_energy"</span><span class="p">,</span> <span class="s2">"injection_zenith"</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+    <span class="n">graph_definiton</span> <span class="o">=</span> <span class="n">graph_definition</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># torch_geometric.data.Data</span>
+</pre></div>
+</div>
 <p>It’s then straightforward to create a <code class="code docutils literal notranslate"><span class="pre">DataLoader</span></code> for training, which will take care of batching, shuffling, and such:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataloader</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
 
@@ -662,9 +687,9 @@ By default, the following fields will be available in a graph built by <code cla
 <li><p><code class="code docutils literal notranslate"><span class="pre">graph[truth_label]</span> <span class="pre">for</span> <span class="pre">truth_label</span> <span class="pre">in</span> <span class="pre">truth</span></code>: For each truth label in the <code class="code docutils literal notranslate"><span class="pre">truth</span></code> argument, the corresponding data is stored as a  <code class="code docutils literal notranslate"><span class="pre">[num_rows,</span> <span class="pre">1]</span></code> dimensional tensor. E.g., <code class="code docutils literal notranslate"><span class="pre">graph["energy"]</span> <span class="pre">=</span> <span class="pre">torch.tensor(26,</span> <span class="pre">dtype=torch.float)</span></code></p></li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">graph[feature]</span> <span class="pre">for</span> <span class="pre">feature</span> <span class="pre">in</span> <span class="pre">features</span></code>: For each feature given in the <code class="code docutils literal notranslate"><span class="pre">features</span></code> argument, the corresponding data is stored as a  <code class="code docutils literal notranslate"><span class="pre">[num_rows,</span> <span class="pre">1]</span></code> dimensional tensor. E.g., <code class="code docutils literal notranslate"><span class="pre">graph["sensor_x"]</span> <span class="pre">=</span> <span class="pre">torch.tensor([100,</span> <span class="pre">-200,</span> <span class="pre">-300,</span> <span class="pre">200],</span> <span class="pre">dtype=torch.float)`</span></code></p></li>
 </ul>
-<section id="sqlitedataset-vs-parquetdataset">
-<h3 id="sqlitedataset-vs-parquetdataset"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code><a class="headerlink" href="#sqlitedataset-vs-parquetdataset" title="Link to this heading">¶</a></h3>
-<p>Besides working on different file formats, <code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> and <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> have significant differences,
+<section id="sqlitedataset-vs-parquetdataset-vs-lmdbdataset">
+<h3 id="sqlitedataset-vs-parquetdataset-vs-lmdbdataset"><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> vs. <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code><a class="headerlink" href="#sqlitedataset-vs-parquetdataset-vs-lmdbdataset" title="Link to this heading">¶</a></h3>
+<p>Besides working on different file formats, <code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code>, <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code>, and <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code> have significant differences,
 which may lead you to choose one over the other, depending on the problem at hand.</p>
 <dl class="field-list simple">
 <dt class="field-odd">SQLiteDataset<span class="colon">:</span></dt>
@@ -678,11 +703,18 @@ Unlike SQLite, the query speed remains constant regardless of dataset size, but 
 This means that the subsampling of your dataset needs to happen prior to the conversion to <code class="code docutils literal notranslate"><span class="pre">parquet</span></code>, unlike <cite>SQLiteDataset</cite> which allows for subsampling after conversion, due to it’s fast random access.
 Conversion of files to <code class="code docutils literal notranslate"><span class="pre">parquet</span></code> is significantly faster than its <code class="code docutils literal notranslate"><span class="pre">SQLite</span></code> counterpart.</p>
 </dd>
+<dt class="field-odd">LMDBDataset<span class="colon">:</span></dt>
+<dd class="field-odd"><p>LMDB databases produced by <code class="code docutils literal notranslate"><span class="pre">LMDBWriter</span></code> store events as key-value pairs with configurable serialization methods (pickle, json, msgpack, dill).
+<code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code> supports two modes: reading raw tables and computing data representations in real-time (similar to <code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code>), or reading pre-computed data representations directly from the database for faster access.
+LMDB provides fast random access similar to SQLite, while also supporting efficient storage of pre-computed graph representations, making it suitable for scenarios where you want to pre-compute and cache data representations.
+LMDB takes up roughly half the space of SQLite, and is therefore a good compromise between SQLite and Parquet.</p>
+</dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p><code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code> is scalable to ultra large datasets, but is more difficult to work with and has a higher memory consumption.</p>
 <p><code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> does not scale to very large datasets, but is easy to work with and has minimal memory consumption.</p>
+<p><code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code> provides a balance between SQLite and Parquet, offering fast random access and support for pre-computed representations, making it well-suited for scenarios where data representations are computed once and reused multiple times.</p>
 </div>
 </section>
 </section>
@@ -705,7 +737,7 @@ Conversion of files to <code class="code docutils literal notranslate"><span cla
 <p>would produce a <code class="code docutils literal notranslate"><span class="pre">Dataset</span></code> with only those five events.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For <code class="code docutils literal notranslate"><span class="pre">SQLiteDatase</span></code>, the <code class="code docutils literal notranslate"><span class="pre">selection</span></code> argument specifies individual events chosen for the dataset,
+<p>For <code class="code docutils literal notranslate"><span class="pre">SQLiteDataset</span></code> and <code class="code docutils literal notranslate"><span class="pre">LMDBDataset</span></code>, the <code class="code docutils literal notranslate"><span class="pre">selection</span></code> argument specifies individual events chosen for the dataset,
 whereas for <code class="code docutils literal notranslate"><span class="pre">ParquetDataset</span></code>, the <code class="code docutils literal notranslate"><span class="pre">selection</span></code> argument specifies which batches are used in the dataset.</p>
 </div>
 </section>
@@ -746,12 +778,14 @@ In these cases you can define a <a class="reference external" href="https://grap
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnsembleDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.parquet</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParquetDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.sqlite</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.dataset.lmdb.lmdb_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">LMDBDataset</span>
 
 <span class="n">dataset_1</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">dataset_2</span> <span class="o">=</span> <span class="n">SQLiteDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">dataset_3</span> <span class="o">=</span> <span class="n">ParquetDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">dataset_4</span> <span class="o">=</span> <span class="n">LMDBDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 
-<span class="n">ensemble_dataset</span> <span class="o">=</span> <span class="n">EnsembleDataset</span><span class="p">([</span><span class="n">dataset_1</span><span class="p">,</span> <span class="n">dataset_2</span><span class="p">,</span> <span class="n">dataset_3</span><span class="p">])</span>
+<span class="n">ensemble_dataset</span> <span class="o">=</span> <span class="n">EnsembleDataset</span><span class="p">([</span><span class="n">dataset_1</span><span class="p">,</span> <span class="n">dataset_2</span><span class="p">,</span> <span class="n">dataset_3</span><span class="p">,</span> <span class="n">dataset_4</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>You can find a detailed example <a class="reference external" href="https://github.com/graphnet-team/graphnet/blob/main/examples/02_data/04_ensemble_dataset.py">here</a> .</p>

@@ -712,8 +712,11 @@
                     <span class="s2">"will be deprecated in GraphNeT 2.0. "</span>
                     <span class="s2">"Please use `data_representation` instead."</span>
                 <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">elif</span> <span class="s2">"LMDBDataset"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__mro__</span>
+            <span class="p">]:</span>
                 <span class="c1"># Code stops</span>
+                <span class="c1"># Check class hierarchy as string to avoid circular import</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                     <span class="s2">"__init__() missing 1 required keyword argument:"</span>
                     <span class="s2">"'data_representation'"</span>
@@ -721,7 +724,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">data_representation</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_string_column</span> <span class="o">=</span> <span class="n">data_representation</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">string_index_name</span>
+        <span class="k">if</span> <span class="n">data_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_string_column</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_string_column</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">data_representation</span><span class="o">.</span><span class="n">_detector</span><span class="o">.</span><span class="n">string_index_name</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">node_truth</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node_truth_table</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -815,6 +823,11 @@
             <span class="s2">"DeprecationWarning: `_graph_definition` will be deprecated in"</span>
             <span class="s2">" GraphNeT 2.0. Please use `_data_representation` instead."</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">"No data representation available. Provide a data "</span>
+                <span class="s2">"representation when constructing the dataset."</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span>
 
     <span class="c1"># Abstract method(s)</span>
@@ -1080,7 +1093,14 @@
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span>
         <span class="c1"># Construct graph data object</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
+                <span class="s2">"Real-time computation of data representation requires "</span>
+                <span class="s2">"a data representation to be provided. Please provide a "</span>
+                <span class="s2">"data representation when initializing the dataset."</span>
+            <span class="p">)</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_representation</span><span class="p">(</span>
             <span class="n">input_features</span><span class="o">=</span><span class="n">node_features</span><span class="p">,</span>
             <span class="n">input_feature_names</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_features</span><span class="p">,</span>

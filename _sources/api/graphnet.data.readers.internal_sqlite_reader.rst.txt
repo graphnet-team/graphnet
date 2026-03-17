@@ -1,0 +1,8 @@
+
+internal\_sqlite\_reader
+========================
+
+.. automodule:: graphnet.data.readers.internal_sqlite_reader
+   :members:
+   :show-inheritance:
+   :undoc-members:

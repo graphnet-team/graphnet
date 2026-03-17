@@ -416,6 +416,10 @@
         <li class="md-nav__item"><a href="#graphnet.training.utils.save_results" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_results()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.utils.save_selection" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_selection()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.utils.add_custom_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_custom_labels()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.utils.add_truth" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_truth()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -468,6 +472,20 @@
     
     
       <a href="#graphnet.training.utils.save_selection" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_selection()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.utils.add_custom_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_custom_labels()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.utils.add_truth" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_truth()</span></code></a>
       
     
     </li></ul>
@@ -527,6 +545,10 @@
         <li class="md-nav__item"><a href="#graphnet.training.utils.save_results" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_results()</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.utils.save_selection" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">save_selection()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.utils.add_custom_labels" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_custom_labels()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.utils.add_truth" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">add_truth()</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -689,6 +711,51 @@ last elements, which will always be 0 and 1 respectively.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.training.utils.add_custom_labels">
+<span class="sig-prename descclassname"><span class="pre">graphnet.training.utils.</span></span><span class="sig-name descname"><span class="pre">add_custom_labels</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_label_functions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat_labels_by</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/utils.html#add_custom_labels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.utils.add_custom_labels" title="Link to this definition">¶</a></dt>
+<dd><p>Add custom labels to the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span>) – data where the label will be stored</p></li>
+<li><p><strong>custom_label_functions</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span>) – dictionary containing the custom
+label functions</p></li>
+<li><p><strong>repeat_labels_by</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – If specified, repeats the labels along the
+specified dimension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>data with labels</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.training.utils.add_truth">
+<span class="sig-prename descclassname"><span class="pre">graphnet.training.utils.</span></span><span class="sig-name descname"><span class="pre">add_truth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_dicts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repeat_labels_by</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/utils.html#add_truth"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.utils.add_truth" title="Link to this definition">¶</a></dt>
+<dd><p>Add truth labels from ´truth_dicts´ to ´data´.</p>
+<p>I.e. ´data[key] = truth_dict[key]´</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span>) – data where the label will be stored</p></li>
+<li><p><strong>truth_dicts</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]]</span>) – dictionary containing the labels</p></li>
+<li><p><strong>dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – dtype of the truth labels</p></li>
+<li><p><strong>repeat_labels_by</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – If specified, repeats the labels along the
+specified dimension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>data with labels</p>
 </dd>
 </dl>
 </dd></dl>

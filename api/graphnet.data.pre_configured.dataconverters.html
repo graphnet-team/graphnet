@@ -378,7 +378,11 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.I3ToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3ToSQLiteConverter</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.I3ToLMDBConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3ToLMDBConverter</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.SQLiteToLMDBConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SQLiteToLMDBConverter</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -402,7 +406,21 @@
     <li class="md-nav__item">
     
     
+      <a href="#graphnet.data.pre_configured.dataconverters.I3ToLMDBConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3ToLMDBConverter</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="#graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.data.pre_configured.dataconverters.SQLiteToLMDBConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SQLiteToLMDBConverter</span></code></a>
       
     
     </li></ul>
@@ -553,7 +571,11 @@
         </li>
         <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.I3ToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3ToSQLiteConverter</span></code></a>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.I3ToLMDBConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">I3ToLMDBConverter</span></code></a>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ParquetToSQLiteConverter</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.data.pre_configured.dataconverters.SQLiteToLMDBConverter" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SQLiteToLMDBConverter</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -638,6 +660,53 @@ Defaults to 1 (no multiprocessing).</p></li>
 </dl>
 </dd></dl>
 <dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.pre_configured.dataconverters.I3ToLMDBConverter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.data.pre_configured.dataconverters.</span></span><span class="sig-name descname"><span class="pre">I3ToLMDBConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gcd_rescue</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i3_filters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_size_bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialization</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_label_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/pre_configured/dataconverters.html#I3ToLMDBConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pre_configured.dataconverters.I3ToLMDBConverter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.data.dataconverter.html#graphnet.data.dataconverter.DataConverter" title="graphnet.data.dataconverter.DataConverter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataConverter</span></code></a></p>
+<p>Preconfigured DataConverter for converting i3 files to LMDB files.</p>
+<p>Convert I3 files to LMDB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gcd_rescue</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – gcd_rescue: Path to a GCD file that will be used if
+no GCD file is found in subfolder. <cite>I3Reader</cite> will
+recursively search the input directory for I3-GCD file
+pairs. By IceCube convention,
+a folder containing i3 files will have an
+accompanying GCD file. However, in some cases, this
+convention is broken. In cases where a folder contains
+i3 files but no GCD file, the <cite>gcd_rescue</cite> is used
+instead.</p></li>
+<li><p><strong>extractors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.icecube.i3extractor.html#graphnet.data.extractors.icecube.i3extractor.I3Extractor" title="graphnet.data.extractors.icecube.i3extractor.I3Extractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Extractor</span></code></a>]</span>) – The <a href="#id5"><span class="problematic" id="id6">`</span></a>Extractor`(s) that will be applied to the input
+files.</p></li>
+<li><p><strong>outdir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory to save the files in.</p></li>
+<li><p><strong>index_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – Name of the event id column added to the events.
+Defaults to “event_no”.</p></li>
+<li><p><strong>num_workers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – The number of CPUs used for parallel processing.
+Defaults to 1 (no multiprocessing).</p></li>
+<li><p><strong>i3_filters</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter" title="graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Filter</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.icecube.utilities.i3_filters.html#graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter" title="graphnet.data.extractors.icecube.utilities.i3_filters.I3Filter"><code class="xref py py-class docutils literal notranslate"><span class="pre">I3Filter</span></code></a>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Instances of <cite>I3Filter</cite> to filter PFrames. Defaults to
+<cite>NullSplitI3Filter</cite>.</p></li>
+<li><p><strong>map_size_bytes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">8589934592</span></code>) – LMDB map size. Defaults to 8 GiB.</p></li>
+<li><p><strong>serialization</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">'pickle'</span></code>) – Either a string in {“pickle”, “json”, “msgpack”,
+“dill”}, or a callable that takes an object and
+returns bytes. Defaults to “pickle”.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional <cite>DataRepresentation</cite> instance or list
+of instances. If provided together with
+extractor_name and truth_extractor_name,
+the stored value will contain a
+“data_representations” field with outputs from
+each <cite>data_representation.forward(…)</cite> keyed
+by class name.</p></li>
+<li><p><strong>pulsemap_extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the extractor providing
+pulse-level features.</p></li>
+<li><p><strong>truth_extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the extractor providing event-level
+truth labels.</p></li>
+<li><p><strong>truth_label_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Names of truth columns to include.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.data.pre_configured.dataconverters.</span></span><span class="sig-name descname"><span class="pre">ParquetToSQLiteConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/pre_configured/dataconverters.html#ParquetToSQLiteConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pre_configured.dataconverters.ParquetToSQLiteConverter" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.data.dataconverter.html#graphnet.data.dataconverter.DataConverter" title="graphnet.data.dataconverter.DataConverter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataConverter</span></code></a></p>
@@ -648,7 +717,7 @@ SQLite.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>extractors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.internal.parquet_extractor.html#graphnet.data.extractors.internal.parquet_extractor.ParquetExtractor" title="graphnet.data.extractors.internal.parquet_extractor.ParquetExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParquetExtractor</span></code></a>]</span>) – The <a href="#id5"><span class="problematic" id="id6">`</span></a>Extractor`(s) that will be applied to the input
+<li><p><strong>extractors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.internal.parquet_extractor.html#graphnet.data.extractors.internal.parquet_extractor.ParquetExtractor" title="graphnet.data.extractors.internal.parquet_extractor.ParquetExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ParquetExtractor</span></code></a>]</span>) – The <a href="#id7"><span class="problematic" id="id8">`</span></a>Extractor`(s) that will be applied to the input
 files.</p></li>
 <li><p><strong>outdir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory to save the files in.</p></li>
 <li><p><strong>icetray_verbose</strong> – Set the level of verbosity of icetray.
@@ -657,6 +726,46 @@ Defaults to 0.</p></li>
 Defaults to “event_no”.</p></li>
 <li><p><strong>num_workers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – The number of CPUs used for parallel processing.
 Defaults to 1 (no multiprocessing).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.data.pre_configured.dataconverters.SQLiteToLMDBConverter">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.data.pre_configured.dataconverters.</span></span><span class="sig-name descname"><span class="pre">SQLiteToLMDBConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subset_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">map_size_bytes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">serialization</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_extractor_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_label_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/pre_configured/dataconverters.html#SQLiteToLMDBConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.pre_configured.dataconverters.SQLiteToLMDBConverter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.data.dataconverter.html#graphnet.data.dataconverter.DataConverter" title="graphnet.data.dataconverter.DataConverter"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataConverter</span></code></a></p>
+<p>Preconfigured DataConverter for converting SQLite to LMDB files.</p>
+<p>This class converts SQLite files written by SQLiteWriter to LMDB.</p>
+<p>Convert internal SQLite files to LMDB.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>extractors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.data.extractors.internal.sqlite_extractor.html#graphnet.data.extractors.internal.sqlite_extractor.SQLiteExtractor" title="graphnet.data.extractors.internal.sqlite_extractor.SQLiteExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SQLiteExtractor</span></code></a>]</span>) – The <a href="#id9"><span class="problematic" id="id10">`</span></a>Extractor`(s) that will be applied to the input
+files.</p></li>
+<li><p><strong>outdir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The directory to save the files in.</p></li>
+<li><p><strong>index_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'event_no'</span></code>) – Name of the event id column added to the events.
+Defaults to “event_no”.</p></li>
+<li><p><strong>num_workers</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1</span></code>) – The number of CPUs used for parallel processing.
+Defaults to 1 (no multiprocessing).</p></li>
+<li><p><strong>subset_size</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">10000</span></code>) – Number of events per fileset chunk for SQLiteReader.
+Defaults to 10000.</p></li>
+<li><p><strong>map_size_bytes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">8589934592</span></code>) – LMDB map size. Defaults to 8 GiB.</p></li>
+<li><p><strong>serialization</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">'pickle'</span></code>) – Either a string in {“pickle”, “json”, “msgpack”,
+“dill”}, or a callable that takes an object and
+returns bytes. Defaults to “pickle”.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional <cite>DataRepresentation</cite> instance or list
+of instances. If provided together with
+extractor_name and truth_extractor_name,
+names and truth labels, the stored value will
+contain a “data_representations” field with
+outputs from each
+<cite>data_representation.forward(…)</cite> keyed by
+class name.</p></li>
+<li><p><strong>pulsemap_extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the extractor providing
+pulse-level features.</p></li>
+<li><p><strong>truth_extractor_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of the extractor providing event-level
+truth labels.</p></li>
+<li><p><strong>truth_label_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Names of truth columns to include.</p></li>
 </ul>
 </dd>
 </dl>

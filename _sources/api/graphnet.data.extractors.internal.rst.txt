@@ -16,6 +16,7 @@ internal
    :maxdepth: 2
 
    graphnet.data.extractors.internal.parquet_extractor
+   graphnet.data.extractors.internal.sqlite_extractor
 
 
 
