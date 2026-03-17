@@ -61,7 +61,7 @@
 </script>
   
   
-    <title>Installation &#8212; graphnet  documentation</title>
+    <title>Quick Start &#8212; graphnet  documentation</title>
 
 <style>
   dt:target {
@@ -166,7 +166,7 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           <span class="md-header-nav__topic">GraphNeT</span>
-          <span class="md-header-nav__topic"> Installation </span>
+          <span class="md-header-nav__topic"> Quick Start </span>
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -283,21 +283,33 @@
     
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> Installation </label>
+    <label class="md-nav__link md-nav__link--active" for="__toc"> Quick Start </label>
     
-      <a href="#" class="md-nav__link md-nav__link--active">Installation</a>
+      <a href="#" class="md-nav__link md-nav__link--active">Quick Start</a>
       
         
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#installation-install--page-root" class="md-nav__link">Installation</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#installation-install--page-root" class="md-nav__link">Quick Start</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#quick-start" class="md-nav__link">Quick Start</a>
+        <li class="md-nav__item"><a href="#installing-from-source" class="md-nav__link">Installing From Source</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#installation-into-experiment-specific-environments" class="md-nav__link">Installation into experiment-specific Environments</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#icetray-icecube-p-one" class="md-nav__link">IceTray (IceCube & P-ONE)</a>
         </li>
-        <li class="md-nav__item"><a href="#installation-in-cvmfs-icecube" class="md-nav__link">Installation in CVMFS (IceCube)</a>
+        <li class="md-nav__item"><a href="#km3io-km3net" class="md-nav__link">km3io (KM3NeT)</a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
         </li>
-        <li class="md-nav__item"><a href="#installation-with-km3io-km3net" class="md-nav__link">Installation with km3io (KM3NeT)</a>
+        <li class="md-nav__item"><a href="#docker-apptainer-images" class="md-nav__link">Docker & Apptainer Images</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#running-docker-images-as-apptainer-environments" class="md-nav__link">Running Docker images as Apptainer environments</a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -307,22 +319,43 @@
     <li class="md-nav__item">
     
     
-      <a href="#quick-start" class="md-nav__link">Quick Start</a>
+      <a href="#installing-from-source" class="md-nav__link">Installing From Source</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#installation-into-experiment-specific-environments" class="md-nav__link">Installation into experiment-specific Environments</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#icetray-icecube-p-one" class="md-nav__link">IceTray (IceCube & P-ONE)</a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#installation-in-cvmfs-icecube" class="md-nav__link">Installation in CVMFS (IceCube)</a>
+      <a href="#km3io-km3net" class="md-nav__link">km3io (KM3NeT)</a>
       
+    
+    </li></ul>
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#installation-with-km3io-km3net" class="md-nav__link">Installation with km3io (KM3NeT)</a>
+      <a href="#docker-apptainer-images" class="md-nav__link">Docker & Apptainer Images</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#running-docker-images-as-apptainer-environments" class="md-nav__link">Running Docker images as Apptainer environments</a>
       
+    
+    </li></ul>
     
     </li></ul>
     
@@ -383,13 +416,25 @@
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#installation-install--page-root" class="md-nav__link">Installation</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#installation-install--page-root" class="md-nav__link">Quick Start</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#quick-start" class="md-nav__link">Quick Start</a>
+        <li class="md-nav__item"><a href="#installing-from-source" class="md-nav__link">Installing From Source</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#installation-into-experiment-specific-environments" class="md-nav__link">Installation into experiment-specific Environments</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#icetray-icecube-p-one" class="md-nav__link">IceTray (IceCube & P-ONE)</a>
         </li>
-        <li class="md-nav__item"><a href="#installation-in-cvmfs-icecube" class="md-nav__link">Installation in CVMFS (IceCube)</a>
+        <li class="md-nav__item"><a href="#km3io-km3net" class="md-nav__link">km3io (KM3NeT)</a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
         </li>
-        <li class="md-nav__item"><a href="#installation-with-km3io-km3net" class="md-nav__link">Installation with km3io (KM3NeT)</a>
+        <li class="md-nav__item"><a href="#docker-apptainer-images" class="md-nav__link">Docker & Apptainer Images</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#running-docker-images-as-apptainer-environments" class="md-nav__link">Running Docker images as Apptainer environments</a>
+        </li></ul>
+            </nav>
         </li></ul>
             </nav>
         </li>
@@ -402,11 +447,11 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="installation">
-<h1 id="installation-install--page-root">Installation<a class="headerlink" href="#installation-install--page-root" title="Link to this heading">¶</a></h1>
-<p><a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT is available for Python 3.9 to Python 3.11.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
+  <section id="quick-start">
+<h1 id="installation-install--page-root">Quick Start<a class="headerlink" href="#installation-install--page-root" title="Link to this heading">¶</a></h1>
+<p>Here we provide a quick start guide for getting you started with <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT.</p>
+<section id="installing-from-source">
+<h2 id="installing-from-source">Installing From Source<a class="headerlink" href="#installing-from-source" title="Link to this heading">¶</a></h2>
 <p>We recommend installing <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT in a separate environment, e.g. using a Python virtual environment or Anaconda (see details on installation <a class="reference external" href="https://www.anaconda.com/products/individual">here</a>).
 With conda installed, you can create a fresh environment like so</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create the environment with minimal packages</span>
@@ -422,9 +467,6 @@ pip<span class="w"> </span>list
 <span class="c1"># Now you're ready to proceed with the installation</span>
 </pre></div>
 </div>
-</div>
-<section id="quick-start">
-<h2 id="quick-start">Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h2>
 <style>
   .quick-start {
     display: flex;
@@ -483,12 +525,14 @@ pip<span class="w"> </span>list
 </style>
 <div class="quick-start">
 <div class="title-column">
+<div>GraphNeT</div>
 <div>PyTorch</div>
 <div>Your OS</div>
 <div>CUDA</div>
 <div>Run:</div>
 </div>
 <div class="content-column">
+<div class="row" id="graphnet"></div>
 <div class="row" id="torch"></div>
 <div class="row" id="os"></div>
 <div class="row" id="cuda"></div>
@@ -497,6 +541,11 @@ pip<span class="w"> </span>list
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+  var graphnetList = [
+    ['v1.8.0', 'v1.8.0 (Stable)'],
+    ['latest', 'Latest'],
+  ];
+
   var torchList = [
     ['torch-2.7.0', 'PyTorch 2.7.0'],
     ['torch-2.6.0', 'PyTorch 2.6.0'],
@@ -530,6 +579,10 @@ pip<span class="w"> </span>list
     "torch-2.5.1": "torch-25"
   };
 
+  for (var i = 0; i < graphnetList.length; i++) {
+    $("#graphnet").append('<div id="' + graphnetList[i][0] + '">' + graphnetList[i][1] + '</div>');
+  }
+
   for (var i = 0; i < torchList.length; i++) {
     $("#torch").append('<div id="' + torchList[i][0] + '">' + torchList[i][1] + '</div>');
   }
@@ -548,42 +601,53 @@ pip<span class="w"> </span>list
   }
 
   function updateCommand() {
-  var torch = $("#command").attr("torch");
-  var os = $("#command").attr("os");
-  var cuda = $("#command").attr("cuda");
+    var graphnet = $("#command").attr("graphnet");
+    var torch = $("#command").attr("torch");
+    var os = $("#command").attr("os");
+    var cuda = $("#command").attr("cuda");
 
-  if (!torch || !os || !cuda) return;
+    if (!graphnet || !torch || !os || !cuda) return;
 
-  if (os === "macos" && cuda !== "cpu") {
-    $("#command pre").text('# macOS binaries do not support CUDA');
-    return;
-  }
+    if (os === "macos" && cuda !== "cpu") {
+      $("#command pre").text('# macOS binaries do not support CUDA');
+      return;
+    }
 
-  if (cuda !== "cpu" && torch === "no_torch") {
-    $("#command pre").text('# GPU acceleration is not available without PyTorch.');
-    return;
-  }
+    if (cuda !== "cpu" && torch === "no_torch") {
+      $("#command pre").text('# GPU acceleration is not available without PyTorch.');
+      return;
+    }
 
-  if (
-    (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
-    (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
-    (torch === "torch-2.5.1" && (cuda === "cu126" || cuda === "cu128"))
-  ) {
-    $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
-    return;
-  }
+    if (
+      (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
+      (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
+      (torch === "torch-2.5.1" && (cuda === "cu126" || cuda === "cu128"))
+    ) {
+      $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
+      return;
+    }
 
-  if (torch === "no_torch") {
-    $("#command pre").text("pip3 install -e .[develop]");
-  } else {
+    var gitCloneCmd =
+      graphnet === "v1.8.0"
+        ? "git clone --branch v1.8.0 --depth 1 https://github.com/graphnet-team/graphnet.git"
+        : "git clone https://github.com/graphnet-team/graphnet.git";
+
+    if (torch === "no_torch") {
+      $("#command pre").text([
+        "# Clone and Install GraphNeT",
+        gitCloneCmd,
+        "cd graphnet",
+        "pip3 install -e .[develop]"
+      ].join("\n"));
+      return;
+    }
+
     var torchVersion = torchWheelMap[torch];
     var extrasPrefix = torchExtrasMap[torch];
-
     var installLine = "pip3 install -e .[" + extrasPrefix + "]";
     var wheelUrl = "https://data.pyg.org/whl/torch-" + torchVersion + "+" + (cuda === "cpu" ? "cpu" : cuda) + ".html";
     installLine += " -f " + wheelUrl;
 
-    // --- Added PyTorch wheels install command here ---
     var pytorchInstallCommands = {
       "torch-2.5.1": {
         "cu118": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118",
@@ -605,18 +669,15 @@ pip<span class="w"> </span>list
       }
     };
 
-    // Pick PyTorch install command or fallback to cpu
-    var pytorchCmd = pytorchInstallCommands[torch][cuda];
-    if (!pytorchCmd) {
-      pytorchCmd = pytorchInstallCommands[torch]["cpu"] || "pip3 install torch torchvision torchaudio";
-    }
+    var pytorchCmd = pytorchInstallCommands[torch][cuda] ||
+                     pytorchInstallCommands[torch]["cpu"];
 
     $("#command pre").text([
-      "# Install PyTorch ",
+      "# Install PyTorch",
       pytorchCmd,
       " ",
       "# Clone and Install GraphNeT",
-      "git clone https://github.com/graphnet-team/graphnet.git",
+      gitCloneCmd,
       "cd graphnet",
       installLine,
       " ",
@@ -624,8 +685,6 @@ pip<span class="w"> </span>list
       "pip3 install git+https://github.com/thoglu/jammy_flows.git"
     ].join("\n"));
   }
-}
-
 
   $(".quick-start .content-column .row div").click(function () {
     $(this).parent().children().removeClass("selected");
@@ -634,55 +693,70 @@ pip<span class="w"> </span>list
     updateCommand();
   });
 
-  // Default selection
+  $("#graphnet").children().get(0).click();
   $("#torch").children().get(0).click();
   $("#linux").click();
   $("#cpu").click();
 </script>
 <p>When installation is completed, you should be able to run <a class="reference external" href="https://github.com/graphnet-team/graphnet/tree/main/examples">the examples</a>.</p>
-</section>
-<section id="installation-in-cvmfs-icecube">
-<h2 id="installation-in-cvmfs-icecube">Installation in CVMFS (IceCube)<a class="headerlink" href="#installation-in-cvmfs-icecube" title="Link to this heading">¶</a></h2>
-<p>You may want <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT to be able to interface with IceTray, e.g., when converting I3 files to a deep learning friendly file format, or when deploying models as part of an IceTray chain. In these cases, you need to install <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT in a Python runtime that has IceTray installed.</p>
-<p>To achieve this, we recommend installing <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT into a CVMFS with IceTray installed, like so:</p>
+<section id="installation-into-experiment-specific-environments">
+<h3 id="installation-into-experiment-specific-environments">Installation into experiment-specific Environments<a class="headerlink" href="#installation-into-experiment-specific-environments" title="Link to this heading">¶</a></h3>
+<p>Users may want to install <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT into an environment that is specific to their experiment. This is useful for converting data from the experiment into a deep learning friendly file format, or when deploying models as part of an experiment-specific processing chain.</p>
+<p>Below are some examples of how to install <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT into experiment-specific environments. If your experiment is missing, please feel free to open an issue on the <a class="reference external" href="https://github.com/graphnet-team/graphnet/issues">GitHub repository</a> and/or contribute a pull request.</p>
+<section id="icetray-icecube-p-one">
+<h4 id="icetray-icecube-p-one">IceTray (IceCube &amp; P-ONE)<a class="headerlink" href="#icetray-icecube-p-one" title="Link to this heading">¶</a></h4>
+<p>While <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT can be installed into existing IceTray environments that is either built from source or distributed through CVMFS, we highly recommend to instead use our existing Docker images that contain both IceTray and GraphNeT. These images are created by installing GraphNeT into public Docker images from the IceCube Collaboration.</p>
+<p>Details on how to run these images as Apptainer environments are provided in the <a class="reference internal" href="#docker-apptainer-images">Docker &amp; Apptainer Images</a> section.</p>
+<p>For users who prefer to install <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT directly into a CVMFS environment rather than using Docker/Apptainer images, you can follow the steps below. This example uses PyTorch 2.7.0 (CPU) — adjust the PyTorch version and extras according to the compatibility matrix above.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Download GraphNeT</span>
 git<span class="w"> </span>clone<span class="w"> </span>https://github.com/graphnet-team/graphnet.git
 <span class="nb">cd</span><span class="w"> </span>graphnet
+
 <span class="c1"># Open your favorite CVMFS distribution</span>
 <span class="nb">eval</span><span class="w"> </span><span class="sb">`</span>/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh<span class="sb">`</span>
 /cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/RHEL_7_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
-<span class="c1"># Update central utils</span>
-pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span><span class="s1">'pip&gt;=20'</span>
-pip<span class="w"> </span>install<span class="w"> </span>wheel<span class="w"> </span><span class="nv">setuptools</span><span class="o">==</span><span class="m">59</span>.5.0
-<span class="c1"># Install graphnet into the CVMFS as a user</span>
-pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>-r<span class="w"> </span>requirements/torch_cpu.txt<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>torch,develop<span class="o">]</span>
+
+<span class="c1"># Upgrade central packaging libraries</span>
+pip<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>--upgrade<span class="w"> </span>setuptools<span class="w"> </span>versioneer
+
+<span class="c1"># Install PyTorch (CPU)</span>
+pip3<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.7.0<span class="w"> </span>torchvision<span class="w"> </span>torchaudio<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
+
+<span class="c1"># Install GraphNeT</span>
+pip3<span class="w"> </span>install<span class="w"> </span>--user<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>torch-27,develop<span class="o">]</span><span class="w"> </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.7.0+cpu.html
 </pre></div>
 </div>
-<p>Once installed, <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT is available whenever you open the CVMFS locally.</p>
+<p>To use <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT in a new terminal session, re-activate the CVMFS distribution and the virtual environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">eval</span><span class="w"> </span><span class="sb">`</span>/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/setup.sh<span class="sb">`</span>
+/cvmfs/icecube.opensciencegrid.org/py3-v4.2.1/RHEL_7_x86_64/metaprojects/icetray/v1.5.1/env-shell.sh
+<span class="nb">source</span><span class="w"> </span>~/graphnet_venv/bin/activate
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">"import graphnet; print(graphnet.__version__)"</span>
+</pre></div>
+</div>
+<p>which should print the version of <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT.</p>
 </section>
-<section id="installation-with-km3io-km3net">
-<h2 id="installation-with-km3io-km3net">Installation with km3io (KM3NeT)<a class="headerlink" href="#installation-with-km3io-km3net" title="Link to this heading">¶</a></h2>
-<p>This installation is only necessary if you want to process KM3NeT/ARCA or KM3NeT/ORCA files. Processing means converting them from a <cite>.root</cite> offline format into a suitable format for training using <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>. If you already have your KM3NeT data in <cite>SQLite</cite> or <cite>parquet</cite> format and only want to train a model or perform inference on this database, this specific installation is not needed.</p>
-<p>Note that this installation will add <cite>km3io</cite> ensuring it is built with a compatible versions. The steps below are provided for a conda environment, with an enviroment created in the same way it is done above in this page, but feel free to choose a different enviroment setup.</p>
-<p>As mentioned, it is highly reommended to create a conda enviroment where your installation is done to do not mess up any dependecy. It can be done with the following commands:</p>
+<section id="km3io-km3net">
+<h4 id="km3io-km3net">km3io (KM3NeT)<a class="headerlink" href="#km3io-km3net" title="Link to this heading">¶</a></h4>
+<p>Note that this installation will add <cite>km3io</cite> ensuring it is built with a compatible version. The steps below are provided for a conda environment, with an environment created in the same way it is done above in this page, but feel free to choose a different environment setup.</p>
+<p>As mentioned, it is highly recommended to create a conda environment where your installation is done to do not mess up any dependency. It can be done with the following commands:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an environment with Python 3.10</span>
 conda<span class="w"> </span>create<span class="w"> </span>-p<span class="w"> </span>&lt;full-path-to-env&gt;<span class="w"> </span>--no-default-packages<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.10<span class="w"> </span>-y
 <span class="c1"># Activate the environment and move to the graphnet repository you just cloned. If using conda:</span>
 conda<span class="w"> </span>activate<span class="w"> </span>&lt;full-path-to-env&gt;
 </pre></div>
 </div>
-<p>The isntallation of GraphNeT is then done by:</p>
+<p>The installation of GraphNeT is then done by:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/graphnet-team/graphnet.git
 <span class="nb">cd</span><span class="w"> </span>graphnet
 </pre></div>
 </div>
-<p>Choose the appropriate requirements file based on your system. Here there is just an example of installation with PyTorch-2.5.1 but check the matrix above for a full idea of all the versions can be installed.</p>
-<p>For CPU-only enviroments:</p>
+<p>Choose the appropriate requirements file based on your system. Here there is just an example of installation with PyTorch-2.5.1 but check the matrix above for a full idea of all the versions that can be installed.</p>
+<p>For CPU-only environments:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.20.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cpu
 pip3<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>torch-25<span class="o">]</span><span class="w"> </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.5.1+cpu.html
 </pre></div>
 </div>
-<p>For GPU enviroments with, for instance, CUDA 11.8 drivers:</p>
+<p>For GPU environments with, for instance, CUDA 11.8 drivers:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3<span class="w"> </span>install<span class="w"> </span><span class="nv">torch</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span><span class="nv">torchvision</span><span class="o">==</span><span class="m">0</span>.20.1<span class="w"> </span><span class="nv">torchaudio</span><span class="o">==</span><span class="m">2</span>.5.1<span class="w"> </span>--index-url<span class="w"> </span>https://download.pytorch.org/whl/cu118
 pip3<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>torch-25<span class="o">]</span><span class="w"> </span>-f<span class="w"> </span>https://data.pyg.org/whl/torch-2.5.1+cu118.html
 </pre></div>
@@ -692,10 +766,32 @@ pip3<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </
 pip3<span class="w"> </span>install<span class="w"> </span><span class="nv">km3io</span><span class="o">==</span><span class="m">1</span>.2.0
 </pre></div>
 </div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>We recommend installing <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT without GPU in clean metaprojects.</p>
+</section>
+</section>
+</section>
+<section id="docker-apptainer-images">
+<h2 id="docker-apptainer-images">Docker &amp; Apptainer Images<a class="headerlink" href="#docker-apptainer-images" title="Link to this heading">¶</a></h2>
+<p>We provide Docker images for <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT. The list of available Docker images with standalone installations of GraphNeT can be found in DockerHub at <a class="reference external" href="https://hub.docker.com/r/rorsoe/graphnet/tags">https://hub.docker.com/r/rorsoe/graphnet/tags</a>.</p>
+<p>New images are created automatically when a new release is published, and when a new PR is merged to the main branch (latest). Each image comes in both GPU and CPU versions, but with a limited selection of pytorch versions. The Dockerfile for the standalone images is <a class="reference external" href="https://github.com/graphnet-team/graphnet/blob/main/docker/standalone/Dockerfile">here</a>.</p>
+<p>In compliment to standalone images, we also provide experiment-specific images for:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://hub.docker.com/r/rorsoe/graphnet_icetray/tags">IceCube &amp; P-ONE (IceTray+GraphNeT)</a> which is built using this <a class="reference external" href="https://github.com/graphnet-team/graphnet/blob/main/docker/icetray/Dockerfile">Dockerfile</a>.</p></li>
+<li><p>KM3NeT (km3io+GraphNeT) (Coming Soon)</p></li>
+</ul>
+<section id="running-docker-images-as-apptainer-environments">
+<h3 id="running-docker-images-as-apptainer-environments">Running Docker images as Apptainer environments<a class="headerlink" href="#running-docker-images-as-apptainer-environments" title="Link to this heading">¶</a></h3>
+<p>While Docker images require sudo-rights to run, they may be converted to Apptainer images and used as virtual environments - providing a convienient way to run <a class="reference internal" href="../_images/favicon.svg"><img alt="graphnet" class="align-bottom" src="../_images/favicon.svg" style="width: 25px; height: 25px;"/></a>GraphNeT without sudo-rights or the need to install it on your system.</p>
+<p>To run one of the Docker images as a Apptainer environment, you can use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--cleanenv<span class="w"> </span>--env<span class="w"> </span><span class="nv">PYTHONNOUSERSITE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>--env<span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="w"> </span>docker://&lt;path_to_image&gt;<span class="w"> </span>bash
+</pre></div>
 </div>
+<p>where &lt;path_to_image&gt; is the path to the image you want to use from the DockerHub. For example, if <cite>rorsoe/graphnet:graphnet-1.8.0-cu126-torch26-ubuntu-22.04</cite> is chosen, an image with GraphNeT 1.8.0 + PyTorch 2.6.0 + CUDA 12.6 installed will open. The additional arguments <cite>–cleanenv –env PYTHONNOUSERSITE=1 –env PYTHONPATH=</cite> ensure that the environment is not contaminated with any other packages that may be installed on your system.</p>
+<p>To run one of the images with IceTray+GraphNeT as a Apptainer environment, you can for example use the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>apptainer<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--cleanenv<span class="w"> </span>--env<span class="w"> </span><span class="nv">PYTHONNOUSERSITE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>--env<span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="w"> </span>docker://rorsoe/graphnet_icetray:graphnet-1.8.0-cpu-torch26-icecube-icetray-icetray-devel-v1.13.0-ubuntu22.04-2025-02-12<span class="w"> </span>bash
+</pre></div>
+</div>
+<p>which opens an image with a CPU-installation of GraphNeT 1.8.0 + PyTorch v2.6.0 + IceTray v1.13.0 installed and ready to use. You can replace the image path with the one you want to use from the DockerHub.</p>
+</section>
 </section>
 </section>
 
