@@ -41,24 +41,6 @@ class simple_model(Model):
         x_rep = scatter(src=x, index=data.batch, dim=0, reduce="max")
         return x, x_rep
 
-
-class simple_target_gen(Model):
-    """Just for a dummy charge target."""
-
-    def __init__(
-        self,
-    ) -> None:
-        """Construct."""
-        super().__init__()
-
-    def forward(self, data: Data) -> Tensor:
-        """Forward pass."""
-        target = torch.sum(
-            scatter(src=data.x, index=data.batch, dim=0, reduce="max"), dim=1
-        )
-        return target.view(-1, 1)
-
-
 def test() -> None:
     """Short test with saving at the end."""
     graph_definition = KNNGraph(
@@ -87,11 +69,6 @@ def test() -> None:
         break
 
     dummy_model = simple_model()
-
-    # encoder: Model,
-    # bert_task: UnsupervisedTask,
-    # encoder_out_dim: Optional[int] = None,
-    # need_charge_rep: bool = False,
     default_task = UnsupervisedTask(
         default_mask_augment(), default_loss_calc()
     )

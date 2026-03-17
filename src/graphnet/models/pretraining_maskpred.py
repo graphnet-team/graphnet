@@ -1,4 +1,4 @@
-"""Self-supervised pretraining using BERT-style mask prediction."""
+"""Exp. feature: Self-supervised pretraining using BERT-style mask prediction."""
 
 from typing import Any, Tuple, Union, List, Type, Optional, Dict
 import os
@@ -80,9 +80,9 @@ class default_mask_augment(Model):
         self.learned_value = learned_masking_value
 
         if self.learned_value:
-            print(
-                """warning: can currently only mask adjacent features,
-                  e.g. only (x,y,z) or only (t,q) but not e.g. (x,t,q)"""
+            self.info(
+                """can currently only mask adjacent features,
+                         e.g. only (x,y,z) or only (t,q) but not e.g. (x,t,q)"""
             )
             self.values = torch.nn.Parameter(
                 torch.randn(1, len(self.masked_feat))
@@ -143,7 +143,7 @@ class default_loss_calc(Model):
         """Construct the loss calc."""
         super().__init__()
         if mask_pred_net is None:
-            print(
+            self.info(
                 "no custom net for mask prediction specified; using a standard net"
             )
             self.rep = standard_maskpred_net(
@@ -310,7 +310,7 @@ class mask_pred_frame(EasySyntax):
         run_name = "pretrained_model"
 
         save_path = os.path.join(save_path, run_name)
-        print("saving to", save_path)
+        self.info("saving to " + save_path)
         os.makedirs(save_path, exist_ok=True)
 
         model.save_state_dict(f"{save_path}/state_dict.pth")
