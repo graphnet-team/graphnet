@@ -33,6 +33,7 @@ models
    graphnet.models.easy_model
    graphnet.models.model
    graphnet.models.normalizing_flow
+   graphnet.models.pretraining_maskpred
    graphnet.models.standard_averaged_model
    graphnet.models.standard_model
    graphnet.models.utils

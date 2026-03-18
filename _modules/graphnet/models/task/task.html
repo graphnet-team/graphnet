@@ -859,6 +859,77 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform_prediction</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 </div>
 
+
+
+<div class="viewcode-block" id="UnsupervisedTask">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.UnsupervisedTask">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupervisedTask</span><span class="p">(</span><span class="n">Task</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""A `Task` for Unsupervised training with augmentations."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">augment_like</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">loss_computation</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `UnsupervisedTask`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            augment_like: a model to manipulate the data in desired way.</span>
+<span class="sd">            Make sure that outputs match required inputs of loss_computation.</span>
+<span class="sd">            This is also the opportunity to extract all that is needed downstream</span>
+<span class="sd">            like a custom additional target.</span>
+<span class="sd">            loss_computation: second step in task that calculates the loss e.g.</span>
+<span class="sd">            based on the model output and extracted nodes</span>
+<span class="sd">        """</span>
+        <span class="c1"># only needed for task to work, not actually relevant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"t"</span><span class="p">,</span> <span class="s2">"q"</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">s</span> <span class="o">+</span> <span class="s2">"_pred"</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span> <span class="o">=</span> <span class="mi">4</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aug</span> <span class="o">=</span> <span class="n">augment_like</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss</span> <span class="o">=</span> <span class="n">loss_computation</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_target_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return default target labels."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_target_labels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">default_prediction_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""Return default prediction labels."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_prediction_labels</span>
+
+<div class="viewcode-block" id="UnsupervisedTask.nb_inputs">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.UnsupervisedTask.nb_inputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nb_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+<span class="w">        </span><span class="sd">"""Return number of conditional inputs assumed by task."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_size</span></div>
+
+
+<div class="viewcode-block" id="UnsupervisedTask.augment">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.UnsupervisedTask.augment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">augment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Data</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Perform augmentation or similar."""</span>
+        <span class="n">aug_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aug</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aug_aux</span> <span class="o">=</span> <span class="n">aug_out</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">aug_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="UnsupervisedTask.compute_loss">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.task.html#graphnet.models.task.task.UnsupervisedTask.compute_loss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Perform loss calc with model output, data and aux from augment."""</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aug_aux</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">"augmentation or similar must happen before loss calc"</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">aug_aux</span><span class="p">)</span></div>
+</div>
+
 </pre></div>
 
           </article>

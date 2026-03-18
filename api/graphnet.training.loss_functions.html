@@ -441,6 +441,8 @@
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.EnsembleLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleLoss</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RMSEVonMisesFisher3DLoss</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.loss_functions.NegCosLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NegCosLoss</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -586,6 +588,13 @@
       <a href="#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RMSEVonMisesFisher3DLoss</span></code></a>
       
     
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.training.loss_functions.NegCosLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NegCosLoss</span></code></a>
+      
+    
     </li></ul>
     
     </li>
@@ -682,6 +691,8 @@
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.EnsembleLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">EnsembleLoss</span></code></a>
         </li>
         <li class="md-nav__item"><a href="#graphnet.training.loss_functions.RMSEVonMisesFisher3DLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">RMSEVonMisesFisher3DLoss</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.training.loss_functions.NegCosLoss" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NegCosLoss</span></code></a>
         </li></ul>
             </nav>
         </li>
@@ -1136,6 +1147,24 @@ given, all columns are used for all loss functions.</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>vmfs_factor</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">0.05</span></code>) – A factor applied to the VonMisesFisher3DLoss term.</p></li>
 <li><p><strong>0.05.</strong> (<em>Defaults ot</em>)</p></li>
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>object</p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.training.loss_functions.NegCosLoss">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">NegCosLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#NegCosLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.NegCosLoss" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
+<p>Negative Cosine error loss.</p>
+<p>Construct <cite>LossFunction</cite>, saving model config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
