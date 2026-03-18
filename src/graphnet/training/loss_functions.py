@@ -608,3 +608,20 @@ class RMSEVonMisesFisher3DLoss(EnsembleLoss):
             loss_factors=[1, vmfs_factor],
             prediction_keys=[[0, 1, 2], [0, 1, 2, 3]],
         )
+
+
+class NegCosLoss(LossFunction):
+    """Negative Cosine error loss."""
+
+    def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
+        """Implement loss calculation."""
+        # Check(s)
+        assert prediction.dim() == 2
+        if target.dim() != prediction.dim():
+            target = target.squeeze(1)
+        assert prediction.size() == target.size()
+
+        reco_norm = torch.nn.functional.normalize(prediction, dim=1)
+        orig_norm = torch.nn.functional.normalize(target, dim=1)
+        elements = -(reco_norm * orig_norm).sum(dim=1)
+        return elements
