@@ -15,7 +15,7 @@ def frame_is_montecarlo(
     frame: "icetray.I3Frame", mctree: Optional[str] = "I3MCTree"
 ) -> bool:
     """Check whether `frame` is from Monte Carlo simulation."""
-    return ("MCInIcePrimary" in frame) or (mctree in frame)
+    return ("MCInIcePrimary" in frame) or ("MCPrimary" in frame) or (mctree in frame)
 
 
 def frame_is_noise(
@@ -30,8 +30,11 @@ def frame_is_noise(
             frame["MCInIcePrimary"].energy
             return False
         except:  # noqa: E722
-            return True
-
+            try:
+                frame["MCPrimary"].energy  # IceTop CORSIKA primary
+                return False
+            except:  # noqa: E722
+                return True
 
 def get_om_keys_and_pulseseries(
     frame: "icetray.I3Frame",

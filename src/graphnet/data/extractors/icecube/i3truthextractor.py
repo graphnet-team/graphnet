@@ -175,6 +175,7 @@ class I3TruthExtractor(I3Extractor):
         if frame["I3EventHeader"].sub_event_stream not in [
             "InIceSplit",
             "Final",
+            "ice_top",
         ]:
             return output
 
@@ -289,6 +290,9 @@ class I3TruthExtractor(I3Extractor):
     def _extract_dbang_decay_length(
         self, frame: "icetray.I3Frame", padding_value: float = -1
     ) -> float:
+        if self._mctree not in frame:
+            return padding_value
+            
         mctree = frame[self._mctree]
         try:
             p_true = mctree.primaries[0]
@@ -418,7 +422,10 @@ class I3TruthExtractor(I3Extractor):
             try:
                 MCInIcePrimary = frame["MCInIcePrimary"]
             except KeyError:
-                MCInIcePrimary = frame[self._mctree][0]
+                try:
+                    MCInIcePrimary = frame[self._mctree][0]
+                except KeyError:
+                    MCInIcePrimary = frame["MCPrimary"]  # IceTop CORSIKA primary
             if (
                 MCInIcePrimary.energy != MCInIcePrimary.energy
             ):  # This is a nan check. Only happens for some muons
@@ -472,6 +479,9 @@ class I3TruthExtractor(I3Extractor):
             Tuple containing the energy of tracks from primary, and the
                 corresponding inelasticity.
         """
+        if self._mctree not in frame:
+            return float("nan"), float("nan"), float("nan")
+            
         mc_tree = frame[self._mctree]
         primary = mc_tree.primaries[0]
         daughters = mc_tree.get_daughters(primary)
@@ -509,7 +519,7 @@ class I3TruthExtractor(I3Extractor):
             sim_type = "data"
         elif "muon" in input_file:
             sim_type = "muongun"
-        elif "corsika" in input_file:
+        elif "corsika" in input_file or frame.Has("MCPrimary"):
             sim_type = "corsika"
         elif "genie" in input_file or "nu" in input_file.lower():
             sim_type = "genie"
