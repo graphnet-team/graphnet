@@ -430,3 +430,7 @@ class LMDBDataset(Dataset):
             data = super().__getitem__(sequential_index)
 
         return data
+
+    def close(self) -> None:
+        """Close any open LMDB connections."""
+        self._close_connection()
