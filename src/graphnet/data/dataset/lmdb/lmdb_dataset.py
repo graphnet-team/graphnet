@@ -169,9 +169,9 @@ class LMDBDataset(Dataset):
         if self._pre_computed_representation is None:
             # Only check for missing columns if using raw tables
             self._remove_missing_columns()
-        self._close_connection()
         if self._pre_computed_representation is not None:
             self._identify_missing_truth_labels()
+        self._close_connection()
 
     def _identify_missing_truth_labels(self) -> None:
         """Identify missing truth labels in the pre-computed representation."""
