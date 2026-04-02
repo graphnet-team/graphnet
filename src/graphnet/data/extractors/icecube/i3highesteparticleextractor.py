@@ -377,14 +377,6 @@ class I3HighestEparticleExtractor(I3Extractor):
                     if tmp_EonEntrance > EonEntrance:
                         particle = track_particle
 
-                        closest_pos = np.array(
-                            [
-                                track.GetXc(),
-                                track.GetYc(),
-                                track.GetZc(),
-                            ]
-                        )
-
                         EonEntrance = tmp_EonEntrance
 
                         visible_length = intersections.second - max(
@@ -421,6 +413,13 @@ class I3HighestEparticleExtractor(I3Extractor):
                             )
                             particle.time = track.GetTi()
                         else:
+                            closest_pos = np.array(
+                                [
+                                    track.GetXc(),
+                                    track.GetYc(),
+                                    track.GetZc(),
+                                ]
+                            )
                             # If the track is stopping or throughgoing,
                             # pos is point closest to detector center.
                             distance = np.sqrt((closest_pos**2).sum())
@@ -748,7 +747,7 @@ class I3HighestEparticleExtractor(I3Extractor):
         lengths = lengths[length_mask]
 
         containment = GN_containment_types.stopping_bundle.value
-        closest_pos = []
+        highest_e = 0
         for track, MGtrack in zip(MMCTrackList, MuonGun_tracks):
             intersections = self.hull.surface.intersection(
                 MGtrack.pos, MGtrack.dir
@@ -781,30 +780,24 @@ class I3HighestEparticleExtractor(I3Extractor):
                     raise  # re-raise unexpected errors
 
             EonEntrance += track_energy
-
-            closest_pos.append(
-                np.array(
+            if track_energy > highest_e:
+                highest_e = track_energy
+                closest_pos = np.array(
                     [
                         track.GetXc(),
                         track.GetYc(),
                         track.GetZc(),
                     ]
                 )
-                * track_energy
-            )
-            if closest_time is None:
-                closest_time = track.GetTc()
-            elif closest_time < track.GetTc():
+
                 closest_time = track.GetTc()
 
-            if intersections.second > 0:
-                visible_length = max(
-                    visible_length, intersections.second - intersections.first
-                )
-                if MGtrack.length > intersections.second:
-                    containment = (
-                        GN_containment_types.throughgoing_bundle.value
-                    )
+                if intersections.second > 0:
+                    visible_length = intersections.second - intersections.first
+                    if MGtrack.length > intersections.second:
+                        containment = (
+                            GN_containment_types.throughgoing_bundle.value
+                        )
 
         # If no intersection.second is every positive
         # the visible_length can still be negative here
@@ -822,8 +815,6 @@ class I3HighestEparticleExtractor(I3Extractor):
         assert (
             visible_length >= 0
         ), f"Visible length is negative for particle {frame['I3EventHeader']}"
-
-        closest_pos = np.sum(closest_pos, axis=0) / EonEntrance
 
         bundle.pos = dataclasses.I3Position(
             closest_pos[0], closest_pos[1], closest_pos[2]
