@@ -22,14 +22,14 @@ AVAILABLE_RUN_IDS = [
 class SnowStormDataset(IceCubeHostedDataset):
     """IceCube SnowStorm Monte Carlo simulation dataset.
 
-    This module provides access to the SnowStorm simulation data and prepares it
-    for the training and evaluation of deep learning models in GraphNeT by parsing
-    the data into the GraphNeT-compatible CuratedDataset format.
+    This module provides access to certain RunIDs of the SnowStorm simulation data set.
+    It prepares the data for the training and evaluation of deep learning models in GraphNeT by parsing
+    it into the CuratedDataset format.
 
     The data is organized by SnowStorm RunIDs containing pulsemaps input features
     along with event-level truth information.
 
-    The access to the data requires an IceCube Collaboration account.
+    The access requires an IceCube Collaboration account.
 
     References:
     SnowStorm documentation: https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations
