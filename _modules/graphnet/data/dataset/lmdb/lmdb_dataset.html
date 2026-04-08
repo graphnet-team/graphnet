@@ -522,9 +522,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_computed_representation</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Only check for missing columns if using raw tables</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_remove_missing_columns</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_close_connection</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pre_computed_representation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_identify_missing_truth_labels</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_close_connection</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_identify_missing_truth_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Identify missing truth labels in the pre-computed representation."""</span>
@@ -785,7 +785,14 @@
             <span class="c1"># Use base class implementation for raw tables</span>
             <span class="n">data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">sequential_index</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">data</span></div>
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="LMDBDataset.close">
+<a class="viewcode-back" href="../../../../../api/graphnet.data.dataset.lmdb.lmdb_dataset.html#graphnet.data.dataset.lmdb.lmdb_dataset.LMDBDataset.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Close any open LMDB connections."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_close_connection</span><span class="p">()</span></div>
+</div>
 
 </pre></div>
 
