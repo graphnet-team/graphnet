@@ -296,7 +296,6 @@ def test_sqlite_to_lmdb_converter() -> None:
         truth=TRUTH.DEEPCORE,
         graph_definition=graph_definition,
     )
-
     dataset_from_lmdb_raw = LMDBDataset(path, **opt_raw)  # type: ignore
     dataset_sqlite = SQLiteDataset(
         get_file_path("sqlite"), **opt_raw  # type: ignore[arg-type]
@@ -310,6 +309,7 @@ def test_sqlite_to_lmdb_converter() -> None:
             dataset_from_lmdb_raw[ix].x, dataset_sqlite[ix].x
         )
 
+    dataset_from_lmdb_raw.close()  # Close connection
     # Test 2: Check that pre-computed representation matches real-time computed
     # The pre-computed representation field name is the class name
     pre_computed_field_name = graph_definition.__class__.__name__
@@ -361,3 +361,4 @@ def test_sqlite_to_lmdb_converter() -> None:
                     )
                 else:
                     assert precomputed_truth == realtime_truth
+    dataset_from_lmdb_precomputed.close()  # Close connection
