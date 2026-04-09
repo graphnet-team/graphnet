@@ -177,7 +177,7 @@ class I3TruthExtractor(I3Extractor):
         # (e.g NullSplit). We remove those here.
         allowed_streams = ["InIceSplit", "Final"]
         if self._ice_top:
-            allowed_streams.append("ice_top")
+            allowed_streams = ["ice_top"]
 
         if frame["I3EventHeader"].sub_event_stream not in allowed_streams:
             return output
