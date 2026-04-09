@@ -107,14 +107,14 @@ class I3Calorimetry(I3Extractor):
                 )
 
             if self.daughters:
-                assert e_total <= (
-                    primary_energy * (1 + 1e-6)
+                assert e_total <= (primary_energy * (1 + 1e-6)) or (
+                    e_total - primary_energy < 0.5
                 ), "Total energy on entrance is greater than primary energy\
                     \nTotal energy: {}\
                     \nPrimary energy: {}\
                     \nTrack energy: {}\
                     \nCascade energy: {}\
-                    {}".format(
+                    {}".format(  # allow for differences due to mass -> kinetic energy conversion and numerical precision
                     e_total,
                     primary_energy,
                     e_entrance_track,
