@@ -32,6 +32,7 @@ class I3TruthExtractor(I3Extractor):
         mctree: Optional[str] = "I3MCTree",
         extend_boundary: Optional[float] = 0.0,
         exclude: list = [None],
+        ice_top: bool = False,
     ):
         """Construct I3TruthExtractor.
 
@@ -45,6 +46,7 @@ class I3TruthExtractor(I3Extractor):
             extend_boundary: Distance to extend the convex hull of the detector
                 for defining starting events.
             exclude: List of keys to exclude from the extracted data.
+            ice_top: Whether the data being extracted is IceTop data. Defaults to False.
         """
         # Base class constructor
         super().__init__(name, exclude=exclude)
@@ -89,6 +91,7 @@ class I3TruthExtractor(I3Extractor):
 
         self._extend_boundary = extend_boundary
         self._mctree = mctree
+        self._ice_top = ice_top
 
     def set_gcd(self, i3_file: str, gcd_file: Optional[str] = None) -> None:
         """Extract GFrame and CFrame from i3/gcd-file pair.
@@ -130,8 +133,8 @@ class I3TruthExtractor(I3Extractor):
         self, frame: "icetray.I3Frame", padding_value: Any = -1
     ) -> Dict[str, Any]:
         """Extract truth-level information."""
-        is_mc = frame_is_montecarlo(frame, self._mctree)
-        is_noise = frame_is_noise(frame, self._mctree)
+        is_mc = frame_is_montecarlo(frame, self._mctree, self._ice_top)
+        is_noise = frame_is_noise(frame, self._mctree, self._ice_top)
         sim_type = self._find_data_type(is_mc, self._i3_file, frame)
 
         output = {
@@ -172,10 +175,11 @@ class I3TruthExtractor(I3Extractor):
         # for example I3RecoPulseSeriesMap,  etc.
         # At low levels i3 files contain several other P frame splits
         # (e.g NullSplit). We remove those here.
-        if frame["I3EventHeader"].sub_event_stream not in [
-            "InIceSplit",
-            "Final",
-        ]:
+        allowed_streams = ["InIceSplit", "Final"]
+        if self._ice_top:
+            allowed_streams = ["ice_top"]
+
+        if frame["I3EventHeader"].sub_event_stream not in allowed_streams:
             return output
 
         if "FilterMask" in frame:
@@ -250,8 +254,12 @@ class I3TruthExtractor(I3Extractor):
                     "pid": MCInIcePrimary.pdg_encoding,
                     "interaction_type": interaction_type,
                     "elasticity": elasticity,
-                    "dbang_decay_length": self._extract_dbang_decay_length(
-                        frame, padding_value
+                    "dbang_decay_length": (
+                        padding_value
+                        if self._ice_top
+                        else self._extract_dbang_decay_length(
+                            frame, padding_value
+                        )
                     ),
                     "energy_track": energy_track,
                     "energy_cascade": energy_cascade,
@@ -415,17 +423,20 @@ class I3TruthExtractor(I3Extractor):
                 or 0 (neither); and the elasticity in the range ]0,1[.
         """
         if sim_type != "noise":
-            try:
-                MCInIcePrimary = frame["MCInIcePrimary"]
-            except KeyError:
-                MCInIcePrimary = frame[self._mctree][0]
-            if (
-                MCInIcePrimary.energy != MCInIcePrimary.energy
-            ):  # This is a nan check. Only happens for some muons
-                # where second item in MCTree is primary. Weird!
-                MCInIcePrimary = frame[self._mctree][1]
-                # For some strange reason the second entry is identical in
-                # all variables and has no nans (always muon)
+            if self._ice_top:
+                MCInIcePrimary = frame["MCPrimary"]  # IceTop CORSIKA primary
+            else:
+                try:
+                    MCInIcePrimary = frame["MCInIcePrimary"]
+                except KeyError:
+                    MCInIcePrimary = frame[self._mctree][0]
+                if (
+                    MCInIcePrimary.energy != MCInIcePrimary.energy
+                ):  # This is a nan check. Only happens for some muons
+                    # where second item in MCTree is primary. Weird!
+                    MCInIcePrimary = frame[self._mctree][1]
+                    # For some strange reason the second entry is identical in
+                    # all variables and has no nans (always muon)
         else:
             MCInIcePrimary = None
 
@@ -472,6 +483,11 @@ class I3TruthExtractor(I3Extractor):
             Tuple containing the energy of tracks from primary, and the
                 corresponding inelasticity.
         """
+        if self._ice_top and self._mctree not in frame:
+            raise RuntimeError(
+                f"Expected MCTree key '{self._mctree}' not found in frame for IceTop data."
+            )
+
         mc_tree = frame[self._mctree]
         primary = mc_tree.primaries[0]
         daughters = mc_tree.get_daughters(primary)
@@ -509,7 +525,7 @@ class I3TruthExtractor(I3Extractor):
             sim_type = "data"
         elif "muon" in input_file:
             sim_type = "muongun"
-        elif "corsika" in input_file:
+        elif "corsika" in input_file or self._ice_top:
             sim_type = "corsika"
         elif "genie" in input_file or "nu" in input_file.lower():
             sim_type = "genie"

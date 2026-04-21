@@ -12,16 +12,29 @@ if has_icecube_package():
 
 
 def frame_is_montecarlo(
-    frame: "icetray.I3Frame", mctree: Optional[str] = "I3MCTree"
+    frame: "icetray.I3Frame",
+    mctree: Optional[str] = "I3MCTree",
+    ice_top: bool = False,
 ) -> bool:
     """Check whether `frame` is from Monte Carlo simulation."""
+    if ice_top:
+        return "MCPrimary" in frame
     return ("MCInIcePrimary" in frame) or (mctree in frame)
 
 
 def frame_is_noise(
-    frame: "icetray.I3Frame", mctree: Optional[str] = "I3MCTree"
+    frame: "icetray.I3Frame",
+    mctree: Optional[str] = "I3MCTree",
+    ice_top: bool = False,
 ) -> bool:
     """Check whether `frame` is from noise."""
+    if ice_top:
+        try:
+            frame["MCPrimary"].energy
+            return False
+        except:  # noqa: E722
+            return True
+
     try:
         frame[mctree][0].energy
         return False
