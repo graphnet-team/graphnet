@@ -783,7 +783,7 @@
 <p>Utility methods for working with I3Frames.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/frames.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_montecarlo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ice_top</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/frames.html#frame_is_montecarlo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_montecarlo" title="Link to this definition">¶</a></dt>
 <dd><p>Check whether <cite>frame</cite> is from Monte Carlo simulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -793,13 +793,14 @@
 <dd class="field-even"><ul class="simple">
 <li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
 <li><p><strong>mctree</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>ice_top</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 <dl class="py function">
 <dt class="sig sig-object py" id="graphnet.data.extractors.icecube.utilities.frames.frame_is_noise">
-<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/frames.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_noise" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.icecube.utilities.frames.</span></span><span class="sig-name descname"><span class="pre">frame_is_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mctree</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ice_top</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/icecube/utilities/frames.html#frame_is_noise"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.icecube.utilities.frames.frame_is_noise" title="Link to this definition">¶</a></dt>
 <dd><p>Check whether <cite>frame</cite> is from noise.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -809,6 +810,7 @@
 <dd class="field-even"><ul class="simple">
 <li><p><strong>frame</strong> (<em>icecube.icetray.I3Frame</em>)</p></li>
 <li><p><strong>mctree</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>ice_top</strong> (<em>bool</em>)</p></li>
 </ul>
 </dd>
 </dl>
