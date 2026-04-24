@@ -373,12 +373,20 @@
 <div class="viewcode-block" id="SnowStormDataset">
 <a class="viewcode-back" href="../../../api/graphnet.datasets.snowstorm_dataset.html#graphnet.datasets.snowstorm_dataset.SnowStormDataset">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SnowStormDataset</span><span class="p">(</span><span class="n">IceCubeHostedDataset</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""IceCube SnowStorm simulation dataset.</span>
+<span class="w">    </span><span class="sd">"""IceCube SnowStorm Monte Carlo simulation dataset.</span>
 
-<span class="sd">    More information can be found at</span>
-<span class="sd">    https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations</span>
-<span class="sd">    This is a IceCube Collaboration simulation dataset.</span>
-<span class="sd">    Requires a username and password.</span>
+<span class="sd">    This module provides access to certain RunIDs of the SnowStorm simulation data set.</span>
+<span class="sd">    It prepares the data for the training and evaluation of deep learning models in GraphNeT by parsing</span>
+<span class="sd">    it into the CuratedDataset format.</span>
+
+<span class="sd">    The data is organized by SnowStorm RunIDs containing pulsemaps input features</span>
+<span class="sd">    along with event-level truth information.</span>
+
+<span class="sd">    The access requires an IceCube Collaboration account.</span>
+
+<span class="sd">    References:</span>
+<span class="sd">    SnowStorm documentation: https://wiki.icecube.wisc.edu/index.php/SnowStorm_MC#File_Locations</span>
+<span class="sd">    SnowStorm paper: arXiv:1909.01530</span>
 <span class="sd">    """</span>
 
     <span class="n">_experiment</span> <span class="o">=</span> <span class="s2">"IceCube SnowStorm dataset"</span>
@@ -444,7 +452,15 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_args</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">truth</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]:</span>
-<span class="w">        </span><span class="sd">"""Prepare arguments for dataset."""</span>
+<span class="w">        </span><span class="sd">"""Prepare arguments for dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            backend: backend of dataset. Only "sqlite" is supported.</span>
+<span class="sd">            features: List of features from user to use as input.</span>
+<span class="sd">            truth: List of event-level truth from user.</span>
+
+<span class="sd">        Returns: Dataset arguments, train/val selection, test selection</span>
+<span class="sd">        """</span>
         <span class="k">assert</span> <span class="n">backend</span> <span class="o">==</span> <span class="s2">"sqlite"</span>
         <span class="n">dataset_paths</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">rid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_ids</span><span class="p">:</span>
@@ -459,7 +475,6 @@
         <span class="c1"># get RunID</span>
         <span class="n">pattern</span> <span class="o">=</span> <span class="sa">rf</span><span class="s2">"</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="p">)</span><span class="si">}</span><span class="s2">/(\d+)/.*"</span>
         <span class="n">event_counts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">event_counts</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">dataset_paths</span><span class="p">:</span>
 
             <span class="c1"># Extract the ID</span>
@@ -528,7 +543,7 @@
             <span class="n">runid_string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"RunID </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> contains </span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s2">10d</span><span class="si">}</span><span class="s2"> events</span><span class="se">\n</span><span class="s2">"</span>
             <span class="n">tot</span> <span class="o">+=</span> <span class="n">v</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">_comments</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Contains ~</span><span class="si">{</span><span class="n">tot</span><span class="o">/</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> million events:</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">"Contains ~</span><span class="si">{</span><span class="n">tot</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> million events:</span><span class="se">\n</span><span class="s2">"</span>
             <span class="o">+</span> <span class="n">runid_string</span>
             <span class="o">+</span> <span class="n">fixed_string</span>
         <span class="p">)</span>
