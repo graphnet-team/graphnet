@@ -170,14 +170,14 @@
         "# Clone and Install GraphNeT",
         gitCloneCmd,
         "cd graphnet",
-        "pip3 install -e .[develop]"
+        "pip3 install -e \".[develop]\""
       ].join("\n"));
       return;
     }
 
     var torchVersion = torchWheelMap[torch];
     var extrasPrefix = torchExtrasMap[torch];
-    var installLine = "pip3 install -e .[" + extrasPrefix + "]";
+    var installLine = "pip3 install -e \".[" + extrasPrefix + "]\"";
     var wheelUrl = "https://data.pyg.org/whl/torch-" + torchVersion + "+" + (cuda === "cpu" ? "cpu" : cuda) + ".html";
     installLine += " -f " + wheelUrl;
 
