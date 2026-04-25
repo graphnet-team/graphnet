@@ -72,4 +72,24 @@ class Extractor(ABC, Logger):
     def __init_subclass__(cls) -> None:
         """Initialize subclass and apply the exclude decorator to __call__."""
         super().__init_subclass__()
-        cls.__call__ = cls.exclude(cls.__call__)  # type: ignore
+        if cls._get_root_logger().getEffectiveLevel() > 10:
+            cls.__call__ = cls.exclude(cls.__call__)  # type: ignore
+        else:
+            import time
+
+            cls.__call__ = cls.exclude(cls.__call__)  # type: ignore
+            # wrap with time logging
+            original_call = cls.__call__
+
+            def timed_call(
+                cls: "Extractor", *args: Any
+            ) -> Union[dict, pd.DataFrame]:
+                start_time = time.time()
+                result = original_call(cls, *args)
+                end_time = time.time()
+                cls._logger.debug(
+                    f"Extractor {cls.name} took {end_time - start_time:.4f} seconds."
+                )
+                return result
+
+            cls.__call__ = timed_call  # type: ignore
