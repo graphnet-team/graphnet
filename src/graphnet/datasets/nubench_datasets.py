@@ -11,6 +11,10 @@ from graphnet.data.dataset import Dataset, EnsembleDataset
 from graphnet.models.data_representation import DataRepresentation
 from graphnet.models.detector.nubench import (
     NuBenchDetector,
+    Cluster,
+    FlowerL,
+    FlowerS,
+    FlowerXL,
     Hexagon,
     Triangle,
 )
@@ -99,6 +103,51 @@ class NuBenchDataset(ERDAHostedDataset):
     """
 
     _registry: Dict[str, NuBenchSpec] = {
+        "cluster": NuBenchSpec(
+            erda_hash="EBamFwOU2D",
+            detector_cls=Cluster,
+            experiment="Cluster (NuBench)",
+            comments=(
+                "Neutrino events from a Cluster geometry simulation. "
+                "Train/test split provided by NuBench selection files."
+            ),
+        ),
+        "flower_l": NuBenchSpec(
+            erda_hash="EJylHQXkBr",
+            detector_cls=FlowerL,
+            experiment="Flower L (NuBench)",
+            comments=(
+                "Neutrino events from a Flower L geometry simulation. "
+                "Train/test split provided by NuBench selection files."
+            ),
+        ),
+        "flower_s": NuBenchSpec(
+            erda_hash="cUPqNKMRbQ",
+            detector_cls=FlowerS,
+            experiment="Flower S (NuBench)",
+            comments=(
+                "Neutrino events from a Flower S geometry simulation. "
+                "Train/test split provided by NuBench selection files."
+            ),
+        ),
+        "flower_xl": NuBenchSpec(
+            erda_hash="foVpx81yBz",
+            detector_cls=FlowerXL,
+            experiment="Flower XL (NuBench)",
+            comments=(
+                "Neutrino events from a Flower XL geometry simulation. "
+                "Train/test split provided by NuBench selection files."
+            ),
+        ),
+        "hexagon": NuBenchSpec(
+            erda_hash="GTf1gIlBbZ",
+            detector_cls=Hexagon,
+            experiment="Hexagon (NuBench)",
+            comments=(
+                "Neutrino events from a Hexagonal geometry simulation. "
+                "Train/test split provided by NuBench selection files."
+            ),
+        ),
         "hexagon_ice_le": NuBenchSpec(
             erda_hash="b9VHSF9X64",
             detector_cls=Hexagon,
