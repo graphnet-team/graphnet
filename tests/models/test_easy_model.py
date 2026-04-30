@@ -5,7 +5,7 @@ the tests exercise only the prediction/attribute-gathering machinery,
 not GNN/Detector/Task code.
 """
 
-from typing import List, Union
+from typing import Iterator, List, Union
 
 import numpy as np
 import pytest
@@ -40,9 +40,7 @@ class _FakeModel(EasySyntax):
     def validate_tasks(self) -> None:
         pass
 
-    def forward(
-        self, data: Union[Data, List[Data]]
-    ) -> List[Tensor]:
+    def forward(self, data: Union[Data, List[Data]]) -> List[Tensor]:
         if isinstance(data, list):
             data = data[0]
         # Per-event prediction: repeat event_id across all prediction columns.
@@ -50,10 +48,14 @@ class _FakeModel(EasySyntax):
         n_cols = len(self.prediction_labels)
         return [eid.repeat(1, n_cols)]
 
-    def compute_loss(self, preds, data, verbose=False):  # type: ignore[override]
+    def compute_loss(  # type: ignore[override]
+        self, preds: Tensor, data: List[Data], verbose: bool = False
+    ) -> Tensor:
         raise NotImplementedError
 
-    def shared_step(self, batch, batch_idx):  # type: ignore[override]
+    def shared_step(  # type: ignore[override]
+        self, batch: List[Data], batch_idx: int
+    ) -> Tensor:
         raise NotImplementedError
 
 
@@ -69,7 +71,9 @@ def _make_dataset(n_events: int) -> List[Data]:
                 value=torch.tensor([float(i) * 10.0]),
                 # Per-event 3-vector — mimics `direction` (shape (1, 3)) so
                 # batches concatenate to (N, 3).
-                vec=torch.tensor([[float(i), float(i) + 0.5, float(i) + 0.25]]),
+                vec=torch.tensor(
+                    [[float(i), float(i) + 0.5, float(i) + 0.25]]
+                ),
                 pulses=torch.arange(n_pulses, dtype=torch.float32),
                 n_pulses=torch.tensor([n_pulses]),
             )
@@ -111,9 +115,7 @@ def test_predict_as_dataframe_attributes_aligned(model: _FakeModel) -> None:
         additional_attributes=["event_id", "value"],
     )
     assert list(df.columns) == ["pred_a", "pred_b", "event_id", "value"]
-    np.testing.assert_array_equal(
-        df["event_id"].to_numpy(), np.arange(8)
-    )
+    np.testing.assert_array_equal(df["event_id"].to_numpy(), np.arange(8))
     np.testing.assert_array_equal(
         df["value"].to_numpy(), np.arange(8, dtype=np.float32) * 10.0
     )
@@ -131,7 +133,7 @@ class _CountingLoader(DataLoader):
     counter has to live on the class — patching the instance has no effect.
     """
 
-    def __iter__(self):  # type: ignore[override]
+    def __iter__(self) -> Iterator:
         type(self).iter_count = getattr(type(self), "iter_count", 0) + 1
         return super().__iter__()
 
@@ -181,7 +183,8 @@ def test_predict_as_dataframe_with_shuffled_loader(
 def test_predict_as_dataframe_respects_limit_predict_batches(
     model: _FakeModel,
 ) -> None:
-    """`limit_predict_batches` truncates predictions and attributes together."""
+    """`limit_predict_batches` truncates predictions and attributes
+    together."""
     ds = _make_dataset(20)
     df = model.predict_as_dataframe(
         _loader(ds, batch_size=4),
@@ -199,7 +202,8 @@ def test_predict_as_dataframe_respects_limit_predict_batches(
 def test_predict_as_dataframe_skips_misaligned_attribute(
     model: _FakeModel,
 ) -> None:
-    """Pulse-level attr requested on event-level model is dropped, not crashed."""
+    """Pulse-level attr requested on event-level model is dropped, not
+    crashed."""
     ds = _make_dataset(6)
     df = model.predict_as_dataframe(
         _loader(ds, batch_size=2),
@@ -226,7 +230,12 @@ def test_predict_as_dataframe_expands_multidim_attribute(
         additional_attributes=["vec", "event_id"],
     )
     assert list(df.columns) == [
-        "pred_a", "pred_b", "vec_0", "vec_1", "vec_2", "event_id"
+        "pred_a",
+        "pred_b",
+        "vec_0",
+        "vec_1",
+        "vec_2",
+        "event_id",
     ]
     expected = np.arange(n, dtype=np.float32)
     np.testing.assert_array_equal(df["vec_0"].to_numpy(), expected)

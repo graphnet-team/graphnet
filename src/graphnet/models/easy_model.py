@@ -317,7 +317,11 @@ class EasySyntax(Model):
                 value = value.detach().cpu().numpy()
             else:
                 value = np.asarray(value)
-            if pulse_level_predictions and len(value) < n_pulses.sum():
+            if (
+                pulse_level_predictions
+                and n_pulses is not None
+                and len(value) < n_pulses.sum()
+            ):
                 value = np.repeat(value, n_pulses)
             pred.append(value)
         return pred
@@ -414,9 +418,7 @@ class EasySyntax(Model):
         pred_tensors = outputs[:split]
         attr_arrays = outputs[split:]
 
-        predictions = (
-            torch.cat(pred_tensors, dim=1).detach().cpu().numpy()
-        )
+        predictions = torch.cat(pred_tensors, dim=1).detach().cpu().numpy()
         assert len(prediction_columns) == predictions.shape[1], (
             f"Number of provided column names ({len(prediction_columns)}) and "
             f"number of output columns ({predictions.shape[1]}) don't match."
