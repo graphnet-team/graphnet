@@ -440,7 +440,16 @@ class EasySyntax(Model):
                     " event-level predictions. Attribute skipped."
                 )
                 continue
-            columns[name] = np.asarray(arr)
+            arr = np.asarray(arr)
+            if arr.ndim == 1:
+                columns[name] = arr
+            else:
+                # Multi-dim target (e.g. `direction` with x/y/z components):
+                # expand to one column per component so the DataFrame stays
+                # tabular.
+                flat = arr.reshape(len(arr), -1)
+                for i in range(flat.shape[1]):
+                    columns[f"{name}_{i}"] = flat[:, i]
 
         return pd.DataFrame(columns)
 
