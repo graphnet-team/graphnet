@@ -67,6 +67,9 @@ def _make_dataset(n_events: int) -> List[Data]:
                 x=torch.zeros(n_pulses, 1),
                 event_id=torch.tensor([i], dtype=torch.long),
                 value=torch.tensor([float(i) * 10.0]),
+                # Per-event 3-vector — mimics `direction` (shape (1, 3)) so
+                # batches concatenate to (N, 3).
+                vec=torch.tensor([[float(i), float(i) + 0.5, float(i) + 0.25]]),
                 pulses=torch.arange(n_pulses, dtype=torch.float32),
                 n_pulses=torch.tensor([n_pulses]),
             )
@@ -205,3 +208,27 @@ def test_predict_as_dataframe_skips_misaligned_attribute(
     assert "event_id" in df.columns
     assert "pulses" not in df.columns
     assert len(df) == 6
+
+
+def test_predict_as_dataframe_expands_multidim_attribute(
+    model: _FakeModel,
+) -> None:
+    """Per-event vector attribute is split into one column per component.
+
+    Mirrors how `target_labels = ["direction"]` carries an (N, 3) tensor
+    on the batch — pandas can't take a 2D array as a single column, so
+    `predict_as_dataframe` flattens to `<name>_<i>`.
+    """
+    n = 7
+    ds = _make_dataset(n)
+    df = model.predict_as_dataframe(
+        _loader(ds, batch_size=3),
+        additional_attributes=["vec", "event_id"],
+    )
+    assert list(df.columns) == [
+        "pred_a", "pred_b", "vec_0", "vec_1", "vec_2", "event_id"
+    ]
+    expected = np.arange(n, dtype=np.float32)
+    np.testing.assert_array_equal(df["vec_0"].to_numpy(), expected)
+    np.testing.assert_array_equal(df["vec_1"].to_numpy(), expected + 0.5)
+    np.testing.assert_array_equal(df["vec_2"].to_numpy(), expected + 0.25)
