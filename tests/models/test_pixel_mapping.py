@@ -78,12 +78,12 @@ def test_pixel_mappings() -> None:
         len(pixel_mapping.shape) == 3
     ), f"Expected shape to be 3 got {len(pixel_mapping.shape)}"
     assert pixel_mapping.shape == [
-        (n_features, 10, 10, 60),
-        (n_features, 1, 8, 10),
-        (n_features, 1, 8, 50),
+        [n_features, 10, 10, 60],
+        [n_features, 1, 8, 10],
+        [n_features, 1, 8, 50],
     ], (
-        f"Expected shape to be [({n_features},10,10,60), "
-        f"({n_features},1,8,10), ({n_features},1,8,50)] got "
+        f"Expected shape to be [[{n_features},10,10,60], "
+        f"[{n_features},1,8,10], [{n_features},1,8,50]] got "
         f"{pixel_mapping.shape}"
     )
     assert isinstance(
@@ -179,7 +179,7 @@ def test_segments_mapping() -> None:
             include_upper_dc=inc_upc,
         )
         picture = pixel_mapping(tmp, pixel_feature_names)
-        tensor_image: torch.tensor = torch.tensor(
+        tensor_image: torch.Tensor = torch.tensor(
             np.load(image), dtype=dtype
         ).unsqueeze(0)
 

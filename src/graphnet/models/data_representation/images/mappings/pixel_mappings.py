@@ -1,14 +1,182 @@
 """Classes for mapping pixel data to images."""
 
 from abc import abstractmethod
-from typing import List
-from torch_geometric.data import Data
-import torch
-import pandas as pd
-import numpy as np
+from typing import Dict, List, Tuple
 
+import numpy as np
+import pandas as pd
+import torch
+from torch_geometric.data import Data
+
+from graphnet.constants import PROMETHEUS_CNN_MAPPING
 from graphnet.models import Model
-from graphnet.constants import IC86_CNN_MAPPING, PROMETHEUS_CNN_MAPPING
+
+# Names of the columns used internally in the mapping DataFrame produced
+# by `IC86PixelMapping`. They identify which column in the mapping holds
+# the position of a pixel along each spatial axis of the resulting image.
+# Defined as constants so the mapping logic does not rely on free-form
+# strings spread across the implementation.
+_AX0_COL = "mat_ax0"
+_AX1_COL = "mat_ax1"
+_AX2_COL = "mat_ax2"
+
+# Fixed (mat_ax0, mat_ax1) placement for IceCube86 main-array strings
+# (1..78) on a 10x10 grid. This reproduces the mapping previously stored
+# in the `ic86_cnn_mapping.parquet` file. The placement is determined
+# entirely by detector geometry and is therefore hard-coded here so the
+# mapping can be compiled at instantiation without an external file.
+_IC86_STRING_TO_AX01: Dict[int, Tuple[int, int]] = {
+    1: (9, 4),
+    2: (9, 5),
+    3: (9, 6),
+    4: (9, 7),
+    5: (9, 8),
+    6: (9, 9),
+    7: (8, 3),
+    8: (8, 4),
+    9: (8, 5),
+    10: (8, 6),
+    11: (8, 7),
+    12: (8, 8),
+    13: (8, 9),
+    14: (7, 2),
+    15: (7, 3),
+    16: (7, 4),
+    17: (7, 5),
+    18: (7, 6),
+    19: (7, 7),
+    20: (7, 8),
+    21: (7, 9),
+    22: (6, 1),
+    23: (6, 2),
+    24: (6, 3),
+    25: (6, 4),
+    26: (6, 5),
+    27: (6, 6),
+    28: (6, 7),
+    29: (6, 8),
+    30: (6, 9),
+    31: (5, 0),
+    32: (5, 1),
+    33: (5, 2),
+    34: (5, 3),
+    35: (5, 4),
+    36: (5, 5),
+    37: (5, 6),
+    38: (5, 7),
+    39: (5, 8),
+    40: (5, 9),
+    41: (4, 0),
+    42: (4, 1),
+    43: (4, 2),
+    44: (4, 3),
+    45: (4, 4),
+    46: (4, 5),
+    47: (4, 6),
+    48: (4, 7),
+    49: (4, 8),
+    50: (4, 9),
+    51: (3, 0),
+    52: (3, 1),
+    53: (3, 2),
+    54: (3, 3),
+    55: (3, 4),
+    56: (3, 5),
+    57: (3, 6),
+    58: (3, 7),
+    59: (3, 8),
+    60: (2, 0),
+    61: (2, 1),
+    62: (2, 2),
+    63: (2, 3),
+    64: (2, 4),
+    65: (2, 5),
+    66: (2, 6),
+    67: (2, 7),
+    68: (1, 0),
+    69: (1, 1),
+    70: (1, 2),
+    71: (1, 3),
+    72: (1, 4),
+    73: (1, 5),
+    74: (1, 6),
+    75: (0, 0),
+    76: (0, 1),
+    77: (0, 2),
+    78: (0, 3),
+}
+
+# Sentinel value used in `mat_ax2` for DeepCore rows, which only use two
+# spatial axes (mat_ax0 and mat_ax1). Kept identical to the value used in
+# the original parquet file for backward compatibility.
+_DC_AX2_SENTINEL = -500
+
+
+def _build_ic86_mapping(
+    string_label: str,
+    dom_number_label: str,
+) -> pd.DataFrame:
+    """Compile the IceCube86 pixel mapping from detector geometry.
+
+    The mapping places the 78 main-array strings on a fixed 10x10 grid
+    and unfolds the eight DeepCore strings (79..86) into separate
+    upper/lower DeepCore arrays based on the DOM number convention used
+    in IceCube simulations.
+
+    Args:
+        string_label: Column name to use for the IceCube string number
+            (1..86) in the resulting mapping.
+        dom_number_label: Column name to use for the DOM number
+            (1..60) in the resulting mapping.
+
+    Returns:
+        DataFrame indexed by (`string_label`, `dom_number_label`) with
+        the columns [`string_label`, `dom_number_label`, `mat_ax0`,
+        `mat_ax1`, `mat_ax2`] giving the pixel position within the
+        appropriate sub-image.
+    """
+    rows: List[Tuple[int, int, int, int, float]] = []
+
+    # Main array: each (string, dom_number) maps to (mat_ax0, mat_ax1,
+    # dom_number - 1) where (mat_ax0, mat_ax1) is fixed per string.
+    for string in range(1, 79):
+        ax0, ax1 = _IC86_STRING_TO_AX01[string]
+        for dom_number in range(1, 61):
+            rows.append((string, dom_number, ax0, ax1, float(dom_number - 1)))
+
+    # DeepCore (strings 79..86): mat_ax0 = string - 79. The first 10
+    # DOMs go into the upper DeepCore image (mat_ax1 = dom_number - 1)
+    # and the remaining 50 DOMs go into the lower DeepCore image
+    # (mat_ax1 = dom_number - 11). The third spatial axis is unused
+    # for the DeepCore sub-images.
+    for string in range(79, 87):
+        ax0 = string - 79
+        for dom_number in range(1, 11):
+            rows.append(
+                (string, dom_number, ax0, dom_number - 1, _DC_AX2_SENTINEL)
+            )
+        for dom_number in range(11, 61):
+            rows.append(
+                (string, dom_number, ax0, dom_number - 11, _DC_AX2_SENTINEL)
+            )
+
+    df = pd.DataFrame(
+        rows,
+        columns=[
+            string_label,
+            dom_number_label,
+            _AX0_COL,
+            _AX1_COL,
+            _AX2_COL,
+        ],
+    )
+    df.sort_values(
+        by=[string_label, dom_number_label],
+        ascending=[True, True],
+        inplace=True,
+    )
+    df.set_index([string_label, dom_number_label], inplace=True, drop=False)
+    return df
 
 
 class PixelMapping(Model):
@@ -77,8 +245,13 @@ class IC86PixelMapping(PixelMapping):
         include_main_array: bool = True,
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
-    ):
+    ) -> None:
         """Construct `IC86PixelMapping`.
+
+        The mapping from (string, dom_number) to a position in the
+        resulting images is generated programmatically at instantiation
+        time from the IceCube86 detector geometry, so no auxiliary file
+        is required.
 
         Args:
             dtype: data type used for node features. e.g. ´torch.float´
@@ -118,22 +291,10 @@ class IC86PixelMapping(PixelMapping):
         self._include_lower_dc = include_lower_dc
         self._include_upper_dc = include_upper_dc
 
-        # read mapping from parquet file
-        df = pd.read_parquet(IC86_CNN_MAPPING)
-        df.sort_values(
-            by=["string", "dom_number"],
-            ascending=[True, True],
-            inplace=True,
+        self._mapping = _build_ic86_mapping(
+            string_label=string_label,
+            dom_number_label=dom_number_label,
         )
-
-        # Set the index to string and dom_number for faster lookup
-        df.set_index(
-            ["string", "dom_number"],
-            inplace=True,
-            drop=False,
-        )
-
-        self._mapping = df
         super().__init__(pixel_feature_names=pixel_feature_names)
 
     def _set_indices(
@@ -171,22 +332,30 @@ class IC86PixelMapping(PixelMapping):
                 dtype=self._dtype,
             )
 
-        # data.x is expected to be a tensor with shape (N, F)
-        # where N is the number of pixels (DOMs) and F is the number
-        # of features. Each row represents a single pixel.
+        # data.x is a tensor with shape (N, F) where N is the number of
+        # pixels (DOMs) and F is the number of features. Each row
+        # represents a single pixel.
         x = data.x
 
-        # Direct coordinate and feature extraction
         string_dom_number = x[
             :, [self._string_idx, self._dom_number_idx]
         ].int()
         batch_row_features = x[:, self._cnn_features_idx]
 
-        # look up the mapping for string and dom_number
+        # Look up the pixel position in each sub-image for every (string,
+        # dom_number) pair. Columns are referenced via the configurable
+        # `string_label`/`dom_number_label` and the internal axis-column
+        # constants so the lookup does not depend on free-form strings.
         match_indices = self._mapping.loc[
             zip(*string_dom_number.t().tolist())
         ][
-            ["string", "dom_number", "mat_ax0", "mat_ax1", "mat_ax2"]
+            [
+                self._string_label,
+                self._dom_number_label,
+                _AX0_COL,
+                _AX1_COL,
+                _AX2_COL,
+            ]
         ].values.astype(
             int
         )
@@ -272,7 +441,7 @@ class ExamplePrometheusMapping(PixelMapping):
         pixel_feature_names: List[str],
         string_label: str = "sensor_string_id",
         sensor_number_label: str = "sensor_id",
-    ):
+    ) -> None:
         """Construct `ExamplePrometheusMapping`.
 
         Args:
@@ -303,16 +472,26 @@ class ExamplePrometheusMapping(PixelMapping):
         )  # 2 for string and sensor number
 
         # read mapping from parquet file
+        # The Prometheus mapping is hand-crafted from a specific detector
+        # geometry and is not derivable from a simple closed-form rule,
+        # so we still load it from a packaged file. The expected schema
+        # is documented in `_set_image_feature_names` below.
         df = pd.read_parquet(PROMETHEUS_CNN_MAPPING)
+        df.rename(
+            columns={
+                "sensor_string_id": string_label,
+                "sensor_id": sensor_number_label,
+            },
+            inplace=True,
+        )
         df.sort_values(
-            by=["sensor_string_id", "sensor_id"],
+            by=[string_label, sensor_number_label],
             ascending=[True, True],
             inplace=True,
         )
 
-        # Set the index to string and sensor_number for faster lookup
         df.set_index(
-            ["sensor_string_id", "sensor_id"],
+            [string_label, sensor_number_label],
             inplace=True,
             drop=False,
         )
@@ -354,11 +533,20 @@ class ExamplePrometheusMapping(PixelMapping):
         ].int()
         batch_row_features = x[:, self._cnn_features_idx]
 
-        # look up the mapping for string and sensor_number
+        # Look up the pixel position in the image for every (string,
+        # sensor_id) pair. Column references go through the configurable
+        # labels and the internal axis-column constants so this method
+        # does not rely on hard-coded column names from the data file.
         match_indices = self._mapping.loc[
             zip(*string_sensor_number.t().tolist())
         ][
-            ["sensor_string_id", "sensor_id", "mat_ax0", "mat_ax1", "mat_ax2"]
+            [
+                self._string_label,
+                self._sensor_number_label,
+                _AX0_COL,
+                _AX1_COL,
+                _AX2_COL,
+            ]
         ].values.astype(
             int
         )
