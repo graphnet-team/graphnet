@@ -20,6 +20,10 @@ from .graphs import (
     ClusterSummaryFeatures,
 )
 from .images import (
-    ImageDefinition,
+    ExamplePrometheusGridDefinition,
+    ExamplePrometheusImage,
+    GridDefinition,
+    IC86GridDefinition,
     IC86Image,
+    ImageRepresentation,
 )

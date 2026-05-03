@@ -1,4 +1,4 @@
-"""A module containing different image representations in GraphNeT."""
+"""Concrete :class:`ImageRepresentation` subclasses for common detectors."""
 
 from typing import List, Optional, Any
 import torch
@@ -6,16 +6,16 @@ import torch
 from graphnet.models.data_representation.graphs import NodeDefinition
 from graphnet.models.detector import Detector, IceCube86, ORCA150
 
-from .image_definition import ImageDefinition
-from .mappings import IC86PixelMapping, ExamplePrometheusMapping
+from .image_representation import ImageRepresentation
+from .mappings import IC86GridDefinition, ExamplePrometheusGridDefinition
 
 
-class IC86Image(ImageDefinition):
-    """Class creating a image for IC86 DNN data."""
+class IC86Image(ImageRepresentation):
+    """IceCube-86 images (main array + optional DeepCore tensors)."""
 
     def __init__(
         self,
-        node_definition: NodeDefinition,
+        pixel_definition: NodeDefinition,
         input_feature_names: List[str],
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
@@ -25,27 +25,25 @@ class IC86Image(ImageDefinition):
         detector: Optional[Detector] = None,
         **kwargs: Any,
     ) -> None:
-        """Construct `IC86DNNImage`.
+        """Construct `IC86Image`.
 
         Args:
-            node_definition: Definition of nodes.
-            input_feature_names: Names of each column in expected input data
-                that will be built into a image.
-            include_lower_dc: If True, the lower DeepCore will be included.
-            include_upper_dc: If True, the upper DeepCore will be included.
-            string_label: The label for the string number in the data.
-            dom_number_label: The label for the DOM number in the data.
-            dtype: data type used for node features. e.g. ´torch.float´
-            detector: The corresponding ´Detector´ representing the data.
+            pixel_definition: Pulse → DOM row features (:class:`NodeDefinition`).
+            input_feature_names: Raw input column names.
+            include_lower_dc: Include lower DeepCore grid.
+            include_upper_dc: Include upper DeepCore grid.
+            string_label: DOM string column in pixel rows.
+            dom_number_label: DOM index column in pixel rows.
+            dtype: Tensor dtype for images.
+            detector: ``IceCube86``; default standardizes all but coordinates.
         """
-        # Default detector with unstandardized input features
         if detector is None:
             detector = IceCube86(
                 replace_with_identity=input_feature_names,
             )
         else:
             assert isinstance(detector, IceCube86)
-        node_definition.set_output_feature_names(input_feature_names)
+        pixel_definition.set_output_feature_names(input_feature_names)
         assert (
             string_label in input_feature_names
         ), f"String label '{string_label}' not in input feature names"
@@ -53,36 +51,31 @@ class IC86Image(ImageDefinition):
             dom_number_label in input_feature_names
         ), f"DOM number label '{dom_number_label}' not in input feature names"
 
-        # Base class constructor
-        pixel_mapping = IC86PixelMapping(
+        grid_definition = IC86GridDefinition(
+            detector=detector,
+            dtype=dtype,
             string_label=string_label,
             dom_number_label=dom_number_label,
-            pixel_feature_names=node_definition._output_feature_names,
+            pixel_feature_names=pixel_definition._output_feature_names,
             include_lower_dc=include_lower_dc,
             include_upper_dc=include_upper_dc,
-            dtype=dtype,
         )
 
         super().__init__(
-            detector=detector,
-            node_definition=node_definition,
-            pixel_mapping=pixel_mapping,  # PixelMapping,
+            pixel_definition=pixel_definition,
+            grid_definition=grid_definition,
             input_feature_names=input_feature_names,
             add_inactive_sensors=False,
             **kwargs,
         )
 
 
-class ExamplePrometheusImage(ImageDefinition):
-    """Class creating a image for Prometheus.
-
-    This Image was created to be used in the example scripts. This is
-    not intended to be used for purposes beyond that.
-    """
+class ExamplePrometheusImage(ImageRepresentation):
+    """Example Prometheus-style single-image layout (tutorial scripts only)."""
 
     def __init__(
         self,
-        node_definition: NodeDefinition,
+        pixel_definition: NodeDefinition,
         input_feature_names: List[str],
         string_label: str = "sensor_string_id",
         dom_number_label: str = "sensor_id",
@@ -93,21 +86,19 @@ class ExamplePrometheusImage(ImageDefinition):
         """Construct `ExamplePrometheusImage`.
 
         Args:
-            node_definition: Definition of nodes.
-            input_feature_names: Names of each column in expected input data
-                that will be built into a image.
-            string_label: The label for the string number in the data.
-            dom_number_label: The label for the DOM number in the data.
-            dtype: data type used for node features. e.g. ´torch.float´
-            detector: The corresponding ´Detector´ representing the data.
+            pixel_definition: Pulse → sensor row features (:class:`NodeDefinition`).
+            input_feature_names: Raw input column names.
+            string_label: String id column in pixel rows.
+            dom_number_label: Sensor id column (internal grid key name).
+            dtype: Tensor dtype for images.
+            detector: ``ORCA150`` by default.
         """
-        # Default detector with unstandardized input features
         if detector is None:
             detector = ORCA150(
                 replace_with_identity=input_feature_names,
             )
 
-        node_definition.set_output_feature_names(input_feature_names)
+        pixel_definition.set_output_feature_names(input_feature_names)
         assert (
             string_label in input_feature_names
         ), f"String label '{string_label}' not in input feature names"
@@ -115,18 +106,17 @@ class ExamplePrometheusImage(ImageDefinition):
             dom_number_label in input_feature_names
         ), f"DOM number label '{dom_number_label}' not in input feature names"
 
-        # Base class constructor
-        pixel_mapping = ExamplePrometheusMapping(
+        grid_definition = ExamplePrometheusGridDefinition(
+            detector=detector,
+            dtype=dtype,
             string_label=string_label,
             sensor_number_label=dom_number_label,
-            pixel_feature_names=node_definition._output_feature_names,
-            dtype=dtype,
+            pixel_feature_names=pixel_definition._output_feature_names,
         )
 
         super().__init__(
-            detector=detector,
-            node_definition=node_definition,
-            pixel_mapping=pixel_mapping,  # PixelMapping,
+            pixel_definition=pixel_definition,
+            grid_definition=grid_definition,
             input_feature_names=input_feature_names,
             add_inactive_sensors=False,
             **kwargs,

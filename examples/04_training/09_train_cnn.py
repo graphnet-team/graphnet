@@ -82,31 +82,11 @@ def main(
         # Log configuration to W&B
         wandb_logger.experiment.config.update(config)
 
-    # First we need to define how the image is constructed.
-    # This is done using an ImageDefinition.
-
-    # An ImageDefinition combines two components:
-
-    # 1. A pixel definition, which defines how the pixel data is
-    # represented. Since an image has always fixed dimensions this
-    # pixel definition is also responsible to represent the data in
-    # a way such that this fixed dimensions can be achieved.
-    # Normally, this could mean that light pulses that arrive at
-    # the same optical module must be aggregated to a
-    # fixed-dimensional vector.
-    # A pixel definition works exactly the same as the
-    # a node definition in the graph scenerio.
-
-    # 2. A pixel mapping, which defines where each pixel is located
-    # in the final image. This is highly detector specific, as it
-    # depends on the geometry of the detector.
-
-    # An ImageDefinition can be used to create multiple images of
-    # a single event. In the example of IceCube, you can e.g
-    # create three images, one for the so called main array,
-    # one for the upper deep core and one for the lower deep
-    # core. Essentially, these are just different areas in
-    # the detector.
+    # Build pulses → pixels → image tensors via `ImageRepresentation`.
+    # 1) `pixel_definition`: aggregates pulses (here per optical module).
+    # 2) `grid_definition` (inside `ExamplePrometheusImage`): detector grid
+    #    layouts and scatter into shaped tensors.
+    # Multiple tensors per event are supported (e.g. IC86 main + DeepCore).
 
     # Here we use the PercentileClusters pixel definition, which
     # aggregates the light pulses that arrive at the same optical
@@ -119,8 +99,8 @@ def main(
         input_feature_names=features,
     )
 
-    # The final image definition used here is the ExamplePrometheusImage,
-    # which is a detector specific pixel mapping.
+    # `ExamplePrometheusImage` wires a Prometheus `GridDefinition`
+    # for the example layout.
     # It maps optical modules into the image
     # using the sensor_string_id and sensor_id
     # (number of the optical module).
@@ -131,14 +111,14 @@ def main(
     # sensor_string_id. Therefore we need to make sure that
     # these features are not standardized, which is done by the
     # `replace_with_identity` argument of the detector.
-    image_definition = ExamplePrometheusImage(
+    image_representation = ExamplePrometheusImage(
         detector=ORCA150(
             replace_with_identity=[
                 "sensor_id",
                 "sensor_string_id",
             ],
         ),
-        node_definition=pixel_definition,
+        pixel_definition=pixel_definition,
         input_feature_names=features,
         string_label="sensor_string_id",
         dom_number_label="sensor_id",
@@ -153,7 +133,7 @@ def main(
         truth_table=truth_table,
         features=features,
         truth=truth,
-        data_representation=image_definition,
+        data_representation=image_representation,
     )
 
     # Create the training and validation dataloaders.
@@ -173,16 +153,19 @@ def main(
 
     # Building model
 
+    # LCSC spatial size must match this `ImageRepresentation`'s grid.
+    image_size = image_representation.single_image_spatial_shape()
+
     # Define architecture of the backbone, in this example
     # the LCSC architecture from Alexander Harnisch is used.
     backbone = LCSC(
-        num_input_features=image_definition.nb_outputs,
+        num_input_features=image_representation.nb_outputs,
         out_put_dim=2,
         input_norm=True,
         num_conv_layers=5,
         conv_filters=[5, 10, 20, 40, 60],
         kernel_size=3,
-        image_size=(8, 9, 22),  # dimensions of the example image
+        image_size=image_size,
         pooling_type=[
             "Avg",
             None,
@@ -224,7 +207,7 @@ def main(
     # along with typical machine learning options such as
     # learning rate optimizers and schedulers.
     model = StandardModel(
-        data_representation=image_definition,
+        data_representation=image_representation,
         backbone=backbone,
         tasks=[task],
         optimizer_class=Adam,

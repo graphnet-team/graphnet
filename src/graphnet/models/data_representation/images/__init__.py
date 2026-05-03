@@ -1,10 +1,9 @@
-"""Modules for mapping images.
+"""CNN images: ``ImageRepresentation`` + ``GridDefinition``."""
 
-´ImageDefinition´ defines the nodes and the mapping,  and contains
-general image-manipulation.´PixelMapping´ defines how raw data is
-mapped into the regular sized image.
-"""
-
-from .image_definition import ImageDefinition
+from .image_representation import ImageRepresentation
 from .images import IC86Image, ExamplePrometheusImage
-from .mappings import IC86PixelMapping, ExamplePrometheusMapping
+from .mappings import (
+    ExamplePrometheusGridDefinition,
+    GridDefinition,
+    IC86GridDefinition,
+)

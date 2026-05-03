@@ -246,7 +246,7 @@ class InceptionResnet(LightningModule):
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the Conv"."""
+        """Forward pass of the InceptionResnet block."""
         tmp = torch.cat(
             [
                 self.tower1(x),

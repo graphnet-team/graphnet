@@ -1,11 +1,12 @@
-"""Unit tests for node definitions."""
+"""Tests for IceCube-86 :class:`IC86GridDefinition`."""
 
 import numpy as np
 import pandas as pd
 import torch
 from torch_geometric.data import Data
 from copy import deepcopy
-from graphnet.models.data_representation.images import IC86PixelMapping
+from graphnet.models.data_representation.images import IC86GridDefinition
+from graphnet.models.detector import IceCube86
 from graphnet.constants import (
     TEST_IC86MAIN_IMAGE,
     IC86_CNN_MAPPING,
@@ -16,7 +17,7 @@ import pytest
 
 
 def basic_checks_picture(picture: Data, dtype: torch.dtype) -> None:
-    """Basic checks for the output of pixel mapping."""
+    """Basic checks for grid scatter output."""
     assert isinstance(
         picture, Data
     ), f"Output should be a Data object got {type(picture)}"
@@ -32,20 +33,18 @@ def basic_checks_picture(picture: Data, dtype: torch.dtype) -> None:
     assert np.all(
         [picture.x[i].dtype == dtype for i in range(len(picture.x))]
     ), (
-        "All tensors in x should have the dtype specified in pixel_mapping",
+        "All tensors in x should have the dtype specified on the grid",
         f"got {[picture.x[i].dtype for i in range(len(picture.x))]}",
     )
 
 
-def test_pixel_mappings() -> None:
-    """Test pixel mapping for IC86 DNN mapping."""
-    # definitions
+def test_ic86_grid_definition() -> None:
+    """End-to-end scatter for IC86 main + DeepCore grids."""
     dtype = torch.float32
     pixel_feature_names = ["string", "dom_number", "data1", "data2"]
     string_label = "string"
     dom_number_label = "dom_number"
 
-    # Create dummy data
     dummy_data = Data(
         x=torch.tensor(
             [[1, 2, 5.8, 1e-4], [79, 46, 3.7, 1e-18], [84, 9, 6.87, 2e5]],
@@ -53,10 +52,9 @@ def test_pixel_mappings() -> None:
         ),
     )
 
-    # Construct node definition
-    # This defines each DOM as a cluster, and will summarize pulses seen by
-    # DOMs using percentiles.
-    pixel_mapping = IC86PixelMapping(
+    detector = IceCube86(replace_with_identity=pixel_feature_names)
+    grid_definition = IC86GridDefinition(
+        detector=detector,
         dtype=dtype,
         pixel_feature_names=pixel_feature_names,
         string_label=string_label,
@@ -65,26 +63,23 @@ def test_pixel_mappings() -> None:
         include_upper_dc=True,
     )
 
-    # Apply node definition to torch tensor with raw pulses
-    picture = pixel_mapping(dummy_data, pixel_feature_names)
-    new_features = pixel_mapping.image_feature_names
+    picture = grid_definition(dummy_data, pixel_feature_names)
+    new_features = grid_definition.image_feature_names
     n_features = len(new_features)
 
-    # Check the output
     basic_checks_picture(picture, dtype)
 
-    # More checks
     assert (
-        len(pixel_mapping.shape) == 3
-    ), f"Expected shape to be 3 got {len(pixel_mapping.shape)}"
-    assert pixel_mapping.shape == [
+        len(grid_definition.shape) == 3
+    ), f"Expected shape to be 3 got {len(grid_definition.shape)}"
+    assert grid_definition.shape == [
         [n_features, 10, 10, 60],
         [n_features, 1, 8, 10],
         [n_features, 1, 8, 50],
     ], (
         f"Expected shape to be [[{n_features},10,10,60], "
         f"[{n_features},1,8,10], [{n_features},1,8,50]] got "
-        f"{pixel_mapping.shape}"
+        f"{grid_definition.shape}"
     )
     assert isinstance(
         new_features, list
@@ -117,7 +112,6 @@ def test_pixel_mappings() -> None:
         picture.x[2] == 0
     ), "Lower DeepCore should not be all zeros, got all zeros."
 
-    # Try string and dom_number that does not exist
     dummy_data = Data(
         x=torch.tensor(
             [
@@ -129,15 +123,12 @@ def test_pixel_mappings() -> None:
         ),
     )
 
-    # should raise KeyError since the string and dom_number
-    # do not exist in the mapping
     with pytest.raises(KeyError):
-        picture = pixel_mapping(dummy_data, pixel_feature_names)
+        grid_definition(dummy_data, pixel_feature_names)
 
 
-def test_segments_mapping() -> None:
-    """Test pixel mapping for IC86 main array."""
-    # definitions
+def test_ic86_grid_segments() -> None:
+    """IC86 grid: single sub-image at a time vs reference arrays."""
     dtype = torch.float32
     string_label = "string"
     dom_number_label = "dom_number"
@@ -148,19 +139,14 @@ def test_segments_mapping() -> None:
         "redundant_dom_number",
     ]
 
-    # Load the grid mapping
-    # This is a mapping from string and dom_number to the pixel coordinates
-    # in the main array, upper DeepCore and lower DeepCore.
-    # Running the grid mapping through the pixel mapping will
-    # create the full images for the main array, upper DeepCore
-    # and lower DeepCore.
-    grid = pd.read_parquet(IC86_CNN_MAPPING)
-    grid = grid.loc[:, ["string", "dom_number"]]
-    grid["redundant_string"] = grid["string"].copy()
-    grid["redundant_dom_number"] = grid["dom_number"].copy()
-    grid = Data(x=torch.tensor(grid.to_numpy(), dtype=dtype))
+    grid_df = pd.read_parquet(IC86_CNN_MAPPING)
+    grid_df = grid_df.loc[:, ["string", "dom_number"]]
+    grid_df["redundant_string"] = grid_df["string"].copy()
+    grid_df["redundant_dom_number"] = grid_df["dom_number"].copy()
+    grid_tensor = Data(x=torch.tensor(grid_df.to_numpy(), dtype=dtype))
 
-    # Test the pixel mapping for the main array, upper and lower DeepCore
+    detector = IceCube86(replace_with_identity=pixel_feature_names)
+
     for image, inc_main, inc_upc, inc_lowdc, label in zip(
         [TEST_IC86MAIN_IMAGE, TEST_IC86UPPERDC_IMAGE, TEST_IC86LOWERDC_IMAGE],
         [True, False, False],
@@ -168,8 +154,9 @@ def test_segments_mapping() -> None:
         [False, False, True],
         ["main array", "upper deepcore", "lower deepcore"],
     ):
-        tmp = deepcopy(grid)
-        pixel_mapping = IC86PixelMapping(
+        tmp = deepcopy(grid_tensor)
+        grid_definition = IC86GridDefinition(
+            detector=detector,
             dtype=dtype,
             pixel_feature_names=pixel_feature_names,
             string_label=string_label,
@@ -178,15 +165,13 @@ def test_segments_mapping() -> None:
             include_lower_dc=inc_lowdc,
             include_upper_dc=inc_upc,
         )
-        picture = pixel_mapping(tmp, pixel_feature_names)
+        picture = grid_definition(tmp, pixel_feature_names)
         tensor_image: torch.Tensor = torch.tensor(
             np.load(image), dtype=dtype
         ).unsqueeze(0)
 
-        # Check the output
         basic_checks_picture(picture, dtype)
 
-        # More checks
         assert len(picture.x) == 1, (
             "There should be one tensor in x ",
             f"got list with length {len(picture.x)}",
@@ -198,7 +183,6 @@ def test_segments_mapping() -> None:
         assert not torch.all(
             picture.x[0] == 0
         ), f"{label} should not be all zeros, got all zeros."
-        # Check if the tensor matches the expected image
         assert torch.equal(tensor_image, picture.x[0]), (
             f"{label} should match the expected"
             " main array from IC86 DNN mapping."

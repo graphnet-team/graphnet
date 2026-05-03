@@ -13,26 +13,22 @@ from graphnet.constants import (
 )
 
 
-def test_image_definition() -> None:
-    """Test the ImageDefinition class for IC86 DNN data."""
-    # Define input feature names
-
+def test_ic86_image_representation() -> None:
+    """Pipeline IC86Image: pixel definition + grid → list of tensors."""
     grid = pd.read_parquet(IC86_CNN_MAPPING)
     grid = grid.loc[:, ["string", "dom_number"]]
     grid["redundant_string"] = grid["string"].copy()
     grid["redundant_dom_number"] = grid["dom_number"].copy()
     dtype = torch.float32
 
-    # Create a NodeDefinition instance
-    node_def = NodesAsPulses(
+    pixel_def = NodesAsPulses(
         input_feature_names=grid.columns.tolist(),
     )
 
     detector = IceCube86(replace_with_identity=grid.columns.tolist())
 
-    # Create an instance of TestImageIC86
-    image_definition = IC86Image(
-        node_definition=node_def,
+    image_representation = IC86Image(
+        pixel_definition=pixel_def,
         input_feature_names=grid.columns.tolist(),
         include_lower_dc=True,
         include_upper_dc=True,
@@ -43,19 +39,19 @@ def test_image_definition() -> None:
     )
 
     assert (
-        image_definition.nb_outputs == 2
-    ), "Expected 2 outputs, got {}".format(image_definition.nb_outputs)
+        image_representation.nb_outputs == 2
+    ), "Expected 2 outputs, got {}".format(image_representation.nb_outputs)
 
     output_feature_names = grid.columns.tolist()
     output_feature_names.remove("string")
     output_feature_names.remove("dom_number")
 
-    assert image_definition.output_feature_names == output_feature_names, (
+    assert image_representation.output_feature_names == output_feature_names, (
         f"Output feature names do not match expected output: "
-        f"{image_definition.output_feature_names} != {output_feature_names}"
+        f"{image_representation.output_feature_names} != {output_feature_names}"
     )
 
-    image = image_definition(
+    image = image_representation(
         grid.values,
         input_feature_names=grid.columns.tolist(),
     )

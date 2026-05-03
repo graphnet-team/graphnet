@@ -1,11 +1,7 @@
-"""Modules for mapping images for different detectors.
+"""Detector grids: shapes, lookup tables, scatter into image tensors."""
 
-´PixelMapping´ defines how raw data is mapped into the regular sized
-image.
-"""
-
-from .pixel_mappings import (
-    PixelMapping,
-    IC86PixelMapping,
-    ExamplePrometheusMapping,
+from .grid_definition import (
+    ExamplePrometheusGridDefinition,
+    GridDefinition,
+    IC86GridDefinition,
 )

@@ -1,4 +1,9 @@
-"""Classes for mapping pixel data to images."""
+"""Detector-specific grid layouts: lookup tables, shapes, and scatter into tensors.
+
+Each :class:`GridDefinition` is bound to a :class:`~graphnet.models.detector.Detector`.
+:class:`~graphnet.models.data_representation.images.image_representation.ImageRepresentation`
+calls :meth:`GridDefinition.forward` to place pixel rows into image tensor(s).
+"""
 
 from abc import abstractmethod
 from typing import Dict, List, Tuple
@@ -10,9 +15,10 @@ from torch_geometric.data import Data
 
 from graphnet.constants import PROMETHEUS_CNN_MAPPING
 from graphnet.models import Model
+from graphnet.models.detector import Detector
 
 # Names of the columns used internally in the mapping DataFrame produced
-# by `IC86PixelMapping`. They identify which column in the mapping holds
+# by `IC86GridDefinition`. They identify which column in the mapping holds
 # the position of a pixel along each spatial axis of the resulting image.
 # Defined as constants so the mapping logic does not rely on free-form
 # strings spread across the implementation.
@@ -107,8 +113,8 @@ _IC86_STRING_TO_AX01: Dict[int, Tuple[int, int]] = {
 }
 
 # Sentinel value used in `mat_ax2` for DeepCore rows, which only use two
-# spatial axes (mat_ax0 and mat_ax1). Kept identical to the value used in
-# the original parquet file for backward compatibility.
+# spatial axes (mat_ax0 and mat_ax1). Matches the sentinel used in the
+# packaged IC86 CNN mapping reference table.
 _DC_AX2_SENTINEL = -500
 
 
@@ -179,36 +185,46 @@ def _build_ic86_mapping(
     return df
 
 
-class PixelMapping(Model):
-    """Abstract class for mapping pixel data to images."""
+class GridDefinition(Model):
+    """Detector-specific orthonormal image grid(s).
+
+    Holds tensor shapes and tables that map pixel keys to voxel indices.
+    """
 
     def __init__(
         self,
+        detector: Detector,
         pixel_feature_names: List[str],
     ) -> None:
-        """Construct `PixelMapping`."""
+        """Construct `GridDefinition`.
+
+        Args:
+            detector: Geometry this grid is defined for (CNN grids are
+                detector-specific).
+            pixel_feature_names: Column names expected on each pixel row,
+                including keys listed in :attr:`map_pixels_by`.
+        """
         super().__init__(name=__name__, class_name=self.__class__.__name__)
+        self._detector = detector
         self._set_image_feature_names(pixel_feature_names)
+
+    @property
+    def detector(self) -> Detector:
+        """Detector instance this grid belongs to."""
+        return self._detector
+
+    @property
+    @abstractmethod
+    def map_pixels_by(self) -> List[str]:
+        """Feature columns that join pixel rows to :meth:`mappings`."""
+
+    @abstractmethod
+    def mappings(self) -> List[pd.DataFrame]:
+        """DataFrame(s) keyed by ``map_pixels_by`` with voxel index columns."""
 
     @abstractmethod
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
-        """Map pixel data to images.
-
-        Args:
-            data: The input data containing pixel features.
-            data_feature_names: Names of each column in expected input data
-                that will be built into a image.
-
-        Returns:
-            Data: The output data with images as features.
-        NOTE: The output data.x should be a list of tensors,
-            where each tensor corresponds to an image.
-
-        Make sure to add a batch dimension to the tensors. E.g a picture
-        with dimensions CxHxW = 10x64x64 should be returned as
-        1x10x64x64.
-        """
-        raise NotImplementedError
+        """Scatter pixel features into shaped tensors (see subclasses)."""
 
     @abstractmethod
     def _set_image_feature_names(self, input_feature_names: List[str]) -> None:
@@ -228,16 +244,12 @@ class PixelMapping(Model):
         pass
 
 
-class IC86PixelMapping(PixelMapping):
-    """Mapping for the IceCube86.
-
-    This mapping is based on the CNN mapping used
-    in the multiple IceCube86 analysis.
-    For further details see: https://arxiv.org/abs/2101.11589
-    """
+class IC86GridDefinition(GridDefinition):
+    """IceCube-86 CNN grid (main array + DeepCore) layouts and lookup table."""
 
     def __init__(
         self,
+        detector: Detector,
         dtype: torch.dtype,
         pixel_feature_names: List[str],
         string_label: str = "string",
@@ -246,7 +258,7 @@ class IC86PixelMapping(PixelMapping):
         include_lower_dc: bool = True,
         include_upper_dc: bool = True,
     ) -> None:
-        """Construct `IC86PixelMapping`.
+        """Construct `IC86GridDefinition`.
 
         The mapping from (string, dom_number) to a position in the
         resulting images is generated programmatically at instantiation
@@ -254,6 +266,7 @@ class IC86PixelMapping(PixelMapping):
         is required.
 
         Args:
+            detector: ``IceCube86`` instance (grid is fixed to that geometry).
             dtype: data type used for node features. e.g. ´torch.float´
             string_label: Name of the feature corresponding
                 to the DOM string number. Values Integers between 1 - 86
@@ -295,7 +308,18 @@ class IC86PixelMapping(PixelMapping):
             string_label=string_label,
             dom_number_label=dom_number_label,
         )
-        super().__init__(pixel_feature_names=pixel_feature_names)
+        super().__init__(
+            detector=detector, pixel_feature_names=pixel_feature_names
+        )
+
+    @property
+    def map_pixels_by(self) -> List[str]:
+        """String and DOM identifiers used for voxel lookup."""
+        return [self._string_label, self._dom_number_label]
+
+    def mappings(self) -> List[pd.DataFrame]:
+        """Return the single combined lookup table for all sub-images."""
+        return [self._mapping]
 
     def _set_indices(
         self,
@@ -314,7 +338,7 @@ class IC86PixelMapping(PixelMapping):
                 self._cnn_features_idx.append(feature_names.index(feature))
 
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
-        """Map pixel data to images."""
+        """Scatter pixel rows into IceCube-86 image tensor(s)."""
         # Initialize output arrays
         if self._include_main_array:
             main_arr = torch.zeros(
@@ -427,24 +451,21 @@ class IC86PixelMapping(PixelMapping):
         return ret
 
 
-class ExamplePrometheusMapping(PixelMapping):
-    """Mapping for the Prometheus detector.
-
-    This mapping is made for example purposes and is not optimized for
-    any specific use case. There is no guarantee that this mapping will
-    work with all Prometheus data.
-    """
+class ExamplePrometheusGridDefinition(GridDefinition):
+    """Example single-image grid for Prometheus-style layouts."""
 
     def __init__(
         self,
+        detector: Detector,
         dtype: torch.dtype,
         pixel_feature_names: List[str],
         string_label: str = "sensor_string_id",
         sensor_number_label: str = "sensor_id",
     ) -> None:
-        """Construct `ExamplePrometheusMapping`.
+        """Construct grid.
 
         Args:
+            detector: Typically ``ORCA150`` in the example scripts.
             dtype: data type used for node features. e.g. ´torch.float´
             string_label: Name of the feature corresponding
                 to the sensor string number.
@@ -497,7 +518,18 @@ class ExamplePrometheusMapping(PixelMapping):
         )
 
         self._mapping = df
-        super().__init__(pixel_feature_names=pixel_feature_names)
+        super().__init__(
+            detector=detector, pixel_feature_names=pixel_feature_names
+        )
+
+    @property
+    def map_pixels_by(self) -> List[str]:
+        """String and sensor identifiers used for voxel lookup."""
+        return [self._string_label, self._sensor_number_label]
+
+    def mappings(self) -> List[pd.DataFrame]:
+        """Return the parquet-backed lookup table for the example layout."""
+        return [self._mapping]
 
     def _set_indices(
         self,
@@ -516,7 +548,7 @@ class ExamplePrometheusMapping(PixelMapping):
                 self._cnn_features_idx.append(feature_names.index(feature))
 
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
-        """Map pixel data to images."""
+        """Scatter pixel rows into the example 3D image tensor."""
         # Initialize output arrays
         image_tensor = torch.zeros(
             (self._nb_cnn_features, 8, 9, 22),
