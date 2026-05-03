@@ -1,7 +1,6 @@
 """Tests for IceCube-86 :class:`IC86GridDefinition`."""
 
 import numpy as np
-import pandas as pd
 import torch
 from torch_geometric.data import Data
 from copy import deepcopy
@@ -9,11 +8,15 @@ from graphnet.models.data_representation.images import IC86GridDefinition
 from graphnet.models.detector import IceCube86
 from graphnet.constants import (
     TEST_IC86MAIN_IMAGE,
-    IC86_CNN_MAPPING,
     TEST_IC86UPPERDC_IMAGE,
     TEST_IC86LOWERDC_IMAGE,
 )
 import pytest
+
+from tests.models.ic86_grid_testdata import (
+    IC86_TEST_PIXEL_COLUMNS,
+    ic86_full_detector_pixel_table,
+)
 
 
 def basic_checks_picture(picture: Data, dtype: torch.dtype) -> None:
@@ -132,18 +135,11 @@ def test_ic86_grid_segments() -> None:
     dtype = torch.float32
     string_label = "string"
     dom_number_label = "dom_number"
-    pixel_feature_names = [
-        "string",
-        "dom_number",
-        "redundant_string",
-        "redundant_dom_number",
-    ]
+    pixel_feature_names = IC86_TEST_PIXEL_COLUMNS
 
-    grid_df = pd.read_parquet(IC86_CNN_MAPPING)
-    grid_df = grid_df.loc[:, ["string", "dom_number"]]
-    grid_df["redundant_string"] = grid_df["string"].copy()
-    grid_df["redundant_dom_number"] = grid_df["dom_number"].copy()
-    grid_tensor = Data(x=torch.tensor(grid_df.to_numpy(), dtype=dtype))
+    grid_tensor = Data(
+        x=torch.tensor(ic86_full_detector_pixel_table(), dtype=dtype)
+    )
 
     detector = IceCube86(replace_with_identity=pixel_feature_names)
 

@@ -3,33 +3,34 @@ from graphnet.models.data_representation import NodesAsPulses
 from graphnet.models.detector import IceCube86
 import torch
 from torch_geometric.data import Data
-import pandas as pd
 import numpy as np
 from graphnet.constants import (
-    IC86_CNN_MAPPING,
     TEST_IC86MAIN_IMAGE,
     TEST_IC86UPPERDC_IMAGE,
     TEST_IC86LOWERDC_IMAGE,
 )
 
+from tests.models.ic86_grid_testdata import (
+    IC86_TEST_PIXEL_COLUMNS,
+    ic86_full_detector_pixel_table,
+)
+
 
 def test_ic86_image_representation() -> None:
     """Pipeline IC86Image: pixel definition + grid → list of tensors."""
-    grid = pd.read_parquet(IC86_CNN_MAPPING)
-    grid = grid.loc[:, ["string", "dom_number"]]
-    grid["redundant_string"] = grid["string"].copy()
-    grid["redundant_dom_number"] = grid["dom_number"].copy()
     dtype = torch.float32
+    columns = IC86_TEST_PIXEL_COLUMNS
+    pixel_table = ic86_full_detector_pixel_table()
 
     pixel_def = NodesAsPulses(
-        input_feature_names=grid.columns.tolist(),
+        input_feature_names=columns,
     )
 
-    detector = IceCube86(replace_with_identity=grid.columns.tolist())
+    detector = IceCube86(replace_with_identity=columns)
 
     image_representation = IC86Image(
         pixel_definition=pixel_def,
-        input_feature_names=grid.columns.tolist(),
+        input_feature_names=columns,
         include_lower_dc=True,
         include_upper_dc=True,
         string_label="string",
@@ -42,7 +43,7 @@ def test_ic86_image_representation() -> None:
         image_representation.nb_outputs == 2
     ), "Expected 2 outputs, got {}".format(image_representation.nb_outputs)
 
-    output_feature_names = grid.columns.tolist()
+    output_feature_names = columns.copy()
     output_feature_names.remove("string")
     output_feature_names.remove("dom_number")
 
@@ -52,8 +53,8 @@ def test_ic86_image_representation() -> None:
     )
 
     image = image_representation(
-        grid.values,
-        input_feature_names=grid.columns.tolist(),
+        pixel_table,
+        input_feature_names=columns,
     )
 
     assert isinstance(
