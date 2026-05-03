@@ -20,7 +20,6 @@ from graphnet.models.graphs import KNNGraph
 from graphnet.models.detector.icecube import IceCubeDeepCore
 from graphnet.models.graphs.nodes import NodesAsPulses
 
-
 CONFIG_PATHS = {
     "parquet": "/tmp/test_dataset_parquet.yml",
     "sqlite": "/tmp/test_dataset_sqlite.yml",

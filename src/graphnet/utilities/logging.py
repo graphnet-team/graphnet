@@ -226,7 +226,6 @@ class Logger:
 
     def warning_once(self, msg: str) -> None:
         """Print `msg` as warning exactly once."""
-        global WARNINGS
         if msg in WARNINGS:
             return
 

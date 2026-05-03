@@ -55,13 +55,11 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         try:
             self._hidden_output_feature_names
         except AttributeError as e:
-            self.error(
-                f"""{self.__class__.__name__} was instantiated without
+            self.error(f"""{self.__class__.__name__} was instantiated without
                        `input_feature_names` and it was not set prior to this
                        forward call. If you are using this class outside a
                        `GraphDefinition`, please instatiate
-                       with `input_feature_names`."""
-            )  # noqa
+                       with `input_feature_names`.""")  # noqa
             raise e
         return self._hidden_output_feature_names
 
@@ -212,12 +210,10 @@ class PercentileClusters(NodeDefinition):
                 cluster_class.add_counts()
             array = cluster_class.clustered_x
         else:
-            self.error(
-                f"""{self.__class__.__name__} was not instatiated with
+            self.error(f"""{self.__class__.__name__} was not instatiated with
                 `input_feature_names` and has not been set later.
                 Please instantiate this class with `input_feature_names`
-                if you're using it outside `GraphDefinition`."""
-            )  # noqa
+                if you're using it outside `GraphDefinition`.""")  # noqa
             raise AttributeError
 
         return torch.tensor(array)

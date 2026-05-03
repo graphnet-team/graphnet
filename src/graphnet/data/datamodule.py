@@ -575,7 +575,7 @@ class GraphNeTDataModule(pl.LightningDataModule, Logger):
             # Construct single dataset
             dataset = self._create_single_dataset(
                 selection=selection,
-                path=self._dataset_args["path"],  # type:ignore
+                path=self._dataset_args["path"],  # type: ignore
             )
         return dataset
 

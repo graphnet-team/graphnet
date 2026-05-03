@@ -15,7 +15,6 @@ from graphnet.data.extractors.i3featureextractor import (
 from graphnet.data.constants import FEATURES
 from graphnet.constants import PRETRAINED_MODEL_DIR
 
-
 # Constants
 MODEL_NAME = "total_neutrino_energy"
 BASE_PATH = f"{PRETRAINED_MODEL_DIR}/icecube/upgrade/QUESO"

@@ -123,7 +123,7 @@ def test_save_selection(selection: List[int], file_path: str) -> None:
     "dataset_ref", [SQLiteDataset, ParquetDataset], indirect=True
 )
 def test_single_dataset_without_selections(
-    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]]
+    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]],
 ) -> None:
     """Verify GraphNeTDataModule behavior when no test selection is provided.
 
@@ -163,7 +163,7 @@ def test_single_dataset_without_selections(
     "dataset_ref", [SQLiteDataset, ParquetDataset], indirect=True
 )
 def test_single_dataset_with_selections(
-    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]]
+    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]],
 ) -> None:
     """Test that selection functionality of DataModule behaves as expected.
 
@@ -226,7 +226,7 @@ def test_single_dataset_with_selections(
     "dataset_ref", [SQLiteDataset, ParquetDataset], indirect=True
 )
 def test_dataloader_args(
-    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]]
+    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]],
 ) -> None:
     """Test that arguments to dataloaders are propagated correctly.
 
@@ -267,7 +267,7 @@ def test_dataloader_args(
     "dataset_ref", [SQLiteDataset, ParquetDataset], indirect=True
 )
 def test_ensemble_dataset_without_selections(
-    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]]
+    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]],
 ) -> None:
     """Test ensemble dataset functionality without selections.
 
@@ -306,7 +306,7 @@ def test_ensemble_dataset_without_selections(
 
 @pytest.mark.parametrize("dataset_ref", [SQLiteDataset, ParquetDataset])
 def test_ensemble_dataset_with_selections(
-    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]]
+    dataset_setup: Tuple[Any, Dict[str, Any], Dict[str, int]],
 ) -> None:
     """Test ensemble dataset functionality with selections.
 

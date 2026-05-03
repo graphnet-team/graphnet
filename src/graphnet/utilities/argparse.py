@@ -6,7 +6,6 @@ from typing import Any, Dict, Optional, Union, Tuple
 
 from graphnet.constants import CONFIG_DIR
 
-
 ASCII_LOGO = r"""
   _____              __   _  __  ______
  / ___/______ ____  / /  / |/ /_/_  __/

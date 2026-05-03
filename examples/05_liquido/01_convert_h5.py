@@ -39,11 +39,9 @@ def main(backend: str) -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
             Convert h5 files from LiquidO to an intermediate format.
-            """
-    )
+            """)
 
     parser.add_argument("backend", choices=["sqlite", "parquet"])
 

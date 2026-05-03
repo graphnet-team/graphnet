@@ -14,7 +14,6 @@ from graphnet.data.extractors.icecube.utilities.frames import (
 from graphnet.utilities.imports import has_icecube_package
 from graphnet.utilities.logging import Logger
 
-
 if has_icecube_package():
     from icecube import (
         icetray,
@@ -58,7 +57,6 @@ def break_cyclic_recursion(fn: Callable) -> Callable:
 
     @wraps(fn)
     def wrapper(obj: Any) -> Any:
-        global BEING_EVALUATED
         try:
             hash_ = (hash(fn), hash(obj))
             if hash_ in BEING_EVALUATED:

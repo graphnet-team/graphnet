@@ -300,11 +300,9 @@ class DataRepresentation(Model):
 
     def _perturb_input(self, input_features: np.ndarray) -> np.ndarray:
         if isinstance(self._perturbation_dict, dict):
-            self.warning_once(
-                f"""Will randomly perturb
+            self.warning_once(f"""Will randomly perturb
                 {list(self._perturbation_dict.keys())}
-                using stds {self._perturbation_dict.values()}"""  # noqa
-            )
+                using stds {self._perturbation_dict.values()}""")  # noqa
             perturbed_features = self.rng.normal(
                 loc=input_features[:, self._perturbation_cols],
                 scale=np.array(

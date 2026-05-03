@@ -282,7 +282,7 @@ def save_model_config(init_fn: Callable) -> Callable:
     )
 
     def _replace_model_instance_with_config(
-        obj: Union["Model", Any]
+        obj: Union["Model", Any],
     ) -> Union[ModelConfig, Any]:
         """Replace `Model` instances in `obj` with their `ModelConfig`."""
         from graphnet.models import Model
@@ -322,7 +322,7 @@ class ModelConfigSaverMeta(type):
         """Catch object construction and save config after `__init__`."""
 
         def _replace_model_instance_with_config(
-            obj: Union["Model", Any]
+            obj: Union["Model", Any],
         ) -> Union[ModelConfig, Any]:
             """Replace `Model` instances in `obj` with their `ModelConfig`."""
             from graphnet.models import Model

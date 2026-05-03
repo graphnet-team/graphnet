@@ -12,7 +12,6 @@ from graphnet.data.dataclasses import I3FileSet
 from graphnet.utilities.filesys import find_i3_files
 from .graphnet_file_reader import GraphNeTFileReader
 
-
 if has_icecube_package():
     from icecube import icetray, dataio  # pyright: reportMissingImports=false
 

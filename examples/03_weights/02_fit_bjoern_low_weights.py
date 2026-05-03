@@ -39,11 +39,9 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
 Fit per-event weights according to the `BjoernLow` weight fitter.
-"""
-    )
+""")
 
     args, unknown = parser.parse_known_args()
 

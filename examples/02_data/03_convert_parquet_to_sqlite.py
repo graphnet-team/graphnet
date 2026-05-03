@@ -37,11 +37,9 @@ def main(parquet_path: str, tables: List[str]) -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
 Convert Parquet files to SQLite database.
-"""
-    )
+""")
 
     parser.add_argument(
         "--parquet-path",

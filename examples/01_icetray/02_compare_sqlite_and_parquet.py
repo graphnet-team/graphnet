@@ -88,12 +88,10 @@ if __name__ == "__main__":
 
     else:
         # Parse command-line arguments
-        parser = ArgumentParser(
-            description="""
+        parser = ArgumentParser(description="""
 Convert I3 files to both SQLite and Parquet formats, and see that the results
 agree.
-"""
-        )
+""")
 
         args, unknown = parser.parse_known_args()
 

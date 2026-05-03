@@ -60,11 +60,9 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
 Plot feature distributions in dataset.
-"""
-    )
+""")
 
     args, unknown = parser.parse_known_args()
 

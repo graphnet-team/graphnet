@@ -71,11 +71,9 @@ def main(backend: str, triggered: str, HNL: str, OUTPUT_DIR: str) -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
             Convert root files from KM3NeT to an sqlite or parquet.
-            """
-    )
+            """)
 
     parser.add_argument(
         "backend",

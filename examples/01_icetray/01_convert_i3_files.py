@@ -160,11 +160,9 @@ if __name__ == "__main__":
     if not has_icecube_package():
         Logger(log_folder=None).error(ERROR_MESSAGE_MISSING_ICETRAY)
     else:
-        parser = ArgumentParser(
-            description="""
+        parser = ArgumentParser(description="""
 Convert I3 files to an intermediate format.
-"""
-        )
+""")
 
         parser.add_argument(
             "backend",

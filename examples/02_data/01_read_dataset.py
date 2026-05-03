@@ -107,11 +107,9 @@ def main(backend: str) -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
 Read a few events from data in an intermediate format.
-"""
-    )
+""")
 
     parser.add_argument(
         "backend",

@@ -80,10 +80,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
 Combine multiple Datasets using EnsembleDataset.
-"""
-    )
+""")
     args, unknown = parser.parse_known_args()
     main()

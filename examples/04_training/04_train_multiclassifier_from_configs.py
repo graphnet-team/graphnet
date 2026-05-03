@@ -144,11 +144,9 @@ def main(
 
 if __name__ == "__main__":
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
             Train GNN classification model.
-            """
-    )
+            """)
 
     parser.with_standard_arguments(
         (
