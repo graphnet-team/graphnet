@@ -1,13 +1,13 @@
 exclude: '^(versioneer.py|src/graphnet/_version.py|docs/)'
 repos:
   - repo: https://github.com/psf/black
-    rev: 24.10.0
+    rev: 26.3.1
     hooks:
     - id: black
       language_version: python3
       args: [--config=black.toml]
   - repo: https://github.com/pycqa/flake8
-    rev: 7.1.1
+    rev: 7.3.0
     hooks:
       - id: flake8
         args: ["--config=.flake8", "--show-source", "--statistics"]
@@ -22,13 +22,13 @@ repos:
     - id: pydocstyle
       language_version: python3
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.20.2
     hooks:
     - id: mypy
       args: [--follow-imports=silent, --disallow-untyped-defs, --disallow-incomplete-defs, --disallow-untyped-calls]
       language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
