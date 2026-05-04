@@ -359,7 +359,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Linear</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Linear</span><span class="p">,</span> <span class="n">Identity</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">Data</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -597,6 +597,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">loss_function</span><span class="p">:</span> <span class="s2">"LossFunction"</span><span class="p">,</span>
+        <span class="n">disable_affine</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">task_kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `LearnedTask`.</span>
@@ -606,13 +607,21 @@
 <span class="sd">                         the last latent layer of `Model` using this Task.</span>
 <span class="sd">                         Available through `Model.nb_outputs`</span>
 <span class="sd">            loss_function: Loss function appropriate to the task.</span>
+<span class="sd">            disable_affine: If True, replace the linear projection from</span>
+<span class="sd">                            `hidden_size` to `nb_inputs` with an identity.</span>
+<span class="sd">                            Use when the upstream model already produces</span>
+<span class="sd">                            an output of the right dimensionality.</span>
 <span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">task_kwargs</span><span class="p">)</span>
 
         <span class="c1"># Mapping from last hidden layer to required size of input</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loss_function</span> <span class="o">=</span> <span class="n">loss_function</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_disable_affine</span> <span class="o">=</span> <span class="n">disable_affine</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disable_affine</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">Identity</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_affine</span> <span class="o">=</span> <span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nb_inputs</span><span class="p">)</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_forward</span><span class="p">(</span>  <span class="c1"># type: ignore</span>

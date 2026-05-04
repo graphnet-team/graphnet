@@ -983,6 +983,10 @@ acts like a prediction head.</p>
 the last latent layer of <cite>Model</cite> using this Task.
 Available through <cite>Model.nb_outputs</cite></p></li>
 <li><p><strong>loss_function</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.training.loss_functions.html#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></span>) – Loss function appropriate to the task.</p></li>
+<li><p><strong>disable_affine</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, replace the linear projection from
+<cite>hidden_size</cite> to <cite>nb_inputs</cite> with an identity.
+Use when the upstream model already produces
+an output of the right dimensionality.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
