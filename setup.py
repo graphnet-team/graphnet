@@ -30,6 +30,9 @@ INSTALL_REQUIRES = [
     "lmdb>=1.4.1",
 ]
 
+# Security: pytorch-lightning versions 2.6.2 and 2.6.3 were compromised in a
+# PyPI supply-chain incident. We restrict extras to <=2.6.1 to avoid those
+# releases. See: https://socket.dev/blog/lightning-pypi-package-compromised
 EXTRAS_REQUIRE = {
     "develop": [
         "black",
@@ -58,7 +61,7 @@ EXTRAS_REQUIRE = {
         "torch_sparse",
         "torch_cluster",
         "torch_spline_conv",
-        "pytorch-lightning>=2.0",
+        "pytorch-lightning>=2.0,<=2.6.1",
     ],
     # --- PyTorch 2.6.0 ---
     "torch-26": [
@@ -69,7 +72,7 @@ EXTRAS_REQUIRE = {
         "torch_sparse",
         "torch_cluster",
         "torch_spline_conv",
-        "pytorch-lightning>=2.0",
+        "pytorch-lightning>=2.0,<=2.6.1",
     ],
     # --- PyTorch 2.7.0 ---
     "torch-27": [
@@ -80,7 +83,7 @@ EXTRAS_REQUIRE = {
         "torch_sparse",
         "torch_cluster",
         "torch_spline_conv",
-        "pytorch-lightning>=2.0",
+        "pytorch-lightning>=2.0,<=2.6.1",
     ],
 }
 
