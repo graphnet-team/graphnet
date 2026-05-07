@@ -109,7 +109,8 @@ class NuBenchDataset(ERDAHostedDataset):
             experiment="Cluster (NuBench)",
             comments=(
                 "NuBench neutrino events from the Cluster geometry "
-                "(inspired by Baikal-GVD), simulated in water. "
+                "(inspired by Baikal-GVD), simulated in water with "
+                "energies in the 10 GeV - 100 TeV range. "
                 "Train/test split provided by NuBench selection files."
             ),
         ),
@@ -119,7 +120,8 @@ class NuBenchDataset(ERDAHostedDataset):
             experiment="Flower L (NuBench)",
             comments=(
                 "NuBench neutrino events from the Flower L geometry "
-                "(inspired by KM3NeT-ARCA), simulated in water. "
+                "(inspired by KM3NeT-ARCA), simulated in water with "
+                "energies in the 10 GeV - 100 TeV range. "
                 "Train/test split provided by NuBench selection files."
             ),
         ),
@@ -129,7 +131,8 @@ class NuBenchDataset(ERDAHostedDataset):
             experiment="Flower S (NuBench)",
             comments=(
                 "NuBench neutrino events from the Flower S geometry "
-                "(inspired by KM3NeT-ORCA), simulated in water. "
+                "(inspired by KM3NeT-ORCA), simulated in water with "
+                "energies in the 10 GeV - 1 TeV range. "
                 "Train/test split provided by NuBench selection files."
             ),
         ),
@@ -139,7 +142,8 @@ class NuBenchDataset(ERDAHostedDataset):
             experiment="Flower XL (NuBench)",
             comments=(
                 "NuBench neutrino events from the Flower XL geometry "
-                "(inspired by TRIDENT), simulated in water. "
+                "(inspired by TRIDENT), simulated in water with "
+                "energies in the 10 GeV - 100 TeV range. "
                 "Train/test split provided by NuBench selection files."
             ),
         ),
@@ -149,7 +153,8 @@ class NuBenchDataset(ERDAHostedDataset):
             experiment="Hexagon (NuBench)",
             comments=(
                 "NuBench neutrino events from the Hexagon geometry "
-                "(inspired by IceCube), simulated in water. "
+                "(inspired by IceCube), simulated in water with "
+                "energies in the 10 GeV - 100 TeV range. "
                 "Train/test split provided by NuBench selection files."
             ),
         ),
@@ -160,7 +165,7 @@ class NuBenchDataset(ERDAHostedDataset):
             comments=(
                 "NuBench neutrino events from the Hexagon geometry "
                 "(inspired by IceCube), simulated in ice. Low-energy "
-                "sample restricted to the 10 GeV - 1 TeV range. "
+                "sample with energies in the 10 GeV - 1 TeV range. "
                 "Train/test split provided by NuBench selection files."
             ),
         ),
@@ -170,7 +175,8 @@ class NuBenchDataset(ERDAHostedDataset):
             experiment="Triangle (NuBench)",
             comments=(
                 "NuBench neutrino events from the Triangle geometry "
-                "(inspired by P-ONE), simulated in water. "
+                "(inspired by P-ONE), simulated in water with "
+                "energies in the 10 GeV - 100 TeV range. "
                 "Train/test split provided by NuBench selection files."
             ),
         ),
