@@ -182,6 +182,17 @@ class NuBenchDataset(ERDAHostedDataset):
         data_representation: DataRepresentation,
         **kwargs: Any,
     ) -> None:
+        """Construct a NuBench dataset by registry name.
+
+        Args:
+            name: Registry key of the NuBench dataset (see
+                :meth:`available_datasets`).
+            download_dir: Directory to download and extract the
+                dataset into.
+            data_representation: Data representation whose detector
+                must match the one expected by the selected dataset.
+            **kwargs: Forwarded to :class:`ERDAHostedDataset`.
+        """
         if name not in self._registry:
             raise ValueError(
                 f"Unknown NuBench dataset {name!r}. "
