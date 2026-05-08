@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="lang:clipboard.copy" content="Copy to clipboard">
+  <meta name="lang:clipboard.copied" content="Copied to clipboard">
+  <meta name="lang:search.language" content="en">
+  <meta name="lang:search.pipeline.stopwords" content="True">
+  <meta name="lang:search.pipeline.trimmer" content="True">
+  <meta name="lang:search.result.none" content="No matching documents">
+  <meta name="lang:search.result.one" content="1 matching document">
+  <meta name="lang:search.result.other" content="# matching documents">
+  <meta name="lang:search.tokenizer" content="[\s\-]+">
+
+  
+    <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&display=fallback" rel="stylesheet">
+
+    <style>
+      body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+    </style>
+  
+
+  <link rel="stylesheet" href="../_static/stylesheets/application.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-palette.css"/>
+  <link rel="stylesheet" href="../_static/stylesheets/application-fixes.css"/>
+  
+  <link rel="stylesheet" href="../_static/fonts/material-icons.css"/>
+  
+  <meta name="theme-color" content="#3f51b5">
+  <script src="../_static/javascripts/modernizr.js"></script>
+  
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXX"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'UA-XXXXX');
+</script>
+  
+  
+    <title>nubench_datasets &#8212; graphnet  documentation</title>
+
+<style>
+  dt:target {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+
+  /*
+    .sig-prename {
+     display: none;
+  }
+  */
+
+  .py.class .sig-name,
+  .py.function .sig-name,
+  .py.method .sig-name,
+  .py.exception .sig-name {
+    color: #37474f;
+    font-feature-settings: "kern";
+    font-family: "Roboto Mono", "Courier New", Courier, monospace;
+    font-weight: 700;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.method .sig-object,
+  .py.exception .sig-object {
+    padding: 1ex;
+  }
+
+  .py.class .sig-object,
+  .py.function .sig-object,
+  .py.exception .sig-object {
+    border-top: 1px solid gray;
+  }
+  .py.method .sig-object {
+    border-top: 1px solid lightgray;
+  }
+
+  .py.class .sig-object,
+  .py.exception .sig-object {
+    background: rgba(0,0,0,0.06);
+  }
+  .py.function .sig-object,
+  .py.method .sig-object {
+    background: rgba(0,0,0,0.03);
+  }
+
+  #eu-emblem {
+    margin: 0;
+  }
+
+  #eu-emblem figcaption {
+    display: none;
+  }
+
+</style>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=75810a84" />
+    <link rel="stylesheet" type="text/css" href="../_static/material.css?v=79c92029" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="icon" href="../_static/favicon.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="prometheus_datasets" href="graphnet.datasets.prometheus_datasets.html" />
+    <link rel="prev" title="datasets" href="graphnet.datasets.html" />
+  
+   
+
+  </head>
+  <body dir=ltr
+        data-md-color-primary=indigo data-md-color-accent=blue>
+  
+  <svg class="md-svg">
+    <defs data-children-count="0">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" width="416" height="448" viewBox="0 0 416 448" id="__github"><path fill="currentColor" d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z"/></svg>
+      
+    </defs>
+  </svg>
+  
+  <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
+  <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
+  <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
+  <a href="#api/graphnet.datasets.nubench_datasets" tabindex="1" class="md-skip"> Skip to content </a>
+  <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <a href="../index.html" title="graphnet  documentation"
+           class="md-header-nav__button md-logo">
+          
+            &nbsp;
+          
+        </a>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer"></label>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch">
+        <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+          <span class="md-header-nav__topic">GraphNeT</span>
+          <span class="md-header-nav__topic"> nubench_datasets </span>
+        </div>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+        <label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+        
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" action="../search.html" method="get" name="search">
+      <input type="text" class="md-search__input" name="q" placeholder=""Search""
+             autocapitalize="off" autocomplete="off" spellcheck="false"
+             data-md-component="query" data-md-state="active">
+      <label class="md-icon md-search__icon" for="__search"></label>
+      <button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">
+        &#xE5CD;
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="result">
+          <div class="md-search-result__meta">
+            Type to start searching
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+      
+        <div class="md-flex__cell md-flex__cell--shrink">
+          <div class="md-header-nav__source">
+            <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+          </div>
+        </div>
+      
+      
+  
+  <script src="../_static/javascripts/version_dropdown.js"></script>
+  <script>
+    var json_loc = "../"versions.json"",
+        target_loc = "../../",
+        text = "Versions";
+    $( document ).ready( add_version_dropdown(json_loc, target_loc, text));
+  </script>
+  
+
+    </div>
+  </nav>
+</header>
+
+  
+  <div class="md-container">
+    
+    
+    
+  <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+      <ul class="md-tabs__list">
+            
+            <li class="md-tabs__item"><a href="../index.html" class="md-tabs__link">Documentation</a></li>
+          <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
+          <li class="md-tabs__item"><a href="graphnet.datasets.html" class="md-tabs__link">datasets</a></li>
+      </ul>
+    </div>
+  </nav>
+    <main class="md-main">
+      <div class="md-main__inner md-grid" data-md-component="container">
+        
+          <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                <nav class="md-nav md-nav--primary" data-md-level="0">
+  <label class="md-nav__title md-nav__title--site" for="__drawer">
+    <a href="../index.html" title="graphnet documentation" class="md-nav__button md-logo">
+      
+        <img src="../_static/" alt=" logo" width="48" height="48">
+      
+    </a>
+    <a href="../index.html"
+       title="graphnet documentation">GraphNeT</a>
+  </label>
+    <div class="md-nav__source">
+      <a href="https://github.com/graphnet-team/graphnet/" title="Go to repository" class="md-source" data-md-source="github">
+
+    <div class="md-source__icon">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>
+    </div>
+  
+  <div class="md-source__repository">
+    GraphNeT
+  </div>
+</a>
+    </div>
+  
+  
+
+  
+  <ul class="md-nav__list">
+    <li class="md-nav__item">
+    
+    
+      <a href="../installation/install.html" class="md-nav__link">Quick Start</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../models/models.html" class="md-nav__link">Models In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../datasets/datasets.html" class="md-nav__link">Datasets In GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../data_conversion/data_conversion.html" class="md-nav__link">Data Conversion in GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../integration/integration.html" class="md-nav__link">Integrating New Experiments into GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="../contribute/contribute.html" class="md-nav__link">Contributing To GraphNeT</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.html" class="md-nav__link">API</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.data.html" class="md-nav__link">data</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.datasets.html" class="md-nav__link">datasets</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+    <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    <label class="md-nav__link md-nav__link--active" for="__toc"> nubench_datasets </label>
+    
+      <a href="#" class="md-nav__link md-nav__link--active">nubench_datasets</a>
+      
+        
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-datasets-nubench-datasets--page-root" class="md-nav__link">nubench_datasets</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NuBenchSpec</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.erda_hash" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">erda_hash</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.detector_cls" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">detector_cls</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.experiment" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">experiment</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.comments" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">comments</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.event_truth" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">event_truth</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.db_relpath" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">db_relpath</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.selection_relpaths" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">selection_relpaths</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.pulsemap_per_split" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">pulsemap_per_split</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NuBenchDataset</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">available_datasets()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.dataset_dir" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">dataset_dir</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NuBenchSpec</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.erda_hash" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">erda_hash</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.detector_cls" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">detector_cls</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.experiment" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">experiment</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.comments" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">comments</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.event_truth" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">event_truth</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.db_relpath" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">db_relpath</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.selection_relpaths" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">selection_relpaths</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.pulsemap_per_split" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">pulsemap_per_split</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NuBenchDataset</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">available_datasets()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.dataset_dir" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">dataset_dir</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.datasets.prometheus_datasets.html" class="md-nav__link">prometheus_datasets</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.datasets.snowstorm_dataset.html" class="md-nav__link">snowstorm_dataset</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.datasets.test_dataset.html" class="md-nav__link">test_dataset</a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.deployment.html" class="md-nav__link">deployment</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.exceptions.html" class="md-nav__link">exceptions</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.html" class="md-nav__link">models</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.training.html" class="md-nav__link">training</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.utilities.html" class="md-nav__link">utilities</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.constants.html" class="md-nav__link">constants</a>
+      
+    
+    </li></ul>
+    
+    </li>
+  </ul>
+  
+
+</nav>
+              </div>
+            </div>
+          </div>
+          <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+            <div class="md-sidebar__scrollwrap">
+              <div class="md-sidebar__inner">
+                
+<nav class="md-nav md-nav--secondary">
+    <label class="md-nav__title" for="__toc">"Contents"</label>
+  <ul class="md-nav__list" data-md-scrollfix="">
+        <li class="md-nav__item"><a href="#api-graphnet-datasets-nubench-datasets--page-root" class="md-nav__link">nubench_datasets</a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NuBenchSpec</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.erda_hash" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">erda_hash</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.detector_cls" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">detector_cls</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.experiment" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">experiment</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.comments" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">comments</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.features" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">features</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.event_truth" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">event_truth</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.db_relpath" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">db_relpath</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.selection_relpaths" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">selection_relpaths</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchSpec.pulsemap_per_split" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">pulsemap_per_split</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">NuBenchDataset</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">available_datasets()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.dataset_dir" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">dataset_dir</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.datasets.nubench_datasets.NuBenchDataset.prepare_data" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a>
+        </li></ul>
+            </nav>
+        </li></ul>
+            </nav>
+        </li>
+  </ul>
+</nav>
+              </div>
+            </div>
+          </div>
+        
+        <div class="md-content">
+          <article class="md-content__inner md-typeset" role="main">
+            
+  <section id="module-graphnet.datasets.nubench_datasets">
+<span id="nubench-datasets"></span><h1 id="api-graphnet-datasets-nubench-datasets--page-root">nubench_datasets<a class="headerlink" href="#api-graphnet-datasets-nubench-datasets--page-root" title="Link to this heading">¶</a></h1>
+<p>Curated datasets from the NuBench benchmark suite (arXiv:2511.13111).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.datasets.nubench_datasets.</span></span><span class="sig-name descname"><span class="pre">NuBenchSpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">erda_hash</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detector_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">comments</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_relpath/merged.db'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selection_relpaths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pulsemap_per_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/datasets/nubench_datasets.html#NuBenchSpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Static configuration for a single NuBench dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>erda_hash</strong> (<em>str</em>)</p></li>
+<li><p><strong>detector_cls</strong> (<em>Type</em><em>[</em><a class="reference internal" href="graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector" title="graphnet.models.detector.nubench.NuBenchDetector"><em>NuBenchDetector</em></a><em>]</em>)</p></li>
+<li><p><strong>experiment</strong> (<em>str</em>)</p></li>
+<li><p><strong>comments</strong> (<em>str</em>)</p></li>
+<li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>event_truth</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>db_relpath</strong> (<em>str</em>)</p></li>
+<li><p><strong>selection_relpaths</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>pulsemap_per_split</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.erda_hash">
+<span class="sig-name descname"><span class="pre">erda_hash</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.erda_hash" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.detector_cls">
+<span class="sig-name descname"><span class="pre">detector_cls</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.NuBenchDetector" title="graphnet.models.detector.nubench.NuBenchDetector"><span class="pre">NuBenchDetector</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.detector_cls" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.experiment">
+<span class="sig-name descname"><span class="pre">experiment</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.experiment" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.comments">
+<span class="sig-name descname"><span class="pre">comments</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.comments" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.features">
+<span class="sig-name descname"><span class="pre">features</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.features" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.event_truth">
+<span class="sig-name descname"><span class="pre">event_truth</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.event_truth" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.db_relpath">
+<span class="sig-name descname"><span class="pre">db_relpath</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'merged/merged.db'</span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.db_relpath" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.selection_relpaths">
+<span class="sig-name descname"><span class="pre">selection_relpaths</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.selection_relpaths" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchSpec.pulsemap_per_split">
+<span class="sig-name descname"><span class="pre">pulsemap_per_split</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchSpec.pulsemap_per_split" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchDataset">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.datasets.nubench_datasets.</span></span><span class="sig-name descname"><span class="pre">NuBenchDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">download_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_representation</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/datasets/nubench_datasets.html#NuBenchDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchDataset" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.data.curated_datamodule.html#graphnet.data.curated_datamodule.ERDAHostedDataset" title="graphnet.data.curated_datamodule.ERDAHostedDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">ERDAHostedDataset</span></code></a></p>
+<p>Single entry point for every NuBench benchmark dataset.</p>
+<p>Pick a dataset by its registry name (see <a class="reference internal" href="#graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets" title="graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets"><code class="xref py py-meth docutils literal notranslate"><span class="pre">available_datasets()</span></code></a>)
+and pass a <code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code> whose detector matches the
+dataset. The tarball is downloaded from ERDA on first use and
+extracted into <code class="docutils literal notranslate"><span class="pre">{download_dir}/{name}/</span></code>.</p>
+<p>The NuBench convention is that train/val events live in the
+<code class="docutils literal notranslate"><span class="pre">merged_photons</span></code> pulsemap while test events live in
+<code class="docutils literal notranslate"><span class="pre">pulses_no_noise</span></code>. This class builds each split against the
+correct pulsemap automatically.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.graphs</span><span class="w"> </span><span class="kn">import</span> <span class="n">KNNGraph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.detector.nubench</span><span class="w"> </span><span class="kn">import</span> <span class="n">Hexagon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">NuBenchDataset</span>
+
+<span class="n">ds</span> <span class="o">=</span> <span class="n">NuBenchDataset</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">"hexagon_ice_le"</span><span class="p">,</span>
+    <span class="n">download_dir</span><span class="o">=</span><span class="s2">"/path/to/nubench_data"</span><span class="p">,</span>
+    <span class="n">data_representation</span><span class="o">=</span><span class="n">KNNGraph</span><span class="p">(</span><span class="n">detector</span><span class="o">=</span><span class="n">Hexagon</span><span class="p">()),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Construct a NuBench dataset by registry name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Registry key of the NuBench dataset (see
+<a class="reference internal" href="#graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets" title="graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets"><code class="xref py py-meth docutils literal notranslate"><span class="pre">available_datasets()</span></code></a>).</p></li>
+<li><p><strong>download_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory to download and extract the
+dataset into.</p></li>
+<li><p><strong>data_representation</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a></span>) – Data representation whose detector
+must match the one expected by the selected dataset.</p></li>
+<li><p><strong>**kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span>) – Forwarded to <code class="xref py py-class docutils literal notranslate"><span class="pre">ERDAHostedDataset</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">available_datasets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/datasets/nubench_datasets.html#NuBenchDataset.available_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchDataset.available_datasets" title="Link to this definition">¶</a></dt>
+<dd><p>Return the list of registered NuBench dataset names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchDataset.dataset_dir">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">dataset_dir</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></span><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchDataset.dataset_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Return the root directory of the extracted dataset.</p>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.datasets.nubench_datasets.NuBenchDataset.prepare_data">
+<span class="sig-name descname"><span class="pre">prepare_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/datasets/nubench_datasets.html#NuBenchDataset.prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.datasets.nubench_datasets.NuBenchDataset.prepare_data" title="Link to this definition">¶</a></dt>
+<dd><p>Download + extract via ERDAHostedDataset if files are missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+</section>
+
+
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+  <footer class="md-footer">
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid">
+          
+            <a href="graphnet.datasets.html" title="datasets"
+               class="md-flex md-footer-nav__link md-footer-nav__link--prev"
+               rel="prev">
+              <div class="md-flex__cell md-flex__cell--shrink">
+                <i class="md-icon md-icon--arrow-back md-footer-nav__button"></i>
+              </div>
+              <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+                <span class="md-flex__ellipsis">
+                  <span
+                      class="md-footer-nav__direction"> "Previous" </span> datasets </span>
+              </div>
+            </a>
+          
+          
+            <a href="graphnet.datasets.prometheus_datasets.html" title="prometheus_datasets"
+               class="md-flex md-footer-nav__link md-footer-nav__link--next"
+               rel="next">
+            <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
+                class="md-flex__ellipsis"> <span
+                class="md-footer-nav__direction"> "Next" </span> prometheus_datasets </span>
+            </div>
+            <div class="md-flex__cell md-flex__cell--shrink"><i
+                class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
+            </div>
+          
+        </a>
+        
+      </nav>
+    </div>
+    <div class="md-footer-meta md-typeset">
+      <div class="md-footer-meta__inner md-grid">
+        <div class="md-footer-copyright">
+          <div class="md-footer-copyright__highlight">
+              &#169; Copyright 2021-2026, GraphNeT team.
+              
+          </div>
+            Created using
+            <a href="http://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+             and
+            <a href="https://github.com/bashtage/sphinx-material/">Material for
+              Sphinx</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="../_static/javascripts/application.js"></script>
+  <script>app.initialize({version: "1.0.4", url: {base: ".."}})</script>
+  </body>
+</html>

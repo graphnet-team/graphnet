@@ -15,6 +15,7 @@ datasets
 .. toctree::
    :maxdepth: 2
 
+   graphnet.datasets.nubench_datasets
    graphnet.datasets.prometheus_datasets
    graphnet.datasets.snowstorm_dataset
    graphnet.datasets.test_dataset

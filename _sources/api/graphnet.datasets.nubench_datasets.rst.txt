@@ -1,0 +1,8 @@
+
+nubench\_datasets
+=================
+
+.. automodule:: graphnet.datasets.nubench_datasets
+   :members:
+   :show-inheritance:
+   :undoc-members:
