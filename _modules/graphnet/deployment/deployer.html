@@ -476,15 +476,11 @@
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_n_workers</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"""processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> files </span><span class="se">\n</span>
-<span class="s2">                using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_workers</span><span class="si">}</span><span class="s2"> workers"""</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> files </span><span class="se">\n</span>
+<span class="s2">                using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_workers</span><span class="si">}</span><span class="s2"> workers"""</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_launch_jobs</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"""Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> files was completed in </span><span class="se">\n</span>
-<span class="s2">         </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="si">}</span><span class="s2"> seconds using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_workers</span><span class="si">}</span><span class="s2"> cores."""</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""Processing </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">input_files</span><span class="p">)</span><span class="si">}</span><span class="s2"> files was completed in </span><span class="se">\n</span>
+<span class="s2">         </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="si">}</span><span class="s2"> seconds using </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_n_workers</span><span class="si">}</span><span class="s2"> cores."""</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

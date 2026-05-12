@@ -605,7 +605,6 @@
 <a class="viewcode-back" href="../../../api/graphnet.utilities.logging.html#graphnet.utilities.logging.Logger.warning_once">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">warning_once</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Print `msg` as warning exactly once."""</span>
-        <span class="k">global</span> <span class="n">WARNINGS</span>
         <span class="k">if</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">WARNINGS</span><span class="p">:</span>
             <span class="k">return</span>
 

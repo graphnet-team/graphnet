@@ -467,10 +467,8 @@
         <span class="k">return</span> <span class="n">i3_files</span><span class="p">,</span> <span class="n">gcd_files</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span> <span class="k">for</span> <span class="nb">input</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">"Inputs contains a mix of files and directories </span><span class="se">\</span>
-<span class="s2">                which is not supported."</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Inputs contains a mix of files and directories </span><span class="se">\</span>
+<span class="s2">                which is not supported."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Some inputs are not valid directories or files."</span><span class="p">)</span></div>
 

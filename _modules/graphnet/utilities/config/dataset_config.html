@@ -554,7 +554,7 @@
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_replace_model_instance_with_config</span><span class="p">(</span>
-        <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">"Model"</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+        <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">"Model"</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelConfig</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">"""Replace `Model` instances in `obj` with their `ModelConfig`."""</span>
         <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
@@ -598,7 +598,7 @@
 <span class="w">        </span><span class="sd">"""Catch object after construction and save config."""</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_replace_model_instance_with_config</span><span class="p">(</span>
-            <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">"Model"</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+            <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">"Model"</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ModelConfig</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">"""Replace `Model` instances in `obj` with their `ModelConfig`."""</span>
             <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>

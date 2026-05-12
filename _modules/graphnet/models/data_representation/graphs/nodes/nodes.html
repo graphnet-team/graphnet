@@ -411,13 +411,11 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_output_feature_names</span>
         <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"""</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was instantiated without</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was instantiated without</span>
 <span class="s2">                       `input_feature_names` and it was not set prior to this</span>
 <span class="s2">                       forward call. If you are using this class outside a</span>
 <span class="s2">                       `GraphDefinition`, please instatiate</span>
-<span class="s2">                       with `input_feature_names`."""</span>
-            <span class="p">)</span>  <span class="c1"># noqa</span>
+<span class="s2">                       with `input_feature_names`."""</span><span class="p">)</span>  <span class="c1"># noqa</span>
             <span class="k">raise</span> <span class="n">e</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hidden_output_feature_names</span>
 
@@ -580,12 +578,10 @@
                 <span class="n">cluster_class</span><span class="o">.</span><span class="n">add_counts</span><span class="p">()</span>
             <span class="n">array</span> <span class="o">=</span> <span class="n">cluster_class</span><span class="o">.</span><span class="n">clustered_x</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">"""</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was not instatiated with</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">"""</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> was not instatiated with</span>
 <span class="s2">                `input_feature_names` and has not been set later.</span>
 <span class="s2">                Please instantiate this class with `input_feature_names`</span>
-<span class="s2">                if you're using it outside `GraphDefinition`."""</span>
-            <span class="p">)</span>  <span class="c1"># noqa</span>
+<span class="s2">                if you're using it outside `GraphDefinition`."""</span><span class="p">)</span>  <span class="c1"># noqa</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span>
 
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">array</span><span class="p">)</span></div>
