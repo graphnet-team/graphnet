@@ -15,7 +15,6 @@ from graphnet.data.extractors.icecube.utilities.collections import (
 
 from graphnet.utilities.imports import has_icecube_package
 
-
 if has_icecube_package() or TYPE_CHECKING:
     from icecube import (
         dataclasses,

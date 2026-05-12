@@ -55,7 +55,7 @@ def test_none_selection() -> None:
 )
 def test_array_selection(selection: Tuple[int]) -> None:
     """Test agreement of the two ways to calculate this loss."""
-    (train_dataloader, test_dataloader) = make_train_validation_dataloader(
+    train_dataloader, test_dataloader = make_train_validation_dataloader(
         db=TEST_SQLITE_DATA,
         graph_definition=graph_definition,
         selection=list(selection),

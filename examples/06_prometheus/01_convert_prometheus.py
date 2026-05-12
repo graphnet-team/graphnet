@@ -42,11 +42,9 @@ def main(backend: str) -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
             Convert parquet files from Prometheus to an intermediate format.
-            """
-    )
+            """)
 
     parser.add_argument("backend", choices=["sqlite", "parquet"])
 

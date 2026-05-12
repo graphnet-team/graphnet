@@ -166,11 +166,9 @@ def main(
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
 Train conditional NormalizingFlow without the use of config files.
-"""
-    )
+""")
 
     parser.add_argument(
         "--path",

@@ -258,14 +258,20 @@ class ParquetDataset(Dataset):
         else:
             file_idx = [bisect_right(self._chunk_cumsum, sequential_index)]
 
-        file_indices = [self._indices[idx] for idx in file_idx]
+        raw_file_indices = [self._indices[idx] for idx in file_idx]
+        file_indices: List[int] = []
+        for entry in raw_file_indices:
+            if isinstance(entry, list):
+                file_indices.extend(entry)
+            else:
+                file_indices.append(int(entry))
 
         arrays = []
-        for file_idx in file_indices:
+        for fidx in file_indices:
             array = self._query_table(
                 table=table,
                 columns=columns,
-                file_idx=file_idx,
+                file_idx=fidx,
                 sequential_index=sequential_index,
                 selection=selection,
             )

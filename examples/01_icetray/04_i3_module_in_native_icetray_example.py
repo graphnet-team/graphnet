@@ -119,11 +119,9 @@ if __name__ == "__main__":
 
     else:
         # Parse command-line arguments
-        parser = ArgumentParser(
-            description="""
+        parser = ArgumentParser(description="""
 Use GraphNeTI3Modules to deploy trained model in native IceTray.
-"""
-        )
+""")
 
         args, unknown = parser.parse_known_args()
 

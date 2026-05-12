@@ -105,9 +105,7 @@ def find_i3_files(
         return i3_files, gcd_files
     else:
         if any([os.path.isdir(input) for input in inputs]):
-            raise ValueError(
-                "Inputs contains a mix of files and directories \
-                which is not supported."
-            )
+            raise ValueError("Inputs contains a mix of files and directories \
+                which is not supported.")
         else:
             raise ValueError("Some inputs are not valid directories or files.")

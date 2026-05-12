@@ -8,7 +8,6 @@ from typing import Any, Callable, Dict, Optional
 from pydantic import BaseModel
 import ruamel.yaml as yaml
 
-
 CONFIG_FILES_SUFFIXES = (".yml", ".yaml")
 
 

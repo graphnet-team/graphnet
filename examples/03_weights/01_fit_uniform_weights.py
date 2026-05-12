@@ -31,11 +31,9 @@ def main() -> None:
 if __name__ == "__main__":
 
     # Parse command-line arguments
-    parser = ArgumentParser(
-        description="""
+    parser = ArgumentParser(description="""
 Fit per-event weights to make the truth-level zenith distribution uniform.
-"""
-    )
+""")
 
     args, unknown = parser.parse_known_args()
 

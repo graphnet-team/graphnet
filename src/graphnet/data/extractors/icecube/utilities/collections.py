@@ -66,7 +66,7 @@ def serialise(obj: Union[Dict, Any]) -> Union[Dict, Any]:
 
 
 def transpose_list_of_dicts(
-    array: List[Dict[str, Any]]
+    array: List[Dict[str, Any]],
 ) -> Dict[str, List[Any]]:
     """Transpose a list of dicts to a dict of lists."""
     if len(array) == 0:

@@ -121,12 +121,8 @@ class Deployer(ABC, Logger):
 
         assert len(settings) == self._n_workers
 
-        self.info(
-            f"""processing {len(input_files)} files \n
-                using {self._n_workers} workers"""
-        )
+        self.info(f"""processing {len(input_files)} files \n
+                using {self._n_workers} workers""")
         self._launch_jobs(settings)
-        self.info(
-            f"""Processing {len(input_files)} files was completed in \n
-         {time.time() - start_time} seconds using {self._n_workers} cores."""
-        )
+        self.info(f"""Processing {len(input_files)} files was completed in \n
+         {time.time() - start_time} seconds using {self._n_workers} cores.""")

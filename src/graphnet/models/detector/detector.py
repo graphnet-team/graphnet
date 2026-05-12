@@ -46,10 +46,8 @@ class Detector(Model):
             try:
                 assert hasattr(self, "geometry_table_path")
             except AssertionError as e:
-                self.error(
-                    f"""{self.__class__.__name__} does not have class
-                           variable `geometry_table_path` set."""
-                )
+                self.error(f"""{self.__class__.__name__} does not have class
+                           variable `geometry_table_path` set.""")
                 raise e
             self._geometry_table = pd.read_parquet(self.geometry_table_path)
         return self._geometry_table
