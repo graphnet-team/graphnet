@@ -6,7 +6,6 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
-from torch_geometric.data import Data
 
 from graphnet.models import Model
 from graphnet.models.data_representation.graphs.utils import (
@@ -265,10 +264,16 @@ class NodeAsDOMTimeSeries(NodeDefinition):
 
     def _construct_nodes(self, x: torch.Tensor) -> torch.Tensor:
         """Construct nodes from raw node features ´x´."""
+        if x.shape[0] == 0:
+            n_features = len(self._keys) + (
+                1 if self._charge_index is None else 0
+            )
+            # `new_node_col` appended below for non-empty events
+            n_features += 1
+            return torch.empty((0, n_features), dtype=x.dtype, device=x.device)
+
         # Cast to Numpy
         x = x.numpy()
-        if x.shape[0] == 0:
-            return Data(x=torch.tensor(np.column_stack([x, []])))
         # if there is no charge column add a dummy column
         # of zeros with the same shape as the time column
         if self._charge_index is None:
