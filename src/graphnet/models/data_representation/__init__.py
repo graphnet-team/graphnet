@@ -18,3 +18,11 @@ from .graphs import (
     NodeAsDOMTimeSeries,
     IceMixNodes,
 )
+from .images import (
+    ExamplePrometheusGridDefinition,
+    ExamplePrometheusImage,
+    GridDefinition,
+    IC86GridDefinition,
+    IC86Image,
+    ImageRepresentation,
+)
