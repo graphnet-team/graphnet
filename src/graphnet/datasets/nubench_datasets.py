@@ -20,7 +20,6 @@ from graphnet.models.detector.nubench import (
 )
 from graphnet.training.labels import Direction, Track
 
-
 FEATURES_NUBENCH = [
     "sensor_pos_x",
     "sensor_pos_y",
