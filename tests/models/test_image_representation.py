@@ -1,0 +1,88 @@
+from graphnet.models.data_representation import IC86Image
+from graphnet.models.data_representation import NodesAsPulses
+from graphnet.models.detector import IceCube86
+import torch
+from torch_geometric.data import Data
+import numpy as np
+from graphnet.constants import (
+    TEST_IC86MAIN_IMAGE,
+    TEST_IC86UPPERDC_IMAGE,
+    TEST_IC86LOWERDC_IMAGE,
+)
+
+from tests.models.ic86_grid_testdata import (
+    IC86_TEST_PIXEL_COLUMNS,
+    ic86_full_detector_pixel_table,
+)
+
+
+def test_ic86_image_representation() -> None:
+    """Pipeline IC86Image: pixel definition + grid → list of tensors."""
+    dtype = torch.float32
+    columns = IC86_TEST_PIXEL_COLUMNS
+    pixel_table = ic86_full_detector_pixel_table()
+
+    pixel_def = NodesAsPulses(
+        input_feature_names=columns,
+    )
+
+    detector = IceCube86(replace_with_identity=columns)
+
+    image_representation = IC86Image(
+        pixel_definition=pixel_def,
+        input_feature_names=columns,
+        include_lower_dc=True,
+        include_upper_dc=True,
+        string_label="string",
+        dom_number_label="dom_number",
+        dtype=dtype,
+        detector=detector,
+    )
+
+    assert (
+        image_representation.nb_outputs == 2
+    ), "Expected 2 outputs, got {}".format(image_representation.nb_outputs)
+
+    output_feature_names = columns.copy()
+    output_feature_names.remove("string")
+    output_feature_names.remove("dom_number")
+
+    assert image_representation.output_feature_names == output_feature_names, (
+        f"Output feature names do not match expected output: "
+        f"{image_representation.output_feature_names} != {output_feature_names}"
+    )
+
+    image = image_representation(
+        pixel_table,
+        input_feature_names=columns,
+    )
+
+    assert isinstance(
+        image, Data
+    ), "Expected output to be a torch_geometric.data.Data object"
+    assert isinstance(image.x, list), "Expected image.x to be a list"
+    assert np.all(
+        [isinstance(x, torch.Tensor) for x in image.x]
+    ), "Expected all elements in image.x to be torch.Tensor"
+    assert (
+        len(image.x) == 3
+    ), "Expected image.x to have 3 elements, got {}".format(len(image.x))
+    assert (
+        "num_nodes" in image.keys()
+    ), "Expected 'num_nodes' in image attributes"
+
+    image_list = [
+        TEST_IC86MAIN_IMAGE,
+        TEST_IC86UPPERDC_IMAGE,
+        TEST_IC86LOWERDC_IMAGE,
+    ]
+    for i, img in enumerate(image_list):
+        expected_image = torch.tensor(np.load(img), dtype=dtype).unsqueeze(0)
+        assert image.x[i].size() == expected_image.size(), (
+            f"Image at index {i} size mismatch: "
+            f"expected {torch.tensor(expected_image).size()},"
+            f"got {image.x[i].size()}"
+        )
+        assert torch.equal(
+            image.x[i], expected_image
+        ), f"Image at index {i} does not match expected image"
