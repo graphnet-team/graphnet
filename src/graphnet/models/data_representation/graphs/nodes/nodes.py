@@ -1,22 +1,21 @@
 """Class(es) for building/connecting graphs."""
 
-from typing import List, Tuple, Optional, Dict, Union
 from abc import abstractmethod
+from copy import deepcopy
+from typing import Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch_geometric.data import Data
 
-from graphnet.utilities.decorators import final
 from graphnet.models import Model
 from graphnet.models.data_representation.graphs.utils import (
     cluster_and_pad,
+    ice_transparency,
     identify_indices,
     lex_sort,
-    ice_transparency,
 )
-from copy import deepcopy
-
-import numpy as np
+from graphnet.utilities.decorators import final
 
 
 class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
@@ -34,7 +33,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             )
 
     @final
-    def forward(self, x: torch.tensor) -> torch.tensor:
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Construct nodes from raw node features.
 
         Args:
@@ -43,11 +42,9 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             node_feature_names: list of names for each column in ´x´.
 
         Returns:
-            graph: a graph without edges
+            Node feature tensor of shape ´[num_nodes, num_features]´.
         """
-        data = self._construct_nodes(x=x)
-
-        return data
+        return self._construct_nodes(x=x)
 
     @property
     def _output_feature_names(self) -> List[str]:
@@ -109,7 +106,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
         """
 
     @abstractmethod
-    def _construct_nodes(self, x: torch.tensor) -> torch.tensor:
+    def _construct_nodes(self, x: torch.Tensor) -> torch.Tensor:
         """Construct nodes from raw node features ´x´.
 
         Args:
@@ -119,8 +116,7 @@ class NodeDefinition(Model):  # pylint: disable=too-few-public-methods
             order of appearance. Length `d`.
 
         Returns:
-            graph: graph without edges.
-            new_node_features: A list of node features names.
+            Node feature tensor of shape ´[num_nodes, num_features]´.
         """
 
 
@@ -495,9 +491,13 @@ class ClusterSummaryFeatures(NodeDefinition):
     - number of pulses per clusters
         feature name: `counts`
 
-    For more details on some of the features see
-    Theo Glauchs thesis (chapter 5.3):
+    For more details on most of the listed features see
+    Theo Glauch's thesis (chapter 5.3):
     https://mediatum.ub.tum.de/node?id=1584755
+
+    NOTE: The `counts` feature (number of pulses per cluster) is an
+        addition introduced in this implementation and is not part of
+        the feature set described in the referenced thesis.
     """
 
     def __init__(
@@ -602,7 +602,7 @@ class ClusterSummaryFeatures(NodeDefinition):
             new_feature_names.append("counts")
         return new_feature_names
 
-    def _construct_nodes(self, x: torch.Tensor) -> Data:
+    def _construct_nodes(self, x: torch.Tensor) -> torch.Tensor:
         """Construct nodes from raw node features ´x´."""
         # Cast to Numpy
         x = x.numpy()
@@ -720,9 +720,7 @@ class ClusterSummaryFeatures(NodeDefinition):
                 f"but got {standardization}"
             )
 
-    def _verify_standardization(
-        self,
-    ) -> torch.Tensor:
+    def _verify_standardization(self) -> None:
         """Verify settings of standardization of the features."""
         if not isinstance(self._charge_standardization, float):
             if isinstance(self._charge_standardization, str):
