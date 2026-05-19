@@ -17,4 +17,13 @@ from .graphs import (
     PercentileClusters,
     NodeAsDOMTimeSeries,
     IceMixNodes,
+    ClusterSummaryFeatures,
+)
+from .images import (
+    ExamplePrometheusGridDefinition,
+    ExamplePrometheusImage,
+    GridDefinition,
+    IC86GridDefinition,
+    IC86Image,
+    ImageRepresentation,
 )
