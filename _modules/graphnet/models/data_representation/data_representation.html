@@ -557,6 +557,25 @@
 
         <span class="c1"># Add data representation Stamp</span>
         <span class="n">data</span><span class="p">[</span><span class="s2">"data_representation"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="c1"># Warn on empty events; the representation will hold no nodes/pulses,</span>
+        <span class="c1"># which is rarely what the user intends.</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">event_no</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">"event_no"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">event_no</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+                <span class="n">event_no</span> <span class="o">=</span> <span class="n">event_no</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> received an empty input tensor "</span>
+                <span class="sa">f</span><span class="s2">"(no pulses) for event_no=</span><span class="si">{</span><span class="n">event_no</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">data_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" in dataset '</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2">'"</span>
+            <span class="n">msg</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="s2">". This event will be turned into an empty data "</span>
+                <span class="s2">"representation; check your input data if this is unexpected."</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">data</span></div>
 
 
