@@ -6,7 +6,7 @@ calls :meth:`GridDefinition.forward` to place pixel rows into image tensor(s).
 """
 
 from abc import abstractmethod
-from typing import List
+from typing import List, Type
 
 import numpy as np
 import pandas as pd
@@ -14,7 +14,7 @@ import torch
 from torch_geometric.data import Data
 
 from graphnet.models import Model
-from graphnet.models.detector import Detector
+from graphnet.models.detector import Detector, IceCube86, ORCA150
 
 from .cnn_mapping_tables import (
     MAT_AX0_COL,
@@ -43,8 +43,21 @@ class GridDefinition(Model):
                 detector-specific).
             pixel_feature_names: Column names expected on each pixel row,
                 including keys listed in :attr:`map_pixels_by`.
+
+        Raises:
+            ValueError: If ``detector`` is not an instance of one of the
+                detectors listed in :attr:`compatible_detectors`.
         """
         super().__init__(name=__name__, class_name=self.__class__.__name__)
+        if not isinstance(detector, tuple(self.compatible_detectors)):
+            compatible = ", ".join(
+                d.__name__ for d in self.compatible_detectors
+            )
+            raise ValueError(
+                f"{self.__class__.__name__} is only compatible with "
+                f"detector(s): {compatible}. Got "
+                f"{detector.__class__.__name__}."
+            )
         self._detector = detector
         self._set_image_feature_names(pixel_feature_names)
 
@@ -52,6 +65,11 @@ class GridDefinition(Model):
     def detector(self) -> Detector:
         """Detector instance this grid belongs to."""
         return self._detector
+
+    @property
+    @abstractmethod
+    def compatible_detectors(self) -> List[Type[Detector]]:
+        """Detector classes this grid can be built for."""
 
     @property
     @abstractmethod
@@ -146,6 +164,11 @@ class IC86GridDefinition(GridDefinition):
         super().__init__(
             detector=detector, pixel_feature_names=pixel_feature_names
         )
+
+    @property
+    def compatible_detectors(self) -> List[Type[Detector]]:
+        """Grid is fixed to the IceCube-86 geometry."""
+        return [IceCube86]
 
     @property
     def map_pixels_by(self) -> List[str]:
@@ -373,6 +396,11 @@ class ExamplePrometheusGridDefinition(GridDefinition):
         super().__init__(
             detector=detector, pixel_feature_names=pixel_feature_names
         )
+
+    @property
+    def compatible_detectors(self) -> List[Type[Detector]]:
+        """Example grid is built for the ORCA150 geometry."""
+        return [ORCA150]
 
     @property
     def map_pixels_by(self) -> List[str]:
