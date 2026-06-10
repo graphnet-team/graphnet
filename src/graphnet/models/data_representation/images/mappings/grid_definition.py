@@ -100,11 +100,6 @@ class IC86GridDefinition(GridDefinition):
     ) -> None:
         """Construct `IC86GridDefinition`.
 
-        The mapping from (string, dom_number) to a position in the
-        resulting images is generated programmatically at instantiation
-        time from the IceCube86 detector geometry, so no auxiliary file
-        is required.
-
         Args:
             detector: ``IceCube86`` instance (grid is fixed to that geometry).
             dtype: data type used for node features. e.g. ´torch.float´
@@ -169,6 +164,8 @@ class IC86GridDefinition(GridDefinition):
     ) -> None:
         """Set the indices for the features."""
         self._cnn_features_idx = []
+        self._dom_number_idx = None
+        self._string_idx = None
         for feature in feature_names:
             if feature == dom_number_label:
                 self._dom_number_idx = feature_names.index(feature)
@@ -176,6 +173,15 @@ class IC86GridDefinition(GridDefinition):
                 self._string_idx = feature_names.index(feature)
             else:
                 self._cnn_features_idx.append(feature_names.index(feature))
+
+        if self._dom_number_idx is None:
+            raise ValueError(
+                f"DOM number label not found in feature names: {dom_number_label}"
+            )
+        if self._string_idx is None:
+            raise ValueError(
+                f"String label not found in feature names: {string_label}"
+            )
 
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
         """Scatter pixel rows into IceCube-86 image tensor(s)."""

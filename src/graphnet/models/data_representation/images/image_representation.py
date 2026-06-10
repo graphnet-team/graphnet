@@ -77,29 +77,6 @@ class ImageRepresentation(DataRepresentation):
         """Channel-spatial layout per image tensor (see ``GridDefinition``)."""
         return self._grid_definition.shape
 
-    def single_image_spatial_shape(self) -> Tuple[int, int, int]:
-        """Return spatial size as ``(height, width, depth)`` for one 3D image.
-
-        Raises:
-            ValueError: If ``shape`` does not describe exactly one four-axis
-                layout (channels plus three spatial axes).
-        """
-        layouts = self.shape
-        if len(layouts) != 1:
-            raise ValueError(
-                "Expected a single-image data representation (one shape "
-                f"entry), got {len(layouts)}. For multi-image inputs, build "
-                "the backbone explicitly for each tensor."
-            )
-        layout = layouts[0]
-        if len(layout) != 4:
-            raise ValueError(
-                "Expected each image layout as "
-                "[num_channels, height, width, depth]; "
-                f"got {layout!r}."
-            )
-        return (layout[1], layout[2], layout[3])
-
     def _set_output_feature_names(
         self, input_feature_names: List[str]
     ) -> List[str]:
