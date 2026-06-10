@@ -419,6 +419,8 @@ class ExamplePrometheusGridDefinition(GridDefinition):
     ) -> None:
         """Set the indices for the features."""
         self._cnn_features_idx = []
+        self._sensor_number_idx = None
+        self._string_idx = None
         for feature in feature_names:
             if feature == sensor_number_label:
                 self._sensor_number_idx = feature_names.index(feature)
@@ -426,6 +428,16 @@ class ExamplePrometheusGridDefinition(GridDefinition):
                 self._string_idx = feature_names.index(feature)
             else:
                 self._cnn_features_idx.append(feature_names.index(feature))
+
+        if self._sensor_number_idx is None:
+            raise ValueError(
+                f"Sensor number label not found in feature names: "
+                f"{sensor_number_label}"
+            )
+        if self._string_idx is None:
+            raise ValueError(
+                f"String label not found in feature names: {string_label}"
+            )
 
     def forward(self, data: Data, data_feature_names: List[str]) -> Data:
         """Scatter pixel rows into the example 3D image tensor."""
