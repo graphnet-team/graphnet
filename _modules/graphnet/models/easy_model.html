@@ -389,8 +389,25 @@
         <span class="n">scheduler_class</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scheduler_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scheduler_config</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">log_on_epoch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">log_on_step</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Construct `StandardModel`."""</span>
+<span class="w">        </span><span class="sd">"""Construct `StandardModel`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tasks: Task(s) appended as the head(s) of the model, defining</span>
+<span class="sd">                the prediction target(s) and loss(es).</span>
+<span class="sd">            optimizer_class: Optimizer class used during training.</span>
+<span class="sd">            optimizer_kwargs: Keyword arguments passed to `optimizer_class`.</span>
+<span class="sd">            scheduler_class: Learning-rate scheduler class. If `None`, no</span>
+<span class="sd">                scheduler is used.</span>
+<span class="sd">            scheduler_kwargs: Keyword arguments passed to `scheduler_class`.</span>
+<span class="sd">            scheduler_config: Additional configuration for how the scheduler</span>
+<span class="sd">                is invoked by PyTorch Lightning (e.g. `interval`, `frequency`).</span>
+<span class="sd">            log_on_epoch: If `True`, logs the training loss on epoch end.</span>
+<span class="sd">            log_on_step: If `True`, logs the training loss on step end.</span>
+<span class="sd">                per-batch training loss under `train_loss_step`.</span>
+<span class="sd">        """</span>
         <span class="c1"># Base class constructor</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -405,6 +422,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_class</span> <span class="o">=</span> <span class="n">scheduler_class</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_kwargs</span> <span class="o">=</span> <span class="n">scheduler_kwargs</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_config</span> <span class="o">=</span> <span class="n">scheduler_config</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_on_step</span> <span class="o">=</span> <span class="n">log_on_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_on_epoch</span> <span class="o">=</span> <span class="n">log_on_epoch</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">validate_tasks</span><span class="p">()</span>
 
@@ -621,8 +640,8 @@
             <span class="n">loss</span><span class="p">,</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_batch_size</span><span class="p">(</span><span class="n">train_batch</span><span class="p">),</span>
             <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">on_epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_on_epoch</span><span class="p">,</span>
+            <span class="n">on_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_on_step</span><span class="p">,</span>
             <span class="n">sync_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -645,8 +664,8 @@
             <span class="n">loss</span><span class="p">,</span>
             <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_batch_size</span><span class="p">(</span><span class="n">val_batch</span><span class="p">),</span>
             <span class="n">prog_bar</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_epoch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">on_step</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">on_epoch</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_on_epoch</span><span class="p">,</span>
+            <span class="n">on_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_on_step</span><span class="p">,</span>
             <span class="n">sync_dist</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span></div>
