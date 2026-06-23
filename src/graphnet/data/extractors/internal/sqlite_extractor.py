@@ -35,9 +35,9 @@ class SQLiteExtractor(Extractor):
             fileset: Tuple of (sqlite3 connection, list of event numbers).
         """
         conn, event_nos = fileset
-        event_list = ",".join(map(str, event_nos))
+        placeholders = ",".join("?" * len(event_nos))
         query = (
             f"SELECT * FROM {self._extractor_name} "
-            f"WHERE event_no IN ({event_list})"
+            f"WHERE event_no IN ({placeholders})"
         )
-        return pd.read_sql_query(query, conn)
+        return pd.read_sql_query(query, conn, params=list(event_nos))
