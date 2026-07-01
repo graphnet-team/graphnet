@@ -378,7 +378,7 @@
 
 <span class="sd">    Curated Datasets in GraphNeT are pre-converted datasets that have</span>
 <span class="sd">    been prepared for training and evaluation of deep learning models.</span>
-<span class="sd">    On these Datasets, graphnet users can train and benchmark their</span>
+<span class="sd">    On these Datasets, GraphNeT users can train and benchmark their</span>
 <span class="sd">    models against SOTA methods.</span>
 <span class="sd">    """</span>
 
@@ -689,9 +689,9 @@
             <span class="c1"># Download, unzip and delete zipped file</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="p">)</span>
             <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="n">file_hash</span> <span class="o">+</span> <span class="s2">".tar.gz"</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"wget -O </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mirror</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_hash</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"tar -xf </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> -C </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rm </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"wget -O '</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">' </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_mirror</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">file_hash</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"tar -xf '</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">' -C </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_dir</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s2">"rm '</span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span></div>
 </div>
 
 
