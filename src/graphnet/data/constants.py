@@ -87,7 +87,21 @@ class TRUTH:
     ]
     DEEPCORE = ICECUBE86
     UPGRADE = DEEPCORE
+    # Matches the schema produced by `PrometheusTruthExtractor` from current
+    # Prometheus (`Injection.to_dict()`) files.
     PROMETHEUS = [
+        "interaction",
+        "initial_state_energy",
+        "initial_state_type",
+        "initial_state_zenith",
+        "initial_state_azimuth",
+        "initial_state_x",
+        "initial_state_y",
+        "initial_state_z",
+    ]
+    # Schema written by old Prometheus versions, e.g. the bundled example
+    # database (`data/examples/sqlite/prometheus/prometheus-events.db`).
+    PROMETHEUS_LEGACY = [
         "injection_energy",
         "injection_type",
         "injection_interaction_type",

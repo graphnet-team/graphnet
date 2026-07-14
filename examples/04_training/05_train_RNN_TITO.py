@@ -30,7 +30,9 @@ from graphnet.data.dataset import ParquetDataset
 
 # Constants
 features = FEATURES.PROMETHEUS
-truth = TRUTH.PROMETHEUS
+# The bundled example database was produced by an old version of Prometheus.
+# Use `TRUTH.PROMETHEUS` when training on freshly converted Prometheus files.
+truth = TRUTH.PROMETHEUS_LEGACY
 
 
 def main(

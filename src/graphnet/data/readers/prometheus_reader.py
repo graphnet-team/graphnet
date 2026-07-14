@@ -26,6 +26,16 @@ class PrometheusReader(GraphNeTFileReader):
         # Open file
         outputs = []
         file = pd.read_parquet(file_path)
+        for extractor in self._extractors:
+            assert isinstance(extractor, PrometheusExtractor)
+            if extractor._table not in file.columns:
+                self.warning_once(
+                    f"Table '{extractor._table}' was not found in "
+                    f"{file_path} (available: {file.columns.tolist()}). "
+                    "Output from this extractor will be empty. If the file "
+                    "was produced with a non-default `photon_field_name`, "
+                    "instantiate the extractor with that table name."
+                )
         for k in range(len(file)):  # Loop over events in file
             extracted_event = OrderedDict()
             for extractor in self._extractors:

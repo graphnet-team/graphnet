@@ -586,6 +586,23 @@ class Dataset(
 
         # Remove missing truth variables
         if missing_truth_variables:
+            requested_truth = [
+                truth_variable
+                for truth_variable in self._truth
+                if truth_variable != self._index_column
+            ]
+            if requested_truth and set(missing_truth_variables) >= set(
+                requested_truth
+            ):
+                raise ColumnMissingException(
+                    "None of the requested truth variables "
+                    f"({', '.join(requested_truth)}) are present in truth "
+                    f"table '{self._truth_table}'. This likely means the "
+                    "requested truth schema does not match the input "
+                    "file, e.g. `TRUTH.PROMETHEUS` used with a file "
+                    "produced by an old Prometheus version (use "
+                    "`TRUTH.PROMETHEUS_LEGACY` for those)."
+                )
             self.warning(
                 (
                     "Removing the following (missing) truth variables: "

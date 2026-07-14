@@ -85,7 +85,8 @@ def dataset_setup(dataset_ref: pytest.FixtureRequest) -> tuple:
     dataset_kwargs = {
         "truth_table": "mc_truth",
         "pulsemaps": "total",
-        "truth": TRUTH.PROMETHEUS,
+        # The example data was produced by an old Prometheus version
+        "truth": TRUTH.PROMETHEUS_LEGACY,
         "features": FEATURES.PROMETHEUS,
         "path": data_path,
         "graph_definition": graph_definition,
