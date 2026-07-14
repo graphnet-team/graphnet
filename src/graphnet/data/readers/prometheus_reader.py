@@ -22,17 +22,31 @@ class PrometheusReader(GraphNeTFileReader):
 
         Returns:
             Extracted data.
+
+        Raises:
+            ValueError: If a table required by one of the configured
+                extractors does not exist in the file.
         """
         # Open file
         outputs = []
         file = pd.read_parquet(file_path)
+        extractors: List[PrometheusExtractor] = []
+        missing_tables = []
+        for extractor in self._extractors:
+            assert isinstance(extractor, PrometheusExtractor)
+            extractors.append(extractor)
+            if extractor._table not in file.columns:
+                missing_tables.append(extractor._table)
+        if missing_tables:
+            raise ValueError(
+                f"Table(s) {missing_tables} not found in {file_path}. "
+                f"Available tables: {list(file.columns)}."
+            )
         for k in range(len(file)):  # Loop over events in file
             extracted_event = OrderedDict()
-            for extractor in self._extractors:
-                assert isinstance(extractor, PrometheusExtractor)
-                if extractor._table in file.columns:
-                    output = extractor(file[extractor._table][k])
-                    extracted_event[extractor._extractor_name] = output
+            for extractor in extractors:
+                output = extractor(file[extractor._table][k])
+                extracted_event[extractor._extractor_name] = output
             outputs.append(extracted_event)
         return outputs
 
