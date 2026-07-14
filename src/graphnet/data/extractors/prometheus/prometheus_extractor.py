@@ -1,6 +1,6 @@
 """Parquet Extractor for conversion of simulation files from PROMETHEUS."""
 
-from typing import List
+from typing import List, Optional
 import pandas as pd
 import numpy as np
 
@@ -53,16 +53,25 @@ class PrometheusTruthExtractor(PrometheusExtractor):
     This Extractor will "initial_state" i.e. neutrino truth.
     """
 
-    def __init__(self, table_name: str = "mc_truth") -> None:
+    def __init__(
+        self,
+        table_name: str = "mc_truth",
+        columns: Optional[List[str]] = None,
+    ) -> None:
         """Construct PrometheusTruthExtractor.
 
         Args:
             table_name: Name of the table in the parquet files that contain
                 event-level truth. Defaults to "mc_truth".
+            columns: Columns to extract from the table. Defaults to
+                `TRUTH.PROMETHEUS`, the truth fields written by every
+                Prometheus injection type. Override to include truth-level
+                data not present per default, e.g. LeptonInjector's
+                "bjorken_x", "bjorken_y" and "column_depth".
         """
-        super().__init__(
-            extractor_name=table_name, columns=list(TRUTH.PROMETHEUS)
-        )
+        if columns is None:
+            columns = list(TRUTH.PROMETHEUS)
+        super().__init__(extractor_name=table_name, columns=columns)
 
 
 class PrometheusFeatureExtractor(PrometheusExtractor):
