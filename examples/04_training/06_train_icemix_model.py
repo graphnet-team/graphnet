@@ -32,7 +32,7 @@ from graphnet.data.dataset import ParquetDataset
 
 # Constants
 features = FEATURES.PROMETHEUS
-truth = TRUTH.PROMETHEUS
+truth = TRUTH.PROMETHEUS_LEGACY
 
 
 def main(

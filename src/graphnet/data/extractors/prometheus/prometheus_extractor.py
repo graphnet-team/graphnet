@@ -4,6 +4,7 @@ from typing import List
 import pandas as pd
 import numpy as np
 
+from graphnet.data.constants import TRUTH
 from graphnet.data.extractors import Extractor
 
 
@@ -59,17 +60,9 @@ class PrometheusTruthExtractor(PrometheusExtractor):
             table_name: Name of the table in the parquet files that contain
                 event-level truth. Defaults to "mc_truth".
         """
-        columns = [
-            "interaction",
-            "initial_state_energy",
-            "initial_state_type",
-            "initial_state_zenith",
-            "initial_state_azimuth",
-            "initial_state_x",
-            "initial_state_y",
-            "initial_state_z",
-        ]
-        super().__init__(extractor_name=table_name, columns=columns)
+        super().__init__(
+            extractor_name=table_name, columns=list(TRUTH.PROMETHEUS)
+        )
 
 
 class PrometheusFeatureExtractor(PrometheusExtractor):

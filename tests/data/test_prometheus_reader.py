@@ -5,6 +5,7 @@ import os
 import pytest
 
 from graphnet.constants import TEST_DATA_DIR
+from graphnet.data.constants import TRUTH
 from graphnet.data.extractors.prometheus import (
     PrometheusFeatureExtractor,
     PrometheusTruthExtractor,
@@ -25,6 +26,7 @@ def test_prometheus_reader_extracts_configured_tables() -> None:
     events = reader(FILE_PATH)
     assert len(events) > 0
     assert set(events[0].keys()) == {"mc_truth", "photons"}
+    assert set(TRUTH.PROMETHEUS) <= set(events[0]["mc_truth"].keys())
 
 
 def test_prometheus_reader_raises_on_missing_table() -> None:
