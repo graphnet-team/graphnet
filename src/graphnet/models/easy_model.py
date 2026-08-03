@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Union, Type
 
 import numpy as np
 import torch
+import torch.distributed as dist
 from pytorch_lightning import Callback, Trainer
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from torch import Tensor
@@ -345,6 +346,52 @@ class EasySyntax(Model):
             pred.append(value)
         return pred
 
+    @staticmethod
+    def _gather_prediction_shards(
+        predictions_list: List[List[Any]],
+        trainer: Trainer,
+    ) -> Optional[List[List[Any]]]:
+        """Gather per-rank prediction shards onto the global-zero rank.
+
+        Returns the per-batch outputs from every rank, concatenated, on the
+        global-zero rank and `None` on all other ranks. Tensors are moved to
+        CPU before the transfer so a shard produced on one rank's device
+        deserializes onto a device that exists on the receiving rank.
+
+        The gather runs over a transient gloo group: NCCL has no
+        gather-to-one primitive, so gathering over the default (NCCL) backend
+        would require an all-gather that forces every rank to hold the whole
+        result. Over gloo (CPU, where the shards already live) only the
+        global-zero rank receives them.
+        """
+
+        def _to_cpu(value: Any) -> Any:
+            if isinstance(value, torch.Tensor):
+                return value.detach().cpu()
+            return value
+
+        local_shard = [
+            [_to_cpu(value) for value in batch] for batch in predictions_list
+        ]
+        gather_group = dist.new_group(backend="gloo")
+        try:
+            gathered: Optional[List[Optional[List[List[Any]]]]] = (
+                [None] * trainer.world_size if trainer.is_global_zero else None
+            )
+            dist.gather_object(
+                local_shard, gathered, dst=0, group=gather_group
+            )
+        finally:
+            dist.destroy_process_group(gather_group)
+        if not trainer.is_global_zero:
+            return None
+        # Only the global-zero rank receives the gathered shards; the assert
+        # narrows away the `None` the other ranks pass to `gather_object`.
+        assert gathered is not None
+        return [
+            batch for shard in gathered if shard is not None for batch in shard
+        ]
+
     def predict(
         self,
         dataloader: DataLoader,
@@ -352,12 +399,20 @@ class EasySyntax(Model):
         distribution_strategy: Optional[str] = "auto",
         additional_attributes: Optional[List[str]] = None,
         **trainer_kwargs: Any,
-    ) -> List[Union[Tensor, np.ndarray]]:
+    ) -> Optional[List[Union[Tensor, np.ndarray]]]:
         """Return predictions for `dataloader`.
 
         If `additional_attributes` is provided, the returned list has the
         per-task prediction tensors followed by one numpy array per
         requested attribute, gathered from the same dataloader pass.
+
+        Under a multi-device (DDP) strategy the dataloader is split into
+        disjoint shards across ranks, so each rank only predicts part of the
+        dataset. The shards are gathered onto the global-zero rank, which
+        returns the complete result; every other rank returns `None`. Rows
+        come back grouped by rank rather than in dataset order, so include
+        the index column (e.g. `event_no`) in `additional_attributes` if you
+        need to re-key or sort the output.
         """
         self.inference()
         self.train(mode=False)
@@ -379,6 +434,19 @@ class EasySyntax(Model):
             predictions_list = inference_trainer.predict(self, dataloader)
         finally:
             self._predict_additional_attributes = None
+
+        # Under a multi-device strategy each rank holds predictions for its
+        # own disjoint shard only; gather every shard so the global-zero rank
+        # can assemble one complete result. Other ranks have nothing to
+        # return. A rank's shard may be empty (fewer batches than ranks), so
+        # completeness is only checked after the gather — checking earlier
+        # would crash that rank and strand the others in the collective.
+        if inference_trainer.world_size > 1:
+            predictions_list = self._gather_prediction_shards(
+                predictions_list, inference_trainer
+            )
+            if not inference_trainer.is_global_zero:
+                return None
         assert len(predictions_list), "Got no predictions"
 
         # The trailing entries in each batch's output are the gathered
@@ -408,12 +476,20 @@ class EasySyntax(Model):
         gpus: Optional[Union[List[int], int]] = None,
         distribution_strategy: Optional[str] = "auto",
         **trainer_kwargs: Any,
-    ) -> pd.DataFrame:
+    ) -> Optional[pd.DataFrame]:
         """Return predictions for `dataloader` as a DataFrame.
 
         Include `additional_attributes` as additional columns in the output
         DataFrame. Attributes are gathered during the prediction pass, so
         the dataloader is iterated only once and shuffling is safe.
+
+        Under a multi-device (DDP) strategy the global-zero rank returns the
+        complete DataFrame and every other rank returns `None` — guard any
+        downstream write accordingly, e.g.::
+
+            df = model.predict_as_dataframe(...)
+            if df is not None:  # only the global-zero rank
+                df.to_parquet(path)
         """
         if prediction_columns is None:
             prediction_columns = self.prediction_labels
@@ -430,6 +506,12 @@ class EasySyntax(Model):
             additional_attributes=additional_attributes,
             **trainer_kwargs,
         )
+
+        # `predict` returns `None` on non-global-zero ranks under a
+        # multi-device strategy; the full result lives on the global-zero
+        # rank.
+        if outputs is None:
+            return None
 
         # `predict` returns task tensors first, then one np.ndarray per
         # requested attribute — split on that boundary.
