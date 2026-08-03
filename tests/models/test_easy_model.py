@@ -147,11 +147,7 @@ class _CountingLoader(DataLoader):
 def test_predict_as_dataframe_iterates_dataloader_once(
     model: _FakeModel,
 ) -> None:
-    """Regression: with attributes, the dataloader is iterated exactly once.
-
-    The previous implementation iterated a second time after `predict()`
-    purely to collect `additional_attributes`.
-    """
+    """Regression: with attributes, the dataloader is iterated once."""
     ds = _make_dataset(6)
     loader = _CountingLoader(ds, batch_size=2)
     _CountingLoader.iter_count = 0
@@ -226,12 +222,7 @@ def test_predict_as_dataframe_skips_misaligned_attribute(
 def test_predict_as_dataframe_expands_multidim_attribute(
     model: _FakeModel,
 ) -> None:
-    """Per-event vector attribute is split into one column per component.
-
-    Mirrors how `target_labels = ["direction"]` carries an (N, 3) tensor
-    on the batch — pandas can't take a 2D array as a single column, so
-    `predict_as_dataframe` flattens to `<name>_<i>`.
-    """
+    """Per-event (N, 3) attribute is expanded to `<name>_<i>` columns."""
     n = 7
     ds = _make_dataset(n)
     df = model.predict_as_dataframe(
@@ -262,8 +253,7 @@ def _free_port() -> int:
 def _gather_shards_worker(rank: int, world_size: int, port: int) -> None:
     """Run `_gather_prediction_shards` inside one rank of a gloo group.
 
-    Assertions raise here and `mp.spawn` propagates them to the test, so a
-    failing rank fails the test.
+    Assertion failures propagate to the test via `mp.spawn`.
     """
     os.environ["MASTER_ADDR"] = "127.0.0.1"
     os.environ["MASTER_PORT"] = str(port)
