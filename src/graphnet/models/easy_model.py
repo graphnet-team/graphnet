@@ -310,11 +310,8 @@ class EasySyntax(Model):
     def predict_step(self, *args: Any, **kwargs: Any) -> List[Any]:
         """Perform prediction step.
 
-        Returns a list whose first entries are the per-task prediction
-        tensors and whose trailing entries are numpy arrays for any
-        attributes requested via `_predict_additional_attributes`. Pulling
-        attributes here avoids a second pass over the dataloader in
-        `predict_as_dataframe`.
+        Returns the per-task prediction tensors, followed by one numpy
+        array per attribute in `_predict_additional_attributes`.
         """
         batch = kwargs.get("batch", args[0])
         pred = list(self(batch))
@@ -353,16 +350,10 @@ class EasySyntax(Model):
     ) -> Optional[List[List[Any]]]:
         """Gather per-rank prediction shards onto the global-zero rank.
 
-        Returns the per-batch outputs from every rank, concatenated, on the
-        global-zero rank and `None` on all other ranks. Tensors are moved to
-        CPU before the transfer so a shard produced on one rank's device
-        deserializes onto a device that exists on the receiving rank.
-
-        The gather runs over a transient gloo group: NCCL has no
-        gather-to-one primitive, so gathering over the default (NCCL) backend
-        would require an all-gather that forces every rank to hold the whole
-        result. Over gloo (CPU, where the shards already live) only the
-        global-zero rank receives them.
+        Returns every rank's per-batch outputs on the global-zero rank and
+        `None` on all other ranks. Shards are moved to CPU and gathered
+        over a transient gloo group, as NCCL has no gather-to-one
+        primitive.
         """
 
         def _to_cpu(value: Any) -> Any:
@@ -402,17 +393,11 @@ class EasySyntax(Model):
     ) -> Optional[List[Union[Tensor, np.ndarray]]]:
         """Return predictions for `dataloader`.
 
-        If `additional_attributes` is provided, the returned list has the
-        per-task prediction tensors followed by one numpy array per
-        requested attribute, gathered from the same dataloader pass.
-
-        Under a multi-device (DDP) strategy the dataloader is split into
-        disjoint shards across ranks, so each rank only predicts part of the
-        dataset. The shards are gathered onto the global-zero rank, which
-        returns the complete result; every other rank returns `None`. Rows
-        come back grouped by rank rather than in dataset order, so include
-        the index column (e.g. `event_no`) in `additional_attributes` if you
-        need to re-key or sort the output.
+        The returned list holds the per-task prediction tensors, followed
+        by one numpy array per requested additional attribute. Under a
+        multi-device strategy the global-zero rank returns the complete
+        result and all other ranks return `None`; rows are grouped by
+        rank, not in dataset order.
         """
         self.inference()
         self.train(mode=False)
@@ -479,17 +464,10 @@ class EasySyntax(Model):
     ) -> Optional[pd.DataFrame]:
         """Return predictions for `dataloader` as a DataFrame.
 
-        Include `additional_attributes` as additional columns in the output
-        DataFrame. Attributes are gathered during the prediction pass, so
-        the dataloader is iterated only once and shuffling is safe.
-
-        Under a multi-device (DDP) strategy the global-zero rank returns the
-        complete DataFrame and every other rank returns `None` — guard any
-        downstream write accordingly, e.g.::
-
-            df = model.predict_as_dataframe(...)
-            if df is not None:  # only the global-zero rank
-                df.to_parquet(path)
+        `additional_attributes` are added as columns, collected during the
+        prediction pass itself, so shuffled dataloaders are safe. Under a
+        multi-device strategy the global-zero rank returns the complete
+        DataFrame and all other ranks return `None`.
         """
         if prediction_columns is None:
             prediction_columns = self.prediction_labels
