@@ -420,12 +420,9 @@ class EasySyntax(Model):
         finally:
             self._predict_additional_attributes = None
 
-        # Under a multi-device strategy each rank holds predictions for its
-        # own disjoint shard only; gather every shard so the global-zero rank
-        # can assemble one complete result. Other ranks have nothing to
-        # return. A rank's shard may be empty (fewer batches than ranks), so
-        # completeness is only checked after the gather — checking earlier
-        # would crash that rank and strand the others in the collective.
+        # Each rank holds only its own shard. Emptiness is checked after
+        # the gather: a rank's shard may be empty, and crashing it would
+        # strand the other ranks in the collective.
         if inference_trainer.world_size > 1:
             predictions_list = self._gather_prediction_shards(
                 predictions_list, inference_trainer
