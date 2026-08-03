@@ -5,6 +5,10 @@ the tests exercise only the prediction/attribute-gathering machinery,
 not GNN/Detector/Task code.
 """
 
+import os
+import socket
+from datetime import timedelta
+from types import SimpleNamespace
 from typing import Iterator, List, Union
 
 import numpy as np
@@ -96,6 +100,7 @@ def test_predict_as_dataframe_shape_and_columns(model: _FakeModel) -> None:
     """No attributes: columns and length match prediction labels/dataset."""
     ds = _make_dataset(10)
     df = model.predict_as_dataframe(_loader(ds, batch_size=3))
+    assert df is not None
     assert list(df.columns) == ["pred_a", "pred_b"]
     assert len(df) == len(ds)
     # _FakeModel echoes event_id, so both columns should equal 0..9.
@@ -114,6 +119,7 @@ def test_predict_as_dataframe_attributes_aligned(model: _FakeModel) -> None:
         _loader(ds, batch_size=3),
         additional_attributes=["event_id", "value"],
     )
+    assert df is not None
     assert list(df.columns) == ["pred_a", "pred_b", "event_id", "value"]
     np.testing.assert_array_equal(df["event_id"].to_numpy(), np.arange(8))
     np.testing.assert_array_equal(
@@ -166,6 +172,7 @@ def test_predict_as_dataframe_with_shuffled_loader(
     df = model.predict_as_dataframe(
         loader, additional_attributes=["event_id", "value"]
     )
+    assert df is not None
     assert len(df) == 12
     # event_id may appear in any order, but pred and attr stay paired.
     np.testing.assert_array_equal(
@@ -191,6 +198,7 @@ def test_predict_as_dataframe_respects_limit_predict_batches(
         additional_attributes=["event_id"],
         limit_predict_batches=2,
     )
+    assert df is not None
     # 2 batches * 4 events = 8 rows; predictions and attrs must still align.
     assert len(df) == 8
     np.testing.assert_array_equal(
@@ -209,6 +217,7 @@ def test_predict_as_dataframe_skips_misaligned_attribute(
         _loader(ds, batch_size=2),
         additional_attributes=["event_id", "pulses"],
     )
+    assert df is not None
     assert "event_id" in df.columns
     assert "pulses" not in df.columns
     assert len(df) == 6
@@ -229,6 +238,7 @@ def test_predict_as_dataframe_expands_multidim_attribute(
         _loader(ds, batch_size=3),
         additional_attributes=["vec", "event_id"],
     )
+    assert df is not None
     assert list(df.columns) == [
         "pred_a",
         "pred_b",
@@ -241,3 +251,56 @@ def test_predict_as_dataframe_expands_multidim_attribute(
     np.testing.assert_array_equal(df["vec_0"].to_numpy(), expected)
     np.testing.assert_array_equal(df["vec_1"].to_numpy(), expected + 0.5)
     np.testing.assert_array_equal(df["vec_2"].to_numpy(), expected + 0.25)
+
+
+def _free_port() -> int:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.bind(("127.0.0.1", 0))
+        return sock.getsockname()[1]
+
+
+def _gather_shards_worker(rank: int, world_size: int, port: int) -> None:
+    """Run `_gather_prediction_shards` inside one rank of a gloo group.
+
+    Assertions raise here and `mp.spawn` propagates them to the test, so a
+    failing rank fails the test.
+    """
+    os.environ["MASTER_ADDR"] = "127.0.0.1"
+    os.environ["MASTER_PORT"] = str(port)
+    torch.distributed.init_process_group(
+        backend="gloo",
+        rank=rank,
+        world_size=world_size,
+        timeout=timedelta(seconds=30),
+    )
+    try:
+        # One batch per rank: [prediction tensor, attribute array]. The tensor
+        # value and the attribute both encode the rank so the gathered result
+        # can be checked for completeness.
+        local_shard = [[torch.tensor([[float(rank)]]), np.array([rank * 10])]]
+        trainer = SimpleNamespace(
+            world_size=world_size, is_global_zero=(rank == 0)
+        )
+        gathered = EasySyntax._gather_prediction_shards(local_shard, trainer)
+        if rank == 0:
+            assert gathered is not None
+            assert len(gathered) == world_size
+            preds = sorted(batch[0].item() for batch in gathered)
+            attrs = sorted(int(batch[1][0]) for batch in gathered)
+            assert preds == [0.0, 1.0]
+            assert attrs == [0, 10]
+        else:
+            assert gathered is None
+    finally:
+        torch.distributed.destroy_process_group()
+
+
+def test_gather_prediction_shards_across_ranks() -> None:
+    """DDP shards from every rank are assembled on rank 0; others get None."""
+    world_size = 2
+    torch.multiprocessing.spawn(
+        _gather_shards_worker,
+        args=(world_size, _free_port()),
+        nprocs=world_size,
+        join=True,
+    )
