@@ -8,7 +8,7 @@ import numpy as np
 
 from graphnet.training.labels import Direction, Track
 from graphnet.data import ERDAHostedDataset
-from graphnet.data.constants import FEATURES
+from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.data.utilities import query_database
 
 
@@ -18,16 +18,7 @@ class PublicPrometheusDataset(ERDAHostedDataset):
     # Static Member Variables:
     _pulsemaps = ["photons"]
     _truth_table = "mc_truth"
-    _event_truth = [
-        "interaction",
-        "initial_state_energy",
-        "initial_state_type",
-        "initial_state_zenith",
-        "initial_state_azimuth",
-        "initial_state_x",
-        "initial_state_y",
-        "initial_state_z",
-    ]
+    _event_truth = TRUTH.PROMETHEUS
     _pulse_truth = None
     _features = FEATURES.PROMETHEUS
 

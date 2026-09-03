@@ -30,7 +30,7 @@ except AssertionError:
 
 # Constants
 features = FEATURES.PROMETHEUS
-truth = TRUTH.PROMETHEUS
+truth = TRUTH.PROMETHEUS_LEGACY
 
 
 def main(
