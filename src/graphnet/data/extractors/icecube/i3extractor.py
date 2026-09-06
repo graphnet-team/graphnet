@@ -14,6 +14,8 @@ if has_icecube_package() or TYPE_CHECKING:
         dataclasses,
     )  # pyright: reportMissingImports=false
 
+from copy import deepcopy
+
 
 class I3Extractor(Extractor):
     """Base class for extracting information from physics I3-frames.
@@ -111,7 +113,7 @@ class I3Extractor(Extractor):
 
     def check_primary_energy(
         self,
-        frame: "icetray.I3Frame",
+        mctree: "dataclasses.I3MCTree",
         primaries: Union[
             "dataclasses.ListI3Particle", "dataclasses.I3Particle"
         ],
@@ -122,7 +124,7 @@ class I3Extractor(Extractor):
         primary particle(s) are returned instead.
 
         Args:
-            frame: I3Frame object.
+            mctree: I3MCTree object.
             primaries: Primary particle or a list of primary particles.
         """
         assert hasattr(
@@ -132,7 +134,7 @@ class I3Extractor(Extractor):
         if isinstance(primaries, dataclasses.ListI3Particle):
             new_primaries = dataclasses.ListI3Particle()
             for primary in primaries:
-                primary = self.check_primary_energy(frame, primary)
+                primary = self.check_primary_energy(mctree, primary)
                 if isinstance(primary, dataclasses.ListI3Particle):
                     new_primaries.extend(primary)
                 elif isinstance(primary, dataclasses.I3Particle):
@@ -151,9 +153,7 @@ class I3Extractor(Extractor):
 
         if primary.energy != primary.energy:
             self.warning_once("Primary energy is nan checking daughters")
-            daughters = dataclasses.I3MCTree.get_daughters(
-                frame[self.mctree], primary
-            )
+            daughters = dataclasses.I3MCTree.get_daughters(mctree, primary)
             if len(daughters) == 0:
                 raise ValueError(
                     "Primary energy is nan and no daughters found"
@@ -165,7 +165,7 @@ class I3Extractor(Extractor):
 
     def get_primaries(
         self,
-        frame: "icetray.I3Frame",
+        mctree: "dataclasses.I3MCTree",
         daughters: bool = False,
         highest_energy_primary: bool = True,
     ) -> "dataclasses.ListI3Particle":
@@ -183,7 +183,7 @@ class I3Extractor(Extractor):
             Corsika case.
 
         Input:
-        frame: I3Frame object
+        mctree: I3MCTree object
         daughters: If True only daughters of the primary neutrino are returned
         highest_energy_primary: If True, return the primary with the highest
             energy. If False, return all primaries.
@@ -195,7 +195,7 @@ class I3Extractor(Extractor):
         ), "mctree should be instantiated by subclass"
 
         if not self._is_corsika:
-            primaries = frame[self.mctree].get_primaries()
+            primaries = mctree.get_primaries()
             if daughters:
                 primaries = [
                     p
@@ -217,16 +217,13 @@ class I3Extractor(Extractor):
 
                     # get the original primary neutrino(s)
                     primary_nus = [
-                        p
-                        for p in frame[self.mctree].get_primaries()
-                        if p.is_neutrino
+                        p for p in mctree.get_primaries() if p.is_neutrino
                     ]
 
                     # recursively search for in-ice neutrino daughters
                     primaries = self.find_in_ice_daughters(
-                        frame,
+                        mctree,
                         primary_nus,
-                        self.mctree,
                     )
 
                 # This is not expected to happen
@@ -246,14 +243,13 @@ class I3Extractor(Extractor):
             primaries = dataclasses.ListI3Particle(primaries)
 
         if self._is_corsika:
-            primaries = frame[self.mctree].get_primaries()
+            primaries = mctree.get_primaries()
         return primaries
 
     def find_in_ice_daughters(
         self,
-        frame: "icetray.I3Frame",
+        mctree: "dataclasses.I3MCTree",
         particles: "dataclasses.ListI3Particle",
-        mctree: str,
     ) -> "dataclasses.ListI3Particle":
         """Find in-ice particles in the frame."""
         if particles == []:
@@ -268,9 +264,71 @@ class I3Extractor(Extractor):
             else:
                 ret.extend(
                     self.find_in_ice_daughters(
-                        frame,
-                        frame[mctree].get_daughters(p.id),
-                        mctree=mctree,
+                        mctree,
+                        mctree.get_daughters(p.id),
                     )
                 )
         return ret
+
+    def split_mc_tree(
+        self, frame: "icetray.I3Frame", highest_energy_primary: bool = True
+    ) -> "dataclasses.I3MCTree":
+        """Split the mctree in subtrees corresponding to each primary particle.
+
+        Into a subtree containing only the daughters of the primary
+        particle, and a subtree containing the rest of the particles in
+        the event.
+        """
+        assert hasattr(
+            self, "mctree"
+        ), "mctree should be instantiated by subclass"
+
+        main_tree = deepcopy(frame[self.mctree])
+        bkg_tree = deepcopy(frame[self.mctree])
+
+        if self._is_corsika:
+            # create empty main tree and return bkg tree.
+            return dataclasses.I3MCTree(), bkg_tree
+
+        all_primaries = main_tree.get_primaries()
+        if highest_energy_primary:
+            # grab the id of the highest energy primary
+            in_ice_daughters = self.find_in_ice_daughters(
+                main_tree, [p for p in all_primaries if p.is_neutrino]
+            )
+            energies = np.array([p.energy for p in in_ice_daughters])
+            p_highest = np.array(in_ice_daughters)[np.argmax(energies)]
+            parent_ids = [
+                p.id for p in self.get_all_parents(main_tree, p_highest)
+            ]
+            parent_ids.append(p_highest.id)
+
+        for primary in all_primaries:
+            if primary.is_neutrino:
+                if highest_energy_primary:
+                    if primary.id not in parent_ids:
+                        main_tree.erase(primary.id)
+                    else:
+                        bkg_tree.erase(primary.id)
+                else:
+                    bkg_tree.erase(primary.id)
+            else:
+                main_tree.erase(primary.id)
+        return main_tree, bkg_tree
+
+    def get_all_parents(
+        self,
+        mctree: "dataclasses.I3MCTree",
+        particle: "dataclasses.I3Particle",
+    ) -> list:
+        """Get all parents of a particle."""
+        assert hasattr(
+            self, "mctree"
+        ), "mctree should be instantiated by subclass"
+
+        parents = []
+        while mctree.has_parent(particle.id):
+            parent = mctree.parent(particle.id)
+            parents.append(parent)
+            particle = parent
+        return parents
