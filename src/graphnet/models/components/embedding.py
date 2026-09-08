@@ -253,8 +253,11 @@ class FourierEncoder(LightningModule):
 
         Args:
             x: `[B, K, D]`-dimensional sequence representation of an event.
-            seq_length: Unpadded length of each sequence in `x`. Required
-                when `add_sequence_length` is True.
+            seq_length: `[B]`-dimensional unpadded length of each sequence in
+                `x`, one entry per sequence rather than per step. Required
+                when `add_sequence_length` is True, in which case each step
+                of a sequence receives a copy of its sequence's embedded
+                length.
 
         Returns:
             Embedded `[B, K, J]`-dimensional sequence.
