@@ -6,7 +6,9 @@ https://github.com/ChenLi2049/ISeeCube/
 import torch
 import torch.nn as nn
 
-from graphnet.models.components.embedding import FourierEncoder
+from graphnet.models.components.embedding import (
+    FourierEncoderEPJC,
+)
 from graphnet.models.gnn.gnn import GNN
 from graphnet.models.utils import array_to_sequence
 
@@ -40,7 +42,7 @@ class ISeeCube(GNN):
             seq_length: The number of pulses in a neutrino event.
             num_layers: The depth of the transformer.
             num_heads: The number of the attention heads.
-            mlp_dim: The mlp dimension of FourierEncoder and Transformer.
+            mlp_dim: The mlp dimension of FourierEncoderEPJC and Transformer.
             rel_pos_buckets: Relative position buckets for relative position
                 bias.
             max_rel_pos: Maximum relative position for relative position bias.
@@ -49,7 +51,7 @@ class ISeeCube(GNN):
             n_features: The number of features in the input data.
         """
         super().__init__(seq_length, hidden_dim)
-        self.fourier_ext = FourierEncoder(
+        self.fourier_ext = FourierEncoderEPJC(
             seq_length=seq_length,
             mlp_dim=mlp_dim,
             output_dim=hidden_dim,
