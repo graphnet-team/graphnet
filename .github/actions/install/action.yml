@@ -70,4 +70,5 @@ runs:
         echo "pip install ${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html"
         pip install --no-cache-dir${{ steps.flags.outputs.user_flag }} ${{ steps.flags.outputs.editable_flag }} .[torch-${{ steps.flags.outputs.torch_flag }},${{ inputs.extras }}] -f https://data.pyg.org/whl/torch-${{ inputs.torch_version }}+${{ inputs.hardware }}.html
         rm -rf ~/.cache/pip
-        pip install --no-cache-dir git+https://github.com/thoglu/jammy_flows.git
+        # without this pin, healpy (via jammy_flows) upgrades numpy to 2.x, breaking icetray
+        pip install --no-cache-dir "numpy>=1.22,<2.0" git+https://github.com/thoglu/jammy_flows.git
