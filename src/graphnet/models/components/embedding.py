@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.functional import Tensor
 
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple, Union
 
 from pytorch_lightning import LightningModule
 from torch_geometric.utils import add_self_loops
@@ -66,14 +66,18 @@ class SinusoidalPosEmb(LightningModule):
     def __init__(
         self,
         dim: int = 16,
-        n_freq: int = 10000,
+        n_freq: float = 10000.0,
         scaled: bool = False,
     ):
         """Construct `SinusoidalPosEmb`.
 
         Args:
-            dim: Embedding dimension.
-            n_freq: Number of frequencies.
+            dim: Embedding dimension. The ladder holds `dim / 2`
+                frequencies, each contributing a sine and a cosine.
+            n_freq: Span of the frequency ladder. The frequencies run from 1
+                down to `n_freq ** -((dim/2 - 1)/(dim/2))`, so this sets how
+                far the embedding reaches beyond its finest scale, not how
+                many frequencies there are.
             scaled: Whether or not to scale the output.
         """
         super().__init__()
@@ -82,14 +86,21 @@ class SinusoidalPosEmb(LightningModule):
         self.scale = nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
         self.dim = dim
         self.n_freq = torch.Tensor([n_freq])
+        # The ladder is fixed at construction, so build it once instead of per
+        # forward pass. Non-persistent: it is derived from `dim` and `n_freq`,
+        # and keeping it out of the state dict leaves checkpoints unchanged.
+        half_dim = dim / 2
+        self.register_buffer(
+            "freqs",
+            torch.exp(
+                torch.arange(half_dim) * (-torch.log(self.n_freq) / half_dim)
+            ),
+            persistent=False,
+        )
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass."""
-        device = x.device
-        half_dim = self.dim / 2
-        emb = torch.log(self.n_freq.to(device=device)) / half_dim
-        emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
-        emb = x.unsqueeze(-1) * emb.unsqueeze(0)
+        emb = x.unsqueeze(-1) * self.freqs
         emb = torch.cat((torch.sin(emb), torch.cos(emb)), dim=-1)
         return emb * self.scale
 
@@ -194,50 +205,71 @@ class FourierEncoder(LightningModule):
 
     A superficial refactor of `FourierEncoderEPJC` that drops the
     assumptions tying it to the Kaggle dataset. `schema` states which
-    columns to embed and with which multiplier, so nothing is assumed about
-    the order or meaning of the input columns, and the boolean embedding and
-    MLP projection are left to the model, since both are problem-specific.
+    columns to embed and over which band of scales, so nothing is assumed
+    about the order or meaning of the input columns, and the boolean
+    embedding and MLP projection are left to the model, since both are
+    problem-specific.
     """
 
     def __init__(
         self,
-        schema: Dict[int, float],
+        schema: Dict[int, Union[float, Tuple[float, float]]],
         seq_length: int = 128,
         scaled: bool = False,
         add_sequence_length: bool = True,
+        n_freq: float = 10000.0,
     ):
         """Construct `FourierEncoder`.
 
         Args:
-            schema: Maps an input column index to the multiplier applied to
-                that column before the sinusoidal ladder, e.g.
-                `{1: 1024, 3: 4096}`. Columns absent from the schema are not
-                embedded.
+            schema: Maps an input column index to how it is embedded, either
+                as a multiplier or as a `(multiplier, n_freq)` pair, e.g.
+                `{1: 1024, 3: (4096, 500)}`. Columns absent from the schema
+                are not embedded.
 
-                The multiplier sets which separations the encoding can
-                resolve. With the ladder running from frequency 1 down to
-                `n_freq ** -((dim/2 - 1)/(dim/2))`, a column resolves
-                wavelengths from `2 * pi * unit / multiplier` up to that
-                times the ladder's ratio, where `unit` is the physical size
-                of one unit of the (normalised) column. A multiplier carried
-                over from data on a different normalisation therefore
-                resolves a different physical range.
+                The two together set the band of separations a column can
+                resolve: wavelengths from `2 * pi * unit / multiplier` up to
+                that times `n_freq ** ((dim/2 - 1)/(dim/2))`, where `unit` is
+                the physical size of one unit of the (normalised) column. So
+                the multiplier places the band and `n_freq` sets its width,
+                and both are properties of the data rather than of the model
+                -- values carried over from a different normalisation resolve
+                a different physical range.
             seq_length: Desired dimensionality of the base sinusoidal
                 positional embeddings.
             scaled: Whether or not to scale the embeddings.
             add_sequence_length: If True, the unpadded length of each
                 sequence is embedded as well, at half width.
+            n_freq: Ladder span for columns whose schema entry gives only a
+                multiplier, and for the sequence-length embedding.
         """
         super().__init__()
         if not schema:
             raise ValueError("`schema` must map at least one column.")
 
-        self.schema = dict(schema)
+        self.schema = {
+            col: (
+                (float(v[0]), float(v[1]))
+                if isinstance(v, (tuple, list))
+                else (float(v), float(n_freq))
+            )
+            for col, v in schema.items()
+        }
         self._add_sequence_length = add_sequence_length
-        self.sin_feature = SinusoidalPosEmb(dim=seq_length, scaled=scaled)
+        # One embedder per distinct span, not per column: columns sharing a
+        # span share a ladder, so the common case of a single span builds a
+        # single module and keeps `scaled`'s one learnable scale.
+        spans = sorted({span for _, span in self.schema.values()})
+        self._span_index = {span: i for i, span in enumerate(spans)}
+        self.sin_feature = nn.ModuleList(
+            [
+                SinusoidalPosEmb(dim=seq_length, n_freq=span, scaled=scaled)
+                for span in spans
+            ]
+        )
         if add_sequence_length:
             self.sin_length = SinusoidalPosEmb(
-                dim=seq_length // 2, scaled=scaled
+                dim=seq_length // 2, n_freq=n_freq, scaled=scaled
             )
         # Width of the concatenation, so the model can size what follows.
         self.output_dim = len(self.schema) * seq_length + (
@@ -263,8 +295,8 @@ class FourierEncoder(LightningModule):
             Embedded `[B, K, J]`-dimensional sequence.
         """
         embeddings = [
-            self.sin_feature(scale * x[:, :, col])
-            for col, scale in self.schema.items()
+            self.sin_feature[self._span_index[span]](scale * x[:, :, col])
+            for col, (scale, span) in self.schema.items()
         ]
 
         if self._add_sequence_length:
