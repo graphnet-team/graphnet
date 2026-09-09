@@ -16,7 +16,7 @@ from graphnet.models.components.attention_blocks import (
 )
 from graphnet.models.components.embedding import (
     FourierEncoder,
-    SpacetimeEncoder,
+    SpacetimeEncoderEPJC,
 )
 from graphnet.models.gnn.dynedge import DynEdge
 from graphnet.models.gnn.gnn import GNN
@@ -72,7 +72,7 @@ class DeepIce(GNN):
             scaled=scaled_emb,
             n_features=n_features,
         )
-        self.rel_pos = SpacetimeEncoder(head_size)
+        self.rel_pos = SpacetimeEncoderEPJC(head_size)
         self.sandwich = nn.ModuleList(
             [
                 Block_rel(
