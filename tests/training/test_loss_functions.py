@@ -311,7 +311,7 @@ def test_vmf3d_log_cmk_closed_form(dtype: torch.dtype = torch.float64) -> None:
     against d/dk log C_3(k) = 1/k - coth(k).
     """
     k = torch.tensor(
-        data=[0.1, 0.5, 1.0, 3.0, 10.0, 100.0, 1000.0, 10000.0],
+        data=[0.1, 0.5, 1.0, 3.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0],
         requires_grad=True,
         dtype=dtype,
     )
@@ -413,13 +413,13 @@ def test_vmf3d_loss_no_gradient_dead_zone(
     The optimum concentration satisfies A_3(kappa) = coth(kappa) - 1/kappa =
     cos(theta). A derivative that is discontinuous somewhere in kappa leaves
     a band of cos(theta) values with no stationary point, so gradient descent
-    pins kappa at the discontinuity for those events. Alignments in
-    (0.9900, 0.9998) probe kappa ~ 100...5000.
+    pins kappa at the discontinuity for those events. The alignments below
+    place the optimum at kappa ~ 100...20000.
     """
     loss = VonMisesFisher3DLoss()
-    for cos_theta in [0.9905, 0.995, 0.999]:
+    for cos_theta in [0.9905, 0.995, 0.999, 0.99995]:
         sin_theta = float(np.sqrt(1 - cos_theta**2))
-        kappa = torch.logspace(1, 4, 400, dtype=dtype, requires_grad=True)
+        kappa = torch.logspace(1, 5, 500, dtype=dtype, requires_grad=True)
         n = kappa.size(0)
         direction = torch.tensor([[0.0, 0.0, 1.0]], dtype=dtype).repeat(n, 1)
         target = torch.tensor(

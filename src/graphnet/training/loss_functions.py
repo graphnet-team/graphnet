@@ -568,10 +568,11 @@ class VonMisesFisher3DLoss(LossFunction):
         assert target.dim() == 2
         assert prediction.size()[0] == target.size()[0]
 
-        direction = prediction[:, :3] # vector  mu / (norm(mu) + eps)
-        direction_norm = torch.norm(direction, dim=1) # norm(mu) / (norm(mu) + eps)
-        concentration = prediction[:, 3] * direction_norm # norm(mu)
-        unit_direction = direction / direction_norm.unsqueeze(1) # mu \ norm(mu)
+        # With x the raw model output the task head normalized:
+        direction = prediction[:, :3]  # x / (|x| + eps)
+        direction_norm = torch.norm(direction, dim=1)  # |x| / (|x| + eps)
+        concentration = prediction[:, 3] * direction_norm  # |x|
+        unit_direction = direction / direction_norm.unsqueeze(1)  # x / |x|
 
         # For unit vectors, concentration * (1 - mu . t) equals
         # concentration * ||t - mu||**2 / 2 exactly. The squared-chord form
