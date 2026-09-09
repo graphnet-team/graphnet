@@ -218,6 +218,27 @@ class SpacetimeEncoder(LightningModule):
         rel_attn = self.projection(sin_emb)
         return rel_attn
 
+    def forward_tiled(
+        self,
+        x: Tensor,
+        start: int,
+        end: int,
+    ) -> Tensor:
+        """Tiled version of the forward pass."""
+        pos = x[:, :, :3]
+        time = x[:, :, 3]
+        dpos = pos[:, start:end, None, :] - pos[:, None, :, :]  # [B,tile,L,3]
+        dt = time[:, start:end, None] - time[:, None, :]  # [B,tile,L]
+        spacetime_interval = dpos.pow(2).sum(-1) - (
+            dt * (3e4 / 500 * 3e-1)
+        ).pow(2)  # [B,tile,L]
+        four_distance = torch.sign(spacetime_interval) * torch.sqrt(
+            torch.abs(spacetime_interval)
+        )
+        sin_emb = self.sin_emb(1024 * four_distance.clip(-4, 4))  # [B,tile,L]
+        rel_attn = self.projection(sin_emb)
+        return rel_attn
+
 
 class RRWPLinearNodeEncoder(LightningModule):
     """Relative random walk probability node encoder.
