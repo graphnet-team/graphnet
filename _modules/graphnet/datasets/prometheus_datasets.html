@@ -359,7 +359,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.training.labels</span><span class="w"> </span><span class="kn">import</span> <span class="n">Direction</span><span class="p">,</span> <span class="n">Track</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERDAHostedDataset</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">FEATURES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">FEATURES</span><span class="p">,</span> <span class="n">TRUTH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.utilities</span><span class="w"> </span><span class="kn">import</span> <span class="n">query_database</span>
 
 
@@ -371,16 +371,7 @@
     <span class="c1"># Static Member Variables:</span>
     <span class="n">_pulsemaps</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"photons"</span><span class="p">]</span>
     <span class="n">_truth_table</span> <span class="o">=</span> <span class="s2">"mc_truth"</span>
-    <span class="n">_event_truth</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">"interaction"</span><span class="p">,</span>
-        <span class="s2">"initial_state_energy"</span><span class="p">,</span>
-        <span class="s2">"initial_state_type"</span><span class="p">,</span>
-        <span class="s2">"initial_state_zenith"</span><span class="p">,</span>
-        <span class="s2">"initial_state_azimuth"</span><span class="p">,</span>
-        <span class="s2">"initial_state_x"</span><span class="p">,</span>
-        <span class="s2">"initial_state_y"</span><span class="p">,</span>
-        <span class="s2">"initial_state_z"</span><span class="p">,</span>
-    <span class="p">]</span>
+    <span class="n">_event_truth</span> <span class="o">=</span> <span class="n">TRUTH</span><span class="o">.</span><span class="n">PROMETHEUS</span>
     <span class="n">_pulse_truth</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_features</span> <span class="o">=</span> <span class="n">FEATURES</span><span class="o">.</span><span class="n">PROMETHEUS</span>
 

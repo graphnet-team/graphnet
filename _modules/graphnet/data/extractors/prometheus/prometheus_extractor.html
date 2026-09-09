@@ -351,10 +351,11 @@
   <h1 id="modules-graphnet-data-extractors-prometheus-prometheus-extractor--page-root">Source code for graphnet.data.extractors.prometheus.prometheus_extractor</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Parquet Extractor for conversion of simulation files from PROMETHEUS."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">TRUTH</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.data.extractors</span><span class="w"> </span><span class="kn">import</span> <span class="n">Extractor</span>
 
 
@@ -408,23 +409,24 @@
 <span class="sd">    This Extractor will "initial_state" i.e. neutrino truth.</span>
 <span class="sd">    """</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mc_truth"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">table_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"mc_truth"</span><span class="p">,</span>
+        <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Construct PrometheusTruthExtractor.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            table_name: Name of the table in the parquet files that contain</span>
 <span class="sd">                event-level truth. Defaults to "mc_truth".</span>
+<span class="sd">            columns: Columns to extract from the table. Defaults to</span>
+<span class="sd">                `TRUTH.PROMETHEUS`, the truth fields written by every</span>
+<span class="sd">                Prometheus injection type. Override to include truth-level</span>
+<span class="sd">                data not present per default, e.g. LeptonInjector's</span>
+<span class="sd">                "bjorken_x", "bjorken_y" and "column_depth".</span>
 <span class="sd">        """</span>
-        <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="s2">"interaction"</span><span class="p">,</span>
-            <span class="s2">"initial_state_energy"</span><span class="p">,</span>
-            <span class="s2">"initial_state_type"</span><span class="p">,</span>
-            <span class="s2">"initial_state_zenith"</span><span class="p">,</span>
-            <span class="s2">"initial_state_azimuth"</span><span class="p">,</span>
-            <span class="s2">"initial_state_x"</span><span class="p">,</span>
-            <span class="s2">"initial_state_y"</span><span class="p">,</span>
-            <span class="s2">"initial_state_z"</span><span class="p">,</span>
-        <span class="p">]</span>
+        <span class="k">if</span> <span class="n">columns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">TRUTH</span><span class="o">.</span><span class="n">PROMETHEUS</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor_name</span><span class="o">=</span><span class="n">table_name</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span></div>
 
 

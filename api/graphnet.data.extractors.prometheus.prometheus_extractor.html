@@ -643,15 +643,22 @@ parquet files.</p>
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.data.extractors.prometheus.prometheus_extractor.PrometheusTruthExtractor">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.prometheus.prometheus_extractor.</span></span><span class="sig-name descname"><span class="pre">PrometheusTruthExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/prometheus/prometheus_extractor.html#PrometheusTruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.prometheus.prometheus_extractor.PrometheusTruthExtractor" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.data.extractors.prometheus.prometheus_extractor.</span></span><span class="sig-name descname"><span class="pre">PrometheusTruthExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/data/extractors/prometheus/prometheus_extractor.html#PrometheusTruthExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.data.extractors.prometheus.prometheus_extractor.PrometheusTruthExtractor" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#graphnet.data.extractors.prometheus.prometheus_extractor.PrometheusExtractor" title="graphnet.data.extractors.prometheus.prometheus_extractor.PrometheusExtractor"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrometheusExtractor</span></code></a></p>
 <p>Class for extracting event level truth from Prometheus parquet files.</p>
 <p>This Extractor will “initial_state” i.e. neutrino truth.</p>
 <p>Construct PrometheusTruthExtractor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>table_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'mc_truth'</span></code>) – Name of the table in the parquet files that contain
-event-level truth. Defaults to “mc_truth”.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">'mc_truth'</span></code>) – Name of the table in the parquet files that contain
+event-level truth. Defaults to “mc_truth”.</p></li>
+<li><p><strong>columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Columns to extract from the table. Defaults to
+<cite>TRUTH.PROMETHEUS</cite>, the truth fields written by every
+Prometheus injection type. Override to include truth-level
+data not present per default, e.g. LeptonInjector’s
+“bjorken_x”, “bjorken_y” and “column_depth”.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

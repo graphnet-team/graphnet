@@ -697,358 +697,358 @@ To save also trained model weights, you need to save the entire model, see below
 <section id="example-modelconfig">
 <h2 id="example-modelconfig">Example <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code><a class="headerlink" href="#example-modelconfig" title="Link to this heading">¶</a></h2>
 <p>You can find several pre-defined <code class="docutils literal notranslate"><span class="pre">ModelConfig</span></code>’s under <code class="docutils literal notranslate"><span class="pre">graphnet/configs/models</span></code>. Below are the contents of <code class="docutils literal notranslate"><span class="pre">example_energy_reconstruction_model.yml</span></code>:</p>
-<div class="highlight-yml notranslate"><div class="highlight"><pre><span></span>arguments:
-  architecture:
-    ModelConfig:
-      arguments:
-        add_global_variables_after_pooling: false
-        dynedge_layer_sizes: null
-        features_subset: null
-        global_pooling_schemes: [min, max, mean, sum]
-        nb_inputs: 4
-        nb_neighbours: 8
-        post_processing_layer_sizes: null
-        readout_layer_sizes: null
-      class_name: DynEdge
-  graph_definition:
-    ModelConfig:
-      arguments:
-        columns: [0, 1, 2]
-        detector:
-          ModelConfig:
-            arguments: {}
-            class_name: Prometheus
-        dtype: null
-        nb_nearest_neighbours: 8
-        node_definition:
-          ModelConfig:
-            arguments: {}
-            class_name: NodesAsPulses
-        node_feature_names: [sensor_pos_x, sensor_pos_y, sensor_pos_z, t]
-      class_name: KNNGraph
-  optimizer_class: '!class torch.optim.adam Adam'
-  optimizer_kwargs: {eps: 0.001, lr: 0.001}
-  scheduler_class: '!class graphnet.training.callbacks PiecewiseLinearLR'
-  scheduler_config: {interval: step}
-  scheduler_kwargs:
-    factors: [0.01, 1, 0.01]
-    milestones: [0, 20.0, 80]
-  tasks:
-  - ModelConfig:
-      arguments:
-        hidden_size: 128
-        loss_function:
-          ModelConfig:
-            arguments: {}
-            class_name: LogCoshLoss
-        loss_weight: null
-        prediction_labels: null
-        target_labels: total_energy
-        transform_inference: '!lambda x: torch.pow(10,x)'
-        transform_prediction_and_target: '!lambda x: torch.log10(x)'
-        transform_support: null
-        transform_target: null
-      class_name: EnergyReconstruction
-class_name: StandardModel
-
-Building your own `Model` class
---------------------------------
-
-**@TODO**
-
-
-Training `Model`s and tracking experiments
-------------------------------------------------
-
-`Model`s in GraphNeT comes with a powerful in-built :py:func:`~graphnet.models.model.Model.fit` method that reduces the training of models on neutrino telescopes to a syntax that is similar to that of `sklearn`:
-
-.. code-block:: python
-
-    model = Model(...)
-    train_dataloader = DataLoader(...)
-    model.fit(train_dataloader=train_dataloader, max_epochs=10)
-
-`Model`s in GraphNeT are PyTorch modules and fully compatible with PyTorch-Lightning.
-You can therefore choose to write your own custom training loops if needed, or use the regular PyTorch-Lightning training functionality.
-The snippet above is equivalent to:
-
-.. code-block:: python
-
-    from  pytorch_lightning import Trainer
-
-    from  graphnet.training.callbacks import ProgressBar
-
-    model = Model(...)
-    train_dataloader = DataLoader(...)
+<div class="highlight-yml notranslate"><div class="highlight"><pre><span></span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">architecture</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">add_global_variables_after_pooling</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">        </span><span class="nt">dynedge_layer_sizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">features_subset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">global_pooling_schemes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">min</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">max</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">mean</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">sum</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">nb_inputs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">        </span><span class="nt">nb_neighbours</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">        </span><span class="nt">post_processing_layer_sizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">readout_layer_sizes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">      </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DynEdge</span>
+<span class="w">  </span><span class="nt">graph_definition</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]</span>
+<span class="w">        </span><span class="nt">detector</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">            </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prometheus</span>
+<span class="w">        </span><span class="nt">dtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">nb_nearest_neighbours</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8</span>
+<span class="w">        </span><span class="nt">node_definition</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">            </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NodesAsPulses</span>
+<span class="w">        </span><span class="nt">node_feature_names</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">sensor_pos_x</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">sensor_pos_y</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">sensor_pos_z</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">t</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KNNGraph</span>
+<span class="w">  </span><span class="nt">optimizer_class</span><span class="p">:</span><span class="w"> </span><span class="s">'!class</span><span class="nv"> </span><span class="s">torch.optim.adam</span><span class="nv"> </span><span class="s">Adam'</span>
+<span class="w">  </span><span class="nt">optimizer_kwargs</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">eps</span><span class="p">:</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">,</span><span class="nt"> lr</span><span class="p">:</span><span class="w"> </span><span class="nv">0.001</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">scheduler_class</span><span class="p">:</span><span class="w"> </span><span class="s">'!class</span><span class="nv"> </span><span class="s">graphnet.training.callbacks</span><span class="nv"> </span><span class="s">PiecewiseLinearLR'</span>
+<span class="w">  </span><span class="nt">scheduler_config</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="nv">step</span><span class="p p-Indicator">}</span>
+<span class="w">  </span><span class="nt">scheduler_kwargs</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">factors</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.01</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.01</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">milestones</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">20.0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">80</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">arguments</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">hidden_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">128</span>
+<span class="w">        </span><span class="nt">loss_function</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">ModelConfig</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">arguments</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+<span class="w">            </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LogCoshLoss</span>
+<span class="w">        </span><span class="nt">loss_weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">prediction_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">target_labels</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">total_energy</span>
+<span class="w">        </span><span class="nt">transform_inference</span><span class="p">:</span><span class="w"> </span><span class="s">'!lambda</span><span class="nv"> </span><span class="s">x:</span><span class="nv"> </span><span class="s">torch.pow(10,x)'</span>
+<span class="w">        </span><span class="nt">transform_prediction_and_target</span><span class="p">:</span><span class="w"> </span><span class="s">'!lambda</span><span class="nv"> </span><span class="s">x:</span><span class="nv"> </span><span class="s">torch.log10(x)'</span>
+<span class="w">        </span><span class="nt">transform_support</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">        </span><span class="nt">transform_target</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">null</span>
+<span class="w">      </span><span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnergyReconstruction</span>
+<span class="nt">class_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StandardModel</span>
+
+<span class="l l-Scalar l-Scalar-Plain">Building your own `Model` class</span>
+<span class="l l-Scalar l-Scalar-Plain">--------------------------------</span>
+
+<span class="err">**@</span><span class="l l-Scalar l-Scalar-Plain">TODO**</span>
+
+
+<span class="l l-Scalar l-Scalar-Plain">Training `Model`s and tracking experiments</span>
+<span class="l l-Scalar l-Scalar-Plain">------------------------------------------------</span>
+
+<span class="nt">`Model`s in GraphNeT comes with a powerful in-built :py:func:`~graphnet.models.model.Model.fit` method that reduces the training of models on neutrino telescopes to a syntax that is similar to that of `sklearn`</span><span class="p">:</span>
+
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
+
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model = Model(...)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">train_dataloader = DataLoader(...)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.fit(train_dataloader=train_dataloader, max_epochs=10)</span>
+
+<span class="err">`</span><span class="l l-Scalar l-Scalar-Plain">Model`s in GraphNeT are PyTorch modules and fully compatible with PyTorch-Lightning.</span>
+<span class="l l-Scalar l-Scalar-Plain">You can therefore choose to write your own custom training loops if needed, or use the regular PyTorch-Lightning training functionality.</span>
+<span class="nt">The snippet above is equivalent to</span><span class="p">:</span>
+
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
+
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from  pytorch_lightning import Trainer</span>
+
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from  graphnet.training.callbacks import ProgressBar</span>
+
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model = Model(...)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">train_dataloader = DataLoader(...)</span>
 
-    # Configure Trainer
-    trainer = Trainer(
-        gpus=None,
-        max_epochs=10,
-        callbacks=[ProgressBar()],
-        log_every_n_steps=1,
-        logger=None,
-        strategy="ddp",
-    )
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Configure Trainer</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">trainer = Trainer(</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">gpus=None,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">max_epochs=10,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">callbacks=[ProgressBar()],</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">log_every_n_steps=1,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">logger=None,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">strategy="ddp",</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">)</span>
 
-    # Train model
-    trainer.fit(model, train_dataloader)
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Train model</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">trainer.fit(model, train_dataloader)</span>
 
 
-Experiment Tracking
---------------------
+<span class="l l-Scalar l-Scalar-Plain">Experiment Tracking</span>
+<span class="l l-Scalar l-Scalar-Plain">--------------------</span>
 
-You can track your experiment using `Weights &amp; Biases &lt;https://wandb.ai/&gt;`_ by passing the `WandbLogger` to :py:func:`~graphnet.models.model.Model.fit`:
+<span class="nt">You can track your experiment using `Weights &amp; Biases &lt;https://wandb.ai/&gt;`_ by passing the `WandbLogger` to :py:func:`~graphnet.models.model.Model.fit`</span><span class="p">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    import os
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">import os</span>
 
-    from pytorch_lightning.loggers import WandbLogger
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from pytorch_lightning.loggers import WandbLogger</span>
 
-    # Create wandb directory
-    wandb_dir = "./wandb/"
-    os.makedirs(wandb_dir, exist_ok=True)
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Create wandb directory</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">wandb_dir = "./wandb/"</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">os.makedirs(wandb_dir, exist_ok=True)</span>
 
-    # Initialise Weights &amp; Biases (W&amp;B) run
-    wandb_logger = WandbLogger(
-        project="example-script",
-        entity="graphnet-team",
-        save_dir=wandb_dir,
-        log_model=True,
-    )
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Initialise Weights &amp; Biases (W&amp;B) run</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">wandb_logger = WandbLogger(</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">project="example-script",</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">entity="graphnet-team",</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">save_dir=wandb_dir,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">log_model=True,</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">)</span>
 
-    # Fit Model
-    model = Model(...)
-    model.fit(
-        ...,
-        logger=wandb_logger,
-    )
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Fit Model</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model = Model(...)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.fit(</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">...,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">logger=wandb_logger,</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">)</span>
 
-By using `WandbLogger`, your training and validation loss is logged and you have the full functionality of Weights &amp; Biases available.
-This means, e.g., that you can log your :py:class:`~graphnet.utilities.config.model_config.ModelConfig`, :py:class:`~graphnet.utilities.config.dataset_config.DatasetConfig`, and :py:class:`~graphnet.utilities.config.training_config.TrainingConfig` as:
+<span class="l l-Scalar l-Scalar-Plain">By using `WandbLogger`, your training and validation loss is logged and you have the full functionality of Weights &amp; Biases available.</span>
+<span class="l l-Scalar l-Scalar-Plain">This means, e.g., that you can log your :py:class:`~graphnet.utilities.config.model_config.ModelConfig`, :py:class:`~graphnet.utilities.config.dataset_config.DatasetConfig`, and :py:class:`~graphnet.utilities.config.training_config.TrainingConfig` as</span><span class="p p-Indicator">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    wandb_logger.experiment.config.update(training_config)
-    wandb_logger.experiment.config.update(model_config.as_dict())
-    wandb_logger.experiment.config.update(dataset_config.as_dict())
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">wandb_logger.experiment.config.update(training_config)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">wandb_logger.experiment.config.update(model_config.as_dict())</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">wandb_logger.experiment.config.update(dataset_config.as_dict())</span>
 
-Using an experiment tracking system like Weights &amp; Biases to track training metrics as well as artifacts like configuration files greatly improves reproducibility, experiment transparency, and collaboration.
-This is because you can easily recreate an previous run from the saved artifacts, you can directly compare runs with diffierent model configurations and hyperparameter choices, and share and compare your results to other people on your team.
-Therefore, we strongly recommend using Weights &amp; Biases or a similar system when training and optimising models meant for actual physics use.
+<span class="l l-Scalar l-Scalar-Plain">Using an experiment tracking system like Weights &amp; Biases to track training metrics as well as artifacts like configuration files greatly improves reproducibility, experiment transparency, and collaboration.</span>
+<span class="l l-Scalar l-Scalar-Plain">This is because you can easily recreate an previous run from the saved artifacts, you can directly compare runs with diffierent model configurations and hyperparameter choices, and share and compare your results to other people on your team.</span>
+<span class="l l-Scalar l-Scalar-Plain">Therefore, we strongly recommend using Weights &amp; Biases or a similar system when training and optimising models meant for actual physics use.</span>
 
 
-Saving, loading, and checkpointing `Model`s
---------------------------------------------
+<span class="l l-Scalar l-Scalar-Plain">Saving, loading, and checkpointing `Model`s</span>
+<span class="l l-Scalar l-Scalar-Plain">--------------------------------------------</span>
 
-There are several methods for saving models in GraphNeT and each comes with its own pros and cons.
+<span class="l l-Scalar l-Scalar-Plain">There are several methods for saving models in GraphNeT and each comes with its own pros and cons.</span>
 
-Using `Model.save`
-~~~~~~~~~~~~~~~~~~
+<span class="l l-Scalar l-Scalar-Plain">Using `Model.save`</span>
+<span class="l l-Scalar l-Scalar-Plain">~~~~~~~~~~~~~~~~~~</span>
 
-You can pickle your entire model (including the `state_dict`) by calling the :py:meth:`~graphnet.models.model.Model.save` method:
+<span class="nt">You can pickle your entire model (including the `state_dict`) by calling the :py:meth:`~graphnet.models.model.Model.save` method</span><span class="p">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    model.save("model.pth")
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.save("model.pth")</span>
 
-You can then load this model by calling :py:meth:`~graphnet.models.model.Model.load` classmethod:
+<span class="nt">You can then load this model by calling :py:meth:`~graphnet.models.model.Model.load` classmethod</span><span class="p">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    from graphnet.models import Model
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.models import Model</span>
 
-    loaded_model = Model.load("model.pth")
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">loaded_model = Model.load("model.pth")</span>
 
-This method is rather convenient as it lets you store everything in a single file but it comes with a big caveat: **it's not version-proof**.
-That is, if you share a pickled model with a user who runs a different version of GraphNeT than what was used to train the model, you might experience compatibility issues.
-This is due to how pickle serialises `Model` objects.
+<span class="nt">This method is rather convenient as it lets you store everything in a single file but it comes with a big caveat</span><span class="p">:</span><span class="w"> </span><span class="err">*</span><span class="nv">*it</span><span class="s">'s</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">version-proof**.</span>
+<span class="s">That</span><span class="nv"> </span><span class="s">is,</span><span class="nv"> </span><span class="s">if</span><span class="nv"> </span><span class="s">you</span><span class="nv"> </span><span class="s">share</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">pickled</span><span class="nv"> </span><span class="s">model</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">user</span><span class="nv"> </span><span class="s">who</span><span class="nv"> </span><span class="s">runs</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">different</span><span class="nv"> </span><span class="s">version</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">GraphNeT</span><span class="nv"> </span><span class="s">than</span><span class="nv"> </span><span class="s">what</span><span class="nv"> </span><span class="s">was</span><span class="nv"> </span><span class="s">used</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">train</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">model,</span><span class="nv"> </span><span class="s">you</span><span class="nv"> </span><span class="s">might</span><span class="nv"> </span><span class="s">experience</span><span class="nv"> </span><span class="s">compatibility</span><span class="nv"> </span><span class="s">issues.</span>
+<span class="s">This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">due</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">how</span><span class="nv"> </span><span class="s">pickle</span><span class="nv"> </span><span class="s">serialises</span><span class="nv"> </span><span class="s">`Model`</span><span class="nv"> </span><span class="s">objects.</span>
 
 
-Using `ModelConfig` and `state_dict`
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<span class="s">Using</span><span class="nv"> </span><span class="s">`ModelConfig`</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">`state_dict`</span>
+<span class="s">~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</span>
 
-You can summarise your `Model` components and their configurations by exporting it to a `.yml` file.
-This only captures the _definition_ of the model, not any trained weights, but by saving the `state_dict` too, you have effectively saved the entire model, both definition and weights.
-You can do so by:
+<span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">summarise</span><span class="nv"> </span><span class="s">your</span><span class="nv"> </span><span class="s">`Model`</span><span class="nv"> </span><span class="s">components</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">their</span><span class="nv"> </span><span class="s">configurations</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">exporting</span><span class="nv"> </span><span class="s">it</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">`.yml`</span><span class="nv"> </span><span class="s">file.</span>
+<span class="s">This</span><span class="nv"> </span><span class="s">only</span><span class="nv"> </span><span class="s">captures</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">_definition_</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">model,</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">trained</span><span class="nv"> </span><span class="s">weights,</span><span class="nv"> </span><span class="s">but</span><span class="nv"> </span><span class="s">by</span><span class="nv"> </span><span class="s">saving</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">`state_dict`</span><span class="nv"> </span><span class="s">too,</span><span class="nv"> </span><span class="s">you</span><span class="nv"> </span><span class="s">have</span><span class="nv"> </span><span class="s">effectively</span><span class="nv"> </span><span class="s">saved</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">entire</span><span class="nv"> </span><span class="s">model,</span><span class="nv"> </span><span class="s">both</span><span class="nv"> </span><span class="s">definition</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">weights.</span>
+<span class="s">You</span><span class="nv"> </span><span class="s">can</span><span class="nv"> </span><span class="s">do</span><span class="nv"> </span><span class="s">so</span><span class="nv"> </span><span class="s">by:</span>
 
-.. code-block:: python
+<span class="s">..</span><span class="nv"> </span><span class="s">code-block::</span><span class="nv"> </span><span class="s">python</span>
 
-    model.save_config('model.yml')
-    model.save_state_dict('state_dict.pth')
+<span class="w">    </span><span class="s">model.save_config('</span><span class="l l-Scalar l-Scalar-Plain">model.yml')</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.save_state_dict('state_dict.pth')</span>
 
-You can then reconstruct your model again by building the model from the `ModelConfig` file and loading in the `state_dict`:
+<span class="nt">You can then reconstruct your model again by building the model from the `ModelConfig` file and loading in the `state_dict`</span><span class="p">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    from graphnet.models import Model
-    from graphnet.utilities.config import ModelConfig
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.models import Model</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.utilities.config import ModelConfig</span>
 
-    model_config = ModelConfig.load("model.yml")
-    model = Model.from_config(model_config)  # With randomly initialised weights.
-    model.load_state_dict("state_dict.pth")  # Now with trained weight.
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model_config = ModelConfig.load("model.yml")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model = Model.from_config(model_config)</span><span class="w">  </span><span class="c1"># With randomly initialised weights.</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.load_state_dict("state_dict.pth")</span><span class="w">  </span><span class="c1"># Now with trained weight.</span>
 
-This method is less prone to version incompatibility issues, such as those mentioned above, and is therefore our recommended way of storing and porting `Model`s.
+<span class="l l-Scalar l-Scalar-Plain">This method is less prone to version incompatibility issues, such as those mentioned above, and is therefore our recommended way of storing and porting `Model`s.</span>
 
 
-Using checkpoints
-~~~~~~~~~~~~~~~~~~
+<span class="l l-Scalar l-Scalar-Plain">Using checkpoints</span>
+<span class="l l-Scalar l-Scalar-Plain">~~~~~~~~~~~~~~~~~~</span>
 
-Because `Model`s in GraphNeT inherit from are also PyTorch-Lightning's `LightningModule`, you have the option to use the `load_from_checkpoint` method:
+<span class="l l-Scalar l-Scalar-Plain">Because `Model`s in GraphNeT inherit from are also PyTorch-Lightning's `LightningModule`, you have the option to use the `load_from_checkpoint` method</span><span class="p p-Indicator">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    model_config = ModelConfig.load("model.yml")
-    model = Model.from_config(model_config)  # With randomly initialised weights.
-    model.load_from_checkpoint("checkpoint.ckpt")  # Now with trained weight.
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model_config = ModelConfig.load("model.yml")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model = Model.from_config(model_config)</span><span class="w">  </span><span class="c1"># With randomly initialised weights.</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.load_from_checkpoint("checkpoint.ckpt")</span><span class="w">  </span><span class="c1"># Now with trained weight.</span>
 
-You can find more information on checkpointing `here &lt;https://lightning.ai/docs/pytorch/latest/common/checkpointing_basic.html&gt;`_.
+<span class="l l-Scalar l-Scalar-Plain">You can find more information on checkpointing `here &lt;https://lightning.ai/docs/pytorch/latest/common/checkpointing_basic.html&gt;`_.</span>
 
-Example: Energy Reconstruction using `ModelConfig`
---------------------------------------------------
+<span class="nt">Example</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Energy Reconstruction using `ModelConfig`</span>
+<span class="l l-Scalar l-Scalar-Plain">--------------------------------------------------</span>
 
-Below is a minimal example for training a GNN in GraphNeT for energy reconstruction on the tiny data sample using configuration files:
+<span class="nt">Below is a minimal example for training a GNN in GraphNeT for energy reconstruction on the tiny data sample using configuration files</span><span class="p">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    # Import(s)
-    import os
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Import(s)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">import os</span>
 
-    from graphnet.constants import CONFIG_DIR  # Local path to graphnet/configs
-    from graphnet.data.dataloader import DataLoader
-    from graphnet.models import Model
-    from graphnet.utilities.config import DatasetConfig, ModelConfig
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.constants import CONFIG_DIR</span><span class="w">  </span><span class="c1"># Local path to graphnet/configs</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.data.dataloader import DataLoader</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.models import Model</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.utilities.config import DatasetConfig, ModelConfig</span>
 
-    # Configuration
-    dataset_config_path = f"{CONFIG_DIR}/datasets/training_example_data_sqlite.yml"
-    model_config_path = f"{CONFIG_DIR}/models/example_energy_reconstruction_model.yml"
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Configuration</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">dataset_config_path = f"{CONFIG_DIR}/datasets/training_example_data_sqlite.yml"</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model_config_path = f"{CONFIG_DIR}/models/example_energy_reconstruction_model.yml"</span>
 
-    # Build model
-    model_config = ModelConfig.load(model_config_path)
-    model = Model.from_config(model_config, trust=True)
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Build model</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model_config = ModelConfig.load(model_config_path)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model = Model.from_config(model_config, trust=True)</span>
 
-    # Construct dataloaders
-    dataset_config = DatasetConfig.load(dataset_config_path)
-    dataloaders = DataLoader.from_dataset_config(
-        dataset_config,
-        batch_size=16,
-        num_workers=1,
-    )
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Construct dataloaders</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">dataset_config = DatasetConfig.load(dataset_config_path)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">dataloaders = DataLoader.from_dataset_config(</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">dataset_config,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">batch_size=16,</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">num_workers=1,</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">)</span>
 
-    # Train model
-    model.fit(
-        dataloaders["train"],
-        dataloaders["validation"],
-        gpus=[0],
-        max_epochs=5,
-    )
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Train model</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.fit(</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">dataloaders["train"],</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">dataloaders["validation"],</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">gpus=[0],</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">max_epochs=5,</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">)</span>
 
-    # Predict on test set and return as pandas.DataFrame
-    results = model.predict_as_dataframe(
-        dataloaders["test"],
-        additional_attributes=model.target_labels + ["event_no"],
-    )
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Predict on test set and return as pandas.DataFrame</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">results = model.predict_as_dataframe(</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">dataloaders["test"],</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">additional_attributes=model.target_labels + ["event_no"],</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">)</span>
 
-    # Save predictions and model to file
-    outdir = "tutorial_output"
-    os.makedirs(outdir, exist_ok=True)
-    results.to_csv(f"{outdir}/results.csv")
-    model.save_state_dict(f"{outdir}/state_dict.pth")
-    model.save(f"{outdir}/model.pth")
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain"># Save predictions and model to file</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">outdir = "tutorial_output"</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">os.makedirs(outdir, exist_ok=True)</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">results.to_csv(f"{outdir}/results.csv")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.save_state_dict(f"{outdir}/state_dict.pth")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">model.save(f"{outdir}/model.pth")</span>
 
-Because `ModelConfig` summarises a `Model` completely, including its `Task`(s), the only modifications required to change the example to reconstruct (or classify) a different attribute than energy, is to pass a `ModelConfig` that defines a model with the corresponding `Task`.
-Similarly, if you wanted to train on a different `Dataset`, you would just have to pass a `DatasetConfig` that defines *that* `Dataset` instead.
+<span class="l l-Scalar l-Scalar-Plain">Because `ModelConfig` summarises a `Model` completely, including its `Task`(s), the only modifications required to change the example to reconstruct (or classify) a different attribute than energy, is to pass a `ModelConfig` that defines a model with the corresponding `Task`.</span>
+<span class="l l-Scalar l-Scalar-Plain">Similarly, if you wanted to train on a different `Dataset`, you would just have to pass a `DatasetConfig` that defines *that* `Dataset` instead.</span>
 
 
-Deploying `Model`s in physics analyses
----------------------------------------
+<span class="l l-Scalar l-Scalar-Plain">Deploying `Model`s in physics analyses</span>
+<span class="l l-Scalar l-Scalar-Plain">---------------------------------------</span>
 
-**@TODO**
+<span class="err">**@</span><span class="l l-Scalar l-Scalar-Plain">TODO**</span>
 
 
-Utilities
----------
+<span class="l l-Scalar l-Scalar-Plain">Utilities</span>
+<span class="l l-Scalar l-Scalar-Plain">---------</span>
 
-The `Logger` class
-~~~~~~~~~~~~~~~~~~
+<span class="l l-Scalar l-Scalar-Plain">The `Logger` class</span>
+<span class="l l-Scalar l-Scalar-Plain">~~~~~~~~~~~~~~~~~~</span>
 
-GraphNeT will automatically log prompts to the terminal from your training run (and in other instances) and write it to `logs` in the directory of your script (by default).
-You can add your own custom messages to the :class:`~graphnet.utilities.logging.Logger` by:
+<span class="l l-Scalar l-Scalar-Plain">GraphNeT will automatically log prompts to the terminal from your training run (and in other instances) and write it to `logs` in the directory of your script (by default).</span>
+<span class="nt">You can add your own custom messages to the :class:`~graphnet.utilities.logging.Logger` by</span><span class="p">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    from graphnet.utilities.logging import Logger
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">from graphnet.utilities.logging import Logger</span>
 
-    logger = Logger()
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">logger = Logger()</span>
 
-    logger.info("My very informative message")
-    logger.warning("My warning shown every time")
-    logger.warning_once("My warning shown once")
-    logger.debug("My debug call")
-    logger.error("My error")
-    logger.critical("My critical call")
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">logger.info("My very informative message")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">logger.warning("My warning shown every time")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">logger.warning_once("My warning shown once")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">logger.debug("My debug call")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">logger.error("My error")</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">logger.critical("My critical call")</span>
 
-Similarly, every class inheriting from `Logger` can use the same methods as, e.g., `self.info("...")`.
+<span class="l l-Scalar l-Scalar-Plain">Similarly, every class inheriting from `Logger` can use the same methods as, e.g., `self.info("...")`.</span>
 
-Appendix
---------
+<span class="l l-Scalar l-Scalar-Plain">Appendix</span>
+<span class="l l-Scalar l-Scalar-Plain">--------</span>
 
-A. Interfacing your data with GraphNeT
----------------------------------------
+<span class="l l-Scalar l-Scalar-Plain">A. Interfacing your data with GraphNeT</span>
+<span class="l l-Scalar l-Scalar-Plain">---------------------------------------</span>
 
-GraphNeT currently supports two data formats — Parquet and SQLite — and you must therefore provide your data in either of these formats for training a `Model`.
-This is done using the `DataConverter` class.
-Performing this conversion into one of the two supported formats can be a somewhat time-consuming task, but it is only done once, and then you are free to perform all of the training and optimization you want.
+<span class="l l-Scalar l-Scalar-Plain">GraphNeT currently supports two data formats — Parquet and SQLite — and you must therefore provide your data in either of these formats for training a `Model`.</span>
+<span class="l l-Scalar l-Scalar-Plain">This is done using the `DataConverter` class.</span>
+<span class="l l-Scalar l-Scalar-Plain">Performing this conversion into one of the two supported formats can be a somewhat time-consuming task, but it is only done once, and then you are free to perform all of the training and optimization you want.</span>
 
-In addition, GraphNeT expects your data to contain at least:
+<span class="l l-Scalar l-Scalar-Plain">In addition, GraphNeT expects your data to contain at least</span><span class="p p-Indicator">:</span>
 
-- `pulsemap`: A per-hit table, containing a series of sensor measurements that represents the detector response to some interaction in some time window, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes).
-- `truth_table`: A per-event table, containing the global truth of each event, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes).
-- (Optional) `node_truth_table`: A per-hit truth array, containing truth labels for each node in your graph. This could be labels indicating whether each reconstructed pulse/photon was a result of noise in the event, or a label indicating which particle in the simulation tree caused a specific pulse/photon. These are the node-level quantities that could be classification/reconstructing targets for certain physics/learning tasks.
-- `index_column`: A unique ID that maps each row in `pulsemap` with its corresponding row in `truth_table` and/or `node_truth_table`.
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">`pulsemap`</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A per-hit table, containing a series of sensor measurements that represents the detector response to some interaction in some time window, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes).</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">`truth_table`</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A per-event table, containing the global truth of each event, as described in [Section 4 - The `Dataset` and `DataLoader` classes](#4-the-dataset-and-dataloader-classes).</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">(Optional) `node_truth_table`</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A per-hit truth array, containing truth labels for each node in your graph. This could be labels indicating whether each reconstructed pulse/photon was a result of noise in the event, or a label indicating which particle in the simulation tree caused a specific pulse/photon. These are the node-level quantities that could be classification/reconstructing targets for certain physics/learning tasks.</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">`index_column`</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A unique ID that maps each row in `pulsemap` with its corresponding row in `truth_table` and/or `node_truth_table`.</span>
 
-Since `pulsemap`, `truth_table`, and `node_truth_table` are named fields in your Parquet files (or tables in SQLite) you may name these fields however you like.
-You can also freely name your `index_column`. For instance, the `truth_table` could be called `"mc_truth"` and the `index_column` could be called `"event_no"`, see the snippets above.
-However, the following constraints exist:
+<span class="l l-Scalar l-Scalar-Plain">Since `pulsemap`, `truth_table`, and `node_truth_table` are named fields in your Parquet files (or tables in SQLite) you may name these fields however you like.</span>
+<span class="l l-Scalar l-Scalar-Plain">You can also freely name your `index_column`. For instance, the `truth_table` could be called `"mc_truth"` and the `index_column` could be called `"event_no"`, see the snippets above.</span>
+<span class="l l-Scalar l-Scalar-Plain">However, the following constraints exist</span><span class="p p-Indicator">:</span>
 
-1. The naming of fields/columns within `pulsemap`,  `truth_table`, and `node_truth_table` must be unique. For instance, the _x_-coordinate of the PMTs and the _x_-coordinate of interaction vertex may not both be called *pos_x*.
-2. No field/column in  `pulsemap`, `truth_table`,  or `node_truth_table` may be called  `x`,  `features`, `edge_attr`, or `edge_index`, as this leads to naming conflicts with attributes of [`torch_geometric.data.Data`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data).
+<span class="l l-Scalar l-Scalar-Plain">1. The naming of fields/columns within `pulsemap`,  `truth_table`, and `node_truth_table` must be unique. For instance, the _x_-coordinate of the PMTs and the _x_-coordinate of interaction vertex may not both be called *pos_x*.</span>
+<span class="l l-Scalar l-Scalar-Plain">2. No field/column in  `pulsemap`, `truth_table`,  or `node_truth_table` may be called  `x`,  `features`, `edge_attr`, or `edge_index`, as this leads to naming conflicts with attributes of [`torch_geometric.data.Data`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.Data.html#torch_geometric.data.Data).</span>
 
-B. Converting your data to a supported format
-----------------------------------------------
+<span class="l l-Scalar l-Scalar-Plain">B. Converting your data to a supported format</span>
+<span class="l l-Scalar l-Scalar-Plain">----------------------------------------------</span>
 
-**@TODO**
+<span class="err">**@</span><span class="l l-Scalar l-Scalar-Plain">TODO**</span>
 
-C. Basics for SQLite databases in GraphNeT
-------------------------------------------
+<span class="l l-Scalar l-Scalar-Plain">C. Basics for SQLite databases in GraphNeT</span>
+<span class="l l-Scalar l-Scalar-Plain">------------------------------------------</span>
 
-In SQLite databases, `pulsemap`, `truth_table`, and optionally `node_truth_table` exist as separate tables.
-Each table has a column `index_column` on which the tables are indexed, in addition to the data that it contains.
-The schemas are:
+<span class="l l-Scalar l-Scalar-Plain">In SQLite databases, `pulsemap`, `truth_table`, and optionally `node_truth_table` exist as separate tables.</span>
+<span class="l l-Scalar l-Scalar-Plain">Each table has a column `index_column` on which the tables are indexed, in addition to the data that it contains.</span>
+<span class="nt">The schemas are</span><span class="p">:</span>
 
-- `truth_table`: The `index_column` is set to `INTEGER PRIMARY KEY NOT NULL` and other columns are `NOT NULL`.
-- `pulsemap` and `node_truth_table`: All columns are set to `NOT NULL` but a non-unique index is created on the table(s) using `index_column`. This is important for query times.
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">`truth_table`</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The `index_column` is set to `INTEGER PRIMARY KEY NOT NULL` and other columns are `NOT NULL`.</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">`pulsemap` and `node_truth_table`</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">All columns are set to `NOT NULL` but a non-unique index is created on the table(s) using `index_column`. This is important for query times.</span>
 
-Below is a snippet that extracts all the contents of `pulsemap` and `truth_table` for the event with `index_column == 120`:
+<span class="nt">Below is a snippet that extracts all the contents of `pulsemap` and `truth_table` for the event with `index_column == 120`</span><span class="p">:</span>
 
-.. code-block:: python
+<span class="nt">.. code-block:</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python</span>
 
-    import pandas as pd
-    import sqlite3
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">import pandas as pd</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">import sqlite3</span>
 
-    database = "data/examples/sqlite/prometheus/prometheus-events.db"
-    pulsemap = "total"
-    index_column = "event_no"
-    truth_table = "mc_truth"
-    event_no = 120
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">database = "data/examples/sqlite/prometheus/prometheus-events.db"</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">pulsemap = "total"</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">index_column = "event_no"</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">truth_table = "mc_truth"</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">event_no = 120</span>
 
-    with sqlite3.connect(database) as conn:
-        query = f"SELECT * from {pulsemap} WHERE {index_column} == {event_no}"
-        detector_response = pd.read_sql(query, conn)
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">with sqlite3.connect(database) as conn</span><span class="p p-Indicator">:</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">query = f"SELECT * from {pulsemap} WHERE {index_column} == {event_no}"</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">detector_response = pd.read_sql(query, conn)</span>
 
-        query = f"SELECT * from {truth_table} WHERE {index_column} == {event_no}"
-        truth = pd.read_sql(query, conn)
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">query = f"SELECT * from {truth_table} WHERE {index_column} == {event_no}"</span>
+<span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">truth = pd.read_sql(query, conn)</span>
 </pre></div>
 </div>
 </section>
