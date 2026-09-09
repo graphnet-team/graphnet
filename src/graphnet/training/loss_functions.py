@@ -568,15 +568,10 @@ class VonMisesFisher3DLoss(LossFunction):
         assert target.dim() == 2
         assert prediction.size()[0] == target.size()[0]
 
-        # The likelihood depends only on the natural parameter
-        # eta = prediction[:, 3] * direction; re-factoring it as
-        # concentration * unit vector makes the squared-chord identity below
-        # applicable. For a unit direction the concentration equals
-        # prediction[:, 3].
-        direction = prediction[:, :3]
-        direction_norm = torch.norm(direction, dim=1)
-        concentration = prediction[:, 3] * direction_norm
-        unit_direction = direction / direction_norm.unsqueeze(1)
+        direction = prediction[:, :3] # vector  mu / (norm(mu) + eps)
+        direction_norm = torch.norm(direction, dim=1) # norm(mu) / (norm(mu) + eps)
+        concentration = prediction[:, 3] * direction_norm # norm(mu)
+        unit_direction = direction / direction_norm.unsqueeze(1) # mu \ norm(mu)
 
         # For unit vectors, concentration * (1 - mu . t) equals
         # concentration * ||t - mu||**2 / 2 exactly. The squared-chord form
