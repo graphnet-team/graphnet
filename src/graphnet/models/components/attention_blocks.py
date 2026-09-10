@@ -309,3 +309,100 @@ class Block_rel(LightningModule):
             )
             x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
         return x
+
+
+class Block(LightningModule):
+    """Transformer block."""
+
+    def __init__(
+        self,
+        input_dim: int,
+        num_heads: int,
+        mlp_ratio: float = 4.0,
+        dropout: float = 0.0,
+        attn_drop: float = 0.0,
+        drop_path: float = 0.0,
+        init_values: Optional[float] = None,
+        activation: nn.Module = nn.GELU,
+        norm_layer: nn.Module = nn.LayerNorm,
+    ):
+        """Construct 'Block'.
+
+        Args:
+            input_dim: Dimension of the input tensor.
+            num_heads: Number of attention heads to use in the
+                `MultiheadAttention` layer.
+            mlp_ratio: Ratio of the hidden size of the feedforward network to
+                the input size in the `Mlp` layer.
+            dropout: Dropout probability to use in the `Mlp` layer.
+            attn_drop: Dropout probability to use in the `MultiheadAttention`
+                layer.
+            drop_path: Probability of applying drop path regularization to the
+                output of the layer.
+            init_values: Initial value to use for the `gamma_1` and `gamma_2`
+                parameters if not `None`.
+            activation: Activation function to use in the `Mlp` layer.
+            norm_layer: Normalization layer to use.
+        """
+        super().__init__()
+        self.norm1 = norm_layer(input_dim)
+        self.attn = nn.MultiheadAttention(
+            input_dim, num_heads, dropout=attn_drop, batch_first=True
+        )
+        self.drop_path = (
+            DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
+        )
+        self.norm2 = norm_layer(input_dim)
+        mlp_hidden_dim = int(input_dim * mlp_ratio)
+        self.mlp = Mlp(
+            in_features=input_dim,
+            hidden_features=mlp_hidden_dim,
+            activation=activation,
+            dropout_prob=dropout,
+        )
+
+        if init_values is not None:
+            self.gamma_1 = nn.Parameter(
+                init_values * torch.ones((input_dim)), requires_grad=True
+            )
+            self.gamma_2 = nn.Parameter(
+                init_values * torch.ones((input_dim)), requires_grad=True
+            )
+        else:
+            self.gamma_1, self.gamma_2 = None, None
+
+    def forward(
+        self,
+        x: Tensor,
+        attn_mask: Optional[Tensor] = None,
+        key_padding_mask: Optional[Tensor] = None,
+    ) -> Tensor:
+        """Forward pass."""
+        if self.gamma_1 is None:
+            xn = self.norm1(x)
+            x = x + self.drop_path(
+                self.attn(
+                    xn,
+                    xn,
+                    xn,
+                    attn_mask=attn_mask,
+                    key_padding_mask=key_padding_mask,
+                    need_weights=False,
+                )[0]
+            )
+            x = x + self.drop_path(self.mlp(self.norm2(x)))
+        else:
+            xn = self.norm1(x)
+            x = x + self.drop_path(
+                self.gamma_1
+                * self.attn(
+                    xn,
+                    xn,
+                    xn,
+                    attn_mask=attn_mask,
+                    key_padding_mask=key_padding_mask,
+                    need_weights=False,
+                )[0]
+            )
+            x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
+        return x
