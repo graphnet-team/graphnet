@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 from torch_geometric.data import Data
-from torch_geometric.utils import softmax
+from torch_geometric.utils import softmax, degree
 from torch_scatter import scatter
 from pytorch_lightning import LightningModule
 
@@ -134,3 +134,216 @@ class GritSparseMHA(LightningModule):
             wV = wV + rowV
 
         return wV, wE
+
+
+class GritTransformerLayer(LightningModule):
+    """Proposed Transformer Layer for GRIT.
+
+    Original code:
+    https://github.com/LiamMa/GRIT/blob/main/grit/layer/grit_layer.py
+    """
+
+    def __init__(
+        self,
+        in_dim: int,
+        out_dim: int,
+        num_heads: int,
+        dropout: float = 0.0,
+        norm: nn.Module = nn.BatchNorm1d,
+        residual: bool = True,
+        deg_scaler: bool = True,
+        activation: nn.Module = nn.ReLU,
+        norm_edges: bool = True,
+        update_edges: bool = True,
+        batch_norm_momentum: float = 0.1,
+        batch_norm_runner: bool = True,
+        rezero: bool = False,
+        enable_edge_transform: bool = True,
+        attn_bias: bool = False,
+        attn_dropout: float = 0.0,
+        attn_clamp: float = 5.0,
+        attn_activation: nn.Module = nn.ReLU,
+        attn_edge_enhance: bool = True,
+    ):
+        """Construct 'GritTransformerLayer'.
+
+        Args:
+            in_dim: Dimension of the input tensor.
+            out_dim: Dimension of theo output tensor.
+            num_heads: Number of attention heads.
+            dropout: Dropout layer probability.
+            norm: Uninstantiated normalization layer.
+                Must be either `torch.nn.BatchNorm1d` or `torch.nn.LayerNorm`.
+            residual: Apply residual connections.
+            deg_scaler: Apply degree scaling after MHA.
+            activation: Uninstantiated activation function.
+                E.g. `torch.nn.ReLU`
+            norm_edges: Apply normalization to edges.
+            update_edges: Update edges after layer.
+            batch_norm_momentum: Momentum of batch normalization.
+            batch_norm_runner: Track running stats of batch normalization.
+            rezero: Apply learnable scaling parameters.
+            enable_edge_transform: Apply a FC to edges at the start
+                of the layer.
+            attn_bias: Add bias to keys and values in MHA block.
+            attn_dropout: Attention droput.
+            attn_clamp: Clamp absolute value of attention scores to a value.
+            attn_activation: Uninstantiated activation function for MHA block.
+                E.g. `torch.nn.ReLU`
+            attn_edge_enhance: Applies learnable weight matrix with node-pair
+                in output node calculation in MHA block.
+        """
+        super().__init__()
+
+        self.in_channels = in_dim
+        self.out_channels = out_dim
+        self.in_dim = in_dim
+        self.out_dim = out_dim
+        self.num_heads = num_heads
+        self.dropout = dropout
+        self.residual = residual
+        self.update_edges = update_edges
+        self.batch_norm_momentum = batch_norm_momentum
+        self.batch_norm_runner = batch_norm_runner
+        self.rezero = rezero
+        self.deg_scaler = deg_scaler
+        self.activation = activation()
+
+        self.attention = GritSparseMHA(
+            in_dim=in_dim,
+            out_dim=out_dim // num_heads,
+            num_heads=num_heads,
+            use_bias=attn_bias,
+            dropout=attn_dropout,
+            clamp=attn_clamp,
+            activation=attn_activation,
+            edge_enhance=attn_edge_enhance,
+        )
+
+        self.fc1_x = nn.Linear(out_dim // num_heads * num_heads, out_dim)
+        if enable_edge_transform:
+            self.fc1_e = nn.Linear(out_dim // num_heads * num_heads, out_dim)
+        else:
+            self.fc1_e = nn.Identity()
+
+        if self.deg_scaler:
+            self.deg_coef = nn.Parameter(
+                torch.zeros(1, out_dim // num_heads * num_heads, 2)
+            )
+            nn.init.xavier_normal_(self.deg_coef)
+
+        if norm == nn.LayerNorm:
+            self.norm1_x = norm(out_dim)
+            self.norm1_e = self.norm(out_dim) if norm_edges else nn.Identity()
+        elif norm == nn.BatchNorm1d:
+            self.norm1_x = norm(
+                out_dim,
+                track_running_stats=self.batch_norm_runner,
+                eps=1e-5,
+                momentum=self.batch_norm_momentum,
+            )
+            self.norm1_e = (
+                norm(
+                    out_dim,
+                    track_running_stats=self.batch_norm_runner,
+                    eps=1e-5,
+                    momentum=self.batch_norm_momentum,
+                )
+                if norm_edges
+                else nn.Identity()
+            )
+        else:
+            raise ValueError(
+                "GritTransformerLayer normalization layer must be 'LayerNorm' \
+                    or 'BatchNorm1d'!"
+            )
+
+        # FFN for x
+        self.FFN_x_layer1 = nn.Linear(out_dim, out_dim * 2)
+        self.FFN_x_layer2 = nn.Linear(out_dim * 2, out_dim)
+
+        if norm == nn.LayerNorm:
+            self.norm2_x = norm(out_dim)
+        elif norm == nn.BatchNorm1d:
+            self.norm2_x = norm(
+                out_dim,
+                track_running_stats=self.batch_norm_runner,
+                eps=1e-5,
+                momentum=self.batch_norm_momentum,
+            )
+
+        if self.rezero:  # Learnable scaling parameters
+            self.alpha1_x = nn.Parameter(torch.zeros(1, 1))
+            self.alpha2_x = nn.Parameter(torch.zeros(1, 1))
+            self.alpha1_e = nn.Parameter(torch.zeros(1, 1))
+
+        self.dropout1 = nn.Dropout(dropout)  # Post-attention dropout on x
+        self.dropout2 = nn.Dropout(dropout)  # Post-attention dropout on e
+        self.dropout3 = nn.Dropout(dropout)  # Post-FFN dropout on x
+
+    def forward(self, data: Data) -> Data:
+        """Forward pass."""
+        x = data.x
+        num_nodes = data.num_nodes
+        log_deg = torch.log10(
+            degree(data.edge_index[0], num_nodes=num_nodes, dtype=data.x.dtype)
+            + 1
+        )
+        log_deg = log_deg.view(data.num_nodes, 1)
+
+        x_attn_residual = x  # for first residual connection
+        e_values_in = data.get("edge_attr", None)
+        e = None
+
+        # Attention outputs
+        x_attn_out, e_attn_out = self.attention(data)
+
+        x = x_attn_out.view(num_nodes, -1)
+        x = self.dropout1(x)
+
+        # Apply degree scaler if enabled
+        if self.deg_scaler:
+            x = torch.stack([x, x * log_deg], dim=-1)
+            x = (x * self.deg_coef).sum(dim=-1)
+
+        x = self.fc1_x(x)
+        if e_attn_out is not None:
+            e = e_attn_out.flatten(1)
+            e = self.dropout2(e)
+            e = self.fc1_e(e)
+
+        if self.residual:
+            if self.rezero:
+                x = x * self.alpha1_x
+            x = x_attn_residual + x
+
+            if e is not None:
+                if self.rezero:
+                    e = e * self.alpha1_e
+                e = e + e_values_in
+
+        x = self.norm1_x(x)
+        if e is not None:
+            e = self.norm1_e(e)
+
+        # FFN for x
+        x_ffn_residual = x  # Residual over the FFN
+        x = self.FFN_x_layer1(x)
+        x = self.activation(x)
+        x = self.dropout3(x)
+        x = self.FFN_x_layer2(x)
+
+        if self.residual:
+            if self.rezero:
+                x = x * self.alpha2_x
+            x = x_ffn_residual + x  # residual connection
+
+        x = self.norm2_x(x)
+
+        data.x = x
+        if self.update_edges:
+            data.edge_attr = e
+        else:
+            data.edge_attr = e_values_in
+
+        return data
