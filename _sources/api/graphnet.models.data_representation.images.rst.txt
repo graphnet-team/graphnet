@@ -1,9 +1,9 @@
 
-data\_representation
-====================
+images
+======
 
 
-.. automodule:: graphnet.models.data_representation
+.. automodule:: graphnet.models.data_representation.images
    :members:
    :show-inheritance:
    :undoc-members:
@@ -14,8 +14,7 @@ data\_representation
 .. toctree::
    :maxdepth: 2
 
-   graphnet.models.data_representation.graphs
-   graphnet.models.data_representation.images
+   graphnet.models.data_representation.images.mappings
 
 |start-h2| Submodules |end-h2|
 
@@ -23,7 +22,8 @@ data\_representation
 .. toctree::
    :maxdepth: 2
 
-   graphnet.models.data_representation.data_representation
+   graphnet.models.data_representation.images.image_representation
+   graphnet.models.data_representation.images.images
 
 
 

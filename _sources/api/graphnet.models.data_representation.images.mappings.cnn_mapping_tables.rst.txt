@@ -1,0 +1,8 @@
+
+cnn\_mapping\_tables
+====================
+
+.. automodule:: graphnet.models.data_representation.images.mappings.cnn_mapping_tables
+   :members:
+   :show-inheritance:
+   :undoc-members:

@@ -61,7 +61,7 @@
 </script>
   
   
-    <title>data_representation &#8212; graphnet  documentation</title>
+    <title>image_representation &#8212; graphnet  documentation</title>
 
 <style>
   dt:target {
@@ -128,8 +128,8 @@
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="detector" href="graphnet.models.detector.html" />
-    <link rel="prev" title="images" href="graphnet.models.data_representation.images.images.html" />
+    <link rel="next" title="images" href="graphnet.models.data_representation.images.images.html" />
+    <link rel="prev" title="grid_definition" href="graphnet.models.data_representation.images.mappings.grid_definition.html" />
   
    
 
@@ -148,7 +148,7 @@
   <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer">
   <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search">
   <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
-  <a href="#api/graphnet.models.data_representation.data_representation" tabindex="1" class="md-skip"> Skip to content </a>
+  <a href="#api/graphnet.models.data_representation.images.image_representation" tabindex="1" class="md-skip"> Skip to content </a>
   <header class="md-header" data-md-component="header">
   <nav class="md-header-nav md-grid">
     <div class="md-flex navheader">
@@ -166,7 +166,7 @@
       <div class="md-flex__cell md-flex__cell--stretch">
         <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
           <span class="md-header-nav__topic">GraphNeT</span>
-          <span class="md-header-nav__topic"> data_representation </span>
+          <span class="md-header-nav__topic"> image_representation </span>
         </div>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -244,6 +244,7 @@
           <li class="md-tabs__item"><a href="graphnet.html" class="md-tabs__link">API</a></li>
           <li class="md-tabs__item"><a href="graphnet.models.html" class="md-tabs__link">models</a></li>
           <li class="md-tabs__item"><a href="graphnet.models.data_representation.html" class="md-tabs__link">data_representation</a></li>
+          <li class="md-tabs__item"><a href="graphnet.models.data_representation.images.html" class="md-tabs__link">images</a></li>
       </ul>
     </div>
   </nav>
@@ -385,6 +386,11 @@
     
     
       <a href="graphnet.models.data_representation.images.html" class="md-nav__link">images</a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.images.mappings.html" class="md-nav__link">mappings</a>
       
     
     </li>
@@ -392,23 +398,21 @@
     
     
     <input class="md-toggle md-nav__toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    <label class="md-nav__link md-nav__link--active" for="__toc"> data_representation </label>
+    <label class="md-nav__link md-nav__link--active" for="__toc"> image_representation </label>
     
-      <a href="#" class="md-nav__link md-nav__link--active">data_representation</a>
+      <a href="#" class="md-nav__link md-nav__link--active">image_representation</a>
       
         
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-data-representation--page-root" class="md-nav__link">data_representation</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-images-image-representation--page-root" class="md-nav__link">image_representation</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ImageRepresentation</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.shape" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">shape</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation.output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">output_feature_names</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -420,31 +424,40 @@
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.data_representation.data_representation.DataRepresentation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a>
+      <a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ImageRepresentation</span></code></a>
       <ul class="md-nav__list"> 
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.data_representation.data_representation.DataRepresentation.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
+      <a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.shape" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">shape</span></code></a>
       
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.data_representation.data_representation.DataRepresentation.output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">output_feature_names</span></code></a>
+      <a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
       
+    
+    </li></ul>
+    
+    </li></ul>
     
     </li>
     <li class="md-nav__item">
     
     
-      <a href="#graphnet.models.data_representation.data_representation.DataRepresentation.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      <a href="graphnet.models.data_representation.images.images.html" class="md-nav__link">images</a>
       
     
     </li></ul>
     
-    </li></ul>
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.data_representation.data_representation.html" class="md-nav__link">data_representation</a>
+      
     
     </li></ul>
     
@@ -586,15 +599,13 @@
 <nav class="md-nav md-nav--secondary">
     <label class="md-nav__title" for="__toc">"Contents"</label>
   <ul class="md-nav__list" data-md-scrollfix="">
-        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-data-representation--page-root" class="md-nav__link">data_representation</a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#api-graphnet-models-data-representation-images-image-representation--page-root" class="md-nav__link">image_representation</a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a><nav class="md-nav">
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">ImageRepresentation</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation.nb_outputs" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">nb_outputs</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.shape" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">shape</span></code></a>
         </li>
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation.output_feature_names" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">output_feature_names</span></code></a>
-        </li>
-        <li class="md-nav__item"><a href="#graphnet.models.data_representation.data_representation.DataRepresentation.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        <li class="md-nav__item"><a href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
         </li></ul>
             </nav>
         </li></ul>
@@ -609,45 +620,37 @@
         <div class="md-content">
           <article class="md-content__inner md-typeset" role="main">
             
-  <section id="module-graphnet.models.data_representation.data_representation">
-<span id="data-representation"></span><h1 id="api-graphnet-models-data-representation-data-representation--page-root">data_representation<a class="headerlink" href="#api-graphnet-models-data-representation-data-representation--page-root" title="Link to this heading">¶</a></h1>
-<p>Base model for defining data representations.</p>
+  <section id="module-graphnet.models.data_representation.images.image_representation">
+<span id="image-representation"></span><h1 id="api-graphnet-models-data-representation-images-image-representation--page-root">image_representation<a class="headerlink" href="#api-graphnet-models-data-representation-images-image-representation--page-root" title="Link to this heading">¶</a></h1>
+<p>Image CNN input pipeline: pulses → pixels → grids / tensors.</p>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.data_representation.data_representation.DataRepresentation">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.data_representation.</span></span><span class="sig-name descname"><span class="pre">DataRepresentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/data_representation.html#DataRepresentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.data_representation.DataRepresentation" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="graphnet.models.model.html#graphnet.models.model.Model" title="graphnet.models.model.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p>
-<p>An Abstract class to create data representations from.</p>
-<p>Construct´DataRepresentation´. The ´detector´ holds.</p>
-<p>´Detector´-specific code. E.g. scaling/standardization and geometry
-tables.</p>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.images.image_representation.ImageRepresentation">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.data_representation.images.image_representation.</span></span><span class="sig-name descname"><span class="pre">ImageRepresentation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/images/image_representation.html#ImageRepresentation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation" title="graphnet.models.data_representation.data_representation.DataRepresentation"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataRepresentation</span></code></a></p>
+<p>Compose a pixel definition with a detector grid for CNN inputs.</p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code>
+acts as <strong>pixel definition</strong>: pulses <code class="docutils literal notranslate"><span class="pre">X</span></code> are aggregated into unordered
+pixel rows <code class="docutils literal notranslate"><span class="pre">P</span></code> (the same abstraction as graph nodes, without requiring
+graph terminology for CNN users).</p>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">GridDefinition</span></code> defines detector-bound orthonormal grid shape(s)
+and lookup table(s); its <code class="xref py py-meth docutils literal notranslate"><span class="pre">forward()</span></code> scatters <code class="docutils literal notranslate"><span class="pre">P</span></code>
+into image tensor(s).</p>
+<p>The <a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a> is taken from
+<code class="docutils literal notranslate"><span class="pre">grid_definition.detector</span></code> so the grid matches the preprocessing geometry.</p>
+<p>Construct <cite>ImageRepresentation</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>detector</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.detector.detector.html#graphnet.models.detector.detector.Detector" title="graphnet.models.detector.detector.Detector"><code class="xref py py-class docutils literal notranslate"><span class="pre">Detector</span></code></a></span>) – The corresponding ´Detector´ representing the data.</p></li>
-<li><p><strong>input_feature_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Names of each column in expected input data
-that will be built into a the data. If not provided,
-it is automatically assumed that all features in <cite>Detector</cite> is
-used.</p></li>
-<li><p><strong>dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – data type used for features. e.g. ´torch.float´</p></li>
-<li><p><strong>perturbation_dict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Dictionary mapping a feature name to a standard
-deviation according to which the values for this
-feature should be randomly perturbed. Defaults
-to None.</p></li>
-<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – seed or Generator used to randomly sample perturbations.
-Defaults to None.</p></li>
-<li><p><strong>add_inactive_sensors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, inactive sensors will be appended
-to the data with padded pulse information. Defaults to False.</p></li>
-<li><p><strong>sensor_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – <p>A list of sensor id’s to be masked from the data. Any
-sensor listed here will be removed from the data.</p>
-<blockquote>
-<div><p>Defaults to None.</p>
-</div></blockquote>
-</p></li>
-<li><p><strong>string_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – A list of string id’s to be masked from the data.
-Defaults to None.</p></li>
-<li><p><strong>repeat_labels</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – If True, labels will be repeated to match the
-the number of rows in the output of the GraphDefinition.
-Defaults to False.</p></li>
+<li><p><strong>pixel_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.data_representation.graphs.nodes.nodes.html#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition" title="graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">NodeDefinition</span></code></a></span>) – Pulse-level features → one row per pixel/DOM.</p></li>
+<li><p><strong>grid_definition</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="graphnet.models.data_representation.images.mappings.grid_definition.html#graphnet.models.data_representation.images.mappings.grid_definition.GridDefinition" title="graphnet.models.data_representation.images.mappings.grid_definition.GridDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">GridDefinition</span></code></a></span>) – Pixel keys + voxel indices + scatter into images.</p></li>
+<li><p><strong>input_feature_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Column names in raw pulse tables. If omitted,
+the detector’s feature list is used.</p></li>
+<li><p><strong>dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – Feature dtype (e.g. <code class="docutils literal notranslate"><span class="pre">torch.float</span></code>).</p></li>
+<li><p><strong>perturbation_dict</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Optional feature noise (see <code class="docutils literal notranslate"><span class="pre">DataRepresentation</span></code>).</p></li>
+<li><p><strong>seed</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – RNG for perturbations.</p></li>
+<li><p><strong>add_inactive_sensors</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Pad inactive sensors when True.</p></li>
+<li><p><strong>sensor_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Drop these sensor IDs.</p></li>
+<li><p><strong>string_mask</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Drop these string IDs.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>
@@ -656,42 +659,36 @@ Defaults to False.</p></li>
 <dd class="field-even"><p>object</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">pixel_definition</span></code> output columns must match what
+<code class="docutils literal notranslate"><span class="pre">grid_definition</span></code> expects (including key fields in
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">GridDefinition.map_pixels_by</span></code>).</p>
+</div>
 <dl class="py property">
-<dt class="sig sig-object py" id="graphnet.models.data_representation.data_representation.DataRepresentation.nb_outputs">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">nb_outputs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></span><a class="headerlink" href="#graphnet.models.data_representation.data_representation.DataRepresentation.nb_outputs" title="Link to this definition">¶</a></dt>
-<dd><p>Return the number of output features.</p>
-</dd></dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="graphnet.models.data_representation.data_representation.DataRepresentation.output_feature_names">
-<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">output_feature_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.models.data_representation.data_representation.DataRepresentation.output_feature_names" title="Link to this definition">¶</a></dt>
-<dd><p>Initialize / return the names of output features.</p>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.images.image_representation.ImageRepresentation.shape">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">shape</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.shape" title="Link to this definition">¶</a></dt>
+<dd><p>Channel-spatial layout per image tensor (see <code class="docutils literal notranslate"><span class="pre">GridDefinition</span></code>).</p>
 </dd></dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.data_representation.data_representation.DataRepresentation.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_dicts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_label_functions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/data_representation.html#DataRepresentation.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.data_representation.DataRepresentation.forward" title="Link to this definition">¶</a></dt>
-<dd><p>Construct data as ´Data´ object.</p>
+<dt class="sig sig-object py" id="graphnet.models.data_representation.images.image_representation.ImageRepresentation.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_feature_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truth_dicts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_label_functions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_weight_default_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/data_representation/images/image_representation.html#ImageRepresentation.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.data_representation.images.image_representation.ImageRepresentation.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Build a <code class="docutils literal notranslate"><span class="pre">Data</span></code> object with image tensor(s) on <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_features</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span>) – Input features for data construction.
-Shape ´[num_rows, d]´</p></li>
-<li><p><strong>input_feature_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – name of each column. Shape ´[,d]´.</p></li>
-<li><p><strong>truth_dicts</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Dictionary containing truth labels.</p></li>
-<li><p><strong>custom_label_functions</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Custom label functions.</p></li>
-<li><p><strong>loss_weight_column</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Name of column that holds loss weight.
-Defaults to None.</p></li>
-<li><p><strong>loss_weight</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Loss weight associated with event. Defaults to None.</p></li>
-<li><p><strong>loss_weight_default_value</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – default value for loss weight.
-Used in instances where some events have
-no pre-defined loss weight. Defaults to None.</p></li>
-<li><p><strong>data_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Path to dataset data files. Defaults to None.</p></li>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>input_features</strong> (<em>ndarray</em>)</p></li>
+<li><p><strong>input_feature_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>)</p></li>
+<li><p><strong>truth_dicts</strong> (<em>List</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>custom_label_functions</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>[</em><em>[</em><em>...</em><em>]</em><em>, </em><em>Any</em><em>]</em><em>] </em><em>| </em><em>None</em>)</p></li>
+<li><p><strong>loss_weight_column</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>loss_weight</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>loss_weight_default_value</strong> (<em>float</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>data_path</strong> (<em>str</em><em> | </em><em>None</em>)</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Data</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>data</p>
 </dd>
 </dl>
 </dd></dl>
@@ -708,7 +705,7 @@ no pre-defined loss weight. Defaults to None.</p></li>
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid">
           
-            <a href="graphnet.models.data_representation.images.images.html" title="images"
+            <a href="graphnet.models.data_representation.images.mappings.grid_definition.html" title="grid_definition"
                class="md-flex md-footer-nav__link md-footer-nav__link--prev"
                rel="prev">
               <div class="md-flex__cell md-flex__cell--shrink">
@@ -717,17 +714,17 @@ no pre-defined loss weight. Defaults to None.</p></li>
               <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
                 <span class="md-flex__ellipsis">
                   <span
-                      class="md-footer-nav__direction"> "Previous" </span> images </span>
+                      class="md-footer-nav__direction"> "Previous" </span> grid_definition </span>
               </div>
             </a>
           
           
-            <a href="graphnet.models.detector.html" title="detector"
+            <a href="graphnet.models.data_representation.images.images.html" title="images"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> detector </span>
+                class="md-footer-nav__direction"> "Next" </span> images </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>
