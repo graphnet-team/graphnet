@@ -1,6 +1,6 @@
 """Utility functions for `graphnet.models`."""
 
-from typing import List, Tuple, Any, Union, Optional
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor, LongTensor
@@ -12,6 +12,18 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from torch_scatter import scatter, scatter_add
 from torch_sparse import SparseTensor
+
+try:
+    from torch.nn.attention.flex_attention import (
+        create_block_mask,
+        flex_attention,
+    )
+
+    FLEX_AVAILABLE = True
+except ImportError:  # pragma: no cover - torch built without flex
+    create_block_mask = None
+    flex_attention = None
+    FLEX_AVAILABLE = False
 
 
 def calculate_xyzt_homophily(
@@ -305,3 +317,130 @@ def get_rw_landing_probs(
     # (Num nodes) x (K steps)
     rw_landing = torch.cat(rws, dim=0).transpose(0, 1)
     return rw_landing
+
+
+# ------------------------------------------------------------------------
+# Variable-length packing for `flex_attention`
+# ------------------------------------------------------------------------
+#
+# A padded `[B, S, D]` batch pushes masked-out slots through every `Linear`,
+# wasting up to ~4x of the dominant compute when events are short. The helpers
+# below pack the valid tokens of a batch into a single `[1, N_total, D]`
+# sequence and drive a block-diagonal `flex_attention`, so each event still
+# attends only within itself. `pack`/`unpack` use data-dependent shapes
+# (`nonzero`) and must therefore stay outside any compiled region.
+
+# Compiling `create_block_mask` makes per-step block-mask construction roughly
+# 50x faster than eager, which otherwise dominates the packing overhead. Built
+# on first use rather than at import so that merely importing
+# `graphnet.models` has no `torch.compile` side effect.
+_COMPILED_CREATE_BLOCK_MASK: Optional[Callable] = None
+
+# Pack only when the batch is at most this full: packing trades padded-token
+# `Linear` work for a less efficient attention kernel (block-diagonal flex vs
+# batched flash), which wins below ~80% occupancy and loses above it.
+_PACK_OCCUPANCY_MAX = 0.8
+
+
+def pack(
+    tokens: Tensor,
+    centroids: Tensor,
+    masks: Tensor,
+) -> Optional[Tuple[Tensor, Tensor, Tensor, Tensor]]:
+    """Pack the valid tokens of a batch into one flat sequence.
+
+    Args:
+        tokens: Padded token features `[B, S, D]`.
+        centroids: Padded token positions `[B, S, C]`.
+        masks: Bool `[B, S]`; True marks a valid token.
+
+    Returns:
+        `(packed_tokens [1, N, D], packed_centroids [1, N, C], doc_id [N],
+        pack_idx [N])`, or None when packing would not pay off -- an empty
+        batch, or occupancy at or above the internal threshold. On None the
+        caller should run the padded path; no token is ever dropped.
+    """
+    batch_size, seq_length, n_features = tokens.shape
+
+    # One host sync.
+    pack_idx = masks.reshape(batch_size * seq_length).nonzero(as_tuple=True)[0]
+    n_valid = int(pack_idx.numel())
+    if (
+        n_valid == 0
+        or n_valid >= _PACK_OCCUPANCY_MAX * batch_size * seq_length
+    ):
+        return None
+
+    packed_tokens = (
+        tokens.reshape(batch_size * seq_length, n_features)
+        .index_select(0, pack_idx)
+        .unsqueeze(0)
+    )
+    packed_centroids = (
+        centroids.reshape(batch_size * seq_length, centroids.shape[-1])
+        .index_select(0, pack_idx)
+        .unsqueeze(0)
+    )
+    # Valid tokens are row-major, so integer division recovers the event.
+    doc_id = pack_idx // seq_length
+
+    # Mark the packed length dynamic so `torch.compile` builds one graph
+    # instead of recompiling for every distinct N.
+    torch._dynamo.mark_dynamic(packed_tokens, 1)
+    torch._dynamo.mark_dynamic(packed_centroids, 1)
+    return packed_tokens, packed_centroids, doc_id, pack_idx
+
+
+def build_block_mask(doc_id: Tensor, n_tokens: int) -> Any:
+    """Build a block-diagonal `BlockMask` over a packed sequence.
+
+    Args:
+        doc_id: `[N]` event index of every packed token.
+        n_tokens: Packed sequence length `N`.
+
+    Returns:
+        A `flex_attention` `BlockMask` allowing attention only within an
+        event.
+    """
+    global _COMPILED_CREATE_BLOCK_MASK
+    if not FLEX_AVAILABLE:
+        raise RuntimeError(
+            "flex_attention is unavailable in this PyTorch build; the packed "
+            "attention path cannot be used."
+        )
+    if _COMPILED_CREATE_BLOCK_MASK is None:
+        _COMPILED_CREATE_BLOCK_MASK = torch.compile(create_block_mask)
+
+    def mask_mod(
+        b: Tensor, h: Tensor, q_idx: Tensor, kv_idx: Tensor
+    ) -> Tensor:
+        return doc_id[q_idx] == doc_id[kv_idx]
+
+    return _COMPILED_CREATE_BLOCK_MASK(
+        mask_mod,
+        B=None,
+        H=None,
+        Q_LEN=n_tokens,
+        KV_LEN=n_tokens,
+        device=doc_id.device,
+    )
+
+
+def unpack(
+    packed: Tensor, pack_idx: Tensor, batch_size: int, seq_length: int
+) -> Tensor:
+    """Scatter a packed `[1, N, D]` sequence back to padded `[B, S, D]`.
+
+    Args:
+        packed: Packed encoder output `[1, N, D]`.
+        pack_idx: The `pack_idx` returned by :func:`pack`.
+        batch_size: Original batch size `B`.
+        seq_length: Original padded sequence length `S`.
+
+    Returns:
+        Padded tensor `[B, S, D]`, zero at every padded slot.
+    """
+    n_features = packed.shape[-1]
+    result = packed.new_zeros(batch_size * seq_length, n_features)
+    result.index_copy_(0, pack_idx, packed[0])
+    return result.reshape(batch_size, seq_length, n_features)

@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.functional import Tensor
 
-from typing import Optional
+from typing import Optional, Sequence
 
 from pytorch_lightning import LightningModule
 from torch_geometric.utils import add_self_loops
@@ -402,3 +402,107 @@ class RWSELinearNodeEncoder(LightningModule):
         data.x = torch.cat((x, rwse), dim=1)
 
         return data
+
+
+class FourierPositionEncoder(LightningModule):
+    """Absolute position encoding via log-spaced Fourier features.
+
+    Lifts the spatial coordinates through sine/cosine at several log-spaced
+    frequencies before a small MLP. This mitigates the spectral bias of a
+    raw-coordinate MLP (Tancik et al. 2020), letting the encoder represent
+    sharp position dependence such as detector boundaries and depth
+    structure.
+
+    Distinct from :class:`FourierEncoder` in the same module, which embeds
+    per-pulse *features* (position, time, charge, auxiliary) with sinusoidal
+    embeddings. This class embeds *position only*, and is applied to token
+    centroids rather than to individual pulses.
+
+    Time is deliberately excluded: callers are expected to centre time per
+    event, which makes absolute time close to meaningless, and relative time
+    is handled by the rotary embedding inside attention.
+    """
+
+    freqs: Tensor
+    axis_scales: Tensor
+
+    def __init__(
+        self,
+        token_dim: int,
+        in_dim: int = 3,
+        num_bands: int = 20,
+        freq_min: float = 3.0,
+        freq_max: float = 180.0,
+        axis_scales: Sequence[float] = (1.0, 1.0, 1.0),
+        dropout: float = 0.1,
+    ):
+        """Construct `FourierPositionEncoder`.
+
+        Args:
+            token_dim: Output dimension.
+            in_dim: Number of leading coordinate axes to encode. Any further
+                axes of the input, such as time, are ignored.
+            num_bands: Number of log-spaced frequency bands per axis.
+            freq_min: Lowest angular frequency, in radians per coordinate
+                unit.
+            freq_max: Highest angular frequency, in radians per coordinate
+                unit.
+            axis_scales: Per-axis multiplier on the frequency bands. Must
+                have length `in_dim`.
+            dropout: Dropout inside the MLP.
+        """
+        super().__init__()
+        if num_bands < 1:
+            raise ValueError(f"num_bands must be >= 1 (got {num_bands})")
+        if len(axis_scales) != in_dim:
+            raise ValueError(
+                f"axis_scales must have length in_dim={in_dim} "
+                f"(got {len(axis_scales)})"
+            )
+        self.in_dim = in_dim
+
+        if num_bands == 1:
+            freqs = torch.tensor([float(freq_min)])
+        else:
+            exponents = torch.arange(num_bands, dtype=torch.float32) / (
+                num_bands - 1
+            )
+            freqs = (
+                float(freq_min)
+                * (float(freq_max) / float(freq_min)) ** exponents
+            )
+        self.register_buffer("freqs", freqs)
+        self.register_buffer(
+            "axis_scales", torch.tensor(axis_scales, dtype=torch.float32)
+        )
+
+        feat_dim = in_dim * num_bands * 2  # sine and cosine per (axis, band)
+        self.mlp = nn.Sequential(
+            nn.Linear(feat_dim, token_dim),
+            nn.GELU(),
+            nn.Dropout(dropout),
+            nn.Linear(token_dim, token_dim),
+        )
+
+    def forward(self, coords: Tensor) -> Tensor:
+        """Encode the leading `in_dim` axes of `coords`.
+
+        Args:
+            coords: `[B, S, C]` coordinates with `C >= in_dim`.
+
+        Returns:
+            `[B, S, token_dim]` position embeddings.
+        """
+        # Trig in float32 for accuracy; the MLP follows the ambient autocast
+        # dtype.
+        xyz = coords[..., : self.in_dim].float()
+        scaled = self.freqs.unsqueeze(0) * self.axis_scales.unsqueeze(1)
+        ang = xyz.unsqueeze(-1) * scaled
+        feats = torch.cat([ang.sin(), ang.cos()], dim=-1).flatten(-2)
+        # The trigonometry runs in float32 for accuracy, but the MLP may
+        # hold low-precision weights when the module itself was converted
+        # rather than run under autocast -- Lightning's "16-true" and
+        # "bf16-true" modes do exactly that, and `Linear` will not cast for
+        # us there. Under autocast the weights are still float32, so this is
+        # a no-op and autocast handles the cast as before.
+        return self.mlp(feats.to(next(self.mlp.parameters()).dtype))
