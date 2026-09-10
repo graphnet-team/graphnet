@@ -1,6 +1,14 @@
 """Class(es) implementing layers to be used in `graphnet` models."""
 
-from typing import Any, Callable, Optional, Sequence, Union, List
+from typing import (
+    Any,
+    Callable,
+    Optional,
+    Sequence,
+    Union,
+    List,
+    TYPE_CHECKING,
+)
 
 import torch
 import torch.nn as nn
@@ -22,6 +30,9 @@ from torch_scatter import scatter
 
 from pytorch_lightning import LightningModule
 from torch_geometric.utils import degree
+
+if TYPE_CHECKING:
+    from graphnet.models.components.embedding import SpacetimeEncoder
 
 
 class DynEdgeConv(EdgeConv, LightningModule):
@@ -392,6 +403,54 @@ class Block_rel(LightningModule):
             x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
         return x
 
+    def forward_tiled(
+        self,
+        x: Tensor,
+        rel_pos_encoder: "SpacetimeEncoder",
+        coords: Tensor,
+        key_padding_mask: Optional[Tensor] = None,
+        q_tile: int = 64,
+        use_checkpoint: bool = False,
+    ) -> Tensor:
+        """Forward pass with the relative bias computed query-tiled.
+
+        Numerically identical to `forward` called with a `rel_pos_bias`
+        precomputed as `rel_pos_encoder(coords)`, but the relative bias is
+        built one query-tile at a time so the `[B, L, L, H]` tensor is never 
+        fully materialised.
+
+        Args:
+            x: Input tensor of shape `[B, L, input_dim]`.
+            rel_pos_encoder: The `SpacetimeEncoder` providing the relative
+                bias via its `forward_tiled` method.
+            coords: Raw coordinates `[B, L, >=4]` (positions 0:3, time
+                3) fed to `rel_pos_encoder`.
+            key_padding_mask: Float mask `[B, L]` (0 valid, -inf pad).
+            q_tile: Number of query rows processed per tile.
+            use_checkpoint: Recompute each tile in the backward pass so the
+                per-tile intermediates are not retained (memory saving during
+                training, at the cost of extra compute).
+
+        Returns:
+            Tensor of shape `[B, L, input_dim]`.
+        """
+        xn = self.norm1(x)
+        attn = self.attn.forward_tiled(
+            xn,
+            rel_pos_encoder,
+            coords,
+            key_padding_mask=key_padding_mask,
+            q_tile=q_tile,
+            use_checkpoint=use_checkpoint,
+        )
+        if self.gamma_1 is None:
+            x = x + self.drop_path(attn)
+            x = x + self.drop_path(self.mlp(self.norm2(x)))
+        else:
+            x = x + self.drop_path(self.gamma_1 * self.drop_path(attn))
+            x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
+        return x
+
 
 class Attention_rel(LightningModule):
     """Attention mechanism with relative position bias."""
@@ -504,6 +563,118 @@ class Attention_rel(LightningModule):
         x = self.proj(x)
         x = self.proj_drop(x)
         return x
+
+    def forward_tiled(
+        self,
+        x: Tensor,
+        rel_pos_encoder: "SpacetimeEncoder",
+        coords: Tensor,
+        key_padding_mask: Optional[Tensor] = None,
+        q_tile: int = 64,
+        use_checkpoint: bool = False,
+    ) -> Tensor:
+        """Query-tiled self-attention with an on-the-fly relative bias.
+
+        Numerically identical to `forward` called with a `rel_pos_bias`
+        precomputed as `rel_pos_encoder(coords)`,  but the relative bias for
+        each block of `q_tile` query rows is built from
+        `rel_pos_encoder.forward_tiled` and consumed immediately, so the
+        `[B, L, L, H]` bias tensor is never fully materialised.
+        Each query row still attends to all keys with a full-row softmax, so
+        the per-row arithmetic (and hence the result) matches `forward`
+        exactly, while peak memory for the bias drops from `O(L^2 * H)` to
+        `O(q_tile * L * H)`.
+
+        Args:
+            x: Input tensor of shape `[B, L, input_dim]`.
+            rel_pos_encoder: The `SpacetimeEncoder` whose `forward_tiled`
+                supplies the relative bias for a query tile.
+            coords: Raw coordinates `[B, L, >=4]` (positions 0:3, time
+                3) fed to `rel_pos_encoder`.
+            key_padding_mask: Float mask `[B, L]` (0 valid, -inf pad),
+                as used by `forward`.
+            q_tile: Number of query rows processed per tile.
+            use_checkpoint: Recompute each tile in the backward pass so the
+                per-tile intermediates are not retained across tiles (needed to
+                realise the memory saving during training); otherwise autograd
+                keeps every tile's tensors. Costs roughly one extra forward.
+
+        Returns:
+            Tensor of shape `[B, L, input_dim]`, identical to `forward`.
+        """
+        batch_size, event_length, _ = x.shape
+        num_heads = self.num_heads
+        head_dim = self.proj_q.weight.shape[0] // num_heads
+
+        def to_heads(t: Tensor, weight: Tensor, bias: Optional[Tensor]) -> Tensor:
+            return (
+                linear(t, weight, bias)
+                .reshape(batch_size, event_length, num_heads, head_dim)
+                .permute(0, 2, 1, 3)
+            )
+
+        q = to_heads(x, self.proj_q.weight, self.q_bias) * self.scale
+        k = to_heads(x, self.proj_k.weight, None)
+        v = to_heads(x, self.proj_v.weight, self.v_bias)
+
+        pair_bias = None
+        if key_padding_mask is not None:
+            assert (
+                key_padding_mask.dtype == torch.float32
+                or key_padding_mask.dtype == torch.float16
+            ), "incorrect mask dtype"
+            pair_bias = torch.min(
+                key_padding_mask[:, None, :], key_padding_mask[:, :, None]
+            )
+            pair_bias[
+                torch.max(
+                    key_padding_mask[:, None, :], key_padding_mask[:, :, None]
+                )
+                < 0
+            ] = 0
+
+        def compute_tile(
+            q_slice: Tensor,
+            k_all: Tensor,
+            v_all: Tensor,
+            coords_all: Tensor,
+            pair: Optional[Tensor],
+            start: int,
+            end: int,
+        ) -> Tensor:
+            rel = rel_pos_encoder.forward_tiled(coords_all, start, end)
+            scores = q_slice @ k_all.transpose(-2, -1)
+            scores = scores + torch.einsum("bhic,bijc->bhij", q_slice, rel)
+            if pair is not None:
+                scores = scores + pair[:, start:end].unsqueeze(1)
+            attn = self.attn_drop(scores.softmax(dim=-1))
+            out = (attn @ v_all).transpose(1, 2)
+            return out + torch.einsum("bhij,bijc->bihc", attn, rel)
+
+        out = x.new_zeros(batch_size, event_length, num_heads, head_dim)
+        for start in range(0, event_length, q_tile):
+            end = min(start + q_tile, event_length)
+            q_slice = q[:, :, start:end]
+            if use_checkpoint and torch.is_grad_enabled():
+                tile_out = torch.utils.checkpoint.checkpoint(
+                    compute_tile,
+                    q_slice,
+                    k,
+                    v,
+                    coords,
+                    pair_bias,
+                    start,
+                    end,
+                    use_reentrant=False,
+                )
+            else:
+                tile_out = compute_tile(
+                    q_slice, k, v, coords, pair_bias, start, end
+                )
+            out[:, start:end] = tile_out
+
+        out = out.reshape(batch_size, event_length, -1)
+        return self.proj_drop(self.proj(out))
 
 
 class Block(LightningModule):

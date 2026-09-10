@@ -43,6 +43,9 @@ class DeepIce(GNN):
         include_dynedge: bool = False,
         dynedge_args: Optional[Dict[str, Any]] = None,
         n_features: int = 6,
+        rel_attention: str = "dense",
+        q_tile: int = 64,
+        tiled_checkpoint: bool = True,
     ):
         """Construct `DeepIce`.
 
@@ -62,7 +65,20 @@ class DeepIce(GNN):
                 Competition settings. If `include_dynedge` is False, this
                 argument have no impact.
             n_features: The number of features in the input data.
+            rel_attention: How the relative-attention sandwich computes its
+                spacetime bias. `"dense"` (default) precomputes the full
+                `[B, L, L, H]` bias (original behaviour). `"tiled"` computes 
+                the bias one query-tile at a time.
+            q_tile: Number of query rows per tile when `rel_attention="tiled"`.
+            tiled_checkpoint: When `rel_attention="tiled"`, recompute each tile
+                in the backward pass (during training) at the cost of one 
+                extra forward.
         """
+        if rel_attention not in ("dense", "tiled"):
+            raise ValueError(
+                f"rel_attention must be 'dense' or 'tiled', "
+                f"got {rel_attention!r}"
+            )
         super().__init__(seq_length, hidden_dim)
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
         self.fourier_ext = FourierEncoder(
@@ -117,6 +133,9 @@ class DeepIce(GNN):
             self.dyn_edge = DynEdge(**dynedge_args)
 
         self.include_dynedge = include_dynedge
+        self.rel_attention = rel_attention
+        self.q_tile = q_tile
+        self.tiled_checkpoint = tiled_checkpoint
 
     @torch.jit.ignore
     def no_weight_decay(self) -> Set:
@@ -129,7 +148,9 @@ class DeepIce(GNN):
             data.x, data.batch, padding_value=0
         )
         x = self.fourier_ext(x0, seq_length)
-        rel_pos_bias = self.rel_pos(x0)
+        tiled = (self.rel_attention == "tiled")
+
+        rel_pos_bias = None if tiled else self.rel_pos(x0)
         batch_size = mask.shape[0]
         if self.include_dynedge:
             graph = self.dyn_edge(data)
@@ -140,7 +161,17 @@ class DeepIce(GNN):
         attn_mask[~mask] = -torch.inf
 
         for i, blk in enumerate(self.sandwich):
-            x = blk(x, attn_mask, rel_pos_bias)
+            if tiled and i < self.n_rel:
+                x = blk.forward_tiled(
+                    x,
+                    self.rel_pos,
+                    x0,
+                    key_padding_mask=attn_mask,
+                    q_tile=self.q_tile,
+                    use_checkpoint=self.tiled_checkpoint and self.training,
+                )
+            else:
+                x = blk(x, attn_mask, rel_pos_bias)
             if i + 1 == self.n_rel:
                 rel_pos_bias = None
 
