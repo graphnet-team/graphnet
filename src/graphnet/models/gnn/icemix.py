@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 from typing import Set, Dict, Any, Optional
 
-from graphnet.models.components.layers import (
+from graphnet.models.components.attention_blocks import (
     Block_rel,
     Block,
 )
