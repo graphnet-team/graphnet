@@ -19,3 +19,11 @@ from .graphs import (
     IceMixNodes,
     ClusterSummaryFeatures,
 )
+from .images import (
+    ExamplePrometheusGridDefinition,
+    ExamplePrometheusImage,
+    GridDefinition,
+    IC86GridDefinition,
+    IC86Image,
+    ImageRepresentation,
+)
