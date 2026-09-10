@@ -1,6 +1,6 @@
 """Class(es) implementing layers to be used in `graphnet` models."""
 
-from typing import Any, Optional, Sequence, Union, List
+from typing import Optional
 
 import torch
 import torch.nn as nn
@@ -9,11 +9,9 @@ from torch_geometric.nn.pool import (
     global_mean_pool,
     global_add_pool,
 )
-from torch_geometric.typing import Adj
 from torch_geometric.data import Data
 from torch.nn.functional import linear
-from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer
-from torch_geometric.utils import to_dense_batch, softmax
+from torch_geometric.utils import softmax
 from torch_scatter import scatter
 
 from pytorch_lightning import LightningModule
@@ -22,6 +20,7 @@ from torch_geometric.utils import degree
 from graphnet.models.components.edge_convolutions import (
     DynEdgeConv,
     EdgeConvTito,
+    DynTrans,
 )
 
 __all__ = [
@@ -37,89 +36,6 @@ __all__ = [
     "GritTransformerLayer",
     "SANGraphHead",
 ]
-
-
-class DynTrans(EdgeConvTito, LightningModule):
-    """Implementation of dynTrans1 layer used in TITO solution for.
-
-    'IceCube - Neutrinos in Deep' kaggle competition.
-    """
-
-    def __init__(
-        self,
-        layer_sizes: Optional[List[int]] = None,
-        aggr: str = "max",
-        features_subset: Optional[Union[Sequence[int], slice]] = None,
-        n_head: int = 8,
-        **kwargs: Any,
-    ):
-        """Construct `DynTrans`.
-
-        Args:
-            layer_sizes: List of layer sizes to be used in `DynTrans`.
-            aggr: Aggregation method to be used with `DynTrans`.
-            features_subset: Subset of features in `Data.x` that should be used
-                when dynamically performing the new graph clustering after the
-                `EdgeConv` operation. Defaults to all features.
-            n_head: Number of heads to be used in the multiheadattention
-                models.
-            **kwargs: Additional features to be passed to `DynTrans`.
-        """
-        # Check(s)
-        if features_subset is None:
-            features_subset = slice(None)  # Use all features
-        assert isinstance(features_subset, (list, slice))
-
-        if layer_sizes is None:
-            layer_sizes = [256, 256, 256]
-        layers = []
-        for ix, (nb_in, nb_out) in enumerate(
-            zip(layer_sizes[:-1], layer_sizes[1:])
-        ):
-            if ix == 0:
-                nb_in *= 3  # edgeConv1
-            layers.append(nn.Linear(nb_in, nb_out))
-            layers.append(nn.LeakyReLU())
-        d_model = nb_out
-
-        # Base class constructor
-        super().__init__(nn=nn.Sequential(*layers), aggr=aggr, **kwargs)
-
-        # Additional member variables
-        self.features_subset = features_subset
-
-        self.norm1 = nn.LayerNorm(d_model, eps=1e-5)  # lNorm
-
-        # Transformer layer(s)
-        encoder_layer = TransformerEncoderLayer(
-            d_model=d_model,
-            nhead=n_head,
-            batch_first=True,
-            norm_first=False,
-        )
-        self._transformer_encoder = TransformerEncoder(
-            encoder_layer, num_layers=1
-        )
-
-    def forward(
-        self, x: Tensor, edge_index: Adj, batch: Optional[Tensor] = None
-    ) -> Tensor:
-        """Forward pass."""
-        x_out = super().forward(x, edge_index)
-
-        if x_out.shape[-1] == x.shape[-1]:
-            x = x + x_out
-        else:
-            x = x_out
-
-        x = self.norm1(x)  # lNorm
-
-        # Transformer layer
-        x, mask = to_dense_batch(x, batch)
-        x = self._transformer_encoder(x, src_key_padding_mask=~mask)
-        x = x[mask]
-
-        return x
 
 
 class DropPath(LightningModule):
