@@ -196,3 +196,116 @@ class Attention_rel(LightningModule):
         x = self.proj(x)
         x = self.proj_drop(x)
         return x
+
+
+class Block_rel(LightningModule):
+    """Implementation of BEiTv2 Block."""
+
+    def __init__(
+        self,
+        input_dim: int,
+        num_heads: int,
+        mlp_ratio: float = 4.0,
+        qkv_bias: bool = False,
+        qk_scale: Optional[float] = None,
+        dropout: float = 0.0,
+        attn_drop: float = 0.0,
+        drop_path: float = 0.0,
+        init_values: Optional[float] = None,
+        activation: nn.Module = nn.GELU,
+        norm_layer: nn.Module = nn.LayerNorm,
+        attn_head_dim: Optional[int] = None,
+    ):
+        """Construct 'Block_rel'.
+
+        Args:
+            input_dim: Dimension of the input tensor.
+            num_heads: Number of attention heads to use in the `Attention_rel`
+            layer.
+            mlp_ratio: Ratio of the hidden size of the feedforward network to
+                the input size in the `Mlp` layer.
+            qkv_bias: Whether or not to include bias terms in the query, key,
+                and value matrices in the `Attention_rel` layer.
+            qk_scale: Scaling factor for the dot product of the query and key
+                matrices in the `Attention_rel` layer.
+            dropout: Dropout probability to use in the `Mlp` layer.
+            attn_drop: Dropout probability to use in the `Attention_rel` layer.
+            drop_path: Probability of applying drop path regularization to the
+                output of the layer.
+            init_values: Initial value to use for the `gamma_1` and `gamma_2`
+                parameters if not `None`.
+            activation: Activation function to use in the `Mlp` layer.
+            norm_layer: Normalization layer to use.
+            attn_head_dim: Dimension of the attention head outputs in the
+                `Attention_rel` layer.
+        """
+        super().__init__()
+        self.norm1 = norm_layer(input_dim)
+        self.attn = Attention_rel(
+            input_dim,
+            num_heads,
+            attn_drop=attn_drop,
+            qkv_bias=qkv_bias,
+            qk_scale=qk_scale,
+            attn_head_dim=attn_head_dim,
+        )
+        self.drop_path = (
+            DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
+        )
+        self.norm2 = norm_layer(input_dim)
+        mlp_hidden_dim = int(input_dim * mlp_ratio)
+        self.mlp = Mlp(
+            in_features=input_dim,
+            hidden_features=mlp_hidden_dim,
+            activation=activation,
+            dropout_prob=dropout,
+        )
+
+        if init_values is not None:
+            self.gamma_1 = nn.Parameter(
+                init_values * torch.ones(input_dim), requires_grad=True
+            )
+            self.gamma_2 = nn.Parameter(
+                init_values * torch.ones(input_dim), requires_grad=True
+            )
+        else:
+            self.gamma_1, self.gamma_2 = None, None
+
+    def forward(
+        self,
+        x: Tensor,
+        key_padding_mask: Optional[Tensor] = None,
+        rel_pos_bias: Optional[Tensor] = None,
+        kv: Optional[Tensor] = None,
+    ) -> Tensor:
+        """Forward pass."""
+        if self.gamma_1 is None:
+            xn = self.norm1(x)
+            kv = xn if kv is None else self.norm1(kv)
+            x = x + self.drop_path(
+                self.attn(
+                    xn,
+                    kv,
+                    kv,
+                    rel_pos_bias=rel_pos_bias,
+                    key_padding_mask=key_padding_mask,
+                )
+            )
+            x = x + self.drop_path(self.mlp(self.norm2(x)))
+        else:
+            xn = self.norm1(x)
+            kv = xn if kv is None else self.norm1(kv)
+            x = x + self.drop_path(
+                self.gamma_1
+                * self.drop_path(
+                    self.attn(
+                        xn,
+                        kv,
+                        kv,
+                        rel_pos_bias=rel_pos_bias,
+                        key_padding_mask=key_padding_mask,
+                    )
+                )
+            )
+            x = x + self.drop_path(self.gamma_2 * self.mlp(self.norm2(x)))
+        return x
