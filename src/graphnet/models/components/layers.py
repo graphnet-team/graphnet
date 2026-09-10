@@ -1,6 +1,6 @@
 """Class(es) implementing layers to be used in `graphnet` models."""
 
-from typing import Any, Callable, Optional, Sequence, Union, List
+from typing import Any, Optional, Sequence, Union, List
 
 import torch
 import torch.nn as nn
@@ -9,9 +9,7 @@ from torch_geometric.nn.pool import (
     global_mean_pool,
     global_add_pool,
 )
-from torch_geometric.typing import Adj, PairTensor
-from torch_geometric.nn.conv import MessagePassing
-from torch_geometric.nn.inits import reset
+from torch_geometric.typing import Adj
 from torch_geometric.data import Data
 from torch.nn.functional import linear
 from torch.nn.modules import TransformerEncoder, TransformerEncoderLayer
@@ -23,6 +21,7 @@ from torch_geometric.utils import degree
 
 from graphnet.models.components.edge_convolutions import (
     DynEdgeConv,
+    EdgeConvTito,
 )
 
 __all__ = [
@@ -38,51 +37,6 @@ __all__ = [
     "GritTransformerLayer",
     "SANGraphHead",
 ]
-
-
-class EdgeConvTito(MessagePassing, LightningModule):
-    """Implementation of EdgeConvTito layer used in TITO solution for.
-
-    'IceCube - Neutrinos in Deep' kaggle competition.
-    """
-
-    def __init__(
-        self,
-        nn: Callable,
-        aggr: str = "max",
-        **kwargs: Any,
-    ):
-        """Construct `EdgeConvTito`.
-
-        Args:
-            nn: The MLP/torch.Module to be used within the `EdgeConvTito`.
-            aggr: Aggregation method to be used with `EdgeConvTito`.
-            **kwargs: Additional features to be passed to `EdgeConvTito`.
-        """
-        super().__init__(aggr=aggr, **kwargs)
-        self.nn = nn
-        self.reset_parameters()
-
-    def reset_parameters(self) -> None:
-        """Reset all learnable parameters of the module."""
-        reset(self.nn)
-
-    def forward(self, x: Union[Tensor, PairTensor], edge_index: Adj) -> Tensor:
-        """Forward pass."""
-        if isinstance(x, Tensor):
-            x = (x, x)
-        # propagate_type: (x: PairTensor)
-        return self.propagate(edge_index, x=x, size=None)
-
-    def message(self, x_i: Tensor, x_j: Tensor) -> Tensor:
-        """Edgeconvtito message passing."""
-        return self.nn(
-            torch.cat([x_i, x_j - x_i, x_j], dim=-1)
-        )  # EdgeConvTito
-
-    def __repr__(self) -> str:
-        """Print out module name."""
-        return f"{self.__class__.__name__}(nn={self.nn})"
 
 
 class DynTrans(EdgeConvTito, LightningModule):
