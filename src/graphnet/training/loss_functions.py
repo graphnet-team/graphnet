@@ -494,8 +494,61 @@ class EuclideanDistanceLoss(LossFunction):
         )
 
 
-class VonMisesFisher3DLoss(VonMisesFisherLoss):
-    """Von Mises-Fisher loss function vectors in the 3D plane."""
+class VonMisesFisher3DLoss(LossFunction):
+    """Negative log-likelihood of the 3D von Mises-Fisher distribution.
+
+    The density on the unit sphere is `f(t | mu, kappa) = C_3(kappa) *
+    exp(kappa * mu . t)` with normalization `C_3(kappa) = kappa /
+    (4*pi*sinh(kappa))`. Substituting `sinh(kappa) = exp(kappa) *
+    (1 - exp(-2*kappa)) / 2` and, exactly for unit vectors,
+    `kappa * (1 - mu . t) = kappa * ||t - mu||**2 / 2`, the negative
+    log-likelihood becomes
+
+    `kappa * ||t - mu||**2 / 2 - log(kappa / (2*pi*(1 - exp(-2*kappa))))`
+
+    where no term grows like `kappa` — the `exp(kappa)` of the normalizer
+    cancels analytically against the alignment term. Every operation is
+    elementary and on-device (no Bessel functions), the derivative is
+    continuous in `kappa` (no approximation boundary for gradient descent
+    on the concentration to stall at), and the squared-chord angular term
+    stays accurate in float32 at high concentration, where `1 - cos(theta)`
+    is comparable to the floating-point epsilon.
+
+    All arithmetic runs in the dtype of the inputs; resolving sub-degree
+    angular information requires the direction vectors in float32 or better.
+    """
+
+    def __init__(self, eps: float = 1e-8, **kwargs: Any) -> None:
+        """Construct `VonMisesFisher3DLoss`.
+
+        Args:
+            eps: Regularization of the normalizer, evaluated as
+                `(kappa + eps) / (1 - exp(-2*kappa) + 2*eps)` so that value
+                and gradient stay finite at `kappa = 0` while the ratio
+                keeps its exact limit of 1/2 (the uniform value
+                `-log(4*pi)`). Gradients lose accuracy below
+                `kappa ~ sqrt(eps)`, where the distribution is effectively
+                uniform.
+        """
+        super().__init__(**kwargs)
+        self._eps = eps
+
+    @staticmethod
+    def _log_cmk_scaled(kappa: Tensor, eps: float) -> Tensor:
+        """Calculate `log(exp(kappa) * C_3(kappa))`.
+
+        Args:
+            kappa: Concentration parameters, of shape [batch_size,].
+            eps: Regularization, see the constructor.
+
+        Returns:
+            Elementwise `log(exp(kappa) * C_3(kappa))`, shape [batch_size,].
+        """
+        return (
+            torch.log(kappa + eps)
+            - torch.log1p(2 * eps - torch.exp(-2 * kappa))
+            - np.log(2 * np.pi)
+        )
 
     def _forward(self, prediction: Tensor, target: Tensor) -> Tensor:
         """Calculate von Mises-Fisher loss for a direction in the 3D.
@@ -504,7 +557,7 @@ class VonMisesFisher3DLoss(VonMisesFisherLoss):
             prediction: Output of the model. Must have shape [N, 4] where
                 columns 0, 1, 2 are predictions of `direction` and last column
                 is an estimate of `kappa`.
-            target: Target tensor, extracted from graph object.
+            target: Target unit vector, extracted from graph object.
 
         Returns:
             Elementwise von Mises-Fisher loss terms. Shape [N,]
@@ -515,9 +568,21 @@ class VonMisesFisher3DLoss(VonMisesFisherLoss):
         assert target.dim() == 2
         assert prediction.size()[0] == target.size()[0]
 
-        kappa = prediction[:, 3]
-        p = kappa.unsqueeze(1) * prediction[:, [0, 1, 2]]
-        return self._evaluate(p, target)
+        # With x the raw model output the task head normalized:
+        direction = prediction[:, :3]  # x / (|x| + eps)
+        direction_norm = torch.norm(direction, dim=1)  # |x| / (|x| + eps)
+        concentration = prediction[:, 3] * direction_norm  # |x|
+        unit_direction = direction / direction_norm.unsqueeze(1)  # x / |x|
+
+        # For unit vectors, concentration * (1 - mu . t) equals
+        # concentration * ||t - mu||**2 / 2 exactly. The squared-chord form
+        # measures the small angular deficit directly, whereas subtracting
+        # cos(theta) from 1 loses all significant digits once theta**2
+        # approaches the floating-point epsilon.
+        sq_chord = torch.sum((target - unit_direction) ** 2, dim=1)
+        return concentration * sq_chord / 2 - self._log_cmk_scaled(
+            concentration, self._eps
+        )
 
 
 class EnsembleLoss(LossFunction):

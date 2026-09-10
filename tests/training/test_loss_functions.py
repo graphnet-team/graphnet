@@ -7,7 +7,11 @@ import warnings
 from torch import Tensor
 from torch.autograd import grad
 
-from graphnet.training.loss_functions import LogCoshLoss, VonMisesFisherLoss
+from graphnet.training.loss_functions import (
+    LogCoshLoss,
+    VonMisesFisherLoss,
+    VonMisesFisher3DLoss,
+)
 from graphnet.utilities.maths import eps_like
 
 
@@ -297,3 +301,184 @@ def test_logcmk_backward_zero_handling(
     assert torch.all(
         grads_multi[zero_mask] == 0.0
     ), "Zero kappa values should have zero gradients"
+
+
+def test_vmf3d_log_cmk_closed_form(dtype: torch.dtype = torch.float64) -> None:
+    """Test the vMF-3D normalizer against the m=3 closed form.
+
+    `log C_3(k) = _log_cmk_scaled(k, eps) - k` is checked in value against
+    the reference log(k) - k - log(2 pi (1 - exp(-2k))) and in gradient
+    against d/dk log C_3(k) = 1/k - coth(k).
+    """
+    k = torch.tensor(
+        data=[0.1, 0.5, 1.0, 3.0, 10.0, 100.0, 1000.0, 10000.0, 100000.0],
+        requires_grad=True,
+        dtype=dtype,
+    )
+
+    res = VonMisesFisher3DLoss._log_cmk_scaled(k, eps=1e-8) - k
+    res_reference = (
+        torch.log(k) - k - torch.log(2 * np.pi * (1 - torch.exp(-2 * k)))
+    )
+    assert torch.allclose(res, res_reference, atol=1e-6)
+
+    grads = _compute_elementwise_gradient(res, k)
+    grads_reference = 1 / k - 1 / torch.tanh(k)
+    assert torch.allclose(grads, grads_reference, atol=1e-6)
+
+
+def test_vmf3d_log_cmk_small_kappa(dtype: torch.dtype = torch.float64) -> None:
+    """Test the vMF-3D normalizer at and near kappa = 0.
+
+    The uniform-distribution limit is log(C_3(0)) = -log(4 pi); values
+    must hit it and both values and gradients must stay finite all the
+    way to 0.
+    """
+    k = torch.tensor(
+        data=[0.0, 1e-8, 1e-4, 1e-2],
+        requires_grad=True,
+        dtype=dtype,
+    )
+
+    res = VonMisesFisher3DLoss._log_cmk_scaled(k, eps=1e-8)
+    assert torch.all(torch.isfinite(res))
+    assert torch.isclose(
+        res[0], torch.tensor(-np.log(4 * np.pi), dtype=dtype), atol=1e-9
+    )
+    assert torch.allclose(
+        res, torch.full_like(res, -np.log(4 * np.pi)), atol=2e-2
+    )
+
+    grads = _compute_elementwise_gradient(res, k)
+    assert torch.all(torch.isfinite(grads))
+    # d/dk log(exp(k) C_3(k)) = 1 - A_3(k) -> 1 - k/3 for small k; only
+    # checked where the eps-regularization error eps/k**2 is subdominant.
+    assert torch.isclose(
+        grads[3], torch.tensor(1 - 1e-2 / 3, dtype=dtype), atol=1e-3
+    )
+
+
+def test_vmf3d_log_cmk_matches_bessel_path(
+    dtype: torch.dtype = torch.float64,
+) -> None:
+    """Test the closed-form normalizer against the Bessel-based path.
+
+    `_log_cmk_scaled(k, eps) - k` and `log_cmk_exact(3, k)` are independent
+    implementations of log C_3(k) (elementary closed form vs.
+    `scipy.special.iv`), so agreement validates both.
+    """
+    k = torch.tensor(
+        data=[0.1, 1.0, 10.0, 100.0, 500.0],
+        requires_grad=True,
+        dtype=dtype,
+    )
+
+    res = VonMisesFisher3DLoss._log_cmk_scaled(k, eps=1e-8) - k
+    res_bessel = VonMisesFisherLoss.log_cmk_exact(3, k)
+    assert torch.allclose(res, res_bessel, atol=1e-6)
+
+    grads = _compute_elementwise_gradient(res, k)
+    grads_bessel = _compute_elementwise_gradient(res_bessel, k)
+    assert torch.allclose(grads, grads_bessel, atol=1e-6)
+
+
+def test_vmf3d_loss_elements(dtype: torch.dtype = torch.float64) -> None:
+    """Test `VonMisesFisher3DLoss` elements against the plain NLL formula."""
+    torch.manual_seed(0)
+    n = 64
+    direction = torch.randn(n, 3, dtype=dtype)
+    direction = direction / direction.norm(dim=1, keepdim=True)
+    target = torch.randn(n, 3, dtype=dtype)
+    target = target / target.norm(dim=1, keepdim=True)
+    kappa = 10 ** (torch.rand(n, dtype=dtype) * 4 - 1)  # 0.1 ... 1000
+
+    prediction = torch.cat([direction, kappa.unsqueeze(1)], dim=1)
+    elements = VonMisesFisher3DLoss()._forward(prediction, target)
+
+    log_cmk_reference = (
+        torch.log(kappa)
+        - kappa
+        - torch.log(2 * np.pi * (1 - torch.exp(-2 * kappa)))
+    )
+    dotprod = (kappa.unsqueeze(1) * direction * target).sum(dim=1)
+    elements_reference = -log_cmk_reference - dotprod
+    assert torch.allclose(elements, elements_reference, atol=1e-6)
+
+
+def test_vmf3d_loss_no_gradient_dead_zone(
+    dtype: torch.dtype = torch.float64,
+) -> None:
+    """Test that the kappa-gradient has a stationary point for any alignment.
+
+    The optimum concentration satisfies A_3(kappa) = coth(kappa) - 1/kappa =
+    cos(theta). A derivative that is discontinuous somewhere in kappa leaves
+    a band of cos(theta) values with no stationary point, so gradient descent
+    pins kappa at the discontinuity for those events. The alignments below
+    place the optimum at kappa ~ 100...20000.
+    """
+    loss = VonMisesFisher3DLoss()
+    for cos_theta in [0.9905, 0.995, 0.999, 0.99995]:
+        sin_theta = float(np.sqrt(1 - cos_theta**2))
+        kappa = torch.logspace(1, 5, 500, dtype=dtype, requires_grad=True)
+        n = kappa.size(0)
+        direction = torch.tensor([[0.0, 0.0, 1.0]], dtype=dtype).repeat(n, 1)
+        target = torch.tensor(
+            [[sin_theta, 0.0, cos_theta]], dtype=dtype
+        ).repeat(n, 1)
+
+        prediction = torch.cat([direction, kappa.unsqueeze(1)], dim=1)
+        elements = loss._forward(prediction, target)
+        elements.sum().backward()
+        grads = kappa.grad
+
+        # A_3 is monotone, so d(loss)/d(kappa) = A_3(kappa) - cos(theta)
+        # must cross zero exactly once on a grid spanning the optimum.
+        signs = torch.sign(grads)
+        flips = (signs[1:] != signs[:-1]).nonzero().flatten()
+        assert len(flips) == 1, (cos_theta, len(flips))
+
+        kappa_star = kappa[flips[0]].detach()
+        a3 = 1 / torch.tanh(kappa_star) - 1 / kappa_star
+        assert torch.isclose(
+            a3, torch.tensor(cos_theta, dtype=dtype), atol=1e-3
+        )
+
+
+def test_vmf3d_loss_fp32_high_kappa_small_angle() -> None:
+    """Test float32 precision of the loss at high kappa and small angles.
+
+    The angular part of the loss is kappa * (1 - cos(theta)); computing it
+    via the squared chord ||t - mu||**2 keeps it accurate in float32 even
+    when 1 - cos(theta) is comparable to the float32 epsilon.
+    """
+    theta = 1e-3
+    kappa_value = 1e4
+    direction = torch.tensor([[0.0, 0.0, 1.0]], dtype=torch.float32)
+    kappa = torch.tensor([[kappa_value]], dtype=torch.float32)
+    prediction = torch.cat([direction, kappa], dim=1)
+    target_aligned = direction.clone()
+    target_off = torch.tensor(
+        [[np.sin(theta), 0.0, np.cos(theta)]], dtype=torch.float32
+    )
+
+    loss = VonMisesFisher3DLoss()
+    angular_part = (
+        loss._forward(prediction, target_off)
+        - loss._forward(prediction, target_aligned)
+    ).double()
+
+    expected = kappa_value * (1 - np.cos(theta))
+    assert torch.isclose(
+        angular_part,
+        torch.tensor([expected], dtype=torch.float64),
+        rtol=1e-3,
+    )
+
+    # Extreme concentrations must not overflow values or gradients.
+    prediction_extreme = torch.tensor(
+        [[0.0, 0.0, 1.0, 1e7]], dtype=torch.float32, requires_grad=True
+    )
+    elements = loss._forward(prediction_extreme, target_off)
+    assert torch.all(torch.isfinite(elements))
+    elements.sum().backward()
+    assert torch.all(torch.isfinite(prediction_extreme.grad))
