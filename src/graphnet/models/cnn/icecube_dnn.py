@@ -8,117 +8,13 @@ from typing import List, Tuple
 
 import torch
 from torch import nn
-from pytorch_lightning import LightningModule
 from torch_geometric.data import Data
 
 from graphnet.models.components.cnn_convolutions import (
-    Conv3dBN,
     InceptionBlock4,
+    InceptionResnet,
 )
 from .cnn import CNN
-
-
-class InceptionResnet(LightningModule):
-    """Inception block with residual connections from Theo Glauch's DNN."""
-
-    def __init__(
-        self,
-        in_channels: int,
-        out_channels: int,
-        t1: int = 2,
-        t2: int = 4,
-        n_pool: int = 3,
-        scale: float = 0.1,
-    ):
-        """Create a InceptionResnet module.
-
-        Args:
-            in_channels: Number of input channels.
-            out_channels: Number of output channels.
-            t1: Size of the first kernel sequence.
-            t2: Size of the second kernel sequence.
-            n_pool: Size of the pooling kernel.
-            scale: Scaling factor for the residual connection.
-        """
-        super().__init__()
-        self._scale = scale
-        self.tower1 = nn.Sequential(
-            Conv3dBN(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                kernel_size=(1, 1, 1),
-                padding="same",
-            ),
-            Conv3dBN(
-                in_channels=out_channels,
-                out_channels=out_channels,
-                kernel_size=(t1, 1, 1),
-                padding="same",
-            ),
-            Conv3dBN(
-                in_channels=out_channels,
-                out_channels=out_channels,
-                kernel_size=(1, t1, 1),
-                padding="same",
-            ),
-            Conv3dBN(
-                in_channels=out_channels,
-                out_channels=out_channels,
-                kernel_size=(1, 1, t1),
-                padding="same",
-            ),
-        )
-        self.tower2 = nn.Sequential(
-            Conv3dBN(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                kernel_size=(1, 1, 1),
-                padding="same",
-            ),
-            Conv3dBN(
-                in_channels=out_channels,
-                out_channels=out_channels,
-                kernel_size=(t2, 1, 1),
-                padding="same",
-            ),
-            Conv3dBN(
-                in_channels=out_channels,
-                out_channels=out_channels,
-                kernel_size=(1, t2, 1),
-                padding="same",
-            ),
-            Conv3dBN(
-                in_channels=out_channels,
-                out_channels=out_channels,
-                kernel_size=(1, 1, t2),
-                padding="same",
-            ),
-        )
-        self.tower3 = nn.Sequential(
-            nn.MaxPool3d(
-                kernel_size=(n_pool, n_pool, n_pool),
-                stride=(1, 1, 1),
-                padding=(n_pool // 2, n_pool // 2, n_pool // 2),
-            ),
-            Conv3dBN(
-                in_channels=in_channels,
-                out_channels=out_channels,
-                kernel_size=(1, 1, 1),
-                padding="same",
-            ),
-        )
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the InceptionResnet block."""
-        tmp = torch.cat(
-            [
-                self.tower1(x),
-                self.tower2(x),
-                self.tower3(x),
-            ],
-            dim=1,
-        )
-        return x + self._scale * tmp
 
 
 class IceCubeDNN(CNN):
