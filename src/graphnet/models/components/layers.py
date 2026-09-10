@@ -1,4 +1,10 @@
-"""Class(es) implementing layers to be used in `graphnet` models."""
+"""Backward-compatibility re-exports of model layer classes.
+
+The implementations live in the dedicated modules `edge_convolutions`,
+`attention_blocks`, and `grit_layers`. This module re-exports them so
+that existing imports and saved model configs referencing
+`graphnet.models.components.layers` keep working.
+"""
 
 from graphnet.models.components.edge_convolutions import (
     DynEdgeConv,
