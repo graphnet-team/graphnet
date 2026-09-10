@@ -1087,12 +1087,35 @@ ensuring continuity at this point.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.training.loss_functions.VonMisesFisher3DLoss">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.training.loss_functions.</span></span><span class="sig-name descname"><span class="pre">VonMisesFisher3DLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/training/loss_functions.html#VonMisesFisher3DLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.training.loss_functions.VonMisesFisher3DLoss" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.VonMisesFisherLoss" title="graphnet.training.loss_functions.VonMisesFisherLoss"><code class="xref py py-class docutils literal notranslate"><span class="pre">VonMisesFisherLoss</span></code></a></p>
-<p>Von Mises-Fisher loss function vectors in the 3D plane.</p>
-<p>Construct <cite>LossFunction</cite>, saving model config.</p>
+<dd><p>Bases: <a class="reference internal" href="#graphnet.training.loss_functions.LossFunction" title="graphnet.training.loss_functions.LossFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">LossFunction</span></code></a></p>
+<p>Negative log-likelihood of the 3D von Mises-Fisher distribution.</p>
+<p>The density on the unit sphere is <cite>f(t | mu, kappa) = C_3(kappa) *
+exp(kappa * mu . t)</cite> with normalization <cite>C_3(kappa) = kappa /
+(4*pi*sinh(kappa))</cite>. Substituting <cite>sinh(kappa) = exp(kappa) *
+(1 - exp(-2*kappa)) / 2</cite> and, exactly for unit vectors,
+<cite>kappa * (1 - mu . t) = kappa * ||t - mu||**2 / 2</cite>, the negative
+log-likelihood becomes</p>
+<p><cite>kappa * ||t - mu||**2 / 2 - log(kappa / (2*pi*(1 - exp(-2*kappa))))</cite></p>
+<p>where no term grows like <cite>kappa</cite> — the <cite>exp(kappa)</cite> of the normalizer
+cancels analytically against the alignment term. Every operation is
+elementary and on-device (no Bessel functions), the derivative is
+continuous in <cite>kappa</cite> (no approximation boundary for gradient descent
+on the concentration to stall at), and the squared-chord angular term
+stays accurate in float32 at high concentration, where <cite>1 - cos(theta)</cite>
+is comparable to the floating-point epsilon.</p>
+<p>All arithmetic runs in the dtype of the inputs; resolving sub-degree
+angular information requires the direction vectors in float32 or better.</p>
+<p>Construct <cite>VonMisesFisher3DLoss</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>eps</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1e-08</span></code>) – Regularization of the normalizer, evaluated as
+<cite>(kappa + eps) / (1 - exp(-2*kappa) + 2*eps)</cite> so that value
+and gradient stay finite at <cite>kappa = 0</cite> while the ratio
+keeps its exact limit of 1/2 (the uniform value
+<cite>-log(4*pi)</cite>). Gradients lose accuracy below
+<cite>kappa ~ sqrt(eps)</cite>, where the distribution is effectively
+uniform.</p></li>
 <li><p><strong>args</strong> (<em>Any</em>)</p></li>
 <li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
 </ul>

@@ -898,8 +898,61 @@
 
 <div class="viewcode-block" id="VonMisesFisher3DLoss">
 <a class="viewcode-back" href="../../../api/graphnet.training.loss_functions.html#graphnet.training.loss_functions.VonMisesFisher3DLoss">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">VonMisesFisher3DLoss</span><span class="p">(</span><span class="n">VonMisesFisherLoss</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Von Mises-Fisher loss function vectors in the 3D plane."""</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VonMisesFisher3DLoss</span><span class="p">(</span><span class="n">LossFunction</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Negative log-likelihood of the 3D von Mises-Fisher distribution.</span>
+
+<span class="sd">    The density on the unit sphere is `f(t | mu, kappa) = C_3(kappa) *</span>
+<span class="sd">    exp(kappa * mu . t)` with normalization `C_3(kappa) = kappa /</span>
+<span class="sd">    (4*pi*sinh(kappa))`. Substituting `sinh(kappa) = exp(kappa) *</span>
+<span class="sd">    (1 - exp(-2*kappa)) / 2` and, exactly for unit vectors,</span>
+<span class="sd">    `kappa * (1 - mu . t) = kappa * ||t - mu||**2 / 2`, the negative</span>
+<span class="sd">    log-likelihood becomes</span>
+
+<span class="sd">    `kappa * ||t - mu||**2 / 2 - log(kappa / (2*pi*(1 - exp(-2*kappa))))`</span>
+
+<span class="sd">    where no term grows like `kappa` — the `exp(kappa)` of the normalizer</span>
+<span class="sd">    cancels analytically against the alignment term. Every operation is</span>
+<span class="sd">    elementary and on-device (no Bessel functions), the derivative is</span>
+<span class="sd">    continuous in `kappa` (no approximation boundary for gradient descent</span>
+<span class="sd">    on the concentration to stall at), and the squared-chord angular term</span>
+<span class="sd">    stays accurate in float32 at high concentration, where `1 - cos(theta)`</span>
+<span class="sd">    is comparable to the floating-point epsilon.</span>
+
+<span class="sd">    All arithmetic runs in the dtype of the inputs; resolving sub-degree</span>
+<span class="sd">    angular information requires the direction vectors in float32 or better.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Construct `VonMisesFisher3DLoss`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            eps: Regularization of the normalizer, evaluated as</span>
+<span class="sd">                `(kappa + eps) / (1 - exp(-2*kappa) + 2*eps)` so that value</span>
+<span class="sd">                and gradient stay finite at `kappa = 0` while the ratio</span>
+<span class="sd">                keeps its exact limit of 1/2 (the uniform value</span>
+<span class="sd">                `-log(4*pi)`). Gradients lose accuracy below</span>
+<span class="sd">                `kappa ~ sqrt(eps)`, where the distribution is effectively</span>
+<span class="sd">                uniform.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eps</span> <span class="o">=</span> <span class="n">eps</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_cmk_scaled</span><span class="p">(</span><span class="n">kappa</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Calculate `log(exp(kappa) * C_3(kappa))`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kappa: Concentration parameters, of shape [batch_size,].</span>
+<span class="sd">            eps: Regularization, see the constructor.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Elementwise `log(exp(kappa) * C_3(kappa))`, shape [batch_size,].</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">kappa</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+            <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">eps</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">kappa</span><span class="p">))</span>
+            <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Calculate von Mises-Fisher loss for a direction in the 3D.</span>
@@ -908,7 +961,7 @@
 <span class="sd">            prediction: Output of the model. Must have shape [N, 4] where</span>
 <span class="sd">                columns 0, 1, 2 are predictions of `direction` and last column</span>
 <span class="sd">                is an estimate of `kappa`.</span>
-<span class="sd">            target: Target tensor, extracted from graph object.</span>
+<span class="sd">            target: Target unit vector, extracted from graph object.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Elementwise von Mises-Fisher loss terms. Shape [N,]</span>
@@ -919,9 +972,21 @@
         <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="n">kappa</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">kappa</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span></div>
+        <span class="c1"># With x the raw model output the task head normalized:</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># x / (|x| + eps)</span>
+        <span class="n">direction_norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">direction</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># |x| / (|x| + eps)</span>
+        <span class="n">concentration</span> <span class="o">=</span> <span class="n">prediction</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">direction_norm</span>  <span class="c1"># |x|</span>
+        <span class="n">unit_direction</span> <span class="o">=</span> <span class="n">direction</span> <span class="o">/</span> <span class="n">direction_norm</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># x / |x|</span>
+
+        <span class="c1"># For unit vectors, concentration * (1 - mu . t) equals</span>
+        <span class="c1"># concentration * ||t - mu||**2 / 2 exactly. The squared-chord form</span>
+        <span class="c1"># measures the small angular deficit directly, whereas subtracting</span>
+        <span class="c1"># cos(theta) from 1 loses all significant digits once theta**2</span>
+        <span class="c1"># approaches the floating-point epsilon.</span>
+        <span class="n">sq_chord</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">target</span> <span class="o">-</span> <span class="n">unit_direction</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">concentration</span> <span class="o">*</span> <span class="n">sq_chord</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_cmk_scaled</span><span class="p">(</span>
+            <span class="n">concentration</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps</span>
+        <span class="p">)</span></div>
 
 
 
