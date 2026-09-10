@@ -43,3 +43,107 @@ class Conv3dBN(LightningModule):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward pass of the Conv3dBN."""
         return self.activation(self.bn(self.conv(x)))
+
+
+class InceptionBlock4(LightningModule):
+    """Inception block with 4 parallel towers from Theo Glauch's DNN."""
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        t0: int = 2,
+        t1: int = 4,
+        t2: int = 5,
+        n_pool: int = 3,
+    ):
+        """Create a InceptionBlock4 module.
+
+        Args:
+            in_channels: Number of input channels.
+            out_channels: Number of output channels.
+            t0: Size of the first kernel sequence.
+            t1: Size of the second kernel sequence.
+            t2: Size of the third kernel sequence.
+            n_pool: Size of the pooling kernel.
+        """
+        super().__init__()
+
+        self.tower0 = nn.Sequential(
+            Conv3dBN(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=(t0, 1, 1),
+                padding="same",
+            ),
+            Conv3dBN(
+                in_channels=out_channels,
+                out_channels=out_channels,
+                kernel_size=(1, t0, 1),
+                padding="same",
+            ),
+            Conv3dBN(
+                in_channels=out_channels,
+                out_channels=out_channels,
+                kernel_size=(1, 1, t0),
+                padding="same",
+            ),
+        )
+
+        self.tower1 = nn.Sequential(
+            Conv3dBN(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=(t1, 1, 1),
+                padding="same",
+            ),
+            Conv3dBN(
+                in_channels=out_channels,
+                out_channels=out_channels,
+                kernel_size=(1, t1, 1),
+                padding="same",
+            ),
+            Conv3dBN(
+                in_channels=out_channels,
+                out_channels=out_channels,
+                kernel_size=(1, 1, t1),
+                padding="same",
+            ),
+        )
+
+        self.tower4 = nn.Sequential(
+            Conv3dBN(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=(1, 1, t2),
+                padding="same",
+            ),
+        )
+
+        self.tower3 = nn.Sequential(
+            nn.MaxPool3d(
+                kernel_size=(n_pool, n_pool, n_pool),
+                stride=(1, 1, 1),
+                padding=(n_pool // 2, n_pool // 2, n_pool // 2),
+            ),
+            Conv3dBN(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=(1, 1, 1),
+                padding="same",
+            ),
+        )
+        self.out_channels = out_channels * 4
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward pass of the InceptionBlock4."""
+        ret = torch.cat(
+            [
+                self.tower0(x),
+                self.tower1(x),
+                self.tower3(x),
+                self.tower4(x),
+            ],
+            dim=1,
+        )
+        return ret
