@@ -518,6 +518,8 @@
 </li>
       <li><a href="api/graphnet.models.data_representation.graphs.nodes.nodes.html#graphnet.models.data_representation.graphs.nodes.nodes.ClusterSummaryFeatures">ClusterSummaryFeatures (class in graphnet.models.data_representation.graphs.nodes.nodes)</a>
 </li>
+      <li><a href="api/graphnet.models.cnn.cnn.html#graphnet.models.cnn.cnn.CNN">CNN (class in graphnet.models.cnn.cnn)</a>
+</li>
       <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening">Coarsening (class in graphnet.models.coarsening)</a>
 </li>
       <li><a href="api/graphnet.data.dataloader.html#graphnet.data.dataloader.collate_fn">collate_fn() (in module graphnet.data.dataloader)</a>
@@ -573,6 +575,8 @@
       <li><a href="api/graphnet.data.extractors.icecube.utilities.containments.html#graphnet.data.extractors.icecube.utilities.containments.GN_containment_types.contained">contained (graphnet.data.extractors.icecube.utilities.containments.GN_containment_types attribute)</a>
 </li>
       <li><a href="api/graphnet.utilities.argparse.html#graphnet.utilities.argparse.Options.contains">contains() (graphnet.utilities.argparse.Options method)</a>
+</li>
+      <li><a href="api/graphnet.models.components.cnn_convolutions.html#graphnet.models.components.cnn_convolutions.Conv3dBN">Conv3dBN (class in graphnet.models.components.cnn_convolutions)</a>
 </li>
       <li><a href="api/graphnet.models.gnn.convnet.html#graphnet.models.gnn.convnet.ConvNet">ConvNet (class in graphnet.models.gnn.convnet)</a>
 </li>
@@ -950,9 +954,13 @@
 </li>
       <li><a href="api/graphnet.models.detector.nubench.html#graphnet.models.detector.nubench.FlowerXL">FlowerXL (class in graphnet.models.detector.nubench)</a>
 </li>
-      <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening.forward">forward() (graphnet.models.coarsening.Coarsening method)</a>
+      <li><a href="api/graphnet.models.cnn.cnn.html#graphnet.models.cnn.cnn.CNN.forward">forward() (graphnet.models.cnn.cnn.CNN method)</a>
 
       <ul>
+        <li><a href="api/graphnet.models.cnn.icecube_dnn.html#graphnet.models.cnn.icecube_dnn.IceCubeDNN.forward">(graphnet.models.cnn.icecube_dnn.IceCubeDNN method)</a>
+</li>
+        <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening.forward">(graphnet.models.coarsening.Coarsening method)</a>
+</li>
         <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Attention_rel.forward">(graphnet.models.components.attention_blocks.Attention_rel method)</a>
 </li>
         <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Block.forward">(graphnet.models.components.attention_blocks.Block method)</a>
@@ -962,6 +970,12 @@
         <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.DropPath.forward">(graphnet.models.components.attention_blocks.DropPath method)</a>
 </li>
         <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Mlp.forward">(graphnet.models.components.attention_blocks.Mlp method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.cnn_convolutions.html#graphnet.models.components.cnn_convolutions.Conv3dBN.forward">(graphnet.models.components.cnn_convolutions.Conv3dBN method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.cnn_convolutions.html#graphnet.models.components.cnn_convolutions.InceptionBlock4.forward">(graphnet.models.components.cnn_convolutions.InceptionBlock4 method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.cnn_convolutions.html#graphnet.models.components.cnn_convolutions.InceptionResnet.forward">(graphnet.models.components.cnn_convolutions.InceptionResnet method)</a>
 </li>
         <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.DynEdgeConv.forward">(graphnet.models.components.edge_convolutions.DynEdgeConv method)</a>
 </li>
@@ -1770,8 +1784,6 @@
         <li><a href="api/graphnet.data.writers.html#module-graphnet.data.writers">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.writers.graphnet_writer
 
@@ -1786,6 +1798,8 @@
         <li><a href="api/graphnet.data.writers.lmdb_writer.html#module-graphnet.data.writers.lmdb_writer">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.writers.parquet_writer
 
@@ -1920,6 +1934,27 @@
 </li>
       </ul></li>
       <li>
+    graphnet.models.cnn
+
+      <ul>
+        <li><a href="api/graphnet.models.cnn.html#module-graphnet.models.cnn">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.cnn.cnn
+
+      <ul>
+        <li><a href="api/graphnet.models.cnn.cnn.html#module-graphnet.models.cnn.cnn">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.cnn.icecube_dnn
+
+      <ul>
+        <li><a href="api/graphnet.models.cnn.icecube_dnn.html#module-graphnet.models.cnn.icecube_dnn">module</a>
+</li>
+      </ul></li>
+      <li>
     graphnet.models.coarsening
 
       <ul>
@@ -1938,6 +1973,13 @@
 
       <ul>
         <li><a href="api/graphnet.models.components.attention_blocks.html#module-graphnet.models.components.attention_blocks">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.components.cnn_convolutions
+
+      <ul>
+        <li><a href="api/graphnet.models.components.cnn_convolutions.html#module-graphnet.models.components.cnn_convolutions">module</a>
 </li>
       </ul></li>
       <li>
@@ -2629,19 +2671,21 @@
 </li>
       <li><a href="api/graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCube86">IceCube86 (class in graphnet.models.detector.icecube)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.data.constants.html#graphnet.data.constants.FEATURES.ICECUBE86">ICECUBE86 (graphnet.data.constants.FEATURES attribute)</a>
 
       <ul>
         <li><a href="api/graphnet.data.constants.html#graphnet.data.constants.TRUTH.ICECUBE86">(graphnet.data.constants.TRUTH attribute)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCube86Prometheus">IceCube86Prometheus (class in graphnet.models.detector.prometheus)</a>
 </li>
       <li><a href="api/graphnet.models.detector.icecube.html#graphnet.models.detector.icecube.IceCubeDeepCore">IceCubeDeepCore (class in graphnet.models.detector.icecube)</a>
 </li>
       <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCubeDeepCore8">IceCubeDeepCore8 (class in graphnet.models.detector.prometheus)</a>
+</li>
+      <li><a href="api/graphnet.models.cnn.icecube_dnn.html#graphnet.models.cnn.icecube_dnn.IceCubeDNN">IceCubeDNN (class in graphnet.models.cnn.icecube_dnn)</a>
 </li>
       <li><a href="api/graphnet.models.detector.prometheus.html#graphnet.models.detector.prometheus.IceCubeGen2">IceCubeGen2 (class in graphnet.models.detector.prometheus)</a>
 </li>
@@ -2662,6 +2706,10 @@
       <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.IdentityTask">IdentityTask (class in graphnet.models.task.task)</a>
 </li>
       <li><a href="api/graphnet.models.data_representation.images.image_representation.html#graphnet.models.data_representation.images.image_representation.ImageRepresentation">ImageRepresentation (class in graphnet.models.data_representation.images.image_representation)</a>
+</li>
+      <li><a href="api/graphnet.models.components.cnn_convolutions.html#graphnet.models.components.cnn_convolutions.InceptionBlock4">InceptionBlock4 (class in graphnet.models.components.cnn_convolutions)</a>
+</li>
+      <li><a href="api/graphnet.models.components.cnn_convolutions.html#graphnet.models.components.cnn_convolutions.InceptionResnet">InceptionResnet (class in graphnet.models.components.cnn_convolutions)</a>
 </li>
       <li><a href="api/graphnet.utilities.config.dataset_config.html#graphnet.utilities.config.dataset_config.DatasetConfig.index_column">index_column (graphnet.utilities.config.dataset_config.DatasetConfig attribute)</a>
 </li>
@@ -3117,11 +3165,19 @@
 </li>
         <li><a href="api/graphnet.models.html#module-graphnet.models">graphnet.models</a>
 </li>
+        <li><a href="api/graphnet.models.cnn.html#module-graphnet.models.cnn">graphnet.models.cnn</a>
+</li>
+        <li><a href="api/graphnet.models.cnn.cnn.html#module-graphnet.models.cnn.cnn">graphnet.models.cnn.cnn</a>
+</li>
+        <li><a href="api/graphnet.models.cnn.icecube_dnn.html#module-graphnet.models.cnn.icecube_dnn">graphnet.models.cnn.icecube_dnn</a>
+</li>
         <li><a href="api/graphnet.models.coarsening.html#module-graphnet.models.coarsening">graphnet.models.coarsening</a>
 </li>
         <li><a href="api/graphnet.models.components.html#module-graphnet.models.components">graphnet.models.components</a>
 </li>
         <li><a href="api/graphnet.models.components.attention_blocks.html#module-graphnet.models.components.attention_blocks">graphnet.models.components.attention_blocks</a>
+</li>
+        <li><a href="api/graphnet.models.components.cnn_convolutions.html#module-graphnet.models.components.cnn_convolutions">graphnet.models.components.cnn_convolutions</a>
 </li>
         <li><a href="api/graphnet.models.components.edge_convolutions.html#module-graphnet.models.components.edge_convolutions">graphnet.models.components.edge_convolutions</a>
 </li>
@@ -3298,9 +3354,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/graphnet.data.extractors.extractor.html#graphnet.data.extractors.extractor.Extractor.name">name (graphnet.data.extractors.extractor.Extractor property)</a>
 </li>
-      <li><a href="api/graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN.nb_inputs">nb_inputs (graphnet.models.gnn.gnn.GNN property)</a>
+      <li><a href="api/graphnet.models.cnn.cnn.html#graphnet.models.cnn.cnn.CNN.nb_inputs">nb_inputs (graphnet.models.cnn.cnn.CNN property)</a>
 
       <ul>
+        <li><a href="api/graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN.nb_inputs">(graphnet.models.gnn.gnn.GNN property)</a>
+</li>
         <li><a href="api/graphnet.models.task.classification.html#graphnet.models.task.classification.BinaryClassificationTask.nb_inputs">(graphnet.models.task.classification.BinaryClassificationTask attribute)</a>
 </li>
         <li><a href="api/graphnet.models.task.classification.html#graphnet.models.task.classification.BinaryClassificationTaskLogits.nb_inputs">(graphnet.models.task.classification.BinaryClassificationTaskLogits attribute)</a>
@@ -3350,9 +3408,11 @@
         <li><a href="api/graphnet.models.task.task.html#graphnet.models.task.task.UnsupervisedTask.nb_inputs">(graphnet.models.task.task.UnsupervisedTask method)</a>
 </li>
       </ul></li>
-      <li><a href="api/graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation.nb_outputs">nb_outputs (graphnet.models.data_representation.data_representation.DataRepresentation property)</a>
+      <li><a href="api/graphnet.models.cnn.cnn.html#graphnet.models.cnn.cnn.CNN.nb_outputs">nb_outputs (graphnet.models.cnn.cnn.CNN property)</a>
 
       <ul>
+        <li><a href="api/graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation.nb_outputs">(graphnet.models.data_representation.data_representation.DataRepresentation property)</a>
+</li>
         <li><a href="api/graphnet.models.data_representation.graphs.nodes.nodes.html#graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition.nb_outputs">(graphnet.models.data_representation.graphs.nodes.nodes.NodeDefinition property)</a>
 </li>
         <li><a href="api/graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN.nb_outputs">(graphnet.models.gnn.gnn.GNN property)</a>

@@ -1,0 +1,8 @@
+
+cnn
+===
+
+.. automodule:: graphnet.models.cnn.cnn
+   :members:
+   :show-inheritance:
+   :undoc-members:

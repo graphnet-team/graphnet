@@ -1,0 +1,8 @@
+
+icecube\_dnn
+============
+
+.. automodule:: graphnet.models.cnn.icecube_dnn
+   :members:
+   :show-inheritance:
+   :undoc-members:

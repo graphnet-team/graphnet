@@ -16,6 +16,7 @@ components
    :maxdepth: 2
 
    graphnet.models.components.attention_blocks
+   graphnet.models.components.cnn_convolutions
    graphnet.models.components.edge_convolutions
    graphnet.models.components.embedding
    graphnet.models.components.grit_layers

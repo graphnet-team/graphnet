@@ -1,0 +1,8 @@
+
+cnn\_convolutions
+=================
+
+.. automodule:: graphnet.models.components.cnn_convolutions
+   :members:
+   :show-inheritance:
+   :undoc-members:
