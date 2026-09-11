@@ -19,13 +19,13 @@ inputs:
     description: "Version of PyTorch"
     required: true
     default: "2.6.0"
-    options: ["2.7.0", "2.6.0", "2.5.1", "2.4.0"]
+    options: ["2.12.1", "2.10.0", "2.9.1", "2.7.0", "2.6.0", "2.5.1", "2.4.0"]
 
   hardware:
     description: "The requirements file depends on the hardware, i.e., CPU, GPU, or macOS"
     required: true
     default: "cpu"
-    options: ["cpu", "cu118", "cu121", "cu124", "cu126", "macos"]
+    options: ["cpu", "cu118", "cu121", "cu124", "cu126", "cu128", "cu130", "cu132", "macos"]
 
   use_vm:
     description: "Should the installation happen in a virtual environment named venv?"

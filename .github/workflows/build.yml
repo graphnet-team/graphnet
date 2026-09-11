@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        torch_version: ['2.7.0']
+        torch_version: ['2.10.0']
         hardware: ["cpu"]
     container:
       # GitHub Actions overwrite the docker container entrypoint
@@ -123,7 +123,7 @@ jobs:
           source ~/venv/bin/activate
           pip show torch
           pip show torch-geometric
-          pip show torch-cluster
+          pip show pyg-lib
           pip show torch-sparse
           pip show torch-scatter
           pip show jammy_flows
@@ -156,7 +156,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['3.11']
-        torch_version: ['2.7.0', '2.6.0', '2.5.0']
+        torch_version: ['2.12.1', '2.10.0', '2.9.1']
         hardware: ["cpu"]
     steps:
       - uses: actions/checkout@v4
@@ -184,7 +184,7 @@ jobs:
         run: |
           pip show torch
           pip show torch-geometric
-          pip show torch-cluster
+          pip show pyg-lib
           pip show torch-sparse
           pip show torch-scatter
           pip show dill
@@ -204,7 +204,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.11']
-        torch_version: ['2.7.0']
+        torch_version: ['2.10.0']
         hardware: ["cpu"]
 
     steps:
@@ -230,7 +230,7 @@ jobs:
         run: |
             pip show torch
             pip show torch-geometric
-            pip show torch-cluster
+            pip show pyg-lib
             pip show torch-sparse
             pip show torch-scatter
       - name: Run unit tests and generate coverage report
