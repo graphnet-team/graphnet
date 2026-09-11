@@ -14,7 +14,7 @@ from torch_geometric.data import Data
 
 from graphnet.models.gnn.gnn import GNN
 
-from graphnet.models.components.layers import (
+from graphnet.models.components.grit_layers import (
     GritTransformerLayer,
     SANGraphHead,
 )
