@@ -55,7 +55,7 @@ class ParquetWriter(GraphNeTWriter):
 
                 table_dir = os.path.join(save_path, f"{table}")
                 os.makedirs(table_dir, exist_ok=True)
-                df = data[table].set_index(self._index_column)
+                df = data[table]
                 df.to_parquet(
                     os.path.join(table_dir, file_name + f"_{table}.parquet")
                 )
@@ -199,8 +199,8 @@ class ParquetWriter(GraphNeTWriter):
                     id = split[index_column][split["file_name"] == unique_file]
 
                     # Filter out indices that point to empty events
-                    idx = [i for i in id if i in df.index]
-                    table_shards.append(df.loc[idx, :])
+                    idx = [i for i in id if i in set(df[index_column])]
+                    table_shards.append(df[df[index_column].isin(idx)])
 
                 os.makedirs(os.path.join(outdir, table), exist_ok=True)
                 if len(table_shards) > 0:
