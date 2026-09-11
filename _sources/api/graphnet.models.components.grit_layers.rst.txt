@@ -1,0 +1,8 @@
+
+grit\_layers
+============
+
+.. automodule:: graphnet.models.components.grit_layers
+   :members:
+   :show-inheritance:
+   :undoc-members:

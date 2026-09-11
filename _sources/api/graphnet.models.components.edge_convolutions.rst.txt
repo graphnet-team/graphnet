@@ -1,0 +1,8 @@
+
+edge\_convolutions
+==================
+
+.. automodule:: graphnet.models.components.edge_convolutions
+   :members:
+   :show-inheritance:
+   :undoc-members:

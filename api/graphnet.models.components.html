@@ -128,7 +128,7 @@
     <link rel="icon" href="../_static/favicon.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="embedding" href="graphnet.models.components.embedding.html" />
+    <link rel="next" title="attention_blocks" href="graphnet.models.components.attention_blocks.html" />
     <link rel="prev" title="models" href="graphnet.models.html" />
   
    
@@ -378,7 +378,28 @@
     <li class="md-nav__item">
     
     
+      <a href="graphnet.models.components.attention_blocks.html" class="md-nav__link">attention_blocks</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.components.edge_convolutions.html" class="md-nav__link">edge_convolutions</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
       <a href="graphnet.models.components.embedding.html" class="md-nav__link">embedding</a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="graphnet.models.components.grit_layers.html" class="md-nav__link">grit_layers</a>
       
     
     </li>
@@ -556,6 +577,20 @@
 <p><h2> Submodules </h2></p>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.components.attention_blocks.html">attention_blocks</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.DropPath"><code class="docutils literal notranslate"><span class="pre">DropPath</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Mlp"><code class="docutils literal notranslate"><span class="pre">Mlp</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Attention_rel"><code class="docutils literal notranslate"><span class="pre">Attention_rel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Block_rel"><code class="docutils literal notranslate"><span class="pre">Block_rel</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.components.edge_convolutions.html">edge_convolutions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.DynEdgeConv"><code class="docutils literal notranslate"><span class="pre">DynEdgeConv</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.EdgeConvTito"><code class="docutils literal notranslate"><span class="pre">EdgeConvTito</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.DynTrans"><code class="docutils literal notranslate"><span class="pre">DynTrans</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.models.components.embedding.html">embedding</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.embedding.html#graphnet.models.components.embedding.LinearEdgeEncoder"><code class="docutils literal notranslate"><span class="pre">LinearEdgeEncoder</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.embedding.html#graphnet.models.components.embedding.LinearNodeEncoder"><code class="docutils literal notranslate"><span class="pre">LinearNodeEncoder</span></code></a></li>
@@ -567,20 +602,13 @@
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.embedding.html#graphnet.models.components.embedding.RWSELinearNodeEncoder"><code class="docutils literal notranslate"><span class="pre">RWSELinearNodeEncoder</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="graphnet.models.components.layers.html">layers</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.DynEdgeConv"><code class="docutils literal notranslate"><span class="pre">DynEdgeConv</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.EdgeConvTito"><code class="docutils literal notranslate"><span class="pre">EdgeConvTito</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.DynTrans"><code class="docutils literal notranslate"><span class="pre">DynTrans</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.DropPath"><code class="docutils literal notranslate"><span class="pre">DropPath</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.Mlp"><code class="docutils literal notranslate"><span class="pre">Mlp</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.Block_rel"><code class="docutils literal notranslate"><span class="pre">Block_rel</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.Attention_rel"><code class="docutils literal notranslate"><span class="pre">Attention_rel</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.Block"><code class="docutils literal notranslate"><span class="pre">Block</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.GritSparseMHA"><code class="docutils literal notranslate"><span class="pre">GritSparseMHA</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.GritTransformerLayer"><code class="docutils literal notranslate"><span class="pre">GritTransformerLayer</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.layers.html#graphnet.models.components.layers.SANGraphHead"><code class="docutils literal notranslate"><span class="pre">SANGraphHead</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.components.grit_layers.html">grit_layers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.GritSparseMHA"><code class="docutils literal notranslate"><span class="pre">GritSparseMHA</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.GritTransformerLayer"><code class="docutils literal notranslate"><span class="pre">GritTransformerLayer</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.SANGraphHead"><code class="docutils literal notranslate"><span class="pre">SANGraphHead</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="graphnet.models.components.layers.html">layers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="graphnet.models.components.pool.html">pool</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.pool.html#graphnet.models.components.pool.min_pool"><code class="docutils literal notranslate"><span class="pre">min_pool()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="graphnet.models.components.pool.html#graphnet.models.components.pool.min_pool_x"><code class="docutils literal notranslate"><span class="pre">min_pool_x()</span></code></a></li>
@@ -622,12 +650,12 @@
             </a>
           
           
-            <a href="graphnet.models.components.embedding.html" title="embedding"
+            <a href="graphnet.models.components.attention_blocks.html" title="attention_blocks"
                class="md-flex md-footer-nav__link md-footer-nav__link--next"
                rel="next">
             <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title"><span
                 class="md-flex__ellipsis"> <span
-                class="md-footer-nav__direction"> "Next" </span> embedding </span>
+                class="md-footer-nav__direction"> "Next" </span> attention_blocks </span>
             </div>
             <div class="md-flex__cell md-flex__cell--shrink"><i
                 class="md-icon md-icon--arrow-forward md-footer-nav__button"></i>

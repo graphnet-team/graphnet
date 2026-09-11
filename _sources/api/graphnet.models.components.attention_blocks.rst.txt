@@ -1,0 +1,8 @@
+
+attention\_blocks
+=================
+
+.. automodule:: graphnet.models.components.attention_blocks
+   :members:
+   :show-inheritance:
+   :undoc-members:

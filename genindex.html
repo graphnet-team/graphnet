@@ -432,7 +432,7 @@
 </li>
       <li><a href="api/graphnet.data.utilities.sqlite_utilities.html#graphnet.data.utilities.sqlite_utilities.attach_index">attach_index() (in module graphnet.data.utilities.sqlite_utilities)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Attention_rel">Attention_rel (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Attention_rel">Attention_rel (class in graphnet.models.components.attention_blocks)</a>
 </li>
       <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.AttributeCoarsening">AttributeCoarsening (class in graphnet.models.coarsening)</a>
 </li>
@@ -470,9 +470,9 @@
 </li>
       <li><a href="api/graphnet.training.weight_fitting.html#graphnet.training.weight_fitting.BjoernLow">BjoernLow (class in graphnet.training.weight_fitting)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block">Block (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Block">Block (class in graphnet.models.components.attention_blocks)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block_rel">Block_rel (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Block_rel">Block_rel (class in graphnet.models.components.attention_blocks)</a>
 </li>
       <li><a href="api/graphnet.data.extractors.icecube.utilities.types.html#graphnet.data.extractors.icecube.utilities.types.break_cyclic_recursion">break_cyclic_recursion() (in module graphnet.data.extractors.icecube.utilities.types)</a>
 </li>
@@ -756,19 +756,19 @@
 </li>
       <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.DOMCoarsening">DOMCoarsening (class in graphnet.models.coarsening)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.DropPath">DropPath (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.DropPath">DropPath (class in graphnet.models.components.attention_blocks)</a>
 </li>
       <li><a href="api/graphnet.utilities.config.base_config.html#graphnet.utilities.config.base_config.BaseConfig.dump">dump() (graphnet.utilities.config.base_config.BaseConfig method)</a>
 </li>
       <li><a href="api/graphnet.models.gnn.dynedge.html#graphnet.models.gnn.dynedge.DynEdge">DynEdge (class in graphnet.models.gnn.dynedge)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.DynEdgeConv">DynEdgeConv (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.DynEdgeConv">DynEdgeConv (class in graphnet.models.components.edge_convolutions)</a>
 </li>
       <li><a href="api/graphnet.models.gnn.dynedge_jinst.html#graphnet.models.gnn.dynedge_jinst.DynEdgeJINST">DynEdgeJINST (class in graphnet.models.gnn.dynedge_jinst)</a>
 </li>
       <li><a href="api/graphnet.models.gnn.dynedge_kaggle_tito.html#graphnet.models.gnn.dynedge_kaggle_tito.DynEdgeTITO">DynEdgeTITO (class in graphnet.models.gnn.dynedge_kaggle_tito)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.DynTrans">DynTrans (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.DynTrans">DynTrans (class in graphnet.models.components.edge_convolutions)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -780,7 +780,7 @@
 </li>
       <li><a href="api/graphnet.models.easy_model.html#graphnet.models.easy_model.EasySyntax">EasySyntax (class in graphnet.models.easy_model)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.EdgeConvTito">EdgeConvTito (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.EdgeConvTito">EdgeConvTito (class in graphnet.models.components.edge_convolutions)</a>
 </li>
       <li><a href="api/graphnet.models.data_representation.graphs.edges.edges.html#graphnet.models.data_representation.graphs.edges.edges.EdgeDefinition">EdgeDefinition (class in graphnet.models.data_representation.graphs.edges.edges)</a>
 </li>
@@ -836,7 +836,7 @@
         <li><a href="api/graphnet.datasets.nubench_datasets.html#graphnet.datasets.nubench_datasets.NuBenchSpec.experiment">(graphnet.datasets.nubench_datasets.NuBenchSpec attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.DropPath.extra_repr">extra_repr() (graphnet.models.components.layers.DropPath method)</a>
+      <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.DropPath.extra_repr">extra_repr() (graphnet.models.components.attention_blocks.DropPath method)</a>
 
       <ul>
         <li><a href="api/graphnet.models.model.html#graphnet.models.model.Model.extra_repr">(graphnet.models.model.Model method)</a>
@@ -953,6 +953,22 @@
       <li><a href="api/graphnet.models.coarsening.html#graphnet.models.coarsening.Coarsening.forward">forward() (graphnet.models.coarsening.Coarsening method)</a>
 
       <ul>
+        <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Attention_rel.forward">(graphnet.models.components.attention_blocks.Attention_rel method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Block.forward">(graphnet.models.components.attention_blocks.Block method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Block_rel.forward">(graphnet.models.components.attention_blocks.Block_rel method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.DropPath.forward">(graphnet.models.components.attention_blocks.DropPath method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Mlp.forward">(graphnet.models.components.attention_blocks.Mlp method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.DynEdgeConv.forward">(graphnet.models.components.edge_convolutions.DynEdgeConv method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.DynTrans.forward">(graphnet.models.components.edge_convolutions.DynTrans method)</a>
+</li>
+        <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.EdgeConvTito.forward">(graphnet.models.components.edge_convolutions.EdgeConvTito method)</a>
+</li>
         <li><a href="api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder.forward">(graphnet.models.components.embedding.FourierEncoder method)</a>
 </li>
         <li><a href="api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.LinearEdgeEncoder.forward">(graphnet.models.components.embedding.LinearEdgeEncoder method)</a>
@@ -969,27 +985,11 @@
 </li>
         <li><a href="api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoder.forward">(graphnet.models.components.embedding.SpacetimeEncoder method)</a>
 </li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Attention_rel.forward">(graphnet.models.components.layers.Attention_rel method)</a>
+        <li><a href="api/graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.GritSparseMHA.forward">(graphnet.models.components.grit_layers.GritSparseMHA method)</a>
 </li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block.forward">(graphnet.models.components.layers.Block method)</a>
+        <li><a href="api/graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.GritTransformerLayer.forward">(graphnet.models.components.grit_layers.GritTransformerLayer method)</a>
 </li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Block_rel.forward">(graphnet.models.components.layers.Block_rel method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.DropPath.forward">(graphnet.models.components.layers.DropPath method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.DynEdgeConv.forward">(graphnet.models.components.layers.DynEdgeConv method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.DynTrans.forward">(graphnet.models.components.layers.DynTrans method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.EdgeConvTito.forward">(graphnet.models.components.layers.EdgeConvTito method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.GritSparseMHA.forward">(graphnet.models.components.layers.GritSparseMHA method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.GritTransformerLayer.forward">(graphnet.models.components.layers.GritTransformerLayer method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Mlp.forward">(graphnet.models.components.layers.Mlp method)</a>
-</li>
-        <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.SANGraphHead.forward">(graphnet.models.components.layers.SANGraphHead method)</a>
+        <li><a href="api/graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.SANGraphHead.forward">(graphnet.models.components.grit_layers.SANGraphHead method)</a>
 </li>
         <li><a href="api/graphnet.models.data_representation.data_representation.html#graphnet.models.data_representation.data_representation.DataRepresentation.forward">(graphnet.models.data_representation.data_representation.DataRepresentation method)</a>
 </li>
@@ -1763,8 +1763,6 @@
         <li><a href="api/graphnet.data.utilities.string_selection_resolver.html#module-graphnet.data.utilities.string_selection_resolver">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.writers
 
@@ -1772,6 +1770,8 @@
         <li><a href="api/graphnet.data.writers.html#module-graphnet.data.writers">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     graphnet.data.writers.graphnet_writer
 
@@ -1934,10 +1934,31 @@
 </li>
       </ul></li>
       <li>
+    graphnet.models.components.attention_blocks
+
+      <ul>
+        <li><a href="api/graphnet.models.components.attention_blocks.html#module-graphnet.models.components.attention_blocks">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.components.edge_convolutions
+
+      <ul>
+        <li><a href="api/graphnet.models.components.edge_convolutions.html#module-graphnet.models.components.edge_convolutions">module</a>
+</li>
+      </ul></li>
+      <li>
     graphnet.models.components.embedding
 
       <ul>
         <li><a href="api/graphnet.models.components.embedding.html#module-graphnet.models.components.embedding">module</a>
+</li>
+      </ul></li>
+      <li>
+    graphnet.models.components.grit_layers
+
+      <ul>
+        <li><a href="api/graphnet.models.components.grit_layers.html#module-graphnet.models.components.grit_layers">module</a>
 </li>
       </ul></li>
       <li>
@@ -2486,9 +2507,9 @@
 </li>
       <li><a href="api/graphnet.models.gnn.grit.html#graphnet.models.gnn.grit.GRIT">GRIT (class in graphnet.models.gnn.grit)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.GritSparseMHA">GritSparseMHA (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.GritSparseMHA">GritSparseMHA (class in graphnet.models.components.grit_layers)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.GritTransformerLayer">GritTransformerLayer (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.GritTransformerLayer">GritTransformerLayer (class in graphnet.models.components.grit_layers)</a>
 </li>
       <li><a href="api/graphnet.models.components.pool.html#graphnet.models.components.pool.group_by">group_by() (in module graphnet.models.components.pool)</a>
 </li>
@@ -2862,7 +2883,7 @@
         <li><a href="api/graphnet.data.writers.sqlite_writer.html#graphnet.data.writers.sqlite_writer.SQLiteWriter.merge_files">(graphnet.data.writers.sqlite_writer.SQLiteWriter method)</a>
 </li>
       </ul></li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.EdgeConvTito.message">message() (graphnet.models.components.layers.EdgeConvTito method)</a>
+      <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.EdgeConvTito.message">message() (graphnet.models.components.edge_convolutions.EdgeConvTito method)</a>
 </li>
       <li><a href="api/graphnet.models.components.pool.html#graphnet.models.components.pool.min_pool">min_pool() (in module graphnet.models.components.pool)</a>
 </li>
@@ -2870,7 +2891,7 @@
 </li>
       <li><a href="api/graphnet.models.data_representation.graphs.edges.minkowski.html#graphnet.models.data_representation.graphs.edges.minkowski.MinkowskiKNNEdges">MinkowskiKNNEdges (class in graphnet.models.data_representation.graphs.edges.minkowski)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.Mlp">Mlp (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.attention_blocks.html#graphnet.models.components.attention_blocks.Mlp">Mlp (class in graphnet.models.components.attention_blocks)</a>
 </li>
       <li><a href="api/graphnet.models.model.html#graphnet.models.model.Model">Model (class in graphnet.models.model)</a>
 </li>
@@ -3100,7 +3121,13 @@
 </li>
         <li><a href="api/graphnet.models.components.html#module-graphnet.models.components">graphnet.models.components</a>
 </li>
+        <li><a href="api/graphnet.models.components.attention_blocks.html#module-graphnet.models.components.attention_blocks">graphnet.models.components.attention_blocks</a>
+</li>
+        <li><a href="api/graphnet.models.components.edge_convolutions.html#module-graphnet.models.components.edge_convolutions">graphnet.models.components.edge_convolutions</a>
+</li>
         <li><a href="api/graphnet.models.components.embedding.html#module-graphnet.models.components.embedding">graphnet.models.components.embedding</a>
+</li>
+        <li><a href="api/graphnet.models.components.grit_layers.html#module-graphnet.models.components.grit_layers">graphnet.models.components.grit_layers</a>
 </li>
         <li><a href="api/graphnet.models.components.layers.html#module-graphnet.models.components.layers">graphnet.models.components.layers</a>
 </li>
@@ -3541,7 +3568,7 @@
 </li>
       <li><a href="api/graphnet.utilities.imports.html#graphnet.utilities.imports.requires_icecube">requires_icecube() (in module graphnet.utilities.imports)</a>
 </li>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.EdgeConvTito.reset_parameters">reset_parameters() (graphnet.models.components.layers.EdgeConvTito method)</a>
+      <li><a href="api/graphnet.models.components.edge_convolutions.html#graphnet.models.components.edge_convolutions.EdgeConvTito.reset_parameters">reset_parameters() (graphnet.models.components.edge_convolutions.EdgeConvTito method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -3569,7 +3596,7 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/graphnet.models.components.layers.html#graphnet.models.components.layers.SANGraphHead">SANGraphHead (class in graphnet.models.components.layers)</a>
+      <li><a href="api/graphnet.models.components.grit_layers.html#graphnet.models.components.grit_layers.SANGraphHead">SANGraphHead (class in graphnet.models.components.grit_layers)</a>
 </li>
       <li><a href="api/graphnet.models.model.html#graphnet.models.model.Model.save">save() (graphnet.models.model.Model method)</a>
 </li>
