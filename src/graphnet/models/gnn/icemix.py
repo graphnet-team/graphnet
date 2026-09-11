@@ -15,7 +15,7 @@ from graphnet.models.components.attention_blocks import (
     Block,
 )
 from graphnet.models.components.embedding import (
-    FourierEncoder,
+    FourierEncoderEPJC,
     SpacetimeEncoder,
 )
 from graphnet.models.gnn.dynedge import DynEdge
@@ -48,7 +48,8 @@ class DeepIce(GNN):
 
         Args:
             hidden_dim: The latent feature dimension.
-            mlp_ratio: Mlp expansion ratio of FourierEncoder and Transformer.
+            mlp_ratio: Mlp expansion ratio of FourierEncoderEPJC and
+                Transformer.
             seq_length: The base feature dimension.
             depth: The depth of the transformer.
             head_size: The size of the attention heads.
@@ -65,7 +66,7 @@ class DeepIce(GNN):
         """
         super().__init__(seq_length, hidden_dim)
         fourier_out_dim = hidden_dim // 2 if include_dynedge else hidden_dim
-        self.fourier_ext = FourierEncoder(
+        self.fourier_ext = FourierEncoderEPJC(
             seq_length=seq_length,
             mlp_dim=None,
             output_dim=fourier_out_dim,

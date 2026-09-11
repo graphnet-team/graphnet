@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.functional import Tensor
 
-from typing import Optional
+from typing import Dict, Optional, Tuple, Union
 
 from pytorch_lightning import LightningModule
 from torch_geometric.utils import add_self_loops
@@ -66,14 +66,18 @@ class SinusoidalPosEmb(LightningModule):
     def __init__(
         self,
         dim: int = 16,
-        n_freq: int = 10000,
+        n_freq: float = 10000.0,
         scaled: bool = False,
     ):
         """Construct `SinusoidalPosEmb`.
 
         Args:
-            dim: Embedding dimension.
-            n_freq: Number of frequencies.
+            dim: Embedding dimension. The ladder holds `dim / 2`
+                frequencies, each contributing a sine and a cosine.
+            n_freq: Span of the frequency ladder. The frequencies run from 1
+                down to `n_freq ** -((dim/2 - 1)/(dim/2))`, so this sets how
+                far the embedding reaches beyond its finest scale, not how
+                many frequencies there are.
             scaled: Whether or not to scale the output.
         """
         super().__init__()
@@ -82,26 +86,38 @@ class SinusoidalPosEmb(LightningModule):
         self.scale = nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
         self.dim = dim
         self.n_freq = torch.Tensor([n_freq])
+        # The ladder is fixed at construction, so build it once instead of per
+        # forward pass. Non-persistent: it is derived from `dim` and `n_freq`,
+        # and keeping it out of the state dict leaves checkpoints unchanged.
+        half_dim = dim / 2
+        self.register_buffer(
+            "freqs",
+            torch.exp(
+                torch.arange(half_dim) * (-torch.log(self.n_freq) / half_dim)
+            ),
+            persistent=False,
+        )
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass."""
-        device = x.device
-        half_dim = self.dim / 2
-        emb = torch.log(self.n_freq.to(device=device)) / half_dim
-        emb = torch.exp(torch.arange(half_dim, device=device) * (-emb))
-        emb = x.unsqueeze(-1) * emb.unsqueeze(0)
+        emb = x.unsqueeze(-1) * self.freqs
         emb = torch.cat((torch.sin(emb), torch.cos(emb)), dim=-1)
         return emb * self.scale
 
 
-class FourierEncoder(LightningModule):
-    """Fourier encoder module.
+class FourierEncoderEPJC(LightningModule):
+    """Fourier encoder of the IceMix Kaggle solution.
 
-    This module incorporates sinusoidal positional embeddings and
-    auxiliary embeddings to process input sequences and produce
-    meaningful representations. The module assumes that the input data
-    is in the format of (x, y, z, time, charge, auxiliary), being the
-    first four features mandatory.
+    The graphnet implementation of the encoder as presented in the EPJ-C
+    publication (arXiv:2310.15674). It incorporates sinusoidal positional
+    embeddings and auxiliary embeddings to process input sequences and
+    produce meaningful representations.
+
+    It carries assumptions from that competition that make it hard to use
+    elsewhere: the input must be in the order (x, y, z, time, charge,
+    auxiliary) with the first four mandatory, and the multipliers applied
+    before the sinusoidal ladder are fixed to the Kaggle dataset's
+    normalisation. See `FourierEncoder` for a version without them.
     """
 
     def __init__(
@@ -178,6 +194,123 @@ class FourierEncoder(LightningModule):
         x = self.mlp(x)
 
         return x
+
+
+class FourierEncoder(LightningModule):
+    """Apply sinusoidal positional encodings to sequence representations.
+
+    Embeds `[B, K, D]` sequences -- batch size, padded sequence length, and
+    features per step -- into sinusoidal positions, optionally alongside the
+    unpadded length of each sequence.
+
+    A superficial refactor of `FourierEncoderEPJC` that drops the
+    assumptions tying it to the Kaggle dataset. `schema` states which
+    columns to embed and over which band of scales, so nothing is assumed
+    about the order or meaning of the input columns, and the boolean
+    embedding and MLP projection are left to the model, since both are
+    problem-specific.
+    """
+
+    def __init__(
+        self,
+        schema: Dict[int, Union[float, Tuple[float, float]]],
+        seq_length: int = 128,
+        scaled: bool = False,
+        add_sequence_length: bool = True,
+        n_freq: float = 10000.0,
+    ):
+        """Construct `FourierEncoder`.
+
+        Args:
+            schema: Maps an input column index to how it is embedded, either
+                as a multiplier or as a `(multiplier, n_freq)` pair, e.g.
+                `{1: 1024, 3: (4096, 500)}`. Columns absent from the schema
+                are not embedded.
+
+                The two together set the band of separations a column can
+                resolve: wavelengths from `2 * pi * unit / multiplier` up to
+                that times `n_freq ** ((dim/2 - 1)/(dim/2))`, where `unit` is
+                the physical size of one unit of the (normalised) column. So
+                the multiplier places the band and `n_freq` sets its width,
+                and both are properties of the data rather than of the model
+                -- values carried over from a different normalisation resolve
+                a different physical range.
+            seq_length: Desired dimensionality of the base sinusoidal
+                positional embeddings.
+            scaled: Whether or not to scale the embeddings.
+            add_sequence_length: If True, the unpadded length of each
+                sequence is embedded as well, at half width.
+            n_freq: Ladder span for columns whose schema entry gives only a
+                multiplier, and for the sequence-length embedding.
+        """
+        super().__init__()
+        if not schema:
+            raise ValueError("`schema` must map at least one column.")
+
+        self.schema = {
+            col: (
+                (float(v[0]), float(v[1]))
+                if isinstance(v, (tuple, list))
+                else (float(v), float(n_freq))
+            )
+            for col, v in schema.items()
+        }
+        self._add_sequence_length = add_sequence_length
+        # One embedder per distinct span, not per column: columns sharing a
+        # span share a ladder, so the common case of a single span builds a
+        # single module and keeps `scaled`'s one learnable scale.
+        spans = sorted({span for _, span in self.schema.values()})
+        self._span_index = {span: i for i, span in enumerate(spans)}
+        self.sin_feature = nn.ModuleList(
+            [
+                SinusoidalPosEmb(dim=seq_length, n_freq=span, scaled=scaled)
+                for span in spans
+            ]
+        )
+        if add_sequence_length:
+            self.sin_length = SinusoidalPosEmb(
+                dim=seq_length // 2, n_freq=n_freq, scaled=scaled
+            )
+        # Width of the concatenation, so the model can size what follows.
+        self.output_dim = len(self.schema) * seq_length + (
+            seq_length // 2 if add_sequence_length else 0
+        )
+
+    def forward(
+        self,
+        x: Tensor,
+        seq_length: Optional[Tensor] = None,
+    ) -> Tensor:
+        """Apply positional encoding of `x`.
+
+        Args:
+            x: `[B, K, D]`-dimensional sequence representation of an event.
+            seq_length: `[B]`-dimensional unpadded length of each sequence in
+                `x`, one entry per sequence rather than per step. Required
+                when `add_sequence_length` is True, in which case each step
+                of a sequence receives a copy of its sequence's embedded
+                length.
+
+        Returns:
+            Embedded `[B, K, J]`-dimensional sequence.
+        """
+        embeddings = [
+            self.sin_feature[self._span_index[span]](scale * x[:, :, col])
+            for col, (scale, span) in self.schema.items()
+        ]
+
+        if self._add_sequence_length:
+            if seq_length is None:
+                raise ValueError(
+                    "Must pass `seq_length` when `add_sequence_length` is "
+                    "True."
+                )
+            length = torch.log10(seq_length.to(dtype=x.dtype))
+            embeddings.append(
+                self.sin_length(length).unsqueeze(1).expand(-1, x.shape[1], -1)
+            )
+
+        return torch.cat(embeddings, -1)
 
 
 class SpacetimeEncoder(LightningModule):
