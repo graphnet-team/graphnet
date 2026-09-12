@@ -1,6 +1,6 @@
 """Implementation of the DynEdge GNN model architecture."""
 
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Sequence, Union
 
 import torch
 from torch import Tensor, LongTensor
@@ -28,7 +28,7 @@ class DynEdge(GNN):
         *,
         nb_neighbours: int = 8,
         features_subset: Optional[Union[List[int], slice]] = None,
-        dynedge_layer_sizes: Optional[List[Tuple[int, ...]]] = None,
+        dynedge_layer_sizes: Optional[List[Sequence[int]]] = None,
         post_processing_layer_sizes: Optional[List[int]] = None,
         readout_layer_sizes: Optional[List[int]] = None,
         global_pooling_schemes: Optional[Union[str, List[str]]] = None,
@@ -102,7 +102,10 @@ class DynEdge(GNN):
 
         assert isinstance(dynedge_layer_sizes, list)
         assert len(dynedge_layer_sizes)
-        assert all(isinstance(sizes, tuple) for sizes in dynedge_layer_sizes)
+        # YAML has no tuple type, so a serialized config reloads these inner
+        # size pairs as lists; coerce them back so a saved DynEdge config
+        # round-trips.
+        dynedge_layer_sizes = [tuple(sizes) for sizes in dynedge_layer_sizes]
         assert all(len(sizes) > 0 for sizes in dynedge_layer_sizes)
         assert all(
             all(size > 0 for size in sizes) for sizes in dynedge_layer_sizes
