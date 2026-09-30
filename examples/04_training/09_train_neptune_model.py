@@ -84,8 +84,6 @@ def main(
         ),
     }
 
-    # Neptune consumes the raw pulse cloud directly, so no edges and no
-    # pulse-count cap are needed.
     data_representation = EdgelessGraph(
         detector=Prometheus(),
         node_definition=NodesAsPulses(),
@@ -129,31 +127,24 @@ def main(
     training_dataloader = dm.train_dataloader
     validation_dataloader = dm.val_dataloader
 
-    # Building model. `Prometheus` standardizes positions as metres / 100 and
-    # time as nanoseconds / 1.05e4, so `xyz_scale=0.1` and `time_scale=10.5`
-    # bring them to the kilometres and microseconds Neptune expects. This
-    # detector records no charge, hence `charge_column=None`.
-    #
-    # Note that the geometric priors -- `fourier_freq_min` / `_max`,
-    # `rope_scales`, and the tokenizer's `metric_time_scale` -- are left at
-    # their IceCube-tuned defaults here. Rescale them for a production run on
-    # a detector of a very different size.
+    # Building model. Prometheus units are 0.1 km and 10.5 us, so the
+    # IceCube86 geometric defaults are rescaled as described in `Neptune`.
     backbone = Neptune(
-        nb_inputs=data_representation.nb_outputs,
-        coordinate_columns=[0, 1, 2],
-        time_column=3,
+        input_feature_names=data_representation.output_feature_names,
+        coordinate_columns=["sensor_pos_x", "sensor_pos_y", "sensor_pos_z"],
+        time_column="t",
         charge_column=None,
-        xyz_scale=0.1,
-        time_scale=10.5,
         num_patches=32,
-        token_dim=64,
-        num_layers=2,
+        d_model=64,
+        depth=2,
         num_heads=4,
         hidden_dim=128,
-        tokenizer_kwargs={"mlp_layers": [32, 64]},
-        # `compile_encoder=True` is worth 2-4x on GPU, and is what enables
-        # the packed attention path. Left off here to keep the example quick.
-        compile_encoder=False,
+        tokenizer_mlp_layers=[32, 64],
+        tokenizer_kwargs={"metric_time_scale": 31.5},
+        position_encoding_schema={
+            c: (18.0, 60.0 ** (20 / 19)) for c in range(3)
+        },
+        rope_scales=[18.0, 18.0, 18.0, 420.0],
     )
     task = DirectionReconstructionWithKappa(
         hidden_size=backbone.nb_outputs,

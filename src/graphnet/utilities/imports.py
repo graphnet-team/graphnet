@@ -47,16 +47,16 @@ def has_jammy_flows_package() -> bool:
         return False
 
 
-def has_triton_package() -> bool:
-    """Check whether the `triton` package is available."""
+def has_torch_fps_package() -> bool:
+    """Check whether the `torch_fps` package is available."""
     try:
-        import triton  # pyright: reportMissingImports=false
+        import torch_fps  # pyright: reportMissingImports=false
 
         return True
     except ImportError:
         Logger(log_folder=None).warning_once(
-            "`triton` not available. Falling back to the pure-PyTorch "
-            "implementation of farthest point sampling."
+            "`torch_fps` not available. Farthest point sampling falls back to "
+            "the slower pure-PyTorch implementation."
         )
         return False
 

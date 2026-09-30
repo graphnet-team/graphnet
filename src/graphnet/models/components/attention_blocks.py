@@ -34,18 +34,10 @@ class DropPath(LightningModule):
         """Forward pass.
 
         Args:
-            x: Input tensor. On the padded path this is `[B, ...]` and one
-                decision is drawn per row of the batch dimension.
-            doc_id: Optional `[N]` event index per token, for a packed
-                `[1, N, D]` input where the batch dimension no longer
-                separates events. One decision is then drawn per event and
-                gathered to its tokens, matching the per-event granularity of
-                the padded path.
-            num_docs: Number of distinct events in `doc_id`. Required when
-                `doc_id` is given.
-
-        Returns:
-            Tensor of the same shape as `x`.
+            x: Input tensor; one drop decision per row of the batch dimension.
+            doc_id: Optional `[N]` event index of each token of a packed
+                `[1, N, D]` input; decisions are then drawn per event.
+            num_docs: Number of events in `doc_id`.
         """
         if self.drop_prob == 0.0 or not self.training:
             return x

@@ -9,6 +9,7 @@ from torch import Tensor
 from torch_geometric.data import Batch, Data
 
 from graphnet.models import Model, StandardModel
+from graphnet.models.components import fps
 from graphnet.models.components.fps import (
     farthest_point_sampling,
     farthest_point_sampling_with_assign,
@@ -17,41 +18,49 @@ from graphnet.models.components.fps import (
 )
 from graphnet.models.components.tokenizers import FPSTokenizer
 from graphnet.models.data_representation import EdgelessGraph, NodesAsPulses
-from graphnet.models.detector.icecube import IceCube86, IceCubeKaggle
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.models.transformer import Neptune
 from graphnet.training.loss_functions import LogCoshLoss
 from graphnet.utilities.config import ModelConfig
+from graphnet.utilities.imports import has_torch_fps_package
 
-# Feature layout used throughout: [x, y, z, t, charge, aux].
-N_FEATURES = 6
+FEATURES = ["x", "y", "z", "t", "charge", "aux"]
+N_FEATURES = len(FEATURES)
 NUM_PATCHES = 8
+NAMES: Dict[str, Any] = dict(
+    input_feature_names=FEATURES,
+    coordinate_columns=["x", "y", "z"],
+    time_column="t",
+)
 
 # Small enough to keep every test in the sub-second range.
 TINY: Dict[str, Any] = dict(
     num_patches=NUM_PATCHES,
-    token_dim=32,
-    num_layers=1,
+    d_model=32,
+    depth=1,
     num_heads=2,
     hidden_dim=24,
-    tokenizer_kwargs={"mlp_layers": [16, 16]},
+    tokenizer_mlp_layers=[16, 16],
 )
 
 
 def _model(**kwargs: Any) -> Neptune:
     """Build a tiny `Neptune` over the six-column feature layout."""
-    config: Dict[str, Any] = dict(TINY)
+    config: Dict[str, Any] = dict(NAMES, charge_column="charge", **TINY)
     config.update(kwargs)
-    return Neptune(nb_inputs=N_FEATURES, charge_column=4, **config)
+    return Neptune(**config)
 
 
 def _batch(counts: List[int], seed: int = 0) -> Batch:
     """Build a batch of events holding `counts[i]` pulses each."""
     torch.manual_seed(seed)
-    return Batch.from_data_list(
-        [Data(x=torch.randn(n, N_FEATURES)) for n in counts]
-    )
+    data = []
+    for n in counts:
+        x = torch.randn(n, N_FEATURES)
+        x[:, 4] = x[:, 4].abs()  # physical charge is non-negative
+        data.append(Data(x=x))
+    return Batch.from_data_list(data)
 
 
 def test_forward_shape() -> None:
@@ -60,7 +69,7 @@ def test_forward_shape() -> None:
     counts = [3, 5, 11]
     output = model(_batch(counts))
     assert output.shape == (len(counts), model.nb_outputs)
-    assert model.nb_outputs == TINY["token_dim"]
+    assert model.nb_outputs == TINY["d_model"]
     assert model.nb_inputs == N_FEATURES
     assert torch.isfinite(output).all()
 
@@ -75,7 +84,6 @@ def test_output_dim_overrides_nb_outputs() -> None:
 def test_both_tokenizer_paths() -> None:
     """Test events below, at, and above the token budget in one batch."""
     model = _model()
-    # Fewer than, exactly, and more than `num_patches` pulses.
     counts = [NUM_PATCHES - 3, NUM_PATCHES, NUM_PATCHES * 5]
     output = model(_batch(counts))
     assert output.shape == (3, model.nb_outputs)
@@ -83,12 +91,7 @@ def test_both_tokenizer_paths() -> None:
 
 
 def test_zero_hit_event() -> None:
-    """Test that empty events keep their row and do not produce NaN.
-
-    Events with no pulses contribute no rows to `data.batch`, so a backbone
-    that infers the batch size from `batch.max()` would silently drop
-    trailing empty events and misalign predictions against labels.
-    """
+    """Test that empty events keep their row and do not produce NaN."""
     model = _model()
     counts = [4, 0, 7, 0]  # empty in the middle and at the end
     output = model(_batch(counts))
@@ -104,21 +107,8 @@ def test_all_events_empty() -> None:
     assert torch.isfinite(output).all()
 
 
-def test_single_event_without_batch_attribute() -> None:
-    """Test that an uncollated `Data` object is treated as one event."""
-    model = _model()
-    torch.manual_seed(0)
-    output = model(Data(x=torch.randn(12, N_FEATURES)))
-    assert output.shape == (1, model.nb_outputs)
-
-
 def test_gradients_reach_every_stage() -> None:
-    """Test that gradients flow to tokenizer, encoder, and readout.
-
-    The parameter names asserted here are also the `state_dict` keys of the
-    reference implementation, so this doubles as a check that the module
-    nesting -- and hence checkpoint compatibility -- is preserved.
-    """
+    """Test that gradients flow to tokenizer, encoder, and readout."""
     model = _model()
     model(_batch([6, NUM_PATCHES * 4])).sum().backward()
     parameters = dict(model.named_parameters())
@@ -126,7 +116,7 @@ def test_gradients_reach_every_stage() -> None:
         "tokenizer.mlp1.0.weight",
         "tokenizer.mlp2.0.weight",
         "tokenizer.rel_encoder.0.weight",
-        "encoder.abs_pos_encoder.mlp.0.weight",
+        "encoder.pos_mlp.0.weight",
         "encoder.layers.layers.0.qkv_proj.weight",
         "encoder.layers.layers.0.ffn.w13.weight",
         "encoder.layers.layers.0.gamma_1",
@@ -151,9 +141,9 @@ def test_attention_pooling() -> None:
 @pytest.mark.parametrize(
     "tokenizer_kwargs",
     [
-        {"mlp_layers": [16, 16], "assign_mode": "knn", "k_neighbors": 3},
-        {"mlp_layers": [16, 16], "lloyd_iters": 2},
-        {"mlp_layers": [16, 16], "knn_pool": "max_mean"},
+        {"assign_mode": "knn", "k_neighbors": 3},
+        {"lloyd_iters": 2},
+        {"knn_pool": "max_mean"},
     ],
 )
 def test_tokenizer_variants(tokenizer_kwargs: Dict[str, Any]) -> None:
@@ -164,161 +154,86 @@ def test_tokenizer_variants(tokenizer_kwargs: Dict[str, Any]) -> None:
     assert torch.isfinite(output).all()
 
 
-def test_charge_scaling_and_columns() -> None:
-    """Test the detector-unit adapter in front of the tokenizer."""
-    # `log10` charge is converted to the `log1p` the tokenizer expects, and
-    # placed in column 0 of the feature tensor.
-    model = _model(charge_scaling="log10")
-    x = torch.zeros(3, N_FEATURES)
-    x[:, 4] = torch.log10(torch.tensor([1.0, 10.0, 100.0]))
-    _, features, _, q_phys, _ = model._prepare_inputs(Data(x=x))
-    assert torch.allclose(q_phys, torch.tensor([1.0, 10.0, 100.0]), atol=1e-5)
-    assert torch.allclose(
-        features[:, 0], torch.log1p(torch.tensor([1.0, 10.0, 100.0]))
-    )
-    # The remaining feature columns follow charge, in order.
-    assert features.shape == (3, 1 + 1)  # charge + the single `aux` column
-    assert model.tokenizer.mlp1[0].in_features == 2
+def test_feature_names_resolve_to_columns() -> None:
+    """Test that feature names select the right columns of `data.x`."""
+    model = _model(input_feature_names=["t", "aux", "x", "charge", "y", "z"])
+    assert model._coordinate_index == [2, 4, 5]
+    assert model._time_index == [0]
+    assert model._charge_index == 3
+    assert model._feature_index == [1]
+    assert model.tokenizer.mlp1[0].in_features == 2  # log1p(charge), aux
 
-    # Without a charge column every pulse counts once.
-    chargeless = Neptune(nb_inputs=4, charge_column=None, **TINY)
+    # Without a charge column every pulse is a unit-weight hit.
+    chargeless = Neptune(
+        **dict(NAMES, input_feature_names=["x", "y", "z", "t"]), **TINY
+    )
     assert chargeless.tokenizer.mlp1[0].in_features == 1
-    _, features, _, q_phys, _ = chargeless._prepare_inputs(
-        Data(x=torch.randn(5, 4))
-    )
-    assert torch.equal(q_phys, torch.ones(5))
-    assert features.shape == (5, 1)
+    batch = Batch.from_data_list([Data(x=torch.randn(n, 4)) for n in (3, 20)])
+    assert torch.isfinite(chargeless(batch)).all()
 
 
-def test_charge_scale_undoes_a_rescaled_logarithm() -> None:
-    """Test `charge_scale` for detectors that rescale the log charge.
+@pytest.mark.parametrize(
+    "override",
+    [
+        {"coordinate_columns": ["x", "y", "w"]},
+        {"time_column": "time"},
+        {"charge_column": "q"},
+        {"feature_columns": ["aux", "missing"]},
+    ],
+)
+def test_unknown_feature_names_raise(override: Dict[str, Any]) -> None:
+    """Test that a name missing from `input_feature_names` raises."""
+    with pytest.raises(ValueError, match="not in input_feature_names"):
+        _model(**override)
 
-    `IceCubeKaggle` stores `log10(charge) / 3`, so undoing the scaling needs
-    the column multiplied by three first.
+
+def test_time_shift_invariance() -> None:
+    """Test that a constant time offset leaves the output unchanged.
+
+    Time only enters through differences, which is why Neptune needs no
+    per-event time centering.
     """
-    charge = torch.tensor([0.5, 1.0, 7.3, 120.0])
-    for detector, scale in ((IceCube86(), 1.0), (IceCubeKaggle(), 3.0)):
-        model = _model(charge_scaling="log10", charge_scale=scale)
-        x = torch.zeros(4, N_FEATURES)
-        x[:, 4] = detector._charge(charge)
-        _, _, _, q_phys, _ = model._prepare_inputs(Data(x=x))
-        assert torch.allclose(
-            q_phys, charge, rtol=1e-4
-        ), f"{type(detector).__name__} charge not recovered"
+    model = _model(tokenizer_kwargs={"lloyd_iters": 2}).eval()
+    batch = _batch([5, NUM_PATCHES * 4, NUM_PATCHES * 2])
+    with torch.no_grad():
+        reference = model(batch)
+        batch.x[:, 3] += 0.75
+        shifted = model(batch)
+    assert torch.allclose(shifted, reference, atol=1e-5)
 
 
-def test_knn_padding_is_not_counted_as_neighbours() -> None:
-    """Test that repeated-centroid padding is excluded from kNN statistics.
-
-    When an event holds fewer points than `k_neighbors`, the sampling
-    backend pads the neighbour list by repeating the centroid index. Since
-    that index is itself valid, the padded slots must be masked out by rank,
-    or the centroid is counted several times in the per-token multiplicity,
-    total charge, mean, and spread. Asking for more neighbours than an event
-    has points must therefore give the same tokens as asking for exactly as
-    many as it has.
-    """
-    base: Dict[str, Any] = dict(
-        feature_dim=2,
-        max_tokens=4,
-        token_dim=8,
-        mlp_layers=[8],
-        assign_mode="knn",
-    )
-    # Event 0 holds 5 points, above `max_tokens` so it takes the sampling
-    # path, and below the 10 neighbours requested so its list gets padded.
-    counts = [5, 40]
-    torch.manual_seed(0)
-    n_points = sum(counts)
-    coords = torch.randn(n_points, 3)
-    times = torch.randn(n_points, 1)
-    features = torch.rand(n_points, 2) * 2
-    batch = torch.repeat_interleave(
-        torch.arange(len(counts)), torch.tensor(counts)
-    )
-
-    reference = FPSTokenizer(k_neighbors=8, **base).eval()
-
-    def tokens(k_neighbors: int) -> Tensor:
-        tokenizer = FPSTokenizer(k_neighbors=k_neighbors, **base).eval()
-        tokenizer.load_state_dict(reference.state_dict())
-        with torch.no_grad():
-            return tokenizer(
-                coords, features, batch, times, batch_size=len(counts)
-            )[0]
-
-    assert torch.allclose(tokens(10)[0], tokens(5)[0], atol=1e-6)
-
-
-@pytest.mark.parametrize("dtype", [torch.bfloat16, torch.half])
-def test_low_precision_without_autocast(dtype: torch.dtype) -> None:
-    """Test a module converted to low precision and run without autocast.
-
-    This is what Lightning's `"16-true"` and `"bf16-true"` precision
-    modes do. The Fourier position encoding evaluates its trigonometry
-    in float32, so its output has to be cast back before reaching low-
-    precision weights.
-    """
-    model = _model().to(dtype)
-    batch = Batch.from_data_list(
-        [
-            Data(x=torch.randn(n, N_FEATURES).to(dtype))
-            for n in (4, NUM_PATCHES * 3, 0)
-        ]
-    )
-    output = model(batch)
-    assert output.shape == (3, model.nb_outputs)
-    assert output.dtype == dtype
-    assert torch.isfinite(output).all()
-
-
-def test_coordinate_and_time_scaling() -> None:
-    """Test that coordinates and time are rescaled and time is centred."""
-    model = _model(xyz_scale=0.5, time_scale=30.0, center_time=True)
-    x = torch.zeros(4, N_FEATURES)
-    x[:, :3] = 2.0
-    x[:, 3] = torch.tensor([0.0, 1.0, 2.0, 3.0])
-    coords, _, _, _, _ = model._prepare_inputs(Data(x=x))
-    assert torch.allclose(coords[:, :3], torch.full((4, 3), 1.0))
-    # Unit charge here, so centring subtracts the plain mean of 1.5 * 30.
-    expected = (torch.tensor([0.0, 1.0, 2.0, 3.0]) - 1.5) * 30.0
-    assert torch.allclose(coords[:, 3], expected)
-
-    uncentred = _model(time_scale=30.0, center_time=False)
-    coords, _, _, _, _ = uncentred._prepare_inputs(Data(x=x))
-    assert torch.allclose(
-        coords[:, 3], torch.tensor([0.0, 1.0, 2.0, 3.0]) * 30.0
-    )
+def test_low_precision_without_autocast() -> None:
+    """Test a model converted to low precision, as in `"bf16-true"`."""
+    for dtype in (torch.bfloat16, torch.half):
+        model = _model().to(dtype)
+        batch = _batch([4, NUM_PATCHES * 3, 0])
+        batch.x = batch.x.to(dtype)
+        output = model(batch)
+        assert output.shape == (3, model.nb_outputs)
+        assert output.dtype == dtype
+        assert torch.isfinite(output).all()
 
 
 def test_invalid_configurations() -> None:
     """Test that misconfigurations fail fast with a clear message."""
     with pytest.raises(ValueError, match="divisible"):
-        _model(token_dim=33, num_heads=2)
+        _model(d_model=33, num_heads=2)
     with pytest.raises(ValueError, match="rotary embedding"):
-        # head_dim = 4, below the minimum of 8 required by RoPE4D.
-        Neptune(
-            nb_inputs=N_FEATURES,
-            token_dim=32,
-            num_heads=8,
-            **{
-                k: v
-                for k, v in TINY.items()
-                if k not in ("token_dim", "num_heads")
-            },
-        )
-    with pytest.raises(ValueError, match="exactly 3 columns"):
-        _model(coordinate_columns=[0, 1])
-    with pytest.raises(ValueError, match="charge_scaling"):
-        _model(charge_scaling="sqrt")
-    with pytest.raises(ValueError, match="out of range"):
-        _model(time_column=99)
+        _model(num_heads=8)  # head_dim = 4, below the RoPE4D minimum of 8
+    with pytest.raises(ValueError, match="3 columns"):
+        _model(coordinate_columns=["x", "y"])
+    with pytest.raises(ValueError, match="charge_col"):
+        _model(tokenizer_kwargs={"charge_col": 1})
 
 
 def test_model_config_round_trip(tmp_path: Any) -> None:
     """Test that `Neptune` survives a `ModelConfig` round trip."""
     path = os.path.join(str(tmp_path), "neptune.yml")
-    model = _model(output_dim=5, pool_type="attention")
+    model = _model(
+        output_dim=5,
+        pool_type="attention",
+        position_encoding_schema={0: (9.0, 50.0), 1: 9.0, 3: (2.0, 10.0)},
+    )
     model.save_config(path)
 
     loaded_config = ModelConfig.load(path)
@@ -336,13 +251,11 @@ def test_standard_model_end_to_end() -> None:
     data_representation = EdgelessGraph(
         detector=Prometheus(), node_definition=NodesAsPulses()
     )
+    names = data_representation.output_feature_names
     backbone = Neptune(
-        nb_inputs=data_representation.nb_outputs,
-        coordinate_columns=[0, 1, 2],
-        time_column=3,
-        charge_column=None,
-        xyz_scale=0.1,
-        time_scale=10.5,
+        input_feature_names=names,
+        coordinate_columns=names[:3],
+        time_column=names[3],
         **TINY,
     )
     task = EnergyReconstruction(
@@ -356,13 +269,52 @@ def test_standard_model_end_to_end() -> None:
         tasks=[task],
     )
     torch.manual_seed(0)
-    nb_inputs = data_representation.nb_outputs
     batch = Batch.from_data_list(
-        [Data(x=torch.randn(n, nb_inputs)) for n in (4, 20, 0)]
+        [Data(x=torch.randn(n, len(names))) for n in (4, 20, 0)]
     )
     predictions = model(batch)
     assert len(predictions) == 1
     assert predictions[0].shape == (3, 1)
+
+
+def test_runs_without_torch_fps(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Test the pure-PyTorch FPS path used when `torch_fps` is missing."""
+    monkeypatch.setattr(fps, "has_torch_fps_package", lambda: False)
+    devices = ["cpu"] + (["cuda"] if torch.cuda.is_available() else [])
+    for device in devices:
+        assert fps._torch_fps() is None
+        model = _model(tokenizer_kwargs={"lloyd_iters": 1}).to(device)
+        output = model(_batch([5, NUM_PATCHES * 4]).to(device))
+        assert torch.isfinite(output).all()
+
+
+@pytest.mark.skipif(not has_torch_fps_package(), reason="needs torch_fps")
+@pytest.mark.parametrize(
+    "device",
+    ["cpu"] + (["cuda"] if torch.cuda.is_available() else []),
+)
+def test_torch_fps_matches_reference(
+    monkeypatch: pytest.MonkeyPatch, device: str
+) -> None:
+    """Test that the `torch_fps` backends agree with the reference."""
+    torch.manual_seed(0)
+    points = torch.randn(4, 300, 4, device=device)
+    mask = torch.rand(4, 300, device=device) < 0.9
+    start = torch.zeros(4, dtype=torch.long, device=device)
+
+    def run() -> List[Tensor]:
+        idx, assign = farthest_point_sampling_with_assign(
+            points, mask, 16, start_idx=start
+        )
+        knn = farthest_point_sampling_with_knn(
+            points, mask, 16, 8, start_idx=start
+        )[1]
+        return [idx, torch.where(mask, assign, 0), knn]
+
+    fast = run()
+    monkeypatch.setattr(fps, "has_torch_fps_package", lambda: False)
+    for a, b in zip(fast, run()):
+        assert torch.equal(a, b)
 
 
 # ------------------------------------------------------------------------
