@@ -80,6 +80,9 @@
   ];
 
   var torchList = [
+    ['torch-2.12.1', 'PyTorch 2.12.1'],
+    ['torch-2.10.0', 'PyTorch 2.10.0'],
+    ['torch-2.9.1', 'PyTorch 2.9.1'],
     ['torch-2.7.0', 'PyTorch 2.7.0'],
     ['torch-2.6.0', 'PyTorch 2.6.0'],
     ['torch-2.5.1', 'PyTorch 2.5.1'],
@@ -97,19 +100,68 @@
     ['cu124', '12.4'],
     ['cu126', '12.6'],
     ['cu128', '12.8'],
+    ['cu130', '13.0'],
+    ['cu132', '13.2'],
     ['cpu', 'CPU'],
   ];
 
   var torchWheelMap = {
+    "torch-2.12.1": "2.12.1",
+    "torch-2.10.0": "2.10.0",
+    "torch-2.9.1": "2.9.1",
     "torch-2.7.0": "2.7.0",
     "torch-2.6.0": "2.6.0",
     "torch-2.5.1": "2.5.1"
   };
 
   var torchExtrasMap = {
+    "torch-2.12.1": "torch-212",
+    "torch-2.10.0": "torch-210",
+    "torch-2.9.1": "torch-29",
     "torch-2.7.0": "torch-27",
     "torch-2.6.0": "torch-26",
     "torch-2.5.1": "torch-25"
+  };
+
+  // A torch/CUDA pair is offered iff it has an entry here; the CUDA rows
+  // mirror the wheel flavors published for each release.
+  var pytorchInstallCommands = {
+    "torch-2.5.1": {
+      "cu118": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118",
+      "cu121": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121",
+      "cu124": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu124",
+      "cpu": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cpu"
+    },
+    "torch-2.6.0": {
+      "cu118": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu118",
+      "cu124": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124",
+      "cu126": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu126",
+      "cpu": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu"
+    },
+    "torch-2.7.0": {
+      "cu118": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118",
+      "cu126": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126",
+      "cu128": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128",
+      "cpu": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
+    },
+    "torch-2.9.1": {
+      "cu126": "pip3 install torch==2.9.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126",
+      "cu128": "pip3 install torch==2.9.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128",
+      "cu130": "pip3 install torch==2.9.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130",
+      "cpu": "pip3 install torch==2.9.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
+    },
+    "torch-2.10.0": {
+      "cu126": "pip3 install torch==2.10.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126",
+      "cu128": "pip3 install torch==2.10.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128",
+      "cu130": "pip3 install torch==2.10.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130",
+      "cpu": "pip3 install torch==2.10.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
+    },
+    "torch-2.12.1": {
+      "cu126": "pip3 install torch==2.12.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126",
+      "cu130": "pip3 install torch==2.12.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu130",
+      "cu132": "pip3 install torch==2.12.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu132",
+      "cpu": "pip3 install torch==2.12.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
+    }
   };
 
   for (var i = 0; i < graphnetList.length; i++) {
@@ -151,11 +203,7 @@
       return;
     }
 
-    if (
-      (torch === "torch-2.7.0" && (cuda === "cu121" || cuda === "cu124")) ||
-      (torch === "torch-2.6.0" && (cuda === "cu121" || cuda === "cu128")) ||
-      (torch === "torch-2.5.1" && (cuda === "cu126" || cuda === "cu128"))
-    ) {
+    if (torch !== "no_torch" && !pytorchInstallCommands[torch][cuda]) {
       $("#command pre").text('# PyTorch version does not support CUDA ' + formatCudaLabel(cuda));
       return;
     }
@@ -181,29 +229,7 @@
     var wheelUrl = "https://data.pyg.org/whl/torch-" + torchVersion + "+" + (cuda === "cpu" ? "cpu" : cuda) + ".html";
     installLine += " -f " + wheelUrl;
 
-    var pytorchInstallCommands = {
-      "torch-2.5.1": {
-        "cu118": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu118",
-        "cu121": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121",
-        "cu124": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu124",
-        "cpu": "pip3 install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cpu"
-      },
-      "torch-2.6.0": {
-        "cu118": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu118",
-        "cu124": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124",
-        "cu126": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu126",
-        "cpu": "pip3 install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cpu"
-      },
-      "torch-2.7.0": {
-        "cu118": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118",
-        "cu126": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu126",
-        "cu128": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128",
-        "cpu": "pip3 install torch==2.7.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu"
-      }
-    };
-
-    var pytorchCmd = pytorchInstallCommands[torch][cuda] ||
-                     pytorchInstallCommands[torch]["cpu"];
+    var pytorchCmd = pytorchInstallCommands[torch][cuda];
 
     $("#command pre").text([
       "# Install PyTorch",
@@ -215,7 +241,7 @@
       installLine,
       " ",
       "# Optionally, install jammy_flows for normalizing flow support:",
-      "pip3 install git+https://github.com/thoglu/jammy_flows.git"
+      "pip3 install \"numpy>=1.22,<2.0\" git+https://github.com/thoglu/jammy_flows.git"
     ].join("\n"));
   }
 
