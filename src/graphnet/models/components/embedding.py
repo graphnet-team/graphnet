@@ -68,6 +68,7 @@ class SinusoidalPosEmb(LightningModule):
         dim: int = 16,
         n_freq: float = 10000.0,
         scaled: bool = False,
+        phase_dtype: Optional[torch.dtype] = torch.float32,
     ):
         """Construct `SinusoidalPosEmb`.
 
@@ -79,12 +80,18 @@ class SinusoidalPosEmb(LightningModule):
                 far the embedding reaches beyond its finest scale, not how
                 many frequencies there are.
             scaled: Whether or not to scale the output.
+            phase_dtype: Precision in which the phase and its sine and cosine
+                are evaluated, with the result cast back to the input dtype.
+                A large multiplier makes the phase large enough that bf16 or
+                fp16 can no longer separate neighbouring positions, so it
+                defaults to float32; `None` keeps the input dtype.
         """
         super().__init__()
         if dim % 2 != 0:
             raise ValueError(f"dim has to be even. Got: {dim}")
         self.scale = nn.Parameter(torch.ones(1) * dim**-0.5) if scaled else 1.0
         self.dim = dim
+        self.phase_dtype = phase_dtype
         self.n_freq = torch.Tensor([n_freq])
         # The ladder is fixed at construction, so build it once instead of per
         # forward pass. Non-persistent: it is derived from `dim` and `n_freq`,
@@ -100,9 +107,15 @@ class SinusoidalPosEmb(LightningModule):
 
     def forward(self, x: Tensor) -> Tensor:
         """Forward pass."""
-        emb = x.unsqueeze(-1) * self.freqs
+        out_dtype = x.dtype
+        freqs = self.freqs
+        if self.phase_dtype is not None:
+            x = x.to(self.phase_dtype)
+            freqs = freqs.to(self.phase_dtype)
+        emb = x.unsqueeze(-1) * freqs
         emb = torch.cat((torch.sin(emb), torch.cos(emb)), dim=-1)
-        return emb * self.scale
+        emb = emb * self.scale
+        return emb.to(out_dtype)
 
 
 class FourierEncoderEPJC(LightningModule):
@@ -125,6 +138,7 @@ class FourierEncoderEPJC(LightningModule):
         output_dim: int = 384,
         scaled: bool = False,
         n_features: int = 6,
+        phase_dtype: Optional[torch.dtype] = torch.float32,
     ):
         """Construct `FourierEncoder`.
 
@@ -138,11 +152,17 @@ class FourierEncoderEPJC(LightningModule):
             output_dim: Dimension of the output (I.e. number of columns).
             scaled: Whether or not to scale the embeddings.
             n_features: The number of features in the input data.
+            phase_dtype: Precision for the sinusoidal phase computation; see
+                `SinusoidalPosEmb`.
         """
         super().__init__()
 
-        self.sin_emb = SinusoidalPosEmb(dim=seq_length, scaled=scaled)
-        self.sin_emb2 = SinusoidalPosEmb(dim=seq_length // 2, scaled=scaled)
+        self.sin_emb = SinusoidalPosEmb(
+            dim=seq_length, scaled=scaled, phase_dtype=phase_dtype
+        )
+        self.sin_emb2 = SinusoidalPosEmb(
+            dim=seq_length // 2, scaled=scaled, phase_dtype=phase_dtype
+        )
 
         if n_features < 4:
             raise ValueError(
@@ -209,6 +229,7 @@ class FourierEncoder(LightningModule):
         scaled: bool = False,
         add_sequence_length: bool = True,
         n_freq: float = 10000.0,
+        phase_dtype: Optional[torch.dtype] = torch.float32,
     ):
         """Construct `FourierEncoder`.
 
@@ -233,6 +254,8 @@ class FourierEncoder(LightningModule):
                 sequence is embedded as well, at half width.
             n_freq: Ladder span for columns whose schema entry gives only a
                 multiplier, and for the sequence-length embedding.
+            phase_dtype: Precision for the sinusoidal phase computation; see
+                `SinusoidalPosEmb`.
         """
         super().__init__()
         if not schema:
@@ -254,13 +277,21 @@ class FourierEncoder(LightningModule):
         self._span_index = {span: i for i, span in enumerate(spans)}
         self.sin_feature = nn.ModuleList(
             [
-                SinusoidalPosEmb(dim=seq_length, n_freq=span, scaled=scaled)
+                SinusoidalPosEmb(
+                    dim=seq_length,
+                    n_freq=span,
+                    scaled=scaled,
+                    phase_dtype=phase_dtype,
+                )
                 for span in spans
             ]
         )
         if add_sequence_length:
             self.sin_length = SinusoidalPosEmb(
-                dim=seq_length // 2, n_freq=n_freq, scaled=scaled
+                dim=seq_length // 2,
+                n_freq=n_freq,
+                scaled=scaled,
+                phase_dtype=phase_dtype,
             )
         # Width of the concatenation, so the model can size what follows.
         self.output_dim = len(self.schema) * seq_length + (
