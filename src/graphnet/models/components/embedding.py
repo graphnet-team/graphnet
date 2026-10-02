@@ -202,13 +202,6 @@ class FourierEncoder(LightningModule):
     Embeds `[B, K, D]` sequences -- batch size, padded sequence length, and
     features per step -- into sinusoidal positions, optionally alongside the
     unpadded length of each sequence.
-
-    A superficial refactor of `FourierEncoderEPJC` that drops the
-    assumptions tying it to the Kaggle dataset. `schema` states which
-    columns to embed and over which band of scales, so nothing is assumed
-    about the order or meaning of the input columns, and the boolean
-    embedding and MLP projection are left to the model, since both are
-    problem-specific.
     """
 
     def __init__(
