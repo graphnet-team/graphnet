@@ -433,6 +433,14 @@
         </li></ul>
             </nav>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.signed_four_distance" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">signed_four_distance()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SpacetimeEncoderEPJC</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SpacetimeEncoder</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -513,6 +521,27 @@
     
     
       <a href="#graphnet.models.components.embedding.FourierEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.signed_four_distance" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">signed_four_distance()</span></code></a>
+      
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SpacetimeEncoderEPJC</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
       
     
     </li></ul>
@@ -769,6 +798,14 @@
         </li></ul>
             </nav>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.signed_four_distance" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">signed_four_distance()</span></code></a>
+        </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SpacetimeEncoderEPJC</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">SpacetimeEncoder</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.SpacetimeEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -874,7 +911,10 @@ be seen as a soft digitization of the input data</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">16</span></code>) – Embedding dimension.</p></li>
-<li><p><strong>n_freq</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">10000</span></code>) – Number of frequencies.</p></li>
+<li><p><strong>n_freq</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">10000.0</span></code>) – Span of the frequency ladder. The frequencies run
+from 1 down to <cite>n_freq ** -((dim/2 - 1)/(dim/2))</cite>, so
+this sets how far the embedding reaches beyond its
+finest scale, not how many frequencies there are.</p></li>
 <li><p><strong>scaled</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether or not to scale the output.</p></li>
 </ul>
 </dd>
@@ -936,18 +976,96 @@ depending on <cite>n_features</cite>.</p></li>
 </dl>
 </dd></dl>
 </dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.signed_four_distance">
+<span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">signed_four_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#signed_four_distance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.signed_four_distance" title="Link to this definition">¶</a></dt>
+<dd><p>Signed spacetime four-distance between every pair of steps.</p>
+<p><cite>sign(s) * sqrt(|s|)</cite> of the interval <cite>dx^2 - (c dt)^2</cite>. Positive is
+spacelike.</p>
+<p><cite>time_scale</cite> converts the time column into the same length unit as the
+position columns, i.e. <cite>t_scale * c / pos_scale</cite> for whatever
+normalisation produced the features. It is a property of that
+normalisation rather than of the physics, so a value carried over from
+other data silently reduces the interval to a spatial distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>x</strong> (<em>Tensor</em>)</p></li>
+<li><p><strong>time_scale</strong> (<em>float</em>)</p></li>
+<li><p><strong>columns</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>, </em><em>int</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.components.embedding.SpacetimeEncoder">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">SpacetimeEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#SpacetimeEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.SpacetimeEncoder" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.SpacetimeEncoderEPJC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">SpacetimeEncoderEPJC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#SpacetimeEncoderEPJC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
-<p>Spacetime encoder module.</p>
-<p>Construct <cite>SpacetimeEncoder</cite>.</p>
-<p>This module calculates space-time interval between each pair of events
-and generates sinusoidal positional embeddings to be added to input
-sequences.</p>
+<p>Spacetime encoder of the IceMix Kaggle solution.</p>
+<p>The graphnet implementation as presented in the EPJ-C publication
+(arXiv:2310.15674). It computes the spacetime interval between each pair
+of pulses and embeds it sinusoidally.</p>
+<p>It carries assumptions from that competition: position must be
+columns 0-2 and time column 3, and the constant
+converting time into a length, the multiplier before the sinusoidal
+ladder and the clip are all fixed to the Kaggle dataset’s normalisation.
+See <cite>SpacetimeEncoder</cite> for a version without them.</p>
+<p>Construct <cite>SpacetimeEncoderEPJC</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>seq_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">32</span></code>) – Dimensionality of the sinusoidal positional embeddings.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.SpacetimeEncoderEPJC.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#SpacetimeEncoderEPJC.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.SpacetimeEncoderEPJC.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Forward pass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>x</strong> (<em>Tensor</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.SpacetimeEncoder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">SpacetimeEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_freq</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#SpacetimeEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.SpacetimeEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Embed the spacetime interval between every pair of steps.</p>
+<p>A refactor of <cite>SpacetimeEncoderEPJC</cite> that drops the assumptions tying it
+to the Kaggle dataset, so the same encoder can be reused on other data:
+which columns carry the coordinates, how time converts into a length, and
+which band of separations the embedding resolves are all stated by the
+caller rather than fixed.</p>
+<p>Construct <cite>SpacetimeEncoder</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seq_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">32</span></code>) – Dimensionality of the sinusoidal embedding.</p></li>
+<li><p><strong>output_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – Width of the projected per-pair feature. Defaults to
+<cite>seq_length</cite>.</p></li>
+<li><p><strong>columns</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">(0,</span> <span class="pre">1,</span> <span class="pre">2,</span> <span class="pre">3)</span></code>) – Input columns holding <cite>(x, y, z, t)</cite>, so the encoder
+reads the right ones whatever order the data arrives in.</p></li>
+<li><p><strong>time_scale</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1.0</span></code>) – Factor converting the time column into the position
+columns’ length unit, <cite>t_scale * c / pos_scale</cite> for the
+normalisation in use. The default assumes time already is a
+length, as it is when the interval needs no constant.</p></li>
+<li><p><strong>scale</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">1024.0</span></code>) – Multiplier applied before the sinusoidal ladder. With
+<cite>n_freq</cite> it sets the resolved band: wavelengths from
+<cite>2 * pi / scale</cite> up to that times
+<cite>n_freq ** ((seq_length/2 - 1)/(seq_length/2))</cite>, in the unit
+the interval is measured in.</p></li>
+<li><p><strong>clip</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">4.0</span></code>) – Bound on the four-distance before embedding, or None to
+leave it unbounded. The tail is heavy, so without a bound a
+few far-separated pairs dominate.</p></li>
+<li><p><strong>n_freq</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">10000.0</span></code>) – Span of the frequency ladder.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">

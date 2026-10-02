@@ -367,7 +367,7 @@
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.components.embedding</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">FourierEncoder</span><span class="p">,</span>
-    <span class="n">SpacetimeEncoder</span><span class="p">,</span>
+    <span class="n">SpacetimeEncoderEPJC</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.gnn.dynedge</span><span class="w"> </span><span class="kn">import</span> <span class="n">DynEdge</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.gnn.gnn</span><span class="w"> </span><span class="kn">import</span> <span class="n">GNN</span>
@@ -425,7 +425,7 @@
             <span class="n">scaled</span><span class="o">=</span><span class="n">scaled_emb</span><span class="p">,</span>
             <span class="n">n_features</span><span class="o">=</span><span class="n">n_features</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rel_pos</span> <span class="o">=</span> <span class="n">SpacetimeEncoder</span><span class="p">(</span><span class="n">head_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rel_pos</span> <span class="o">=</span> <span class="n">SpacetimeEncoderEPJC</span><span class="p">(</span><span class="n">head_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sandwich</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">Block_rel</span><span class="p">(</span>

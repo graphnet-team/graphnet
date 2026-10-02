@@ -355,7 +355,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pytorch_lightning</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightningModule</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_self_loops</span>
@@ -431,14 +431,17 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
-        <span class="n">n_freq</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
+        <span class="n">n_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10000.0</span><span class="p">,</span>
         <span class="n">scaled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `SinusoidalPosEmb`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dim: Embedding dimension.</span>
-<span class="sd">            n_freq: Number of frequencies.</span>
+<span class="sd">            n_freq: Span of the frequency ladder. The frequencies run</span>
+<span class="sd">                from 1 down to `n_freq ** -((dim/2 - 1)/(dim/2))`, so</span>
+<span class="sd">                this sets how far the embedding reaches beyond its</span>
+<span class="sd">                finest scale, not how many frequencies there are.</span>
 <span class="sd">            scaled: Whether or not to scale the output.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -555,20 +558,55 @@
 
 
 
-<div class="viewcode-block" id="SpacetimeEncoder">
-<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoder">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">SpacetimeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Spacetime encoder module."""</span>
+<div class="viewcode-block" id="signed_four_distance">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.signed_four_distance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">signed_four_distance</span><span class="p">(</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">time_scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">columns</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Signed spacetime four-distance between every pair of steps.</span>
+
+<span class="sd">    `sign(s) * sqrt(|s|)` of the interval `dx^2 - (c dt)^2`. Positive is</span>
+<span class="sd">    spacelike.</span>
+
+<span class="sd">    `time_scale` converts the time column into the same length unit as the</span>
+<span class="sd">    position columns, i.e. `t_scale * c / pos_scale` for whatever</span>
+<span class="sd">    normalisation produced the features. It is a property of that</span>
+<span class="sd">    normalisation rather than of the physics, so a value carried over from</span>
+<span class="sd">    other data silently reduces the interval to a spatial distance.</span>
+<span class="sd">    """</span>
+    <span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span><span class="p">,</span> <span class="n">ti</span> <span class="o">=</span> <span class="n">columns</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">[</span><span class="n">xi</span><span class="p">,</span> <span class="n">yi</span><span class="p">,</span> <span class="n">zi</span><span class="p">]]</span>
+    <span class="n">time</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">ti</span><span class="p">]</span>
+    <span class="n">interval</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">time</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">time</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span> <span class="o">*</span> <span class="n">time_scale</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">interval</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="SpacetimeEncoderEPJC">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoderEPJC">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpacetimeEncoderEPJC</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Spacetime encoder of the IceMix Kaggle solution.</span>
+
+<span class="sd">    The graphnet implementation as presented in the EPJ-C publication</span>
+<span class="sd">    (arXiv:2310.15674). It computes the spacetime interval between each pair</span>
+<span class="sd">    of pulses and embeds it sinusoidally.</span>
+
+<span class="sd">    It carries assumptions from that competition: position must be</span>
+<span class="sd">    columns 0-2 and time column 3, and the constant</span>
+<span class="sd">    converting time into a length, the multiplier before the sinusoidal</span>
+<span class="sd">    ladder and the clip are all fixed to the Kaggle dataset's normalisation.</span>
+<span class="sd">    See `SpacetimeEncoder` for a version without them.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">seq_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">"""Construct `SpacetimeEncoder`.</span>
-
-<span class="sd">        This module calculates space-time interval between each pair of events</span>
-<span class="sd">        and generates sinusoidal positional embeddings to be added to input</span>
-<span class="sd">        sequences.</span>
+<span class="w">        </span><span class="sd">"""Construct `SpacetimeEncoderEPJC`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            seq_length: Dimensionality of the sinusoidal positional embeddings.</span>
@@ -577,25 +615,81 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SpacetimeEncoder.forward">
-<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoder.forward">[docs]</a>
+<div class="viewcode-block" id="SpacetimeEncoderEPJC.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoderEPJC.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
-        <span class="c1"># Lmax: Optional[int] = None,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Forward pass."""</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span>
-        <span class="n">time</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">3</span><span class="p">]</span>
-        <span class="n">spacetime_interval</span> <span class="o">=</span> <span class="p">(</span><span class="n">pos</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">pos</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-            <span class="o">-</span><span class="mi">1</span>
-        <span class="p">)</span> <span class="o">-</span> <span class="p">((</span><span class="n">time</span><span class="p">[:,</span> <span class="p">:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">time</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">3e4</span> <span class="o">/</span> <span class="mi">500</span> <span class="o">*</span> <span class="mf">3e-1</span><span class="p">))</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-        <span class="n">four_distance</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">spacetime_interval</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">spacetime_interval</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">four_distance</span> <span class="o">=</span> <span class="n">signed_four_distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">3e4</span> <span class="o">/</span> <span class="mi">500</span> <span class="o">*</span> <span class="mf">3e-1</span><span class="p">)</span>
         <span class="n">sin_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="n">four_distance</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
         <span class="n">rel_attn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">(</span><span class="n">sin_emb</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">rel_attn</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SpacetimeEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SpacetimeEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Embed the spacetime interval between every pair of steps.</span>
+
+<span class="sd">    A refactor of `SpacetimeEncoderEPJC` that drops the assumptions tying it</span>
+<span class="sd">    to the Kaggle dataset, so the same encoder can be reused on other data:</span>
+<span class="sd">    which columns carry the coordinates, how time converts into a length, and</span>
+<span class="sd">    which band of separations the embedding resolves are all stated by the</span>
+<span class="sd">    caller rather than fixed.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">seq_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="n">output_dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">columns</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">time_scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1024.0</span><span class="p">,</span>
+        <span class="n">clip</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">4.0</span><span class="p">,</span>
+        <span class="n">n_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10000.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `SpacetimeEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            seq_length: Dimensionality of the sinusoidal embedding.</span>
+<span class="sd">            output_dim: Width of the projected per-pair feature. Defaults to</span>
+<span class="sd">                `seq_length`.</span>
+<span class="sd">            columns: Input columns holding `(x, y, z, t)`, so the encoder</span>
+<span class="sd">                reads the right ones whatever order the data arrives in.</span>
+<span class="sd">            time_scale: Factor converting the time column into the position</span>
+<span class="sd">                columns' length unit, `t_scale * c / pos_scale` for the</span>
+<span class="sd">                normalisation in use. The default assumes time already is a</span>
+<span class="sd">                length, as it is when the interval needs no constant.</span>
+<span class="sd">            scale: Multiplier applied before the sinusoidal ladder. With</span>
+<span class="sd">                `n_freq` it sets the resolved band: wavelengths from</span>
+<span class="sd">                `2 * pi / scale` up to that times</span>
+<span class="sd">                `n_freq ** ((seq_length/2 - 1)/(seq_length/2))`, in the unit</span>
+<span class="sd">                the interval is measured in.</span>
+<span class="sd">            clip: Bound on the four-distance before embedding, or None to</span>
+<span class="sd">                leave it unbounded. The tail is heavy, so without a bound a</span>
+<span class="sd">                few far-separated pairs dominate.</span>
+<span class="sd">            n_freq: Span of the frequency ladder.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">n_freq</span><span class="o">=</span><span class="n">n_freq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">output_dim</span> <span class="ow">or</span> <span class="n">seq_length</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_scale</span> <span class="o">=</span> <span class="n">time_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip</span> <span class="o">=</span> <span class="n">clip</span>
+
+<div class="viewcode-block" id="SpacetimeEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SpacetimeEncoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Forward pass."""</span>
+        <span class="n">four_distance</span> <span class="o">=</span> <span class="n">signed_four_distance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_scale</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">four_distance</span> <span class="o">=</span> <span class="n">four_distance</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">projection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">four_distance</span><span class="p">))</span></div>
 </div>
 
 
