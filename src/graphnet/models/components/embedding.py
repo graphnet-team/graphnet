@@ -114,10 +114,8 @@ class FourierEncoderEPJC(LightningModule):
     produce meaningful representations.
 
     It carries assumptions from that competition that make it hard to use
-    elsewhere: the input must be in the order (x, y, z, time, charge,
-    auxiliary) with the first four mandatory, and the multipliers applied
-    before the sinusoidal ladder are fixed to the Kaggle dataset's
-    normalisation. See `FourierEncoder` for a version without them.
+    elsewhere. Use `FourierEncoder` unless you are using the model and data
+    from the EPJ-C paper.
     """
 
     def __init__(
