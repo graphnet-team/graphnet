@@ -197,9 +197,9 @@ class FourierEncoderEPJC(LightningModule):
 class FourierEncoder(LightningModule):
     """Apply sinusoidal positional encodings to sequence representations.
 
-    Embeds `[B, K, D]` sequences -- batch size, padded sequence length, and
-    features per step -- into sinusoidal positions, optionally alongside the
-    unpadded length of each sequence.
+    Embeds `[B, K, D]` sequences -- batch size, padded sequence length,
+    and features per step -- into sinusoidal positions, optionally
+    alongside the unpadded length of each sequence.
     """
 
     def __init__(
