@@ -427,6 +427,12 @@
         </li></ul>
             </nav>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoderEPJC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FourierEncoderEPJC</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoderEPJC.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FourierEncoder</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -507,6 +513,20 @@
     
     
       <a href="#graphnet.models.components.embedding.SinusoidalPosEmb.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+      
+    
+    </li></ul>
+    
+    </li>
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.FourierEncoderEPJC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FourierEncoderEPJC</span></code></a>
+      <ul class="md-nav__list"> 
+    <li class="md-nav__item">
+    
+    
+      <a href="#graphnet.models.components.embedding.FourierEncoderEPJC.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
       
     
     </li></ul>
@@ -792,6 +812,12 @@
         </li></ul>
             </nav>
         </li>
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoderEPJC" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FourierEncoderEPJC</span></code></a><nav class="md-nav">
+              <ul class="md-nav__list">
+        <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoderEPJC.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
+        </li></ul>
+            </nav>
+        </li>
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoder" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">FourierEncoder</span></code></a><nav class="md-nav">
               <ul class="md-nav__list">
         <li class="md-nav__item"><a href="#graphnet.models.components.embedding.FourierEncoder.forward" class="md-nav__link"><code class="docutils literal notranslate"><span class="pre">forward()</span></code></a>
@@ -899,7 +925,7 @@
 </dd></dl>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.components.embedding.SinusoidalPosEmb">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">SinusoidalPosEmb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#SinusoidalPosEmb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.SinusoidalPosEmb" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">SinusoidalPosEmb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#SinusoidalPosEmb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.SinusoidalPosEmb" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
 <p>Sinusoidal positional embeddings module.</p>
 <p>This module is from the kaggle competition 2nd place solution (see
@@ -910,12 +936,18 @@ be seen as a soft digitization of the input data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">16</span></code>) – Embedding dimension.</p></li>
-<li><p><strong>n_freq</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">10000.0</span></code>) – Span of the frequency ladder. The frequencies run
-from 1 down to <cite>n_freq ** -((dim/2 - 1)/(dim/2))</cite>, so
-this sets how far the embedding reaches beyond its
-finest scale, not how many frequencies there are.</p></li>
+<li><p><strong>dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">16</span></code>) – Embedding dimension. The ladder holds <cite>dim / 2</cite>
+frequencies, each contributing a sine and a cosine.</p></li>
+<li><p><strong>n_freq</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">10000.0</span></code>) – Span of the frequency ladder. The frequencies run from 1
+down to <cite>n_freq ** -((dim/2 - 1)/(dim/2))</cite>, so this sets how
+far the embedding reaches beyond its finest scale, not how
+many frequencies there are.</p></li>
 <li><p><strong>scaled</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether or not to scale the output.</p></li>
+<li><p><strong>phase_dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – Precision in which the phase and its sine and cosine
+are evaluated, with the result cast back to the input dtype.
+A large multiplier makes the phase large enough that bf16 or
+fp16 can no longer separate neighbouring positions, so it
+defaults to float32; <cite>None</cite> keeps the input dtype.</p></li>
 </ul>
 </dd>
 </dl>
@@ -934,15 +966,17 @@ finest scale, not how many frequencies there are.</p></li>
 </dd></dl>
 </dd></dl>
 <dl class="py class">
-<dt class="sig sig-object py" id="graphnet.models.components.embedding.FourierEncoder">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">FourierEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoder" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.FourierEncoderEPJC">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">FourierEncoderEPJC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mlp_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dim</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoderEPJC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoderEPJC" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
-<p>Fourier encoder module.</p>
-<p>This module incorporates sinusoidal positional embeddings and
-auxiliary embeddings to process input sequences and produce
-meaningful representations. The module assumes that the input data
-is in the format of (x, y, z, time, charge, auxiliary), being the
-first four features mandatory.</p>
+<p>Fourier encoder of the IceMix Kaggle solution.</p>
+<p>The graphnet implementation of the encoder as presented in the EPJ-C
+publication (arXiv:2310.15674). It incorporates sinusoidal positional
+embeddings and auxiliary embeddings to process input sequences and
+produce meaningful representations.</p>
+<p>It carries assumptions from that competition that make it hard to use
+elsewhere. Use <cite>FourierEncoder</cite> unless you are using the model and data
+from the EPJ-C paper.</p>
 <p>Construct <cite>FourierEncoder</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -956,12 +990,14 @@ depending on <cite>n_features</cite>.</p></li>
 <li><p><strong>output_dim</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">384</span></code>) – Dimension of the output (I.e. number of columns).</p></li>
 <li><p><strong>scaled</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether or not to scale the embeddings.</p></li>
 <li><p><strong>n_features</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">6</span></code>) – The number of features in the input data.</p></li>
+<li><p><strong>phase_dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – Precision for the sinusoidal phase computation; see
+<cite>SinusoidalPosEmb</cite>.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="graphnet.models.components.embedding.FourierEncoder.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoder.forward" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.FourierEncoderEPJC.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoderEPJC.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoderEPJC.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -972,6 +1008,67 @@ depending on <cite>n_features</cite>.</p></li>
 <li><p><strong>x</strong> (<em>Tensor</em>)</p></li>
 <li><p><strong>seq_length</strong> (<em>Tensor</em>)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+</dd></dl>
+<dl class="py class">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.FourierEncoder">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.components.embedding.</span></span><span class="sig-name descname"><span class="pre">FourierEncoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">schema</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scaled</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_sequence_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_dtype</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoder" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">LightningModule</span></code></p>
+<p>Apply sinusoidal positional encodings to sequence representations.</p>
+<p>Embeds <cite>[B, K, D]</cite> sequences – batch size, padded sequence length,
+and features per step – into sinusoidal positions, optionally
+alongside the unpadded length of each sequence.</p>
+<p>Construct <cite>FourierEncoder</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>schema</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]]</span>) – <p>Maps an input column index to how it is embedded, either
+as a multiplier or as a <cite>(multiplier, n_freq)</cite> pair, e.g.
+<cite>{1: 1024, 3: (4096, 500)}</cite>. Columns absent from the schema
+are not embedded.</p>
+<p>The two together set the band of separations a column can
+resolve: wavelengths from <cite>2 * pi * unit / multiplier</cite> up to
+that times <cite>n_freq ** ((dim/2 - 1)/(dim/2))</cite>, where <cite>unit</cite> is
+the physical size of one unit of the (normalised) column. So
+the multiplier places the band and <cite>n_freq</cite> sets its width,
+and both are properties of the data rather than of the model
+– values carried over from a different normalisation resolve
+a different physical range.</p>
+</p></li>
+<li><p><strong>seq_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">128</span></code>) – Desired dimensionality of the base sinusoidal
+positional embeddings.</p></li>
+<li><p><strong>scaled</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">False</span></code>) – Whether or not to scale the embeddings.</p></li>
+<li><p><strong>add_sequence_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – If True, the unpadded length of each
+sequence is embedded as well, at half width.</p></li>
+<li><p><strong>n_freq</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>, default: <code class="docutils literal notranslate"><span class="pre">10000.0</span></code>) – Ladder span for columns whose schema entry gives only a
+multiplier, and for the sequence-length embedding.</p></li>
+<li><p><strong>phase_dtype</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">torch.float32</span></code>) – Precision for the sinusoidal phase computation; see
+<cite>SinusoidalPosEmb</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="graphnet.models.components.embedding.FourierEncoder.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seq_length</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/components/embedding.html#FourierEncoder.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.components.embedding.FourierEncoder.forward" title="Link to this definition">¶</a></dt>
+<dd><p>Apply positional encoding of <cite>x</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span>) – <cite>[B, K, D]</cite>-dimensional sequence representation of an event.</p></li>
+<li><p><strong>seq_length</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code>]</span>, default: <code class="docutils literal notranslate"><span class="pre">None</span></code>) – <cite>[B]</cite>-dimensional unpadded length of each sequence in
+<cite>x</cite>, one entry per sequence rather than per step. Required
+when <cite>add_sequence_length</cite> is True, in which case each step
+of a sequence receives a copy of its sequence’s embedded
+length.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Tensor</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Embedded <cite>[B, K, J]</cite>-dimensional sequence.</p>
 </dd>
 </dl>
 </dd></dl>

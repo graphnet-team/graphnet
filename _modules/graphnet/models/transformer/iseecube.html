@@ -357,7 +357,9 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.components.embedding</span><span class="w"> </span><span class="kn">import</span> <span class="n">FourierEncoder</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.components.embedding</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FourierEncoderEPJC</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.gnn.gnn</span><span class="w"> </span><span class="kn">import</span> <span class="n">GNN</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">graphnet.models.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">array_to_sequence</span>
 
@@ -393,7 +395,7 @@
 <span class="sd">            seq_length: The number of pulses in a neutrino event.</span>
 <span class="sd">            num_layers: The depth of the transformer.</span>
 <span class="sd">            num_heads: The number of the attention heads.</span>
-<span class="sd">            mlp_dim: The mlp dimension of FourierEncoder and Transformer.</span>
+<span class="sd">            mlp_dim: The mlp dimension of FourierEncoderEPJC and Transformer.</span>
 <span class="sd">            rel_pos_buckets: Relative position buckets for relative position</span>
 <span class="sd">                bias.</span>
 <span class="sd">            max_rel_pos: Maximum relative position for relative position bias.</span>
@@ -402,7 +404,7 @@
 <span class="sd">            n_features: The number of features in the input data.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fourier_ext</span> <span class="o">=</span> <span class="n">FourierEncoder</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fourier_ext</span> <span class="o">=</span> <span class="n">FourierEncoderEPJC</span><span class="p">(</span>
             <span class="n">seq_length</span><span class="o">=</span><span class="n">seq_length</span><span class="p">,</span>
             <span class="n">mlp_dim</span><span class="o">=</span><span class="n">mlp_dim</span><span class="p">,</span>
             <span class="n">output_dim</span><span class="o">=</span><span class="n">hidden_dim</span><span class="p">,</span>

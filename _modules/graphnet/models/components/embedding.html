@@ -355,7 +355,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch.functional</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pytorch_lightning</span><span class="w"> </span><span class="kn">import</span> <span class="n">LightningModule</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch_geometric.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_self_loops</span>
@@ -433,49 +433,73 @@
         <span class="n">dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span>
         <span class="n">n_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10000.0</span><span class="p">,</span>
         <span class="n">scaled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">phase_dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `SinusoidalPosEmb`.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dim: Embedding dimension.</span>
-<span class="sd">            n_freq: Span of the frequency ladder. The frequencies run</span>
-<span class="sd">                from 1 down to `n_freq ** -((dim/2 - 1)/(dim/2))`, so</span>
-<span class="sd">                this sets how far the embedding reaches beyond its</span>
-<span class="sd">                finest scale, not how many frequencies there are.</span>
+<span class="sd">            dim: Embedding dimension. The ladder holds `dim / 2`</span>
+<span class="sd">                frequencies, each contributing a sine and a cosine.</span>
+<span class="sd">            n_freq: Span of the frequency ladder. The frequencies run from 1</span>
+<span class="sd">                down to `n_freq ** -((dim/2 - 1)/(dim/2))`, so this sets how</span>
+<span class="sd">                far the embedding reaches beyond its finest scale, not how</span>
+<span class="sd">                many frequencies there are.</span>
 <span class="sd">            scaled: Whether or not to scale the output.</span>
+<span class="sd">            phase_dtype: Precision in which the phase and its sine and cosine</span>
+<span class="sd">                are evaluated, with the result cast back to the input dtype.</span>
+<span class="sd">                A large multiplier makes the phase large enough that bf16 or</span>
+<span class="sd">                fp16 can no longer separate neighbouring positions, so it</span>
+<span class="sd">                defaults to float32; `None` keeps the input dtype.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">dim</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"dim has to be even. Got: </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">dim</span><span class="o">**-</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">if</span> <span class="n">scaled</span> <span class="k">else</span> <span class="mf">1.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">=</span> <span class="n">dim</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phase_dtype</span> <span class="o">=</span> <span class="n">phase_dtype</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">n_freq</span><span class="p">])</span>
+        <span class="c1"># The ladder is fixed at construction, so build it once instead of per</span>
+        <span class="c1"># forward pass. Non-persistent: it is derived from `dim` and `n_freq`,</span>
+        <span class="c1"># and keeping it out of the state dict leaves checkpoints unchanged.</span>
+        <span class="n">half_dim</span> <span class="o">=</span> <span class="n">dim</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span>
+            <span class="s2">"freqs"</span><span class="p">,</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+                <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">half_dim</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span><span class="p">)</span> <span class="o">/</span> <span class="n">half_dim</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="n">persistent</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="SinusoidalPosEmb.forward">
 <a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.SinusoidalPosEmb.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""Forward pass."""</span>
-        <span class="n">device</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">device</span>
-        <span class="n">half_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dim</span> <span class="o">/</span> <span class="mi">2</span>
-        <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_freq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">))</span> <span class="o">/</span> <span class="n">half_dim</span>
-        <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">half_dim</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="n">emb</span><span class="p">))</span>
-        <span class="n">emb</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">emb</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">out_dtype</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="n">freqs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">freqs</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase_dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_dtype</span><span class="p">)</span>
+            <span class="n">freqs</span> <span class="o">=</span> <span class="n">freqs</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phase_dtype</span><span class="p">)</span>
+        <span class="n">emb</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">freqs</span>
         <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">emb</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">emb</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">emb</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span></div>
+        <span class="n">emb</span> <span class="o">=</span> <span class="n">emb</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
+        <span class="k">return</span> <span class="n">emb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">out_dtype</span><span class="p">)</span></div>
 </div>
 
 
 
-<div class="viewcode-block" id="FourierEncoder">
-<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder">[docs]</a>
-<span class="k">class</span><span class="w"> </span><span class="nc">FourierEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Fourier encoder module.</span>
+<div class="viewcode-block" id="FourierEncoderEPJC">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoderEPJC">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FourierEncoderEPJC</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Fourier encoder of the IceMix Kaggle solution.</span>
 
-<span class="sd">    This module incorporates sinusoidal positional embeddings and</span>
-<span class="sd">    auxiliary embeddings to process input sequences and produce</span>
-<span class="sd">    meaningful representations. The module assumes that the input data</span>
-<span class="sd">    is in the format of (x, y, z, time, charge, auxiliary), being the</span>
-<span class="sd">    first four features mandatory.</span>
+<span class="sd">    The graphnet implementation of the encoder as presented in the EPJ-C</span>
+<span class="sd">    publication (arXiv:2310.15674). It incorporates sinusoidal positional</span>
+<span class="sd">    embeddings and auxiliary embeddings to process input sequences and</span>
+<span class="sd">    produce meaningful representations.</span>
+
+<span class="sd">    It carries assumptions from that competition that make it hard to use</span>
+<span class="sd">    elsewhere. Use `FourierEncoder` unless you are using the model and data</span>
+<span class="sd">    from the EPJ-C paper.</span>
 <span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
@@ -485,6 +509,7 @@
         <span class="n">output_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">384</span><span class="p">,</span>
         <span class="n">scaled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">n_features</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+        <span class="n">phase_dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Construct `FourierEncoder`.</span>
 
@@ -498,11 +523,17 @@
 <span class="sd">            output_dim: Dimension of the output (I.e. number of columns).</span>
 <span class="sd">            scaled: Whether or not to scale the embeddings.</span>
 <span class="sd">            n_features: The number of features in the input data.</span>
+<span class="sd">            phase_dtype: Precision for the sinusoidal phase computation; see</span>
+<span class="sd">                `SinusoidalPosEmb`.</span>
 <span class="sd">        """</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb2</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span>
+            <span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">,</span> <span class="n">phase_dtype</span><span class="o">=</span><span class="n">phase_dtype</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sin_emb2</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span>
+            <span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">,</span> <span class="n">phase_dtype</span><span class="o">=</span><span class="n">phase_dtype</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_features</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -527,8 +558,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">n_features</span> <span class="o">=</span> <span class="n">n_features</span>
 
-<div class="viewcode-block" id="FourierEncoder.forward">
-<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder.forward">[docs]</a>
+<div class="viewcode-block" id="FourierEncoderEPJC.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoderEPJC.forward">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
@@ -554,6 +585,133 @@
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mlp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FourierEncoder">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">FourierEncoder</span><span class="p">(</span><span class="n">LightningModule</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Apply sinusoidal positional encodings to sequence representations.</span>
+
+<span class="sd">    Embeds `[B, K, D]` sequences -- batch size, padded sequence length,</span>
+<span class="sd">    and features per step -- into sinusoidal positions, optionally</span>
+<span class="sd">    alongside the unpadded length of each sequence.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">schema</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span>
+        <span class="n">seq_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="n">scaled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">add_sequence_length</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">n_freq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10000.0</span><span class="p">,</span>
+        <span class="n">phase_dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">dtype</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `FourierEncoder`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            schema: Maps an input column index to how it is embedded, either</span>
+<span class="sd">                as a multiplier or as a `(multiplier, n_freq)` pair, e.g.</span>
+<span class="sd">                `{1: 1024, 3: (4096, 500)}`. Columns absent from the schema</span>
+<span class="sd">                are not embedded.</span>
+
+<span class="sd">                The two together set the band of separations a column can</span>
+<span class="sd">                resolve: wavelengths from `2 * pi * unit / multiplier` up to</span>
+<span class="sd">                that times `n_freq ** ((dim/2 - 1)/(dim/2))`, where `unit` is</span>
+<span class="sd">                the physical size of one unit of the (normalised) column. So</span>
+<span class="sd">                the multiplier places the band and `n_freq` sets its width,</span>
+<span class="sd">                and both are properties of the data rather than of the model</span>
+<span class="sd">                -- values carried over from a different normalisation resolve</span>
+<span class="sd">                a different physical range.</span>
+<span class="sd">            seq_length: Desired dimensionality of the base sinusoidal</span>
+<span class="sd">                positional embeddings.</span>
+<span class="sd">            scaled: Whether or not to scale the embeddings.</span>
+<span class="sd">            add_sequence_length: If True, the unpadded length of each</span>
+<span class="sd">                sequence is embedded as well, at half width.</span>
+<span class="sd">            n_freq: Ladder span for columns whose schema entry gives only a</span>
+<span class="sd">                multiplier, and for the sequence-length embedding.</span>
+<span class="sd">            phase_dtype: Precision for the sinusoidal phase computation; see</span>
+<span class="sd">                `SinusoidalPosEmb`.</span>
+<span class="sd">        """</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">schema</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`schema` must map at least one column."</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">schema</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">col</span><span class="p">:</span> <span class="p">(</span>
+                <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">))</span>
+                <span class="k">else</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_freq</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">schema</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_sequence_length</span> <span class="o">=</span> <span class="n">add_sequence_length</span>
+        <span class="c1"># One embedder per distinct span, not per column: columns sharing a</span>
+        <span class="c1"># span share a ladder, so the common case of a single span builds a</span>
+        <span class="c1"># single module and keeps `scaled`'s one learnable scale.</span>
+        <span class="n">spans</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">span</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">span</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">values</span><span class="p">()})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_span_index</span> <span class="o">=</span> <span class="p">{</span><span class="n">span</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">span</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">spans</span><span class="p">)}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sin_feature</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">SinusoidalPosEmb</span><span class="p">(</span>
+                    <span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span><span class="p">,</span>
+                    <span class="n">n_freq</span><span class="o">=</span><span class="n">span</span><span class="p">,</span>
+                    <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">,</span>
+                    <span class="n">phase_dtype</span><span class="o">=</span><span class="n">phase_dtype</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">span</span> <span class="ow">in</span> <span class="n">spans</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">add_sequence_length</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sin_length</span> <span class="o">=</span> <span class="n">SinusoidalPosEmb</span><span class="p">(</span>
+                <span class="n">dim</span><span class="o">=</span><span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="n">n_freq</span><span class="o">=</span><span class="n">n_freq</span><span class="p">,</span>
+                <span class="n">scaled</span><span class="o">=</span><span class="n">scaled</span><span class="p">,</span>
+                <span class="n">phase_dtype</span><span class="o">=</span><span class="n">phase_dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="c1"># Width of the concatenation, so the model can size what follows.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span> <span class="o">*</span> <span class="n">seq_length</span> <span class="o">+</span> <span class="p">(</span>
+            <span class="n">seq_length</span> <span class="o">//</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">add_sequence_length</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="FourierEncoder.forward">
+<a class="viewcode-back" href="../../../../api/graphnet.models.components.embedding.html#graphnet.models.components.embedding.FourierEncoder.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">seq_length</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Apply positional encoding of `x`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x: `[B, K, D]`-dimensional sequence representation of an event.</span>
+<span class="sd">            seq_length: `[B]`-dimensional unpadded length of each sequence in</span>
+<span class="sd">                `x`, one entry per sequence rather than per step. Required</span>
+<span class="sd">                when `add_sequence_length` is True, in which case each step</span>
+<span class="sd">                of a sequence receives a copy of its sequence's embedded</span>
+<span class="sd">                length.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Embedded `[B, K, J]`-dimensional sequence.</span>
+<span class="sd">        """</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sin_feature</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_span_index</span><span class="p">[</span><span class="n">span</span><span class="p">]](</span><span class="n">scale</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">col</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="p">(</span><span class="n">scale</span><span class="p">,</span> <span class="n">span</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">schema</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_sequence_length</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">seq_length</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"Must pass `seq_length` when `add_sequence_length` is "</span>
+                    <span class="s2">"True."</span>
+                <span class="p">)</span>
+            <span class="n">length</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">seq_length</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+            <span class="n">embeddings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sin_length</span><span class="p">(</span><span class="n">length</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 </div>
 
 
