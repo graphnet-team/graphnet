@@ -1,6 +1,6 @@
 """Utility functions for `graphnet.models`."""
 
-from typing import List, Tuple, Any, Union, Optional
+from typing import Any, Callable, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor, LongTensor
@@ -12,6 +12,8 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 from torch_scatter import scatter, scatter_add
 from torch_sparse import SparseTensor
+
+from torch.nn.attention.flex_attention import create_block_mask
 
 
 def calculate_xyzt_homophily(
@@ -305,3 +307,79 @@ def get_rw_landing_probs(
     # (Num nodes) x (K steps)
     rw_landing = torch.cat(rws, dim=0).transpose(0, 1)
     return rw_landing
+
+
+# Packing of variable-length batches for block-diagonal `flex_attention`.
+# Compiled on first use, ~50x faster than eager `create_block_mask`.
+_COMPILED_CREATE_BLOCK_MASK: Optional[Callable] = None
+# Packing beats padded SDPA only below this batch occupancy.
+_PACK_OCCUPANCY_MAX = 0.8
+
+
+def pack(
+    tokens: Tensor,
+    centroids: Tensor,
+    masks: Tensor,
+) -> Optional[Tuple[Tensor, Tensor, Tensor, Tensor]]:
+    """Pack the valid tokens of a padded batch into one `[1, N, D]` sequence.
+
+    Uses data-dependent shapes, so it must stay outside compiled regions.
+
+    Args:
+        tokens: `[B, S, D]` padded token features.
+        centroids: `[B, S, C]` padded token positions.
+        masks: Bool `[B, S]`; True marks a valid token.
+
+    Returns:
+        `(tokens [1, N, D], centroids [1, N, C], doc_id [N], pack_idx [N])`,
+        or None if the batch is empty or too full for packing to pay off.
+    """
+    batch_size, seq_length, n_features = tokens.shape
+    pack_idx = masks.reshape(-1).nonzero(as_tuple=True)[0]  # host sync
+    n_valid = int(pack_idx.numel())
+    if n_valid == 0 or n_valid >= _PACK_OCCUPANCY_MAX * masks.numel():
+        return None
+    packed_tokens = tokens.reshape(-1, n_features)[pack_idx].unsqueeze(0)
+    packed_centroids = centroids.reshape(-1, centroids.shape[-1])[pack_idx]
+    packed_centroids = packed_centroids.unsqueeze(0)
+    # One compiled graph for every packed length.
+    torch._dynamo.mark_dynamic(packed_tokens, 1)
+    torch._dynamo.mark_dynamic(packed_centroids, 1)
+    return packed_tokens, packed_centroids, pack_idx // seq_length, pack_idx
+
+
+def build_block_mask(doc_id: Tensor, n_tokens: int) -> Any:
+    """Build a `BlockMask` letting packed tokens attend only within an event.
+
+    Args:
+        doc_id: `[N]` event index of every packed token.
+        n_tokens: Packed sequence length `N`.
+    """
+    global _COMPILED_CREATE_BLOCK_MASK
+    if _COMPILED_CREATE_BLOCK_MASK is None:
+        _COMPILED_CREATE_BLOCK_MASK = torch.compile(create_block_mask)
+
+    def mask_mod(
+        b: Tensor, h: Tensor, q_idx: Tensor, kv_idx: Tensor
+    ) -> Tensor:
+        return doc_id[q_idx] == doc_id[kv_idx]
+
+    return _COMPILED_CREATE_BLOCK_MASK(
+        mask_mod, None, None, n_tokens, n_tokens, device=doc_id.device
+    )
+
+
+def unpack(
+    packed: Tensor, pack_idx: Tensor, batch_size: int, seq_length: int
+) -> Tensor:
+    """Scatter a packed `[1, N, D]` sequence back to a zero-padded `[B, S, D]`.
+
+    Args:
+        packed: `[1, N, D]` packed sequence.
+        pack_idx: The `pack_idx` returned by :func:`pack`.
+        batch_size: Batch size `B`.
+        seq_length: Padded sequence length `S`.
+    """
+    result = packed.new_zeros(batch_size * seq_length, packed.shape[-1])
+    result.index_copy_(0, pack_idx, packed[0])
+    return result.reshape(batch_size, seq_length, -1)

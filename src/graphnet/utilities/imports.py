@@ -47,6 +47,20 @@ def has_jammy_flows_package() -> bool:
         return False
 
 
+def has_torch_fps_package() -> bool:
+    """Check whether the `torch_fps` package is available."""
+    try:
+        import torch_fps  # pyright: reportMissingImports=false
+
+        return True
+    except ImportError:
+        Logger(log_folder=None).warning_once(
+            "`torch_fps` not available. Farthest point sampling falls back to "
+            "the slower pure-PyTorch implementation."
+        )
+        return False
+
+
 def has_km3net_package() -> bool:
     """Check whether the `km3net` packages are available."""
     try:

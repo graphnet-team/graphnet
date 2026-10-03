@@ -25,16 +25,36 @@ class DropPath(LightningModule):
         super(DropPath, self).__init__()
         self.drop_prob = drop_prob
 
-    def forward(self, x: Tensor) -> Tensor:
-        """Forward pass."""
+    def forward(
+        self,
+        x: Tensor,
+        doc_id: Optional[Tensor] = None,
+        num_docs: Optional[int] = None,
+    ) -> Tensor:
+        """Forward pass.
+
+        Args:
+            x: Input tensor; one drop decision per row of the batch dimension.
+            doc_id: Optional `[N]` event index of each token of a packed
+                `[1, N, D]` input; decisions are then drawn per event.
+            num_docs: Number of events in `doc_id`.
+        """
         if self.drop_prob == 0.0 or not self.training:
             return x
         keep_prob = 1 - self.drop_prob
-        shape = (x.shape[0],) + (1,) * (x.ndim - 1)
-        random_tensor = x.new_empty(shape).bernoulli_(keep_prob)
+        if doc_id is None:
+            shape = (x.shape[0],) + (1,) * (x.ndim - 1)
+            random_tensor = x.new_empty(shape).bernoulli_(keep_prob)
+            if keep_prob > 0.0:
+                random_tensor.div_(keep_prob)
+            return x * random_tensor
+
+        assert num_docs is not None, "`num_docs` is required with `doc_id`"
+        event_mask = x.new_empty((num_docs, 1)).bernoulli_(keep_prob)
         if keep_prob > 0.0:
-            random_tensor.div_(keep_prob)
-        return x * random_tensor
+            event_mask = event_mask.div(keep_prob)
+        token_mask = event_mask.index_select(0, doc_id).unsqueeze(0)
+        return x * token_mask
 
     def extra_repr(self) -> str:
         """Return extra representation of the module."""
