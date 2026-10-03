@@ -2,3 +2,4 @@
 
 from .cnn import CNN
 from .icecube_dnn import IceCubeDNN
+from .lcsc import LCSC
