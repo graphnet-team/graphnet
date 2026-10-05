@@ -55,7 +55,8 @@ def has_torch_fps_package() -> bool:
         return True
     except ImportError:
         Logger(log_folder=None).warning_once(
-            "`torch_fps` not available. Farthest point sampling falls back to "
+            '`torch_fps` not available (`pip install "torch-fps==0.6.*"`). '
+            "Farthest point sampling falls back to "
             "the slower pure-PyTorch implementation."
         )
         return False

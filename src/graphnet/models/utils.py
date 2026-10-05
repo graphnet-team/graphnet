@@ -1,6 +1,6 @@
 """Utility functions for `graphnet.models`."""
 
-from typing import Any, Callable, List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor, LongTensor
@@ -310,8 +310,8 @@ def get_rw_landing_probs(
 
 
 # Packing of variable-length batches for block-diagonal `flex_attention`.
-# Compiled on first use, ~50x faster than eager `create_block_mask`.
-_COMPILED_CREATE_BLOCK_MASK: Optional[Callable] = None
+# Lazy: compiles on first call, then ~50x faster than eager.
+_create_block_mask = torch.compile(create_block_mask)
 # Packing beats padded SDPA only below this batch occupancy.
 _PACK_OCCUPANCY_MAX = 0.8
 
@@ -355,16 +355,13 @@ def build_block_mask(doc_id: Tensor, n_tokens: int) -> Any:
         doc_id: `[N]` event index of every packed token.
         n_tokens: Packed sequence length `N`.
     """
-    global _COMPILED_CREATE_BLOCK_MASK
-    if _COMPILED_CREATE_BLOCK_MASK is None:
-        _COMPILED_CREATE_BLOCK_MASK = torch.compile(create_block_mask)
 
     def mask_mod(
         b: Tensor, h: Tensor, q_idx: Tensor, kv_idx: Tensor
     ) -> Tensor:
         return doc_id[q_idx] == doc_id[kv_idx]
 
-    return _COMPILED_CREATE_BLOCK_MASK(
+    return _create_block_mask(
         mask_mod, None, None, n_tokens, n_tokens, device=doc_id.device
     )
 

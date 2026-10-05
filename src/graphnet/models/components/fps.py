@@ -2,14 +2,14 @@
 
 Ported from the Neptune reference implementation
 (https://github.com/felixyu7/neptune, MIT licence). Calls go to the optional
-`torch_fps` package (Triton kernels on CUDA, C++ on CPU) when it is installed;
-otherwise the pure-PyTorch implementation below is used.
+`torch_fps` package (https://github.com/felixyu7/torch-fps; Triton kernels on
+CUDA, C++ on CPU) when it is installed; otherwise the pure-PyTorch
+implementation below is used.
 
 Shared semantics: a point is valid if its mask is True and its coordinates are
-finite; distances accumulate in float32 (or `precision=torch.float64`); ties
-select the lowest index; once a row runs out of valid points the last
-selection repeats; kNN rows with fewer than `k_neighbors` valid points pad
-with the centroid index. The backends agree up to float32 rounding, which can
+finite; distances accumulate in float32; ties select the lowest index; once a
+row runs out of valid points the last selection repeats; kNN rows with fewer
+than `k_neighbors` valid points pad with the centroid index. The backends agree up to float32 rounding, which can
 flip exact ties.
 """
 
@@ -50,11 +50,6 @@ def _dispatch(function: F) -> F:
     return cast(F, wrapper)
 
 
-def _acc(points: Tensor) -> Tensor:
-    """Return `points` in the accumulation dtype (float32, or float64)."""
-    return points if points.dtype == torch.float64 else points.float()
-
-
 def _prepare(
     points: Tensor,
     valid_mask: Tensor,
@@ -62,7 +57,6 @@ def _prepare(
     start_idx: Optional[Tensor],
     random_start: bool,
     generator: Optional[torch.Generator],
-    precision: Optional[torch.dtype],
     validate: bool,
 ) -> Tuple[Tensor, Tensor, Tensor]:
     """Check shapes and return `(points, valid, start)` for the reference."""
@@ -77,7 +71,7 @@ def _prepare(
         raise ValueError(
             "FPS with K > 0 requires at least one point (got N=0)"
         )
-    pts = _acc(points.to(precision or torch.float32))
+    pts = points.float()
     valid = valid_mask.to(points.device, torch.bool) & pts.isfinite().all(-1)
     if k == 0:
         return pts, valid, valid.new_zeros(batch_size, dtype=torch.long)
@@ -157,7 +151,6 @@ def farthest_point_sampling(
     start_idx: Optional[Tensor] = None,
     random_start: bool = True,
     generator: Optional[torch.Generator] = None,
-    precision: Optional[torch.dtype] = None,
     validate: bool = True,
     assume_finite: bool = False,
 ) -> Tensor:
@@ -171,7 +164,6 @@ def farthest_point_sampling(
         random_start: Draw a random valid start when `start_idx` is None;
             otherwise start at the first valid point.
         generator: Optional generator for the random start.
-        precision: Compute dtype; float32 by default, float64 on request.
         validate: Check `k <= valid count` and `start_idx` (one host sync).
         assume_finite: Caller guarantees finite coordinates for valid points.
 
@@ -185,7 +177,6 @@ def farthest_point_sampling(
         start_idx,
         random_start,
         generator,
-        precision,
         validate,
     )
     return _fps_reference(pts, valid, start, k)
@@ -201,7 +192,6 @@ def farthest_point_sampling_with_knn(
     start_idx: Optional[Tensor] = None,
     random_start: bool = True,
     generator: Optional[torch.Generator] = None,
-    precision: Optional[torch.dtype] = None,
     validate: bool = True,
     assume_finite: bool = False,
 ) -> Tuple[Tensor, Tensor]:
@@ -227,7 +217,6 @@ def farthest_point_sampling_with_knn(
         start_idx,
         random_start,
         generator,
-        precision,
         validate,
     )
     idx = _fps_reference(pts, valid, start, k)
@@ -247,7 +236,6 @@ def farthest_point_sampling_with_assign(
     start_idx: Optional[Tensor] = None,
     random_start: bool = True,
     generator: Optional[torch.Generator] = None,
-    precision: Optional[torch.dtype] = None,
     validate: bool = True,
     assume_finite: bool = False,
 ) -> Tuple[Tensor, Tensor]:
@@ -266,7 +254,6 @@ def farthest_point_sampling_with_assign(
         start_idx,
         random_start,
         generator,
-        precision,
         validate,
     )
     idx = _fps_reference(pts, valid, start, k)

@@ -42,6 +42,7 @@ TINY: Dict[str, Any] = dict(
     num_heads=2,
     hidden_dim=24,
     tokenizer_mlp_layers=[16, 16],
+    compile_encoder=False,
 )
 
 
@@ -116,11 +117,11 @@ def test_gradients_reach_every_stage() -> None:
         "tokenizer.mlp1.0.weight",
         "tokenizer.mlp2.0.weight",
         "tokenizer.rel_encoder.0.weight",
-        "encoder.pos_mlp.0.weight",
-        "encoder.layers.layers.0.qkv_proj.weight",
-        "encoder.layers.layers.0.ffn.w13.weight",
-        "encoder.layers.layers.0.gamma_1",
-        "encoder.norm.weight",
+        "pos_mlp.0.weight",
+        "layers.0.qkv_proj.weight",
+        "layers.0.ffn.w13.weight",
+        "layers.0.gamma_1",
+        "norm.weight",
         "head.0.weight",
         "head.3.weight",
     ]:
@@ -218,7 +219,7 @@ def test_invalid_configurations() -> None:
     """Test that misconfigurations fail fast with a clear message."""
     with pytest.raises(ValueError, match="divisible"):
         _model(d_model=33, num_heads=2)
-    with pytest.raises(ValueError, match="rotary embedding"):
+    with pytest.raises(ValueError, match="RoPE4D"):
         _model(num_heads=8)  # head_dim = 4, below the RoPE4D minimum of 8
     with pytest.raises(ValueError, match="3 columns"):
         _model(coordinate_columns=["x", "y"])
