@@ -21,6 +21,7 @@ from graphnet.models.data_representation import EdgelessGraph, NodesAsPulses
 from graphnet.models.detector.prometheus import Prometheus
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.models.transformer import Neptune
+from graphnet.models.transformer import neptune as neptune_module
 from graphnet.training.loss_functions import LogCoshLoss
 from graphnet.utilities.config import ModelConfig
 from graphnet.utilities.imports import has_torch_fps_package
@@ -213,6 +214,32 @@ def test_low_precision_without_autocast() -> None:
         assert output.shape == (3, model.nb_outputs)
         assert output.dtype == dtype
         assert torch.isfinite(output).all()
+
+
+def test_compiled_stack_stays_under_recompile_limit(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """More layers than dynamo's recompile limit compile, in train and eval."""
+    monkeypatch.setattr(
+        neptune_module,
+        "_run_layers_compiled",
+        torch.compile(
+            neptune_module._run_layers, dynamic=True, backend="eager"
+        ),
+    )
+    # Renamed from fail_on_cache_limit_hit in torch 2.7.
+    for flag in ("fail_on_recompile_limit_hit", "fail_on_cache_limit_hit"):
+        try:
+            monkeypatch.setattr(torch._dynamo.config, flag, True)
+            break
+        except AttributeError:
+            continue
+    model = _model(compile_encoder=True, depth=10, drop_path_rate=0.1)
+    batch = _batch([5, 12, 30])
+    model(batch).sum().backward()
+    model.eval()
+    with torch.no_grad():
+        model(batch)
 
 
 def test_invalid_configurations() -> None:

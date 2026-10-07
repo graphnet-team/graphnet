@@ -27,6 +27,24 @@ DEFAULT_POSITION_SCHEMA: Dict[int, Union[float, Tuple[float, float]]] = {
 }
 
 
+def _run_layers(
+    layers: nn.ModuleList,
+    x: Tensor,
+    rope_tables: Tuple[Tensor, Tensor],
+    kwargs: Dict[str, Any],
+) -> Tensor:
+    """Apply the transformer layers in sequence."""
+    for layer in layers:
+        x = layer(x, rope_tables, **kwargs)
+    return x
+
+
+# One graph for the whole stack. Compiling each layer instead needs a cache
+# entry per layer on their shared `forward` (each layer has its own drop-path
+# rate), which overruns dynamo's recompile limit and silently runs eager.
+_run_layers_compiled = torch.compile(_run_layers, dynamic=True)
+
+
 class Neptune(GNN):
     """Neptune: a point transformer for neutrino events.
 
@@ -203,9 +221,6 @@ class Neptune(GNN):
         # Eager flex attention materializes the packed N x N, so packing
         # needs the compiled layers.
         self.compile_encoder = compile_encoder
-        if compile_encoder:
-            for layer in self.layers:
-                layer.compile(dynamic=True)
 
     def _encode(self, x: Tensor, centroids: Tensor, masks: Tensor) -> Tensor:
         """Run the transformer layers, packed when compiled on GPU."""
@@ -226,8 +241,8 @@ class Neptune(GNN):
                 "num_docs": masks.shape[0],
             }
         rope_tables = self.rope(centroids, x.dtype)
-        for layer in self.layers:
-            x = layer(x, rope_tables, **kwargs)
+        run = _run_layers_compiled if self.compile_encoder else _run_layers
+        x = run(self.layers, x, rope_tables, kwargs)
         return x if packed is None else unpack(x, pack_idx, *masks.shape)
 
     def forward(self, data: Data) -> Tensor:
