@@ -91,7 +91,6 @@ def main(
         mctree="I3MCTree",
         mmctracklist="MMCTrackList",
         extractor_name=f"calorimetry_pad_{str(padding)}",
-        daughters=False,
         is_corsika=False,
     )
 
