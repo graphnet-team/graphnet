@@ -16,7 +16,7 @@ from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
-from graphnet.models.gnn import DeepIce
+from graphnet.models.transformer import DeepIce
 from graphnet.models.graphs import KNNGraph
 from graphnet.models.graphs.nodes import IceMixNodes
 from graphnet.models.task.reconstruction import (

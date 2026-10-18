@@ -11,7 +11,7 @@ from graphnet.constants import EXAMPLE_DATA_DIR, EXAMPLE_OUTPUT_DIR
 from graphnet.data.constants import FEATURES, TRUTH
 from graphnet.models import StandardModel
 from graphnet.models.detector.prometheus import Prometheus
-from graphnet.models.gnn import GRIT
+from graphnet.models.transformer import GRIT
 from graphnet.models.graphs import KNNGraphRRWP
 from graphnet.models.task.reconstruction import EnergyReconstruction
 from graphnet.training.callbacks import PiecewiseLinearLR
