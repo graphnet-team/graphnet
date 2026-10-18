@@ -649,13 +649,13 @@
             
   <section id="module-graphnet.models.gnn.icemix">
 <span id="icemix"></span><h1 id="api-graphnet-models-gnn-icemix--page-root">icemix<a class="headerlink" href="#api-graphnet-models-gnn-icemix--page-root" title="Link to this heading">¶</a></h1>
-<p>Implementation of IceMix.</p>
-<p>This method was a solution submitted to the IceCube - Neutrinos in Deep Ice
-Kaggle competition.</p>
-<p>Solution by DrHB: <a class="reference external" href="https://github.com/DrHB/icecube-2nd-place">https://github.com/DrHB/icecube-2nd-place</a></p>
+<p>Deprecated module path for <cite>DeepIce</cite>.</p>
+<p><cite>DeepIce</cite> is a transformer model and now lives in
+<cite>graphnet.models.transformer</cite>. This module re-exports it so existing imports
+keep working, and warns on import that the path has moved.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.gnn.icemix.DeepIce">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.icemix.</span></span><span class="sig-name descname"><span class="pre">DeepIce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/gnn/icemix.html#DeepIce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.icemix.DeepIce" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.icemix.</span></span><span class="sig-name descname"><span class="pre">DeepIce</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/transformer/deepice.html#DeepIce"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.icemix.DeepIce" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">GNN</span></code></a></p>
 <p>DeepIce model.</p>
 <p>Construct <cite>DeepIce</cite>.</p>
@@ -688,7 +688,7 @@ argument have no impact.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.gnn.icemix.DeepIce.no_weight_decay">
-<span class="sig-name descname"><span class="pre">no_weight_decay</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/gnn/icemix.html#DeepIce.no_weight_decay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.icemix.DeepIce.no_weight_decay" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">no_weight_decay</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/transformer/deepice.html#DeepIce.no_weight_decay"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.icemix.DeepIce.no_weight_decay" title="Link to this definition">¶</a></dt>
 <dd><p>cls_tocken should not be subject to weight decay during training.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -698,7 +698,7 @@ argument have no impact.</p></li>
 </dd></dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.gnn.icemix.DeepIce.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/gnn/icemix.html#DeepIce.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.icemix.DeepIce.forward" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/transformer/deepice.html#DeepIce.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.icemix.DeepIce.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Apply learnable forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>

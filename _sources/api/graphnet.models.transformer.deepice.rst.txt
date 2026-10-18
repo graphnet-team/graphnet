@@ -1,0 +1,8 @@
+
+deepice
+=======
+
+.. automodule:: graphnet.models.transformer.deepice
+   :members:
+   :show-inheritance:
+   :undoc-members:

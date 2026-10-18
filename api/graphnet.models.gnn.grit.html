@@ -638,17 +638,13 @@
             
   <section id="module-graphnet.models.gnn.grit">
 <span id="grit"></span><h1 id="api-graphnet-models-gnn-grit--page-root">grit<a class="headerlink" href="#api-graphnet-models-gnn-grit--page-root" title="Link to this heading">¶</a></h1>
-<p>Implementation of GRIT, a graph transformer model.</p>
-<p>Original author: Liheng Ma
-Original code: <a class="reference external" href="https://github.com/LiamMa/GRIT">https://github.com/LiamMa/GRIT</a>
-Paper: “Graph Inductive Biases in Transformers without Message Passing”,</p>
-<blockquote>
-<div><p><a class="reference external" href="https://arxiv.org/abs/2305.17589">https://arxiv.org/abs/2305.17589</a></p>
-</div></blockquote>
-<p>Adapted by: Philip Weigel</p>
+<p>Deprecated module path for <cite>GRIT</cite>.</p>
+<p><cite>GRIT</cite> is a graph-transformer model and now lives in
+<cite>graphnet.models.transformer</cite>. This module re-exports it so existing imports
+keep working, and warns on import that the path has moved.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="graphnet.models.gnn.grit.GRIT">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.grit.</span></span><span class="sig-name descname"><span class="pre">GRIT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/gnn/grit.html#GRIT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.grit.GRIT" title="Link to this definition">¶</a></dt>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">graphnet.models.gnn.grit.</span></span><span class="sig-name descname"><span class="pre">GRIT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/transformer/grit.html#GRIT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.grit.GRIT" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="graphnet.models.gnn.gnn.html#graphnet.models.gnn.gnn.GNN" title="graphnet.models.gnn.gnn.GNN"><code class="xref py py-class docutils literal notranslate"><span class="pre">GNN</span></code></a></p>
 <p>GRIT is a graph transformer model.</p>
 <p>Original code:
@@ -696,7 +692,7 @@ either “mean” (default) or “add”.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="graphnet.models.gnn.grit.GRIT.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/gnn/grit.html#GRIT.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.grit.GRIT.forward" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/graphnet/models/transformer/grit.html#GRIT.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#graphnet.models.gnn.grit.GRIT.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>

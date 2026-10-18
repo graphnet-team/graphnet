@@ -1,0 +1,8 @@
+
+grit
+====
+
+.. automodule:: graphnet.models.transformer.grit
+   :members:
+   :show-inheritance:
+   :undoc-members:
