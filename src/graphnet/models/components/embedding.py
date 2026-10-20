@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 from torch.functional import Tensor
 
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from pytorch_lightning import LightningModule
 from torch_geometric.utils import add_self_loops
@@ -333,6 +333,72 @@ class FourierEncoder(LightningModule):
             )
 
         return torch.cat(embeddings, -1)
+
+
+class RoPE4D(LightningModule):
+    """Axis-aligned rotary position embedding over `(x, y, z, t)`.
+
+    Each axis gets at least one rotation plane, the rest are dealt out
+    round-robin; pair `j` rotates dimensions `(j, dim / 2 + j)`. See
+    https://arxiv.org/abs/2504.06308. Apply the returned tables to queries
+    and keys with :func:`apply_rope`.
+    """
+
+    freqs: Tensor
+    coord_select: Tensor
+
+    def __init__(
+        self,
+        dim: int,
+        scales: Sequence[float] = (1.0, 1.0, 1.0, 1.0),
+        base: int = 10000,
+    ):
+        """Construct `RoPE4D`.
+
+        Args:
+            dim: Head dimension; even and at least 8.
+            scales: Highest frequency per axis, in radians per input unit.
+            base: Frequencies on each axis span `scale / base` to `scale`.
+        """
+        super().__init__()
+        if dim % 2 != 0 or dim < 8:
+            raise ValueError(f"RoPE4D needs an even dim >= 8 (got {dim})")
+        if len(scales) != 4:
+            raise ValueError(f"RoPE4D expects 4 scales (got {len(scales)})")
+        allocation = [1, 1, 1, 1]
+        for i in range(dim // 2 - 4):
+            allocation[i % 4] += 1
+
+        freqs = []
+        for n_planes, scale in zip(allocation, scales):
+            exponents = torch.arange(n_planes, dtype=torch.float32)
+            exponents = exponents / max(n_planes - 1, 1)
+            freqs.append((1.0 / base) * (base**exponents) * scale)
+        self.register_buffer("freqs", torch.cat(freqs))
+        coord_select: List[int] = []
+        for axis, n_planes in enumerate(allocation):
+            coord_select += [axis] * n_planes
+        self.register_buffer("coord_select", torch.tensor(coord_select))
+
+    def forward(
+        self, coords: Tensor, dtype: torch.dtype
+    ) -> Tuple[Tensor, Tensor]:
+        """Return `(cos, sin)` tables `[B, 1, S, dim / 2]` for `coords`.
+
+        Args:
+            coords: `[B, S, 4]` coordinates.
+            dtype: Dtype to cast the tables to; the trig runs in float32.
+        """
+        coords = coords.float().index_select(-1, self.coord_select)
+        angles = (coords * self.freqs).unsqueeze(1)
+        return angles.cos().to(dtype), angles.sin().to(dtype)
+
+
+def apply_rope(x: Tensor, cos: Tensor, sin: Tensor) -> Tensor:
+    """Rotate `[B, H, S, dim]` queries or keys by :class:`RoPE4D` tables."""
+    x1, x2 = x.to(torch.promote_types(x.dtype, cos.dtype)).chunk(2, -1)
+    out = torch.cat((x1 * cos - x2 * sin, x1 * sin + x2 * cos), dim=-1)
+    return out.to(x.dtype)
 
 
 def signed_four_distance(
