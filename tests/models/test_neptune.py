@@ -59,9 +59,7 @@ def _batch(counts: List[int], seed: int = 0) -> Batch:
     torch.manual_seed(seed)
     data = []
     for n in counts:
-        x = torch.randn(n, N_FEATURES)
-        x[:, 4] = x[:, 4].abs()  # physical charge is non-negative
-        data.append(Data(x=x))
+        data.append(Data(x=torch.randn(n, N_FEATURES)))
     return Batch.from_data_list(data)
 
 

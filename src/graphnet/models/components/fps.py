@@ -7,10 +7,11 @@ CUDA, C++ on CPU) when it is installed; otherwise the pure-PyTorch
 implementation below is used.
 
 Shared semantics: a point is valid if its mask is True and its coordinates are
-finite; distances accumulate in float32; ties select the lowest index; once a
-row runs out of valid points the last selection repeats; kNN rows with fewer
-than `k_neighbors` valid points pad with the centroid index. The backends agree up to float32 rounding, which can
-flip exact ties.
+finite; distances accumulate in float32; FPS and kNN ties select the lowest
+index, nearest-centroid assignment ties may pick either centroid; once a row
+runs out of valid points the last selection repeats; kNN rows with fewer than
+`k_neighbors` valid points pad with the centroid index. The backends agree up
+to float32 rounding, which can flip exact ties.
 """
 
 import functools
@@ -18,6 +19,7 @@ from typing import Any, Callable, Optional, Tuple, TypeVar, cast
 
 import torch
 from torch import Tensor
+from torch_geometric.nn import knn
 
 from graphnet.utilities.imports import has_torch_fps_package
 
@@ -135,6 +137,22 @@ def _sq_dist(points: Tensor, cents: Tensor) -> Tensor:
         diff = points[..., :, dim, None] - cents[..., None, :, dim]
         dist = dist + diff * diff
     return torch.where(dist == dist, dist, float("inf"))
+
+
+def _nearest_centroid(
+    points: Tensor, batch: Tensor, cents: Tensor, k: int, batch_size: int
+) -> Tensor:
+    """Return each point's nearest centroid index in `[0, k)`.
+
+    `points` `[N, D]` carry sorted event indices `batch`; `cents` holds `k`
+    centroids per event as `[batch_size * k, D]`.
+    """
+    cent_batch = torch.arange(batch_size, device=points.device)
+    cent_batch = cent_batch.repeat_interleave(k)
+    _, col = knn(cents, points, 1, cent_batch, batch, batch_size=batch_size)
+    if col.numel() != points.shape[0]:
+        raise ValueError("knn dropped points: squared distances reach 1e10")
+    return col % k
 
 
 def _gather_rows(pts: Tensor, idx: Tensor) -> Tensor:
@@ -259,7 +277,15 @@ def farthest_point_sampling_with_assign(
     idx = _fps_reference(pts, valid, start, k)
     if k == 0:
         return idx, torch.zeros_like(valid, dtype=torch.long)
-    return idx, _sq_dist(pts, _gather_rows(pts, idx)).argmin(dim=-1)
+    assign = torch.zeros_like(valid, dtype=torch.long)
+    assign[valid] = _nearest_centroid(
+        pts[valid],
+        valid.nonzero()[:, 0],
+        _gather_rows(pts, idx).flatten(0, 1),
+        k,
+        pts.size(0),
+    )
+    return idx, assign
 
 
 @_dispatch
@@ -282,7 +308,7 @@ def nearest_assign(
         k: Number of centroids per event.
 
     Returns:
-        Int64 `[N]` indices in `[0, k)`; ties pick the lowest index.
+        Int64 `[N]` indices in `[0, k)`.
     """
     p_flat, cents = p_flat.detach(), cents.detach()
     if p_flat.numel() == 0 or starts.numel() == 0:
@@ -292,5 +318,6 @@ def nearest_assign(
         counts,
         output_size=p_flat.shape[0],
     )
-    cents = cents.float().view(starts.numel(), k, -1).index_select(0, seg)
-    return _sq_dist(p_flat.float().unsqueeze(1), cents).squeeze(1).argmin(-1)
+    return _nearest_centroid(
+        p_flat.float(), seg, cents.float(), k, starts.numel()
+    )

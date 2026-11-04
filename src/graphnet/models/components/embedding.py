@@ -341,7 +341,7 @@ class RoPE4D(LightningModule):
     Each axis gets at least one rotation plane, the rest are dealt out
     round-robin; pair `j` rotates dimensions `(j, dim / 2 + j)`. See
     https://arxiv.org/abs/2504.06308. Apply the returned tables to queries
-    and keys with :func:`apply_rope`.
+    and keys with :meth:`RoPE4D.rotate`.
     """
 
     freqs: Tensor
@@ -393,12 +393,12 @@ class RoPE4D(LightningModule):
         angles = (coords * self.freqs).unsqueeze(1)
         return angles.cos().to(dtype), angles.sin().to(dtype)
 
-
-def apply_rope(x: Tensor, cos: Tensor, sin: Tensor) -> Tensor:
-    """Rotate `[B, H, S, dim]` queries or keys by :class:`RoPE4D` tables."""
-    x1, x2 = x.to(torch.promote_types(x.dtype, cos.dtype)).chunk(2, -1)
-    out = torch.cat((x1 * cos - x2 * sin, x1 * sin + x2 * cos), dim=-1)
-    return out.to(x.dtype)
+    @staticmethod
+    def rotate(x: Tensor, cos: Tensor, sin: Tensor) -> Tensor:
+        """Rotate `[B, H, S, dim]` queries or keys by `forward`'s tables."""
+        x1, x2 = x.to(torch.promote_types(x.dtype, cos.dtype)).chunk(2, -1)
+        out = torch.cat((x1 * cos - x2 * sin, x1 * sin + x2 * cos), dim=-1)
+        return out.to(x.dtype)
 
 
 def signed_four_distance(

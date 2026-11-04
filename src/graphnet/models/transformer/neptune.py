@@ -53,10 +53,10 @@ class Neptune(GNN):
     vector. Use with `EdgelessGraph` and `NodesAsPulses`.
 
     Geometric defaults assume `IceCube86` standardization (one unit is
-    0.5 km and 30 us); rescale `position_encoding_schema`, `rope_scales`
+    0.5 km and 30 μs); rescale `position_encoding_schema`, `rope_scales`
     and the tokenizer's `metric_time_scale` for other detectors. The charge
-    column must hold physical charge, e.g. via
-    `Detector(replace_with_identity=["charge"])`. For faster FPS,
+    column must hold `log10` charge, as `IceCube86` standardizes it. For
+    faster FPS,
     `pip install "torch-fps==0.6.*"`.
     """
 
@@ -234,11 +234,11 @@ class Neptune(GNN):
             allow = masks | ~masks.any(dim=-1, keepdim=True)
             kwargs = {"attn_mask": allow[:, None, None, :]}
         else:
-            x, centroids, doc_id, pack_idx = packed
+            x, centroids, event_id, pack_idx = packed
             kwargs = {
-                "block_mask": build_block_mask(doc_id, x.shape[1]),
-                "doc_id": doc_id,
-                "num_docs": masks.shape[0],
+                "block_mask": build_block_mask(event_id, x.shape[1]),
+                "event_id": event_id,
+                "num_events": masks.shape[0],
             }
         rope_tables = self.rope(centroids, x.dtype)
         run = _run_layers_compiled if self.compile_encoder else _run_layers
@@ -258,7 +258,10 @@ class Neptune(GNN):
         if self._charge_index is None:
             charge = x.new_ones(x.shape[0])
         else:
-            charge = x[:, self._charge_index].clamp(min=0)
+            # Undo the detector's log10 to sum physical charge per token
+            # and event. ponytail: assumes plain log10 (IceCube86); add a
+            # scale argument for detectors that rescale it (e.g. DeepCore).
+            charge = 10 ** x[:, self._charge_index]
         features = torch.cat(
             [torch.log1p(charge).unsqueeze(-1), x[:, self._feature_index]],
             dim=1,

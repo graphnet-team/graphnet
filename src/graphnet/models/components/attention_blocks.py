@@ -9,7 +9,7 @@ from torch.nn.attention.flex_attention import flex_attention
 from torch.nn.functional import linear
 from pytorch_lightning import LightningModule
 
-from graphnet.models.components.embedding import apply_rope
+from graphnet.models.components.embedding import RoPE4D
 
 
 class DropPath(LightningModule):
@@ -31,32 +31,32 @@ class DropPath(LightningModule):
     def forward(
         self,
         x: Tensor,
-        doc_id: Optional[Tensor] = None,
-        num_docs: Optional[int] = None,
+        event_id: Optional[Tensor] = None,
+        num_events: Optional[int] = None,
     ) -> Tensor:
         """Forward pass.
 
         Args:
             x: Input tensor; one drop decision per row of the batch dimension.
-            doc_id: Optional `[N]` event index of each token of a packed
+            event_id: Optional `[N]` event index of each token of a packed
                 `[1, N, D]` input; decisions are then drawn per event.
-            num_docs: Number of events in `doc_id`.
+            num_events: Number of events in `event_id`.
         """
         if self.drop_prob == 0.0 or not self.training:
             return x
         keep_prob = 1 - self.drop_prob
-        if doc_id is None:
+        if event_id is None:
             shape = (x.shape[0],) + (1,) * (x.ndim - 1)
             random_tensor = x.new_empty(shape).bernoulli_(keep_prob)
             if keep_prob > 0.0:
                 random_tensor.div_(keep_prob)
             return x * random_tensor
 
-        assert num_docs is not None, "`num_docs` is required with `doc_id`"
-        event_mask = x.new_empty((num_docs, 1)).bernoulli_(keep_prob)
+        assert num_events is not None, "`event_id` needs `num_events`"
+        event_mask = x.new_empty((num_events, 1)).bernoulli_(keep_prob)
         if keep_prob > 0.0:
             event_mask = event_mask.div(keep_prob)
-        token_mask = event_mask.index_select(0, doc_id).unsqueeze(0)
+        token_mask = event_mask.index_select(0, event_id).unsqueeze(0)
         return x * token_mask
 
     def extra_repr(self) -> str:
@@ -559,8 +559,8 @@ class RotaryTransformerBlock(LightningModule):
         rope_tables: Tuple[Tensor, Tensor],
         attn_mask: Optional[Tensor] = None,
         block_mask: Any = None,
-        doc_id: Optional[Tensor] = None,
-        num_docs: Optional[int] = None,
+        event_id: Optional[Tensor] = None,
+        num_events: Optional[int] = None,
     ) -> Tensor:
         """Apply the block.
 
@@ -569,8 +569,8 @@ class RotaryTransformerBlock(LightningModule):
             rope_tables: `(cos, sin)` tables from `RoPE4D`.
             attn_mask: Optional SDPA mask for the padded path.
             block_mask: `flex_attention` `BlockMask`; selects the packed path.
-            doc_id: `[N]` event index per token on the packed path.
-            num_docs: Number of events in `doc_id`.
+            event_id: `[N]` event index per token on the packed path.
+            num_events: Number of events in `event_id`.
 
         Returns:
             `[B, S, d_model]` updated token features.
@@ -581,7 +581,8 @@ class RotaryTransformerBlock(LightningModule):
         q, k, v = qkv.permute(2, 0, 3, 1, 4)  # each [B, H, S, head_dim]
         if self.qk_norm:
             q, k = self.q_norm(q), self.k_norm(k)
-        q, k = apply_rope(q, *rope_tables), apply_rope(k, *rope_tables)
+        q = RoPE4D.rotate(q, *rope_tables)
+        k = RoPE4D.rotate(k, *rope_tables)
 
         if block_mask is not None:
             attn = flex_attention(q, k, v, block_mask=block_mask)
@@ -591,9 +592,9 @@ class RotaryTransformerBlock(LightningModule):
             )
         attn = attn.transpose(1, 2).reshape(batch_size, seq_length, -1)
         attn = self.dropout(self.gamma_1 * self.out_proj(attn))
-        x = x + self.drop_path1(attn, doc_id, num_docs)
+        x = x + self.drop_path1(attn, event_id, num_events)
         ff = self.gamma_2 * self.ffn(self.norm2(x))
-        return x + self.drop_path2(ff, doc_id, num_docs)
+        return x + self.drop_path2(ff, event_id, num_events)
 
 
 def _xavier_init(*linears: nn.Linear) -> None:

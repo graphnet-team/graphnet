@@ -331,7 +331,7 @@ def pack(
         masks: Bool `[B, S]`; True marks a valid token.
 
     Returns:
-        `(tokens [1, N, D], centroids [1, N, C], doc_id [N], pack_idx [N])`,
+        `(tokens [1, N, D], centroids [1, N, C], event_id [N], pack_idx [N])`,
         or None if the batch is empty or too full for packing to pay off.
     """
     batch_size, seq_length, n_features = tokens.shape
@@ -348,21 +348,21 @@ def pack(
     return packed_tokens, packed_centroids, pack_idx // seq_length, pack_idx
 
 
-def build_block_mask(doc_id: Tensor, n_tokens: int) -> Any:
+def build_block_mask(event_id: Tensor, n_tokens: int) -> Any:
     """Build a `BlockMask` letting packed tokens attend only within an event.
 
     Args:
-        doc_id: `[N]` event index of every packed token.
+        event_id: `[N]` event index of every packed token.
         n_tokens: Packed sequence length `N`.
     """
 
     def mask_mod(
         b: Tensor, h: Tensor, q_idx: Tensor, kv_idx: Tensor
     ) -> Tensor:
-        return doc_id[q_idx] == doc_id[kv_idx]
+        return event_id[q_idx] == event_id[kv_idx]
 
     return _create_block_mask(
-        mask_mod, None, None, n_tokens, n_tokens, device=doc_id.device
+        mask_mod, None, None, n_tokens, n_tokens, device=event_id.device
     )
 
 

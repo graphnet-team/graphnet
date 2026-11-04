@@ -67,7 +67,7 @@ class FPSTokenizer(LightningModule):
                 centroid; `"knn"` pools the `k_neighbors` nearest points of
                 each centroid.
             metric_time_scale: Weight of time relative to space in the FPS
-                and assignment metric only. The default, 18, is 0.3 km/us in
+                and assignment metric only. The default, 18, is 0.3 km/μs in
                 `IceCube86` units.
             lloyd_iters: Charge-weighted Lloyd (k-means) steps refining the
                 Voronoi centroids, which then become cell means; cells can
