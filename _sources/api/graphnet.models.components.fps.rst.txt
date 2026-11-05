@@ -1,0 +1,8 @@
+
+fps
+===
+
+.. automodule:: graphnet.models.components.fps
+   :members:
+   :show-inheritance:
+   :undoc-members:

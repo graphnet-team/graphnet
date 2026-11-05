@@ -351,7 +351,7 @@
   <h1 id="modules-graphnet-models-utils--page-root">Source code for graphnet.models.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Utility functions for `graphnet.models`."""</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">LongTensor</span>
@@ -363,6 +363,8 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch_scatter</span><span class="w"> </span><span class="kn">import</span> <span class="n">scatter</span><span class="p">,</span> <span class="n">scatter_add</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch_sparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparseTensor</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn.attention.flex_attention</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_block_mask</span>
 
 
 <div class="viewcode-block" id="calculate_xyzt_homophily">
@@ -679,6 +681,88 @@
     <span class="c1"># (Num nodes) x (K steps)</span>
     <span class="n">rw_landing</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">rws</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rw_landing</span></div>
+
+
+
+<span class="c1"># Packing of variable-length batches for block-diagonal `flex_attention`.</span>
+<span class="c1"># Lazy: compiles on first call, then ~50x faster than eager.</span>
+<span class="n">_create_block_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">create_block_mask</span><span class="p">)</span>
+<span class="c1"># Packing beats padded SDPA only below this batch occupancy.</span>
+<span class="n">_PACK_OCCUPANCY_MAX</span> <span class="o">=</span> <span class="mf">0.8</span>
+
+
+<div class="viewcode-block" id="pack">
+<a class="viewcode-back" href="../../../api/graphnet.models.utils.html#graphnet.models.utils.pack">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pack</span><span class="p">(</span>
+    <span class="n">tokens</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">centroids</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">masks</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">"""Pack the valid tokens of a padded batch into one `[1, N, D]` sequence.</span>
+
+<span class="sd">    Uses data-dependent shapes, so it must stay outside compiled regions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tokens: `[B, S, D]` padded token features.</span>
+<span class="sd">        centroids: `[B, S, C]` padded token positions.</span>
+<span class="sd">        masks: Bool `[B, S]`; True marks a valid token.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        `(tokens [1, N, D], centroids [1, N, C], event_id [N], pack_idx [N])`,</span>
+<span class="sd">        or None if the batch is empty or too full for packing to pay off.</span>
+<span class="sd">    """</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">,</span> <span class="n">n_features</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">pack_idx</span> <span class="o">=</span> <span class="n">masks</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">as_tuple</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># host sync</span>
+    <span class="n">n_valid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">pack_idx</span><span class="o">.</span><span class="n">numel</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">n_valid</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">n_valid</span> <span class="o">&gt;=</span> <span class="n">_PACK_OCCUPANCY_MAX</span> <span class="o">*</span> <span class="n">masks</span><span class="o">.</span><span class="n">numel</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">packed_tokens</span> <span class="o">=</span> <span class="n">tokens</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_features</span><span class="p">)[</span><span class="n">pack_idx</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">packed_centroids</span> <span class="o">=</span> <span class="n">centroids</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">centroids</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])[</span><span class="n">pack_idx</span><span class="p">]</span>
+    <span class="n">packed_centroids</span> <span class="o">=</span> <span class="n">packed_centroids</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># One compiled graph for every packed length.</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">_dynamo</span><span class="o">.</span><span class="n">mark_dynamic</span><span class="p">(</span><span class="n">packed_tokens</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">_dynamo</span><span class="o">.</span><span class="n">mark_dynamic</span><span class="p">(</span><span class="n">packed_centroids</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">packed_tokens</span><span class="p">,</span> <span class="n">packed_centroids</span><span class="p">,</span> <span class="n">pack_idx</span> <span class="o">//</span> <span class="n">seq_length</span><span class="p">,</span> <span class="n">pack_idx</span></div>
+
+
+
+<div class="viewcode-block" id="build_block_mask">
+<a class="viewcode-back" href="../../../api/graphnet.models.utils.html#graphnet.models.utils.build_block_mask">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_block_mask</span><span class="p">(</span><span class="n">event_id</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build a `BlockMask` letting packed tokens attend only within an event.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        event_id: `[N]` event index of every packed token.</span>
+<span class="sd">        n_tokens: Packed sequence length `N`.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">mask_mod</span><span class="p">(</span>
+        <span class="n">b</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">q_idx</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">kv_idx</span><span class="p">:</span> <span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">event_id</span><span class="p">[</span><span class="n">q_idx</span><span class="p">]</span> <span class="o">==</span> <span class="n">event_id</span><span class="p">[</span><span class="n">kv_idx</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">_create_block_mask</span><span class="p">(</span>
+        <span class="n">mask_mod</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="n">n_tokens</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">event_id</span><span class="o">.</span><span class="n">device</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="unpack">
+<a class="viewcode-back" href="../../../api/graphnet.models.utils.html#graphnet.models.utils.unpack">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">unpack</span><span class="p">(</span>
+    <span class="n">packed</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">pack_idx</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Scatter a packed `[1, N, D]` sequence back to a zero-padded `[B, S, D]`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        packed: `[1, N, D]` packed sequence.</span>
+<span class="sd">        pack_idx: The `pack_idx` returned by :func:`pack`.</span>
+<span class="sd">        batch_size: Batch size `B`.</span>
+<span class="sd">        seq_length: Padded sequence length `S`.</span>
+<span class="sd">    """</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">packed</span><span class="o">.</span><span class="n">new_zeros</span><span class="p">(</span><span class="n">batch_size</span> <span class="o">*</span> <span class="n">seq_length</span><span class="p">,</span> <span class="n">packed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">index_copy_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">pack_idx</span><span class="p">,</span> <span class="n">packed</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_length</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
 
 </pre></div>
 

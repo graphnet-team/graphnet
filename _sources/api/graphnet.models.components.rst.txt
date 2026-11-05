@@ -19,9 +19,11 @@ components
    graphnet.models.components.cnn_convolutions
    graphnet.models.components.edge_convolutions
    graphnet.models.components.embedding
+   graphnet.models.components.fps
    graphnet.models.components.grit_layers
    graphnet.models.components.layers
    graphnet.models.components.pool
+   graphnet.models.components.tokenizers
 
 
 

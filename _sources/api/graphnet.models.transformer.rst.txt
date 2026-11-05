@@ -18,6 +18,7 @@ transformer
    graphnet.models.transformer.deepice
    graphnet.models.transformer.grit
    graphnet.models.transformer.iseecube
+   graphnet.models.transformer.neptune
 
 
 

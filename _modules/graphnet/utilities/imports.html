@@ -407,6 +407,24 @@
 
 
 
+<div class="viewcode-block" id="has_torch_fps_package">
+<a class="viewcode-back" href="../../../api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_torch_fps_package">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">has_torch_fps_package</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Check whether the `torch_fps` package is available."""</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch_fps</span>  <span class="c1"># pyright: reportMissingImports=false</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">Logger</span><span class="p">(</span><span class="n">log_folder</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span><span class="o">.</span><span class="n">warning_once</span><span class="p">(</span>
+            <span class="s1">'`torch_fps` not available (`pip install "torch-fps==0.6.*"`). '</span>
+            <span class="s2">"Farthest point sampling falls back to "</span>
+            <span class="s2">"the slower pure-PyTorch implementation."</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
 <div class="viewcode-block" id="has_km3net_package">
 <a class="viewcode-back" href="../../../api/graphnet.utilities.imports.html#graphnet.utilities.imports.has_km3net_package">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">has_km3net_package</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
