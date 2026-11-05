@@ -1,5 +1,7 @@
 """Reconstruction-specific `Model` class(es)."""
 
+from typing import Any
+
 import numpy as np
 import torch
 from torch import Tensor
@@ -47,7 +49,14 @@ class AzimuthReconstruction(AzimuthReconstructionWithKappa):
 
 
 class DirectionReconstructionWithKappa(StandardLearnedTask):
-    """Reconstructs direction with kappa from the 3D-vMF distribution."""
+    """Reconstructs direction with kappa from the 3D-vMF distribution.
+
+    Kappa is the length of the three outputs, so it can only grow as far as
+    the head's output scale does in training. Trained models hit a kappa
+    ceiling (~1e3 in practice) that bright events exceed, and their
+    predicted distributions come out underconfident. Prefer
+    `DirectionReconstructionWithLogKappa`, which predicts kappa separately.
+    """
 
     # Requires three features: untransformed points in (x,y,z)-space.
     default_target_labels = ["direction"]  # contains dir_x, dir_y, dir_z
@@ -67,6 +76,49 @@ class DirectionReconstructionWithKappa(StandardLearnedTask):
         vec_y = x[:, 1] / kappa
         vec_z = x[:, 2] / kappa
         return torch.stack((vec_x, vec_y, vec_z, kappa), dim=1)
+
+
+class DirectionReconstructionWithLogKappa(StandardLearnedTask):
+    """Reconstructs direction with log-kappa from the 3D-vMF distribution.
+
+    The direction is the normalised first three outputs and
+    `kappa = kappa_min + exp(x[:, 3])`. The floor `kappa_min` keeps training
+    from settling on the uniform distribution at initialisation, where the
+    direction's gradient would otherwise vanish with kappa.
+    """
+
+    default_target_labels = ["direction"]
+    default_prediction_labels = [
+        "dir_x_pred",
+        "dir_y_pred",
+        "dir_z_pred",
+        "direction_kappa",
+    ]
+    nb_inputs = 4
+    _log_kappa_max = 20.0
+
+    def __init__(self, *args: Any, kappa_min: float = 1.0, **kwargs: Any):
+        """Construct `DirectionReconstructionWithLogKappa`.
+
+        Args:
+            *args: Passed to `StandardLearnedTask`.
+            kappa_min: Lower bound on the predicted kappa; must be positive.
+            **kwargs: Passed to `StandardLearnedTask`.
+        """
+        if kappa_min <= 0:
+            raise ValueError(f"kappa_min must be positive, got {kappa_min}")
+        super().__init__(*args, **kwargs)
+        self._kappa_min = kappa_min
+
+    def _forward(self, x: Tensor) -> Tensor:
+        direction = x[:, :3] / (
+            torch.linalg.vector_norm(x[:, :3], dim=1, keepdim=True)
+            + eps_like(x)
+        )
+        kappa = self._kappa_min + torch.exp(
+            x[:, 3:4].clamp(max=self._log_kappa_max)
+        )
+        return torch.cat((direction, kappa), dim=1)
 
 
 class ZenithReconstruction(StandardLearnedTask):
