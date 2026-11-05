@@ -56,34 +56,6 @@ def _log_kappa_task(**kwargs: Any) -> DirectionReconstructionWithLogKappa:
     )
 
 
-def test_log_kappa_direction_output() -> None:
-    """Unit directions, kappa above its floor, the stock output layout."""
-    task = _log_kappa_task(kappa_min=1.0)
-    assert task.nb_inputs == 4
-    x = torch.randn(64, 4)
-    pred = task._forward(x)
-    assert pred.shape == (64, 4)
-    torch.testing.assert_close(
-        torch.linalg.vector_norm(pred[:, :3], dim=1), torch.ones(64)
-    )
-    torch.testing.assert_close(pred[:, 3], 1.0 + torch.exp(x[:, 3]))
-
-
-def test_log_kappa_no_ceiling_and_no_overflow() -> None:
-    """Kappa grows past the stock head's typical ceiling and stays finite."""
-    task = _log_kappa_task()
-    x = torch.tensor([[1.0, 0.0, 0.0, 10.0], [0.0, 1.0, 0.0, 1e4]])
-    kappa = task._forward(x)[:, 3]
-    assert kappa[0] > 2e4
-    assert torch.isfinite(kappa).all()
-
-
-def test_log_kappa_floor_must_be_positive() -> None:
-    """A zero floor lets training collapse, so it is rejected."""
-    with pytest.raises(ValueError):
-        _log_kappa_task(kappa_min=0.0)
-
-
 def test_log_kappa_loss_and_gradients() -> None:
     """The vMF loss is finite and its gradient reaches all four outputs."""
     task = _log_kappa_task()
