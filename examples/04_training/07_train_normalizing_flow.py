@@ -148,6 +148,10 @@ def main(
         gpus=config["fit"]["gpus"],
     )
 
+    if results is None:
+        # Only the global-zero rank holds the output in multi-device runs.
+        return
+
     # Save predictions and model to file
     db_name = path.split("/")[-1].split(".")[0]
     path = os.path.join(archive, db_name, run_name)

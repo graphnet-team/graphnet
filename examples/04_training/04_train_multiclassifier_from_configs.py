@@ -139,6 +139,10 @@ def main(
         additional_attributes=additional_attributes + ["event_no"],
         gpus=config.fit["gpus"],
     )
+
+    if results is None:
+        # Only the global-zero rank holds the output in multi-device runs.
+        return
     results.to_csv(f"{path}/results.csv")
 
 
