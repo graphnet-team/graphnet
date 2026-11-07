@@ -304,9 +304,6 @@ class LMDBDataset(Dataset):
                 f"Columns '{missing}' not found in table '{table}'."
             )
 
-        table_data = [
-            np.array(data[column]).reshape(-1, 1) for column in columns
-        ]
         table_data = np.concatenate(table_data, axis=1)
         return table_data
 
