@@ -351,6 +351,8 @@
   <h1 id="modules-graphnet-models-task-reconstruction--page-root">Source code for graphnet.models.task.reconstruction</h1><div class="highlight"><pre>
 <span></span><span class="sd">"""Reconstruction-specific `Model` class(es)."""</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span>
@@ -406,7 +408,14 @@
 <div class="viewcode-block" id="DirectionReconstructionWithKappa">
 <a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithKappa">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DirectionReconstructionWithKappa</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Reconstructs direction with kappa from the 3D-vMF distribution."""</span>
+<span class="w">    </span><span class="sd">"""Reconstructs direction with kappa from the 3D-vMF distribution.</span>
+
+<span class="sd">    Kappa is the length of the three outputs, so it can only grow as far as</span>
+<span class="sd">    the head's output scale does in training. Trained models hit a kappa</span>
+<span class="sd">    ceiling (~1e3 in practice) that bright events exceed, and their</span>
+<span class="sd">    predicted distributions come out underconfident. Prefer</span>
+<span class="sd">    `DirectionReconstructionWithLogKappa`, which predicts kappa separately.</span>
+<span class="sd">    """</span>
 
     <span class="c1"># Requires three features: untransformed points in (x,y,z)-space.</span>
     <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"direction"</span><span class="p">]</span>  <span class="c1"># contains dir_x, dir_y, dir_z</span>
@@ -426,6 +435,52 @@
         <span class="n">vec_y</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">kappa</span>
         <span class="n">vec_z</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">kappa</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">((</span><span class="n">vec_x</span><span class="p">,</span> <span class="n">vec_y</span><span class="p">,</span> <span class="n">vec_z</span><span class="p">,</span> <span class="n">kappa</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="DirectionReconstructionWithLogKappa">
+<a class="viewcode-back" href="../../../../api/graphnet.models.task.reconstruction.html#graphnet.models.task.reconstruction.DirectionReconstructionWithLogKappa">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DirectionReconstructionWithLogKappa</span><span class="p">(</span><span class="n">StandardLearnedTask</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Reconstructs direction with log-kappa from the 3D-vMF distribution.</span>
+
+<span class="sd">    The direction is the normalised first three outputs and</span>
+<span class="sd">    `kappa = kappa_min + exp(x[:, 3])`. The floor `kappa_min` keeps training</span>
+<span class="sd">    from settling on the uniform distribution at initialisation, where the</span>
+<span class="sd">    direction's gradient would otherwise vanish with kappa.</span>
+<span class="sd">    """</span>
+
+    <span class="n">default_target_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"direction"</span><span class="p">]</span>
+    <span class="n">default_prediction_labels</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">"dir_x_pred"</span><span class="p">,</span>
+        <span class="s2">"dir_y_pred"</span><span class="p">,</span>
+        <span class="s2">"dir_z_pred"</span><span class="p">,</span>
+        <span class="s2">"direction_kappa"</span><span class="p">,</span>
+    <span class="p">]</span>
+    <span class="n">nb_inputs</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">_log_kappa_max</span> <span class="o">=</span> <span class="mf">20.0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">kappa_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Construct `DirectionReconstructionWithLogKappa`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args: Passed to `StandardLearnedTask`.</span>
+<span class="sd">            kappa_min: Lower bound on the predicted kappa; must be positive.</span>
+<span class="sd">            **kwargs: Passed to `StandardLearnedTask`.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">kappa_min</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"kappa_min must be positive, got </span><span class="si">{</span><span class="n">kappa_min</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_min</span> <span class="o">=</span> <span class="n">kappa_min</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="n">direction</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">vector_norm</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">3</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="o">+</span> <span class="n">eps_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">kappa</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kappa_min</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_kappa_max</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">direction</span><span class="p">,</span> <span class="n">kappa</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
 
 
 
