@@ -1,13 +1,18 @@
 """Unit tests for Task classes."""
 
+from typing import Any
+
 import pytest
 import torch
 
 from graphnet.data.constants import FEATURES
 from graphnet.models.detector.icecube import IceCube86
 from graphnet.models.gnn import DynEdge
-from graphnet.models.task.reconstruction import EnergyReconstruction
-from graphnet.training.loss_functions import LogCoshLoss
+from graphnet.models.task.reconstruction import (
+    DirectionReconstructionWithLogKappa,
+    EnergyReconstruction,
+)
+from graphnet.training.loss_functions import LogCoshLoss, VonMisesFisher3DLoss
 from graphnet.models.graphs import KNNGraph
 from graphnet.models.graphs.nodes import NodesAsPulses
 
@@ -40,3 +45,24 @@ def test_transform_prediction_and_target() -> None:
             transform_target=torch.log10,
             transform_inference=torch.log10,
         )
+
+
+def _log_kappa_task(**kwargs: Any) -> DirectionReconstructionWithLogKappa:
+    return DirectionReconstructionWithLogKappa(
+        hidden_size=8,
+        target_labels="direction",
+        loss_function=VonMisesFisher3DLoss(),
+        **kwargs,
+    )
+
+
+def test_log_kappa_loss_and_gradients() -> None:
+    """The vMF loss is finite and its gradient reaches all four outputs."""
+    task = _log_kappa_task()
+    x = torch.randn(32, 4, requires_grad=True)
+    target = torch.nn.functional.normalize(torch.randn(32, 3), dim=1)
+    loss = task._loss_function(task._forward(x), target)
+    assert torch.isfinite(loss)
+    loss.backward()
+    assert x.grad is not None
+    assert (x.grad.abs().sum(dim=0) > 0).all()
