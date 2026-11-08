@@ -66,7 +66,9 @@ class I3HighestEparticleExtractor(I3Extractor):
             HEParticle.energy = 0
             primary_energy = sum(
                 prim.energy
-                for prim in self.get_primaries(frame, self.daughters)
+                for prim in self.get_primaries(
+                    frame[self.mctree], self.daughters
+                )
             )
             distance = -1.0
             EonEntrance = 0.0
@@ -178,8 +180,10 @@ class I3HighestEparticleExtractor(I3Extractor):
         Args:
         frame: I3Frame object
         """
-        primaries = self.get_primaries(frame, self.daughters)
-        primaries = [self.check_primary_energy(frame, p) for p in primaries]
+        primaries = self.get_primaries(frame[self.mctree], self.daughters)
+        primaries = [
+            self.check_primary_energy(frame[self.mctree], p) for p in primaries
+        ]
 
         MMCTrackList = frame[self.mmctracklist]
         if self.daughters:
@@ -419,9 +423,10 @@ class I3HighestEparticleExtractor(I3Extractor):
         containment = GN_containment_types.no_intersect.value
         visible_length = 0.0
         if self.daughters:
-            primaries = self.get_primaries(frame, self.daughters)
+            primaries = self.get_primaries(frame[self.mctree], self.daughters)
             primaries = [
-                self.check_primary_energy(frame, p) for p in primaries
+                self.check_primary_energy(frame[self.mctree], p)
+                for p in primaries
             ]
 
             particles = self.get_descendants(frame, primaries)
