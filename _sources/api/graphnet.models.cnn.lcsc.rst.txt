@@ -1,0 +1,8 @@
+
+lcsc
+====
+
+.. automodule:: graphnet.models.cnn.lcsc
+   :members:
+   :show-inheritance:
+   :undoc-members:

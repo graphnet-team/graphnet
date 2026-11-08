@@ -17,6 +17,7 @@ cnn
 
    graphnet.models.cnn.cnn
    graphnet.models.cnn.icecube_dnn
+   graphnet.models.cnn.lcsc
 
 
 
