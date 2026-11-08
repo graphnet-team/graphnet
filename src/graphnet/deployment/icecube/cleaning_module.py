@@ -180,14 +180,17 @@ class I3PulseCleanerModule(I3InferenceModule):
         pulses = dataclasses.I3RecoPulseSeriesMap.from_frame(
             frame, self._total_pulsemap_name
         )
-        for P in pulses:
-            om = omGeoMap[P[0]]
+        # Iterating an I3Map directly yields OMKeys, and OMKey is itself
+        # indexable (om_key[0] is the string number), so pair-style unpacking
+        # silently produces invalid geometry lookups. Use items() instead.
+        for om_key, om_pulses in pulses.items():
+            om = omGeoMap[om_key]
             if om.omtype == 130:  # "mDOM"
-                mDOMMap[P[0]] = P[1]
+                mDOMMap[om_key] = om_pulses
             elif om.omtype == 120:  # "DEgg"
-                DEggMap[P[0]] = P[1]
+                DEggMap[om_key] = om_pulses
             elif om.omtype == 20:  # "IceCube / pDOM"
-                IceCubeMap[P[0]] = P[1]
+                IceCubeMap[om_key] = om_pulses
         return mDOMMap, DEggMap, IceCubeMap
 
     def _construct_prediction_map(

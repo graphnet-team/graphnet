@@ -85,6 +85,36 @@ EXTRAS_REQUIRE = {
         "torch_spline_conv",
         "pytorch-lightning>=2.0,<=2.6.1",
     ],
+    # The extras below use torch-geometric 2.8, whose knn/radius graphs run
+    # on pyg-lib (>=0.6.0, torch>=2.8 only) instead of torch-cluster, so
+    # torch-cluster and the unused torch-spline-conv are dropped.
+    # --- PyTorch 2.9.1 ---
+    "torch-29": [
+        "torch==2.9.1",
+        "torch-geometric==2.8.*",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "pytorch-lightning>=2.0,<=2.6.1",
+    ],
+    # --- PyTorch 2.10.0 ---
+    "torch-210": [
+        "torch==2.10.0",
+        "torch-geometric==2.8.*",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "pytorch-lightning>=2.0,<=2.6.1",
+    ],
+    # --- PyTorch 2.12.1 ---
+    "torch-212": [
+        "torch==2.12.1",
+        "torch-geometric==2.8.*",
+        "pyg_lib",
+        "torch_scatter",
+        "torch_sparse",
+        "pytorch-lightning>=2.0,<=2.6.1",
+    ],
 }
 
 # https://pypi.org/classifiers/

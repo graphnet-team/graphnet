@@ -75,6 +75,13 @@ class KNNEdges(EdgeDefinition):  # pylint: disable=too-few-public-methods
 
     def _construct_edges(self, graph: Data) -> Data:
         """Define K-NN edges."""
+        # pyg-lib's knn kernel segfaults on empty input when `batch` is None.
+        if graph.x.shape[0] == 0:
+            graph.edge_index = torch.empty((2, 0), dtype=torch.long).to(
+                self.device
+            )
+            return graph
+
         graph.edge_index = knn_graph(
             graph.x[:, self._columns],
             self._nb_nearest_neighbours,
@@ -165,6 +172,14 @@ class RadialEdges(EdgeDefinition):
 
     def _construct_edges(self, graph: Data) -> Data:
         """Define radial edges."""
+        # pyg-lib's radius kernel segfaults on empty input when `batch` is
+        # None, like its knn kernel.
+        if graph.x.shape[0] == 0:
+            graph.edge_index = torch.empty((2, 0), dtype=torch.long).to(
+                self.device
+            )
+            return graph
+
         graph.edge_index = radius_graph(
             graph.x[:, self._columns],
             self._radius,
